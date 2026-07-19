@@ -785,21 +785,26 @@
        user only sees cities they can actually add. First 10 of the
        filtered list are shown. Each chip is color-coded with the same
        NotebookLM palette as the rail. Click to add. */
-    // Add a city to the rail, replacing the oldest non-home city if full.
-    // This makes sure the new city is always visible (not sliced off) and
-    // state.activeIdx points to it. Home at position 0 is never touched.
+    // Add a city to the rail. The new city is INSERTED right after the home
+    // (position 1), so it appears prominently next to the user's home city.
+    // If the rail is full (length >= RAIL_MAX), the LAST non-home entry is
+    // dropped to make room. This way:
+    //   - The new city is always visible (not sliced off)
+    //   - The new city appears "next" to home (position 1)
+    //   - state.activeIdx points to it
+    //   - Home at position 0 is never touched
     function addCityToRail(cityObj) {
       ensureHomeFirst();
       const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cityObj.tz);
       if (existingIdx >= 0) return existingIdx;
-      // Home is at 0. If the array is already full (home + 5 others = 6),
-      // drop the oldest non-home entry (last in the array) BEFORE adding.
-      // This keeps the new city visible and preserves home + 4 most recent.
+      // Insert the new city at position 1 (right after home)
+      const insertAt = 1;
+      // If the array is already full, drop the last entry first
       if (state.citiesWithHome.length >= RAIL_MAX) {
-        state.citiesWithHome = state.citiesWithHome.slice(0, RAIL_MAX - 1);
+        state.citiesWithHome.length = RAIL_MAX - 1;
       }
-      state.citiesWithHome.push(cityObj);
-      return state.citiesWithHome.length - 1;
+      state.citiesWithHome.splice(insertAt, 0, cityObj);
+      return insertAt;
     }
 
     function renderPopularCities() {
