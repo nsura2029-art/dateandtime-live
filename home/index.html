@@ -329,12 +329,12 @@
     [data-theme="dark"] .city-card.is-home { box-shadow: 0 0 0 2px color-mix(in srgb, #fbbf24 70%, transparent), 0 4px 16px rgba(251, 191, 36, 0.2); }
     .city-card .home-badge { position: absolute; top: 0.4rem; right: 0.5rem; display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.4rem; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 9999px; text-transform: uppercase; box-shadow: 0 1px 3px rgba(245, 158, 11, 0.4); pointer-events: none; }
     .city-card .home-badge-icon { font-size: 0.75rem; line-height: 1; }
-    .rail { display: flex; flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
+    .rail { display: flex; flex-wrap: nowrap; gap: 1.25rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding: 0.5rem 0.25rem 1rem; scroll-snap-type: x mandatory; }
     @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
     .rail::-webkit-scrollbar { height: 4px; }
     .rail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
-    .city-card { flex: 0 0 auto; min-width: 200px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; text-align: center; }
-    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.4rem; position: relative; }
+    .city-card { flex: 0 0 auto; min-width: 200px; padding: 1.125rem 1.25rem; scroll-snap-align: start; transition: opacity 200ms ease; text-align: center; }
+    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.75rem; position: relative; }
     .city-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; }
     /* Green live dot — same style as the hero live-location pill */
     .live-pulse { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #10b981; position: relative; }
@@ -345,8 +345,8 @@
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
     .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; }
-    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.2rem; text-align: center; }
-    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
+    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.4rem; text-align: center; }
+    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
     .city-day { font-weight: 600; }
     .city-day-sep { color: var(--color-muted-soft); }
     .city-hours-diff { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-foreground); padding: 0.05rem 0.35rem; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
