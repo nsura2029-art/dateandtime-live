@@ -466,7 +466,7 @@
         card.innerHTML = `
           <div class="city-head">
             <span class="city-dot" style="background: var(--city-${color});"></span>
-            <span class="city-name">${c.name}</span>
+            <span class="city-name">${isHome ? '<span aria-label="Home" title="Your home">⌂</span> ' : ''}${c.name}</span>
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
           </div>
           <div class="city-time" data-tz="${c.tz}" style="color: var(--city-${color});">--:--:--</div>
@@ -668,7 +668,7 @@
     }
     function detectHome() {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      return tzToCity(tz) || { name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz, is_capital: 0 };
+      return tzToCity(tz) || { name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0 };
     }
 
     /* ----- Boot ----- */
