@@ -62,6 +62,7 @@ DB tables already (see `timeanddatepro-full`) but no APIs are exposed for them y
 | **5** | Travel / vacation metadata + airports | ⏳ |
 | **6** | Search quality (FTS5, transliteration, ranking) | ✅ **shipped 2026-07-19** — 30 historical place_redirects (Bombay→Mumbai, Edo→Tokyo, etc.). FTS5 with aliases already shipped in Phase 0. Migration: `migrations/006_*`. |
 | **7** | Data quality + governance + automated checks | ✅ **shipped 2026-07-19** — 8 data_sources, 10 import_history rows, 10 data_quality_checks (all 10 pass except 43 duplicate_cities which is informational). Migration: `migrations/007_*`. |
+| **8** | cities15000.zip bulk import | ✅ **shipped 2026-07-19** — cities **5,081 → 33,945** (+28,864). countries **194 → 242** (+48 territories via migration `008_*`). timezones **312 → 408** (+96 via `seed/missing_tzs.py` so the cities FK passes). Tier 3 towns (50K-100K) jumped from 16 → 6,100. Guntur's 30km neighborhood fully searchable (Thenali, Mangalagiri, Tādepalle, Kānūru, etc.). `climate_summaries` rebuilt with `UNIQUE(city_id, month)` so re-runs are idempotent; being re-seeded for all 33,945 cities. Migration: `migrations/008_*`. Seed: `seed/cities15000.py`, `seed/missing_tzs.py`. |
 
 Detailed steps per phase: see the full spec PDF. The phases are independent — each
 one can ship to production behind a feature flag without breaking earlier phases.
