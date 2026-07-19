@@ -5,6 +5,11 @@ compatibility_date = "2024-09-23"
 [assets]
 directory = "./"
 binding = "ASSETS"
+# run_worker_first = true so the Worker in src/index.js intercepts every
+# request and can inject window.__location into HTML responses (Cloudflare
+# IP-geolocation data). Without this, the asset would be served directly
+# and the page wouldn't know the user's city/region/country.
+run_worker_first = true
 exclude = [
   ".git/**",
   ".wrangler/**",

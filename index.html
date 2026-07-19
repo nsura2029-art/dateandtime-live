@@ -159,7 +159,18 @@
     .hero { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
     .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
     .greeting-city { color: var(--color-primary); }
-    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 auto 1.5rem; max-width: 42rem; }
+    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 auto 1rem; max-width: 42rem; }
+
+    /* ===== Live location indicator (green pulse + "City, State, Country") ===== */
+    .live-location { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.875rem; margin: 0 auto 1.25rem; background: color-mix(in srgb, #10b981 12%, transparent); border: 1px solid color-mix(in srgb, #10b981 35%, transparent); border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; color: #047857; backdrop-filter: blur(6px); transition: opacity 300ms ease; }
+    [data-theme="dark"] .live-location { color: #34d399; background: color-mix(in srgb, #10b981 18%, transparent); border-color: color-mix(in srgb, #10b981 40%, transparent); }
+    .live-location.is-hidden { display: none; }
+    .live-location-dot { position: relative; flex-shrink: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent); }
+    .live-location-dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; background: #10b981; opacity: 0.3; animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    .live-location-icon { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; color: #047857; }
+    [data-theme="dark"] .live-location-icon { color: #34d399; }
+    .live-location-icon svg { width: 100%; height: 100%; }
+    .live-location-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 22rem; }
 
     /* Clock */
     .clock-block { margin: 0 auto 0.75rem; max-width: 720px; }
@@ -325,6 +336,12 @@
       <div class="container">
         <h1 class="greeting"><span id="greeting-time">Good Evening</span>, <span class="greeting-city" id="greeting-city">your city</span></h1>
         <p class="subtitle">Plan your day, meetings, holidays, and global time zones in one smart workspace.</p>
+
+        <div class="live-location is-hidden" id="live-location" aria-live="polite">
+          <span class="live-location-dot" aria-hidden="true"></span>
+          <span class="live-location-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span class="live-location-text" id="live-location-text">Detecting your location…</span>
+        </div>
 
         <div class="clock-block">
           <div class="seg-row" aria-label="Live current time">
@@ -629,8 +646,12 @@
       document.getElementById("greeting-time").textContent = getGreeting(h);
       document.getElementById("greeting-city").textContent = home?.name || "your city";
       document.getElementById("current-city-name").textContent = home?.name || "your city";
-      const region = home?.state_code || home?.countryName || home?.country || "";
-      document.getElementById("current-city-region").textContent = region;
+      const regionParts = [];
+      if (home?.regionFull) regionParts.push(home.regionFull);
+      else if (home?.state_code) regionParts.push(home.state_code);
+      if (home?.countryName) regionParts.push(home.countryName);
+      else if (home?.country) regionParts.push(home.country);
+      document.getElementById("current-city-region").textContent = regionParts.join(", ");
       document.querySelectorAll("[data-tz]").forEach(el => { el.textContent = timeIn(el.dataset.tz, now); });
       if (home) document.getElementById("off-hours-pill").textContent = getOffHoursForTz(tz, now);
       requestAnimationFrame(updateClock);
@@ -667,8 +688,48 @@
       return map[tz] || null;
     }
     function detectHome() {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      return tzToCity(tz) || { name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0 };
+      const loc = (typeof window !== "undefined" && window.__location) || null;
+      // Prefer Cloudflare's IP-geolocation (injected by the Worker)
+      if (loc && loc.city) {
+        return {
+          name: loc.city,
+          country: loc.country || "",
+          countryName: loc.country ? (new Intl.DisplayNames(["en"], { type: "region" }).of(loc.country) || "") : "",
+          state_code: loc.regionCode || "",
+          regionFull: loc.region || "",
+          latitude: parseFloat(loc.latitude) || 0,
+          longitude: parseFloat(loc.longitude) || 0,
+          tz: loc.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+          is_capital: 0
+        };
+      }
+      // Fall back to IANA tz heuristic
+      const tz = (loc && loc.timezone) || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const fromMap = tzToCity(tz);
+      if (fromMap) {
+        return {
+          ...fromMap,
+          countryName: fromMap.country ? (new Intl.DisplayNames(["en"], { type: "region" }).of(fromMap.country) || "") : "",
+          regionFull: ""
+        };
+      }
+      return { name: "New York", country: "US", state_code: "NY", countryName: "United States", regionFull: "New York", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0 };
+    }
+
+    /* ----- Live location pill (green dot + "City, State, Country") ----- */
+    function renderLiveLocation(home) {
+      const el = document.getElementById("live-location");
+      const txt = document.getElementById("live-location-text");
+      if (!el || !txt) return;
+      if (!home || !home.name) { el.classList.add("is-hidden"); return; }
+      el.classList.remove("is-hidden");
+      const parts = [];
+      if (home.name) parts.push(home.name);
+      if (home.regionFull) parts.push(home.regionFull);
+      else if (home.state_code) parts.push(home.state_code);
+      if (home.countryName) parts.push(home.countryName);
+      else if (home.country) parts.push(home.country);
+      txt.textContent = parts.length ? parts.join(", ") : "Detecting your location…";
     }
 
     /* ----- Boot ----- */
@@ -699,6 +760,8 @@
         const home = detectHome();
         state.citiesWithHome = buildListWithHome(home);
       }
+      // Render the green live-location pill (uses the same home the rail uses)
+      renderLiveLocation(state.citiesWithHome[0] || null);
       renderRail();
 
       // Fetch the optional features
