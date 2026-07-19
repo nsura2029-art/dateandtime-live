@@ -195,8 +195,18 @@ export default {
   }
 };
 
+function getUpstreamBase(request) {
+  // Use dev API for the dev Worker, prod API for prod. Detected by host.
+  const host = new URL(request.url).hostname;
+  if (host === "tdp-landing-dev.nsura2029.workers.dev" || host.endsWith(".dev.")) {
+    return "https://dev.api.dateandtime.live";
+  }
+  return "https://api.dateandtime.live";
+}
+
 async function proxySimple(request, url, upstreamPath) {
-  const upstream = `https://api.dateandtime.live${upstreamPath}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}`;
+  const base = getUpstreamBase(request);
+  const upstream = `${base}${upstreamPath}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}`;
   try {
     const r = await fetch(upstream, { headers: { "Accept": "application/json" } });
     const body = await r.text();
@@ -217,7 +227,8 @@ async function proxySimple(request, url, upstreamPath) {
 }
 
 async function proxyPost(request, url, upstreamPath) {
-  const upstream = `https://api.dateandtime.live${upstreamPath}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}`;
+  const base = getUpstreamBase(request);
+  const upstream = `${base}${upstreamPath}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}`;
   let body;
   try { body = await request.text(); } catch (e) {}
   try {
