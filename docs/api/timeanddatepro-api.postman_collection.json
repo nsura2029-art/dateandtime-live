@@ -1,0 +1,350 @@
+{
+  "info": {
+    "name": "TimeAndDatePro API",
+    "description": "Complete Postman collection for the TimeAndDatePro API. Covers all 46+ v1 endpoints + v2 search. Deployed Worker: https://datetime-api-dev.nsura2029.workers.dev — Custom domain: https://dev.api.dateandtime.live",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "tdp-api-2026-07",
+    "version": "1.0.0"
+  },
+  "variable": [
+    { "key": "base", "value": "https://dev.api.dateandtime.live", "type": "string" },
+    { "key": "workers", "value": "https://datetime-api-dev.nsura2029.workers.dev", "type": "string" },
+    { "key": "local", "value": "http://localhost:8787", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "─── System ───",
+      "item": [
+        {
+          "name": "GET / — API info",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base}}/", "host": ["{{base}}"], "path": [""] } }
+        },
+        {
+          "name": "GET /api/v1 — endpoint list",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base}}/api/v1", "host": ["{{base}}"], "path": ["api", "v1"] } }
+        },
+        {
+          "name": "GET /api/v1/health",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base}}/api/v1/health", "host": ["{{base}}"], "path": ["api", "v1", "health"] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v2 Search (D1, 13 edge cases) ───",
+      "item": [
+        {
+          "name": "Search Hyderabad (disambiguation: India + Pakistan)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=Hyderabad&limit=3", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "Hyderabad" }, { "key": "limit", "value": "3" }] } }
+        },
+        {
+          "name": "Search Springfield (same name × 2 states)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=Springfield&country=US&limit=5", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "Springfield" }, { "key": "country", "value": "US" }, { "key": "limit", "value": "5" }] } }
+        },
+        {
+          "name": "Search York (exact UK + substring NY)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=York&limit=5", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "York" }, { "key": "limit", "value": "5" }] } }
+        },
+        {
+          "name": "Search NYC → New York City (alias)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=NYC&limit=1", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "NYC" }, { "key": "limit", "value": "1" }] } }
+        },
+        {
+          "name": "Search Bombay → Mumbai (alias)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=Bombay&limit=1", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "Bombay" }, { "key": "limit", "value": "1" }] } }
+        },
+        {
+          "name": "Search Londn → London (fuzzy)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=Londn&limit=2", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "Londn" }, { "key": "limit", "value": "2" }] } }
+        },
+        {
+          "name": "Search München (diacritics)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=M%C3%BCnchen&limit=2", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "München" }, { "key": "limit", "value": "2" }] } }
+        },
+        {
+          "name": "Search São Paulo (diacritics)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=S%C3%A3o+Paulo&limit=2", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "São Paulo" }, { "key": "limit", "value": "2" }] } }
+        },
+        {
+          "name": "Search London ON (hard filter to Ontario, Canada)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=London+ON&limit=3", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "London ON" }, { "key": "limit", "value": "3" }] } }
+        },
+        {
+          "name": "Search London GB (hard filter to UK)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=London+GB&limit=3", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "London GB" }, { "key": "limit", "value": "3" }] } }
+        },
+        {
+          "name": "Search by timezone: all cities in America/New_York",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=a&tz=America/New_York&limit=10", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "a" }, { "key": "tz", "value": "America/New_York" }, { "key": "limit", "value": "10" }] } }
+        },
+        {
+          "name": "Search with locale (fr-FR)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=France&type=country&locale=fr-FR", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "France" }, { "key": "type", "value": "country" }, { "key": "locale", "value": "fr-FR" }] } }
+        },
+        {
+          "name": "Search with location (boost near NYC)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=York&near=40.7128,-74.0060&limit=3", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "York" }, { "key": "near", "value": "40.7128,-74.0060" }, { "key": "limit", "value": "3" }] } }
+        },
+        {
+          "name": "Search with exclude (exclude tracked cities)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v2/search?q=New+York&exclude=5128581&limit=3", "host": ["{{base}}"], "path": ["api", "v2", "search"], "query": [{ "key": "q", "value": "New York" }, { "key": "exclude", "value": "5128581" }, { "key": "limit", "value": "3" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Cities ───",
+      "item": [
+        {
+          "name": "GET /api/v1/cities — list bundled cities",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/cities?limit=5", "host": ["{{base}}"], "path": ["api", "v1", "cities"], "query": [{ "key": "limit", "value": "5" }] } }
+        },
+        {
+          "name": "GET /api/v1/cities/:slug — New York",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/cities/new-york", "host": ["{{base}}"], "path": ["api", "v1", "cities", "new-york"] } }
+        },
+        {
+          "name": "GET /api/v1/cities/live?codes=NYC,LON,TOK",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/cities/live?codes=NYC,LON,TOK", "host": ["{{base}}"], "path": ["api", "v1", "cities", "live"], "query": [{ "key": "codes", "value": "NYC,LON,TOK" }] } }
+        },
+        {
+          "name": "GET /api/v1/cities/search?q=London&limit=3",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/cities/search?q=London&limit=3", "host": ["{{base}}"], "path": ["api", "v1", "cities", "search"], "query": [{ "key": "q", "value": "London" }, { "key": "limit", "value": "3" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Time ───",
+      "item": [
+        {
+          "name": "GET /api/v1/time/now?tz=America/New_York",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/now?tz=America/New_York", "host": ["{{base}}"], "path": ["api", "v1", "time", "now"], "query": [{ "key": "tz", "value": "America/New_York" }] } }
+        },
+        {
+          "name": "GET /api/v1/time/convert — NY to Tokyo",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/convert?from=America/New_York&to=Asia/Tokyo&time=2026-07-11T12:00:00", "host": ["{{base}}"], "path": ["api", "v1", "time", "convert"], "query": [{ "key": "from", "value": "America/New_York" }, { "key": "to", "value": "Asia/Tokyo" }, { "key": "time", "value": "2026-07-11T12:00:00" }] } }
+        },
+        {
+          "name": "GET /api/v1/time/diff — days between two dates",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/diff?from=2026-01-01&to=2026-07-11", "host": ["{{base}}"], "path": ["api", "v1", "time", "diff"], "query": [{ "key": "from", "value": "2026-01-01" }, { "key": "to", "value": "2026-07-11" }] } }
+        },
+        {
+          "name": "GET /api/v1/time/add — add 7 days",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/add?date=2026-07-11&days=7", "host": ["{{base}}"], "path": ["api", "v1", "time", "add"], "query": [{ "key": "date", "value": "2026-07-11" }, { "key": "days", "value": "7" }] } }
+        },
+        {
+          "name": "GET /api/v1/time/unix — current unix timestamp",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/unix", "host": ["{{base}}"], "path": ["api", "v1", "time", "unix"] } }
+        },
+        {
+          "name": "GET /api/v1/time/iso — current ISO 8601",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/iso?tz=Asia/Tokyo", "host": ["{{base}}"], "path": ["api", "v1", "time", "iso"], "query": [{ "key": "tz", "value": "Asia/Tokyo" }] } }
+        },
+        {
+          "name": "GET /api/v1/time/words — date to words",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/words?date=2026-07-11&lang=en", "host": ["{{base}}"], "path": ["api", "v1", "time", "words"], "query": [{ "key": "date", "value": "2026-07-11" }, { "key": "lang", "value": "en" }] } }
+        },
+        {
+          "name": "GET /api/v1/time/sun — sunrise/sunset for Tokyo today",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/time/sun?lat=35.6762&lon=139.6503&date=2026-07-11", "host": ["{{base}}"], "path": ["api", "v1", "time", "sun"], "query": [{ "key": "lat", "value": "35.6762" }, { "key": "lon", "value": "139.6503" }, { "key": "date", "value": "2026-07-11" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Countries (D1, 194 countries) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/countries?limit=5",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/countries?limit=5", "host": ["{{base}}"], "path": ["api", "v1", "countries"], "query": [{ "key": "limit", "value": "5" }] } }
+        },
+        {
+          "name": "GET /api/v1/countries?region=Asia",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/countries?region=Asia&limit=10", "host": ["{{base}}"], "path": ["api", "v1", "countries"], "query": [{ "key": "region", "value": "Asia" }, { "key": "limit", "value": "10" }] } }
+        },
+        {
+          "name": "GET /api/v1/countries/JP",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/countries/JP", "host": ["{{base}}"], "path": ["api", "v1", "countries", "JP"] } }
+        },
+        {
+          "name": "GET /api/v1/countries/USA (cca3 lookup)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/countries/USA", "host": ["{{base}}"], "path": ["api", "v1", "countries", "USA"] } }
+        },
+        {
+          "name": "GET /api/v1/countries/GB/cities?limit=5",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/countries/GB/cities?limit=5", "host": ["{{base}}"], "path": ["api", "v1", "countries", "GB", "cities"], "query": [{ "key": "limit", "value": "5" }] } }
+        },
+        {
+          "name": "GET /api/v1/countries/FR/working-hours",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/countries/FR/working-hours", "host": ["{{base}}"], "path": ["api", "v1", "countries", "FR", "working-hours"] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Popular (D1) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/popular/cities?limit=5",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/popular/cities?limit=5", "host": ["{{base}}"], "path": ["api", "v1", "popular", "cities"], "query": [{ "key": "limit", "value": "5" }] } }
+        },
+        {
+          "name": "GET /api/v1/popular/cities?country=JP&limit=3",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/popular/cities?country=JP&limit=3", "host": ["{{base}}"], "path": ["api", "v1", "popular", "cities"], "query": [{ "key": "country", "value": "JP" }, { "key": "limit", "value": "3" }] } }
+        },
+        {
+          "name": "GET /api/v1/popular/defaults",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/popular/defaults", "host": ["{{base}}"], "path": ["api", "v1", "popular", "defaults"] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Holidays (curated) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/holidays/today",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/holidays/today", "host": ["{{base}}"], "path": ["api", "v1", "holidays", "today"] } }
+        },
+        {
+          "name": "GET /api/v1/holidays/today?country=US",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/holidays/today?country=US", "host": ["{{base}}"], "path": ["api", "v1", "holidays", "today"], "query": [{ "key": "country", "value": "US" }] } }
+        },
+        {
+          "name": "GET /api/v1/holidays/upcoming?country=US&days=30",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/holidays/upcoming?country=US&days=30", "host": ["{{base}}"], "path": ["api", "v1", "holidays", "upcoming"], "query": [{ "key": "country", "value": "US" }, { "key": "days", "value": "30" }] } }
+        },
+        {
+          "name": "GET /api/v1/holidays/year?country=GB&year=2026",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/holidays/year?country=GB&year=2026", "host": ["{{base}}"], "path": ["api", "v1", "holidays", "year"], "query": [{ "key": "country", "value": "GB" }, { "key": "year", "value": "2026" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 DST (computed) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/dst?tz=America/New_York",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/dst?tz=America/New_York", "host": ["{{base}}"], "path": ["api", "v1", "dst"], "query": [{ "key": "tz", "value": "America/New_York" }] } }
+        },
+        {
+          "name": "GET /api/v1/dst?tz=Asia/Tokyo (no DST)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/dst?tz=Asia/Tokyo", "host": ["{{base}}"], "path": ["api", "v1", "dst"], "query": [{ "key": "tz", "value": "Asia/Tokyo" }] } }
+        },
+        {
+          "name": "GET /api/v1/dst/upcoming?tz=Europe/London",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/dst/upcoming?tz=Europe/London", "host": ["{{base}}"], "path": ["api", "v1", "dst", "upcoming"], "query": [{ "key": "tz", "value": "Europe/London" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Quotes (curated) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/quotes/random",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/quotes/random", "host": ["{{base}}"], "path": ["api", "v1", "quotes", "random"] } }
+        },
+        {
+          "name": "GET /api/v1/quotes/ranked?limit=5",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/quotes/ranked?limit=5", "host": ["{{base}}"], "path": ["api", "v1", "quotes", "ranked"], "query": [{ "key": "limit", "value": "5" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 OnThisDay (curated) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/onthisday (today)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/onthisday", "host": ["{{base}}"], "path": ["api", "v1", "onthisday"] } }
+        },
+        {
+          "name": "GET /api/v1/onthisday?month=7&day=20 (Moon landing)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/onthisday?month=7&day=20", "host": ["{{base}}"], "path": ["api", "v1", "onthisday"], "query": [{ "key": "month", "value": "7" }, { "key": "day", "value": "20" }] } }
+        },
+        {
+          "name": "GET /api/v1/onthisday?month=9&day=11 (9/11)",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/onthisday?month=9&day=11", "host": ["{{base}}"], "path": ["api", "v1", "onthisday"], "query": [{ "key": "month", "value": "9" }, { "key": "day", "value": "11" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Currency (static snapshot) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/currency/rates?base=USD",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/currency/rates?base=USD", "host": ["{{base}}"], "path": ["api", "v1", "currency", "rates"], "query": [{ "key": "base", "value": "USD" }] } }
+        },
+        {
+          "name": "GET /api/v1/currency/convert?from=USD&to=EUR&amount=100",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/currency/convert?from=USD&to=EUR&amount=100", "host": ["{{base}}"], "path": ["api", "v1", "currency", "convert"], "query": [{ "key": "from", "value": "USD" }, { "key": "to", "value": "EUR" }, { "key": "amount", "value": "100" }] } }
+        },
+        {
+          "name": "GET /api/v1/currency/convert?from=GBP&to=JPY&amount=50",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/currency/convert?from=GBP&to=JPY&amount=50", "host": ["{{base}}"], "path": ["api", "v1", "currency", "convert"], "query": [{ "key": "from", "value": "GBP" }, { "key": "to", "value": "JPY" }, { "key": "amount", "value": "50" }] } }
+        },
+        {
+          "name": "GET /api/v1/currency/codes",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/currency/codes", "host": ["{{base}}"], "path": ["api", "v1", "currency", "codes"] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Browse home (computed) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/browse/home",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/browse/home", "host": ["{{base}}"], "path": ["api", "v1", "browse", "home"] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Pairs + Meeting ───",
+      "item": [
+        {
+          "name": "GET /api/v1/pairs/NYC/LON",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/pairs/NYC/LON", "host": ["{{base}}"], "path": ["api", "v1", "pairs", "NYC", "LON"] } }
+        },
+        {
+          "name": "GET /api/v1/meeting/best?participants=NYC,LON,TOK,SYD&duration=60",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/meeting/best?participants=NYC,LON,TOK,SYD&duration=60", "host": ["{{base}}"], "path": ["api", "v1", "meeting", "best"], "query": [{ "key": "participants", "value": "NYC,LON,TOK,SYD" }, { "key": "duration", "value": "60" }] } }
+        }
+      ]
+    },
+    {
+      "name": "─── v1 Feedback (D1 CRUD) ───",
+      "item": [
+        {
+          "name": "GET /api/v1/feedback?limit=5",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/feedback?limit=5", "host": ["{{base}}"], "path": ["api", "v1", "feedback"], "query": [{ "key": "limit", "value": "5" }] } }
+        },
+        {
+          "name": "GET /api/v1/feedback/top?limit=3",
+          "request": { "method": "GET", "url": { "raw": "{{base}}/api/v1/feedback/top?limit=3", "host": ["{{base}}"], "path": ["api", "v1", "feedback", "top"], "query": [{ "key": "limit", "value": "3" }] } }
+        },
+        {
+          "name": "POST /api/v1/feedback — create entry",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"feature\",\n  \"title\": \"Add dark mode to all tools\",\n  \"body\": \"Would love to see dark mode support across all the time tools.\",\n  \"author\": \"user@example.com\",\n  \"countryCode\": \"US\"\n}"
+            },
+            "url": { "raw": "{{base}}/api/v1/feedback", "host": ["{{base}}"], "path": ["api", "v1", "feedback"] }
+          }
+        },
+        {
+          "name": "POST /api/v1/feedback/:id/vote — upvote",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{base}}/api/v1/feedback/1/vote", "host": ["{{base}}"], "path": ["api", "v1", "feedback", "1", "vote"] }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/feedback/:id — soft-delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{base}}/api/v1/feedback/1", "host": ["{{base}}"], "path": ["api", "v1", "feedback", "1"] }
+          }
+        }
+      ]
+    }
+  ]
+}
