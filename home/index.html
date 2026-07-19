@@ -247,6 +247,14 @@
     .pills.is-hidden { display: none; }
     .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
     .pill.is-hidden { display: none; }
+    /* Tooltip on pills (hover or focus) */
+    .pill-tip { position: relative; cursor: help; }
+    .pill-tip .pill-help { display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: rgba(31, 26, 58, 0.12); color: inherit; font-size: 0.65rem; font-weight: 700; margin-left: 0.15rem; flex-shrink: 0; }
+    .pill-tip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 0.6rem); left: 50%; transform: translateX(-50%) translateY(4px); background: #1f1a3a; color: #faf7f2; padding: 0.65rem 0.85rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 500; line-height: 1.45; width: max-content; max-width: 22rem; opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+    .pill-tip::before { content: ""; position: absolute; bottom: calc(100% + 0.35rem); left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #1f1a3a; opacity: 0; transition: opacity 180ms ease; z-index: 100; }
+    .pill-tip:hover::after, .pill-tip:focus::after, .pill-tip:hover::before, .pill-tip:focus::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+    [data-theme="dark"] .pill-tip::after { background: #faf7f2; color: #1f1a3a; }
+    [data-theme="dark"] .pill-tip::before { border-top-color: #faf7f2; }
     .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
     .pill-blue { background: rgba(219, 234, 254, 0.76); border-color: rgba(147, 197, 253, 0.3); color: #1e40af; }
     [data-theme="dark"] .pill-blue { background: rgba(30, 64, 175, 0.18); border-color: rgba(147, 197, 253, 0.25); color: #93c5fd; }
@@ -414,10 +422,10 @@
         <p class="hero-supporting">Whether you're planning a meeting, traveling internationally, working remotely, or simply checking the current time, dateandtime.live gives you everything you need instantly. Automatically detect your location or search any city worldwide to see accurate local time and trusted time zone information.</p>
 
         <div class="clock-block">
-          <div class="mono-clock" id="monoClock" aria-label="Live current time">--:--:--.---</div>
-          <div class="format-toggle" role="group" aria-label="Time format">
-            <button id="format-12" type="button" aria-pressed="false">12h</button>
-            <button id="format-24" type="button" aria-pressed="true">24h</button>
+          <div class="mono-clock" id="monoClock" aria-label="Live current time" title="Live local time · updates every frame. Use the 12h/24h toggle below to change the format.">--:--:--.--</div>
+          <div class="format-toggle" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
+            <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
+            <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
           </div>
         </div>
 
@@ -440,10 +448,10 @@
         </div>
 
         <div class="pills" id="home-pills">
-          <span class="pill pill-purple is-hidden" id="holiday-pill"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span></span>
-          <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
-          <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span></span>
-          <span class="pill pill-blue is-hidden" id="dst-pill"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span></span>
+          <span class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Public holidays: National or regional holidays for this country today. If a holiday is showing, most banks, government offices, and many shops will be closed. Plan deliveries and calls around them."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-orange pill-tip" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-blue is-hidden pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
         </div>
 
         <div class="search-section" id="search-section">
@@ -1302,19 +1310,22 @@
       const day = parseInt(get("day"), 10);
       const monthName = get("month");
       const year = get("year");
-      // Monospace clock with milliseconds
-      const hh = String(h).padStart(2, "0");
-      const mm = String(m).padStart(2, "0");
-      const ss = String(s).padStart(2, "0");
-      const ms = String(now.getMilliseconds()).padStart(3, "0");
-      const monoEl = document.getElementById("monoClock");
-      if (monoEl) monoEl.textContent = `${hh}:${mm}:${ss}.${ms}`;
-      // Keep 12h/24h toggle functional (toggles period display)
-      const periodEl = document.getElementById("period");
-      if (periodEl) {
-        if (state.use24Hour) periodEl.classList.add("is-hidden");
-        else { periodEl.classList.remove("is-hidden"); periodEl.textContent = h >= 12 ? "PM" : "AM"; }
+      // Monospace clock with 2-digit centiseconds (hundredths of a second).
+      // Respects the 12h/24h toggle: 24h shows HH:MM:SS.cs, 12h shows h:MM:SS.cs AM/PM
+      const mm2 = String(m).padStart(2, "0");
+      const ss2 = String(s).padStart(2, "0");
+      const cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
+      let hourStr, suffix;
+      if (state.use24Hour) {
+        hourStr = String(h).padStart(2, "0");
+        suffix = "";
+      } else {
+        const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+        hourStr = String(h12);
+        suffix = " " + (h >= 12 ? "PM" : "AM");
       }
+      const monoEl = document.getElementById("monoClock");
+      if (monoEl) monoEl.textContent = `${hourStr}:${mm2}:${ss2}.${cs}${suffix}`;
       document.getElementById("day-date-text").textContent = `${WEEKDAYS[wdToIndex(wd)]}, ${monthName} ${String(day).padStart(2,"0")}, ${year}`;
       document.getElementById("tz-abbr").textContent = tzAbbr(tz);
       document.getElementById("tz-offset").textContent = tzOffset(tz);
