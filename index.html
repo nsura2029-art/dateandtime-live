@@ -1,10 +1,29 @@
 <!doctype html>
+<!--
+  TimeAndDatePro — Landing (production)
+
+  Design: A — Rail (prototype promoted to the actual landing page)
+
+  Strategy: deploy feature-by-feature. Each non-core feature does a
+  best-effort fetch on boot; if the prod API doesn't expose the endpoint
+  yet, the feature hides itself gracefully. As you add endpoints to the
+  prod API, the features will auto-appear — no code change needed.
+
+  Endpoint status on production (https://api.dateandtime.live):
+    /v1/cities            ✓  live — used for the 5 default cities + search
+    /v1/time/now          ✗  not yet on prod — sync row hides
+    /v1/time/sun          ✗  not yet on prod — sunrise pill hides
+    /v1/onthisday         ✗  not yet on prod — on-this-day hides
+    /v2/search            ✗  not yet on prod — search bar shows a soft note
+
+  Production-only. No dev references in this file.
+-->
 <html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TimeAndDatePro</title>
-  <meta name="description" content="Local time, day, date, sunrise, sunset. Live from your browser, synced with the server." />
+  <meta name="description" content="Local time, day, date, sunrise, sunset. Live from your browser." />
   <meta name="theme-color" content="#5b4aaf" />
   <meta property="og:title" content="TimeAndDatePro" />
   <meta property="og:description" content="Time, day, date. Everywhere." />
@@ -34,29 +53,15 @@
   </script>
 
   <style>
-    /* ============================================================
-       Widgetly design tokens — NotebookLM
-       ============================================================ */
     :root, [data-theme="light"] {
-      --color-primary: #5b4aaf;
-      --color-primary-fg: #ffffff;
-      --color-foreground: #49445f;
-      --color-foreground-soft: #6b6585;
-      --color-muted: #77718f;
-      --color-muted-soft: #9a92b0;
-      --color-border: rgba(92,74,175,.16);
-      --color-border-soft: rgba(92,74,175,.08);
-      --color-background: #ffffff;
-      --color-background-soft: #faf8ff;
+      --color-primary: #5b4aaf; --color-primary-fg: #ffffff;
+      --color-foreground: #49445f; --color-foreground-soft: #6b6585;
+      --color-muted: #77718f; --color-muted-soft: #9a92b0;
+      --color-border: rgba(92,74,175,.16); --color-border-soft: rgba(92,74,175,.08);
+      --color-background: #ffffff; --color-background-soft: #faf8ff;
       --color-glow: drop-shadow(0 5px 8px rgba(91,77,145,.10));
-      --color-on-segment: #47435f;
-      --color-off-segment: transparent;
-      --color-off-segment-border: transparent;
-      --color-off-segment-border-opacity: 0;
-      --color-off-segment-opacity: 0;
-      --color-period-bg: rgba(255,255,255,.76);
-      --color-period-fg: #49445f;
-      --color-period-border: rgba(87,69,165,.14);
+      --color-on-segment: #47435f; --color-off-segment: transparent; --color-off-segment-opacity: 0;
+      --color-period-bg: rgba(255,255,255,.76); --color-period-fg: #49445f;
       --color-page-texture:
         radial-gradient(circle at 12% 18%, rgba(255,216,170,.92), transparent 27%),
         radial-gradient(circle at 83% 15%, rgba(197,220,255,.95), transparent 31%),
@@ -66,38 +71,19 @@
       --color-nav-underline: linear-gradient(90deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
       --color-logo-gradient: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
       --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
-      --color-card-bg: rgba(255,255,255,.66);
-      --color-pill-green-bg: rgba(16,185,129,.10);
-      --color-pill-green-fg: #047857;
-      --color-pill-green-bd: rgba(16,185,129,.32);
-      --color-pill-purple-bg: rgba(91,74,175,.10);
-      --color-pill-purple-fg: #5b4aaf;
-      --color-pill-purple-bd: rgba(91,74,175,.30);
-      --color-pill-orange-bg: rgba(249,115,22,.10);
-      --color-pill-orange-fg: #c2410c;
-      --color-pill-orange-bd: rgba(249,115,22,.30);
+      --color-pill-purple-bg: rgba(91,74,175,.10); --color-pill-purple-fg: #5b4aaf; --color-pill-purple-bd: rgba(91,74,175,.30);
+      --color-pill-orange-bg: rgba(249,115,22,.10); --color-pill-orange-fg: #c2410c; --color-pill-orange-bd: rgba(249,115,22,.30);
       color-scheme: light;
     }
     [data-theme="dark"] {
-      --color-primary: #a78bfa;
-      --color-primary-fg: #0f0a1f;
-      --color-foreground: #ede9fe;
-      --color-foreground-soft: #d6cef5;
-      --color-muted: #a599c5;
-      --color-muted-soft: #6b6585;
-      --color-border: rgba(167,139,250,.18);
-      --color-border-soft: rgba(167,139,250,.10);
-      --color-background: #0f0820;
-      --color-background-soft: #16092e;
+      --color-primary: #a78bfa; --color-primary-fg: #0f0a1f;
+      --color-foreground: #ede9fe; --color-foreground-soft: #d6cef5;
+      --color-muted: #a599c5; --color-muted-soft: #6b6585;
+      --color-border: rgba(167,139,250,.18); --color-border-soft: rgba(167,139,250,.10);
+      --color-background: #0f0820; --color-background-soft: #16092e;
       --color-glow: drop-shadow(0 0 12px rgba(249,115,22,.25));
-      --color-on-segment: #f97316;
-      --color-off-segment: transparent;
-      --color-off-segment-border: transparent;
-      --color-off-segment-border-opacity: 0;
-      --color-off-segment-opacity: 0;
-      --color-period-bg: rgba(31,10,62,.7);
-      --color-period-fg: #f97316;
-      --color-period-border: rgba(249,115,22,.30);
+      --color-on-segment: #f97316; --color-off-segment: transparent; --color-off-segment-opacity: 0;
+      --color-period-bg: rgba(31,10,62,.7); --color-period-fg: #f97316;
       --color-page-texture:
         radial-gradient(circle at 18% 22%, rgba(139,92,246,.30), transparent 30%),
         radial-gradient(circle at 82% 18%, rgba(99,102,241,.20), transparent 28%),
@@ -107,66 +93,50 @@
       --color-nav-underline: linear-gradient(90deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
       --color-logo-gradient: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
       --color-button-primary: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
-      --color-card-bg: rgba(15,8,32,.55);
-      --color-pill-green-bg: rgba(16,185,129,.16);
-      --color-pill-green-fg: #6ee7b7;
-      --color-pill-green-bd: rgba(16,185,129,.35);
-      --color-pill-purple-bg: rgba(167,139,250,.18);
-      --color-pill-purple-fg: #c4b5fd;
-      --color-pill-purple-bd: rgba(167,139,250,.40);
-      --color-pill-orange-bg: rgba(249,115,22,.16);
-      --color-pill-orange-fg: #fdba74;
-      --color-pill-orange-bd: rgba(249,115,22,.35);
+      --color-pill-purple-bg: rgba(167,139,250,.18); --color-pill-purple-fg: #c4b5fd; --color-pill-purple-bd: rgba(167,139,250,.40);
+      --color-pill-orange-bg: rgba(249,115,22,.16); --color-pill-orange-fg: #fdba74; --color-pill-orange-bd: rgba(249,115,22,.35);
       color-scheme: dark;
     }
 
+    /* ===== NotebookLM pastel palette (one per city, deterministic by name hash) ===== */
+    :root {
+      --city-peach: #FFB59C; --city-peach-bg: rgba(255,181,156,0.10);
+      --city-lavender: #C4B5FD; --city-lavender-bg: rgba(196,181,253,0.10);
+      --city-mint: #6EE7B7; --city-mint-bg: rgba(110,231,183,0.10);
+      --city-sky: #7DD3FC; --city-sky-bg: rgba(125,211,252,0.10);
+      --city-rose: #FDA4AF; --city-rose-bg: rgba(253,164,175,0.10);
+      --city-lemon: #FCD34D; --city-lemon-bg: rgba(252,211,77,0.10);
+    }
+    [data-theme="dark"] {
+      --city-peach: #FF8A66; --city-peach-bg: rgba(255,138,102,0.14);
+      --city-lavender: #A78BFA; --city-lavender-bg: rgba(167,139,250,0.14);
+      --city-mint: #34D399; --city-mint-bg: rgba(52,211,153,0.14);
+      --city-sky: #38BDF8; --city-sky-bg: rgba(56,189,248,0.14);
+      --city-rose: #FB7185; --city-rose-bg: rgba(251,113,133,0.14);
+      --city-lemon: #FBBF24; --city-lemon-bg: rgba(251,191,36,0.14);
+    }
+
     *, *::before, *::after { box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--color-background);
-      color: var(--color-foreground);
-      font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-      line-height: 1.55;
-      transition: background-color 0.4s ease, color 0.4s ease;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    body::before {
-      content: "";
-      position: fixed; inset: 0; z-index: -1;
-      background: var(--color-page-texture);
-      pointer-events: none;
-      transition: background 0.4s ease;
-    }
+    html { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body { margin: 0; min-height: 100vh; background: var(--color-background); color: var(--color-foreground); font-family: "Inter", ui-sans-serif, system-ui, sans-serif; line-height: 1.55; transition: background-color .4s ease, color .4s ease; position: relative; }
+    body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--color-page-texture); pointer-events: none; transition: background .4s ease; }
     a { color: inherit; text-decoration: none; }
     button { font: inherit; cursor: pointer; background: none; border: none; padding: 0; color: inherit; }
     ::selection { background: color-mix(in srgb, var(--color-primary) 25%, transparent); }
-    :focus-visible { outline: none; box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px color-mix(in srgb, var(--color-primary) 50%, transparent); }
+    .container { width: 100%; margin-inline: auto; padding-inline: 1.25rem; max-width: 1240px; }
+    @media (min-width: 640px) { .container { padding-inline: 1.5rem; } }
+    @media (min-width: 1024px) { .container { padding-inline: 2rem; } }
+    @media (min-width: 1280px) { .container { padding-inline: 2.5rem; } }
 
-    .container { width: 100%; margin-inline: auto; padding-inline: 1.5rem; max-width: 1240px; }
-    @media (min-width: 640px) { .container { padding-inline: 2rem; } }
-    @media (min-width: 1024px) { .container { padding-inline: 2.5rem; } }
-
-    /* ============================================================
-       HEADER (theme toggle + nav preserved)
-       ============================================================ */
-    .site-header {
-      position: sticky; top: 0; z-index: 50;
-      background: color-mix(in srgb, var(--color-background) 75%, transparent);
-      backdrop-filter: saturate(180%) blur(14px);
-      -webkit-backdrop-filter: saturate(180%) blur(14px);
-      border-bottom: 1px solid var(--color-border);
-    }
+    /* ===== FULL HEADER ===== */
+    .site-header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--color-background) 75%, transparent); backdrop-filter: saturate(180%) blur(14px); border-bottom: 1px solid var(--color-border); }
     .header-row { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 1rem; }
-    .logo { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+    .logo { display: inline-flex; align-items: center; gap: 0.5rem; }
     .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 0.5rem; background-image: var(--color-logo-gradient); color: white; font-size: 0.875rem; font-weight: 800; font-family: ui-monospace, monospace; box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 30%, transparent); }
-    .logo-text { font-size: 1.125rem; letter-spacing: -0.02em; font-weight: 800; }
+    .logo-text { font-size: 1.0625rem; font-weight: 800; letter-spacing: -0.02em; }
     .nav-main { display: none; gap: 0.25rem; }
     @media (min-width: 1024px) { .nav-main { display: inline-flex; } }
-    .nav-link { position: relative; padding: 0.5rem 0.875rem; font-size: 0.875rem; font-weight: 700; letter-spacing: -0.005em; border-radius: 0.5rem; transition: color 200ms ease; }
+    .nav-link { position: relative; padding: 0.5rem 0.875rem; font-size: 0.875rem; font-weight: 700; border-radius: 0.5rem; transition: color 200ms ease; }
     .nav-link:hover { color: var(--color-primary); }
     .nav-link-active { color: var(--color-primary); }
     .nav-link-active::after { content: ""; position: absolute; left: 0.875rem; right: 0.875rem; bottom: 0.25rem; height: 1.5px; background: var(--color-nav-underline); border-radius: 9999px; }
@@ -174,158 +144,32 @@
     .now-dot::after { content: ""; position: absolute; inset: -3px; border-radius: 9999px; background: #10b981; opacity: 0.3; animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
     @keyframes ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
     .header-actions { display: inline-flex; align-items: center; gap: 0.5rem; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; font-size: 0.875rem; font-weight: 700; letter-spacing: -0.005em; transition: all 200ms ease; text-decoration: none; border: 1px solid transparent; height: 40px; padding: 0 1rem; cursor: pointer; border-radius: 9999px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; font-size: 0.875rem; font-weight: 700; transition: all 200ms ease; text-decoration: none; border: 1px solid transparent; height: 40px; padding: 0 1rem; cursor: pointer; border-radius: 9999px; }
     .btn-sm { height: 34px; padding: 0 0.75rem; font-size: 0.8125rem; }
     .btn-primary { color: var(--color-primary-fg); background-image: var(--color-button-primary); box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 25%, transparent); }
     .btn-primary:hover { filter: brightness(1.05); }
     .btn-ghost { color: var(--color-foreground); }
     .btn-ghost:hover { color: var(--color-primary); }
-    .theme-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); backdrop-filter: blur(8px); border: 1px solid var(--color-border); border-radius: 9999px; }
-    .theme-toggle button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 9999px; color: var(--color-muted); transition: all 200ms ease; }
-    .theme-toggle button svg { width: 0.95rem; height: 0.95rem; }
+    .theme-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); border: 1px solid var(--color-border); border-radius: 9999px; }
+    .theme-toggle button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 9999px; color: var(--color-muted); }
+    .theme-toggle button svg { width: 0.9rem; height: 0.9rem; }
     .theme-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
-    /* ============================================================
-       HERO GREETING
-       ============================================================ */
-    main.landing { flex: 1; }
-    .hero { padding: clamp(2rem, 5vw, 3.5rem) 0 1.5rem; }
-    .greeting {
-      font-size: clamp(2rem, 5vw, 3.25rem);
-      font-weight: 800;
-      letter-spacing: -0.035em;
-      line-height: 1.05;
-      margin: 0 0 0.75rem;
-      color: var(--color-foreground);
-    }
+    /* ===== HERO (centered) ===== */
+    .hero { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+    .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
     .greeting-city { color: var(--color-primary); }
-    .subtitle {
-      color: var(--color-muted);
-      font-size: clamp(0.95rem, 1.3vw, 1.0625rem);
-      max-width: 50rem;
-      margin: 0;
-      line-height: 1.5;
-    }
+    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 auto 1.5rem; max-width: 42rem; }
 
-    /* ============================================================
-       TIME CARD
-       ============================================================ */
-    .time-card {
-      background: var(--color-card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--color-border);
-      border-radius: 1.25rem;
-      padding: clamp(1.25rem, 2.5vw, 2rem);
-      margin-bottom: 1rem;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-    .time-card-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-    @media (min-width: 1024px) {
-      .time-card-grid { grid-template-columns: 1fr 360px; gap: 2.5rem; }
-    }
-
-    .sync-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      color: var(--color-foreground);
-      margin: 0 0 0.4rem;
-    }
-    .sync-dot {
-      flex-shrink: 0;
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent);
-    }
-    .sync-accuracy {
-      font-size: 0.8125rem;
-      color: var(--color-muted);
-      margin: 0 0 1rem;
-    }
-    .time-in-city {
-      font-size: 0.9375rem;
-      color: var(--color-foreground);
-      margin: 0;
-    }
-    .time-in-city u { text-decoration-color: color-mix(in srgb, var(--color-primary) 50%, transparent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
-    .time-in-city strong { color: var(--color-primary); font-weight: 700; }
-
-    /* Search */
-    .search-wrap { position: relative; }
-    .search-input {
-      width: 100%;
-      height: 46px;
-      padding: 0 2.5rem 0 1rem;
-      background: var(--color-background);
-      border: 1px solid var(--color-border);
-      border-radius: 0.75rem;
-      color: var(--color-foreground);
-      font: inherit;
-      font-size: 0.875rem;
-      transition: border-color 200ms ease;
-    }
-    .search-input::placeholder { color: var(--color-muted-soft); }
-    .search-input:focus { outline: none; border-color: var(--color-primary); }
-    .search-icon {
-      position: absolute;
-      right: 0.875rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--color-muted-soft);
-      width: 1rem; height: 1rem;
-      pointer-events: none;
-    }
-    .search-results {
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      left: 0; right: 0;
-      max-height: 360px;
-      overflow-y: auto;
-      background: var(--color-background);
-      border: 1px solid var(--color-border);
-      border-radius: 0.75rem;
-      box-shadow: 0 16px 48px rgba(15, 10, 31, 0.20);
-      display: none;
-      z-index: 30;
-    }
-    .search-results.is-open { display: block; }
-    .search-result {
-      width: 100%;
-      text-align: left;
-      padding: 0.625rem 0.875rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      border-bottom: 1px solid var(--color-border-soft);
-      transition: background-color 150ms ease;
-    }
-    .search-result:last-child { border-bottom: 0; }
-    .search-result:hover, .search-result:focus-visible { background: var(--color-background-soft); }
-    .search-result-name { font-weight: 600; font-size: 0.875rem; color: var(--color-foreground); }
-    .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
-
-    /* ============================================================
-       SEVEN-SEGMENT CLOCK
-       ============================================================ */
-    .clock-block { margin: 1.75rem 0 1.5rem; }
+    /* Clock */
+    .clock-block { margin: 0 auto 0.75rem; max-width: 720px; }
     .seg-row {
-      --main-digit-width: clamp(58px, 9vw, 120px);
-      --small-digit-width: clamp(26px, 3.5vw, 46px);
-      --digit-gap: clamp(5px, 0.7vw, 9px);
-      --colon-width: clamp(14px, 1.6vw, 22px);
-      --colon-side-space: clamp(8px, 1.2vw, 16px);
-      --period-width: clamp(48px, 6vw, 78px);
-
+      --main-digit-width: clamp(54px, 13vw, 132px);
+      --small-digit-width: clamp(24px, 5.5vw, 46px);
+      --digit-gap: clamp(4px, 0.7vw, 9px);
+      --colon-width: clamp(12px, 1.6vw, 22px);
+      --colon-side-space: clamp(6px, 1vw, 16px);
+      --period-width: clamp(36px, 4.5vw, 78px);
       display: grid;
       grid-template-columns:
         calc((var(--main-digit-width) * 2) + var(--digit-gap))
@@ -333,151 +177,102 @@
         calc((var(--main-digit-width) * 2) + var(--digit-gap))
         calc(var(--colon-width) + (var(--colon-side-space) * 2))
         calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        0.5rem
         calc(11px + (var(--small-digit-width) * 2) + (var(--digit-gap) * 2))
         var(--period-width);
-
-      align-items: end;
-      justify-content: center;
-      width: 100%;
-      white-space: nowrap;
+      align-items: end; justify-content: center; width: 100%; white-space: nowrap;
     }
     .seg-digit-group { display: flex; align-items: flex-end; gap: var(--digit-gap); flex: 0 0 auto; }
-    .seg-digit {
-      --width: var(--main-digit-width);
-      --height: calc(var(--width) * 1.82);
-      --thickness: calc(var(--width) * .18);
-      position: relative;
-      width: var(--width);
-      height: var(--height);
-      min-width: var(--width);
-      max-width: var(--width);
-      flex: 0 0 var(--width);
-      filter: var(--color-glow);
-    }
+    .seg-digit { --width: var(--main-digit-width); --height: calc(var(--width) * 1.82); --thickness: calc(var(--width) * .18); position: relative; width: var(--width); height: var(--height); min-width: var(--width); max-width: var(--width); flex: 0 0 var(--width); filter: var(--color-glow); }
     .seg-digit.small { --width: var(--small-digit-width); --height: calc(var(--width) * 1.82); --thickness: calc(var(--width) * .18); }
-    .seg { position: absolute; background: var(--color-off-segment); border: 1px solid color-mix(in srgb, var(--color-off-segment-border) calc(var(--color-off-segment-border-opacity) * 100%), transparent); opacity: var(--color-off-segment-opacity); transition: background 45ms linear, border-color 45ms linear, opacity 45ms linear, box-shadow 45ms linear; }
+    .seg { position: absolute; background: var(--color-off-segment); opacity: var(--color-off-segment-opacity); transition: background 45ms linear, opacity 45ms linear, box-shadow 45ms linear; }
     [data-theme="dark"] .seg { box-shadow: inset 0 0 0 0.5px rgba(0,0,0,.4); }
-    .seg.on { z-index: 1; background: var(--color-on-segment); border-color: transparent; opacity: 1; box-shadow: 0 0 6px color-mix(in srgb, var(--color-on-segment) 35%, transparent); }
+    .seg.on { z-index: 1; background: var(--color-on-segment); opacity: 1; box-shadow: 0 0 6px color-mix(in srgb, var(--color-on-segment) 35%, transparent); }
     .seg.horizontal { left: var(--thickness); width: calc(100% - (var(--thickness) * 2)); height: var(--thickness); clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); }
     .seg.vertical { width: var(--thickness); height: calc(50% - (var(--thickness) * 0.55)); clip-path: polygon(0 8%, 50% 0, 100% 8%, 100% 92%, 50% 100%, 0 92%); }
-    .seg.a { top: 0; }
-    .seg.g { top: 50%; transform: translateY(-50%); }
-    .seg.d { bottom: 0; }
-    .seg.f { top: calc(var(--thickness) * 0.42); left: 0; }
-    .seg.b { top: calc(var(--thickness) * 0.42); right: 0; }
-    .seg.e { bottom: calc(var(--thickness) * 0.42); left: 0; }
-    .seg.c { right: 0; bottom: calc(var(--thickness) * 0.42); }
+    .seg.a { top: 0; } .seg.g { top: 50%; transform: translateY(-50%); } .seg.d { bottom: 0; }
+    .seg.f { top: calc(var(--thickness) * 0.42); left: 0; } .seg.b { top: calc(var(--thickness) * 0.42); right: 0; }
+    .seg.e { bottom: calc(var(--thickness) * 0.42); left: 0; } .seg.c { right: 0; bottom: calc(var(--thickness) * 0.42); }
     .seg-digit.is-one .seg.b, .seg-digit.is-one .seg.c { right: calc(50% - (var(--thickness) / 2)); }
-    .seg-colon {
-      position: relative;
-      align-self: end;
-      justify-self: center;
-      width: var(--colon-width);
-      height: calc(var(--main-digit-width) * 1.82);
-      margin: 0;
-      filter: var(--color-glow);
-    }
-    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.6rem; height: 0.6rem; border-radius: 3px; background: var(--color-on-segment); transform: translateX(-50%); }
+    .seg-colon { position: relative; align-self: end; justify-self: center; width: var(--colon-width); height: calc(var(--main-digit-width) * 1.82); margin: 0; filter: var(--color-glow); }
+    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.5rem; height: 0.5rem; border-radius: 2px; background: var(--color-on-segment); transform: translateX(-50%); }
     .seg-colon::before { top: 27%; } .seg-colon::after { bottom: 27%; }
-    .seg-period {
-      width: var(--period-width);
-      margin: 0 0 clamp(5px, 0.7vw, 9px);
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: var(--color-period-fg);
-      font-family: "Courier New", ui-monospace, monospace;
-      font-size: clamp(0.7rem, 1.15vw, 0.95rem);
-      font-weight: 800;
-      letter-spacing: 0.22em;
-      line-height: 1;
-      white-space: nowrap;
-      align-self: end;
-      justify-self: start;
-    }
+    .seg-period-dot { align-self: end; font-family: "Courier New", monospace; font-size: clamp(1.5rem, 3.5vw, 2.5rem); font-weight: 800; color: var(--color-on-segment); margin: 0 0 clamp(4px, 0.7vw, 9px); filter: var(--color-glow); width: 0.5rem; text-align: center; line-height: 1; }
+    .seg-period { width: var(--period-width); margin: 0 0 clamp(4px, 0.6vw, 7px); padding: 0; border: 0; background: transparent; color: var(--color-period-fg); font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.65rem, 1vw, 0.85rem); font-weight: 800; letter-spacing: 0.22em; line-height: 1; white-space: nowrap; align-self: end; justify-self: start; }
     .seg-period.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
 
-    /* ============================================================
-       DAY · DATE · TIMEZONE
-       ============================================================ */
-    .day-date {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: clamp(0.95rem, 1.4vw, 1.0625rem);
-      font-weight: 700;
-      color: var(--color-foreground);
-      margin: 1.25rem 0 0.5rem;
-    }
-    .day-date-icon { width: 1.125rem; height: 1.125rem; color: var(--color-primary); flex-shrink: 0; }
-    .timezone {
-      font-size: 0.875rem;
-      color: var(--color-muted);
-    }
-    .timezone strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, monospace; }
+    .format-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); border: 1px solid var(--color-border); border-radius: 9999px; margin: 0.75rem auto 0; backdrop-filter: blur(8px); }
+    .format-toggle button { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.85rem; border-radius: 9999px; font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-muted); transition: all 200ms ease; }
+    .format-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
-    /* ============================================================
-       ON THIS DAY
-       ============================================================ */
-    .onthisday {
-      display: flex;
-      align-items: center;
-      gap: 0.625rem;
-      padding: 0.875rem 1.125rem;
-      background: color-mix(in srgb, var(--color-background) 60%, transparent);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--color-border);
-      border-radius: 0.75rem;
-      font-size: 0.9375rem;
-      color: var(--color-foreground);
-      margin: 0 0 1rem;
-    }
-    .onthisday-icon { color: var(--color-primary); font-size: 1.125rem; flex-shrink: 0; }
+    .day-date { display: inline-flex; align-items: center; gap: 0.4rem; font-size: clamp(0.85rem, 1.3vw, 0.95rem); font-weight: 700; margin: 1rem 0 0.25rem; }
+    .day-date-icon { width: 0.95rem; height: 0.95rem; color: var(--color-primary); flex-shrink: 0; }
+    .timezone { font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); }
+    .timezone strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, monospace; }
+    .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.8125rem, 1.2vw, 0.9rem); color: var(--color-foreground); margin: 1rem 0 0.5rem; }
+    .sync-row.is-hidden { display: none; }
+    .sync-dot { flex-shrink: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent); }
+    .sync-row strong { color: var(--color-primary); font-weight: 700; }
+    .sync-accuracy { color: var(--color-muted); }
+    .onthisday { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; color: var(--color-muted); margin: 0.25rem 0 0; }
+    .onthisday.is-hidden { display: none; }
     .onthisday strong { color: var(--color-primary); font-weight: 700; }
 
-    /* ============================================================
-       PILLS
-       ============================================================ */
-    .pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1rem; }
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.875rem;
-      border-radius: 9999px;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      border: 1px solid;
-      backdrop-filter: blur(8px);
-    }
-    .pill-green { background: var(--color-pill-green-bg); border-color: var(--color-pill-green-bd); color: var(--color-pill-green-fg); }
+    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin: 0.75rem 0 0; }
+    .pills.is-hidden { display: none; }
+    .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
     .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
     .pill-orange { background: var(--color-pill-orange-bg); border-color: var(--color-pill-orange-bd); color: var(--color-pill-orange-fg); }
-    .pill-icon { display: inline-flex; align-items: center; justify-content: center; width: 1rem; height: 1rem; flex-shrink: 0; }
+    .pill-icon { display: inline-flex; width: 0.85rem; height: 0.85rem; }
     .pill-icon svg { width: 100%; height: 100%; }
 
-    /* ============================================================
-       CURRENT CITY (footer-of-card)
-       ============================================================ */
-    .current-city {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9375rem;
-      color: var(--color-muted);
-      margin: 0;
-      padding: 0.875rem 1.125rem;
-      background: color-mix(in srgb, var(--color-background) 50%, transparent);
-      border: 1px solid var(--color-border);
-      border-radius: 0.75rem;
-    }
+    /* ===== Search bar (CENTERED above favorite cities) ===== */
+    .search-section { margin: 1.5rem auto 0.5rem; max-width: 480px; position: relative; }
+    .search-wrap { position: relative; }
+    .search-input { width: 100%; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
+    .search-input::placeholder { color: var(--color-muted-soft); }
+    .search-input:focus { outline: none; border-color: var(--color-primary); }
+    .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
+    .search-results { position: absolute; top: calc(100% + 0.5rem); left: 0; right: 0; max-height: 360px; overflow-y: auto; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 0.75rem; box-shadow: 0 16px 48px rgba(15, 10, 31, 0.20); display: none; z-index: 30; }
+    .search-results.is-open { display: block; }
+    .search-result { width: 100%; text-align: left; padding: 0.625rem 0.875rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; border-bottom: 1px solid var(--color-border-soft); }
+    .search-result:last-child { border-bottom: 0; }
+    .search-result:hover, .search-result:focus-visible { background: var(--color-background-soft); }
+    .search-result-name { font-weight: 600; font-size: 0.875rem; }
+    .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
+    .search-disabled-note { display: none; padding: 0.5rem 0.75rem; font-size: 0.75rem; color: var(--color-muted); text-align: center; }
+    .search-section.is-disabled .search-disabled-note { display: block; }
+    .search-section.is-disabled .search-input { display: none; }
+    .search-section.is-disabled .search-icon { display: none; }
+
+    /* ===== Favorite cities label + rail ===== */
+    .rail-label { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 1.5rem 0 0.625rem; text-align: left; }
+    .rail { display: flex; flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
+    @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
+    .rail::-webkit-scrollbar { height: 4px; }
+    .rail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
+    .city-card { flex: 0 0 auto; min-width: 140px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; }
+    .city-head { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem; }
+    .city-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; }
+    .city-name { font-size: 0.8125rem; font-weight: 700; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 8.5rem; }
+    .city-remove { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-muted-soft); border-radius: 9999px; }
+    .city-remove:hover { color: #f97316; }
+    .city-remove svg { width: 0.7rem; height: 0.7rem; }
+    .city-time { font-family: "Courier New", ui-monospace, monospace; font-size: 1.125rem; font-weight: 800; letter-spacing: 0.02em; }
+    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.2rem; }
+
+    /* ===== Ad slot ===== */
+    .ad-slot { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.25rem; background: color-mix(in srgb, var(--color-background) 70%, var(--color-background-soft)); border: 1px solid var(--color-border-soft); border-radius: 6px; color: var(--color-muted-soft); font-family: ui-monospace, monospace; margin: 1.5rem auto 1rem; }
+    .ad-slot .ad-label { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; }
+    .ad-slot .ad-size  { font-size: 0.75rem; font-weight: 600; }
+    .ad-slot.leaderboard { width: 100%; max-width: 728px; height: 90px; }
+    @media (max-width: 760px) { .ad-slot.leaderboard { max-width: 320px; height: 50px; } }
+
+    .current-city { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: clamp(0.8rem, 1.1vw, 0.9rem); color: var(--color-muted); margin: 1rem 0 0; }
     .current-city-icon { color: var(--color-primary); flex-shrink: 0; }
     .current-city strong { color: var(--color-foreground); font-weight: 700; }
     .current-city-extra { color: var(--color-primary); font-weight: 700; }
 
-    /* ============================================================
-       Responsive
-       ============================================================ */
     @media (max-width: 1023px) and (min-width: 761px) {
       .header-row { gap: 0.5rem; }
       .nav-main { gap: 0; }
@@ -488,29 +283,15 @@
       .nav-main { display: none !important; }
       .btn { height: 36px; padding: 0 0.75rem; font-size: 0.8125rem; }
       .btn-sm { height: 32px; padding: 0 0.625rem; font-size: 0.75rem; }
-      .logo-text { font-size: 1rem; }
-      .logo-mark { width: 28px; height: 28px; font-size: 0.8125rem; }
-      .hero { padding: 1.5rem 0 1rem; }
-      .seg-row {
-        --main-digit-width: clamp(42px, 13vw, 60px);
-        --small-digit-width: clamp(20px, 6vw, 28px);
-        --colon-width: 10px;
-        --colon-side-space: 6px;
-        --period-width: 36px;
-        --digit-gap: 4px;
-      }
-      .seg-colon::before, .seg-colon::after { width: 0.4rem; height: 0.4rem; }
-      .day-date { font-size: 0.95rem; }
-      .search-input { height: 42px; }
+      .logo-text { font-size: 0.95rem; }
+      .logo-mark { width: 26px; height: 26px; font-size: 0.75rem; }
+      .seg-row { --colon-width: 10px; --colon-side-space: 6px; --period-width: 36px; }
     }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 
 <body>
-  <!-- HEADER (light + dark theme toggle preserved) -->
   <header class="site-header">
     <div class="container header-row">
       <a href="/" class="logo" aria-label="TimeAndDatePro home">
@@ -539,35 +320,11 @@
     </div>
   </header>
 
-  <main class="landing">
-    <!-- Greeting -->
+  <main>
     <section class="hero">
       <div class="container">
-        <h1 class="greeting">
-          <span id="greeting-time">Good Evening</span>, <span class="greeting-city" id="greeting-city">your city</span>
-        </h1>
-        <p class="subtitle">Plan your day, meetings, holidays, and global time zones in one smart workspace. No timezone math required.</p>
-      </div>
-    </section>
-
-    <div class="container">
-      <!-- Time card -->
-      <article class="time-card">
-        <div class="time-card-grid">
-          <div class="time-info">
-            <p class="sync-row">
-              <span class="sync-dot" aria-hidden="true"></span>
-              <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind.</span>
-            </p>
-            <p class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</p>
-            <p class="time-in-city">Time in <strong id="user-city-link">your city</strong>, <span id="user-country">—</span> now:</p>
-          </div>
-          <div class="search-wrap">
-            <input id="city-search" class="search-input" type="search" placeholder="Search city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
-          </div>
-        </div>
+        <h1 class="greeting"><span id="greeting-time">Good Evening</span>, <span class="greeting-city" id="greeting-city">your city</span></h1>
+        <p class="subtitle">Plan your day, meetings, holidays, and global time zones in one smart workspace.</p>
 
         <div class="clock-block">
           <div class="seg-row" aria-label="Live current time">
@@ -576,99 +333,96 @@
             <div id="minutes" class="seg-digit-group"></div>
             <div class="seg-colon" aria-hidden="true"></div>
             <div id="seconds" class="seg-digit-group"></div>
+            <span class="seg-period-dot" aria-hidden="true">.</span>
             <div id="hundredths" class="seg-digit-group"></div>
             <div id="period" class="seg-period is-hidden">PM</div>
+          </div>
+          <div class="format-toggle" role="group" aria-label="Time format">
+            <button id="format-12" type="button" aria-pressed="false">12h</button>
+            <button id="format-24" type="button" aria-pressed="true">24h</button>
           </div>
         </div>
 
         <div class="day-date">
-          <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           <span id="day-date-text">—</span>
         </div>
-        <div class="timezone">
-          <span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong>
+        <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
+
+        <div class="sync-row" id="sync-row">
+          <span class="sync-dot" aria-hidden="true"></span>
+          <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</span></span>
         </div>
-      </article>
 
-      <!-- On this day -->
-      <article class="onthisday" id="onthisday">
-        <span class="onthisday-icon" aria-hidden="true">✦</span>
-        <span id="onthisday-text">Loading on-this-day…</span>
-      </article>
+        <p class="onthisday" id="onthisday"><strong>On this day</strong> · <span id="onthisday-text">—</span></p>
 
-      <!-- Pills row -->
-      <div class="pills">
-        <span class="pill pill-green">
-          <span class="pill-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span id="sync-pill">Your clock is synchronized</span>
-        </span>
-        <span class="pill pill-purple">
-          <span class="pill-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </span>
-          <span id="off-hours-pill">Loading…</span>
-        </span>
-        <span class="pill pill-orange">
-          <span class="pill-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-          </span>
-          <span id="sun-pill">Sunrise · Sunset —</span>
-        </span>
+        <div class="pills" id="home-pills">
+          <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
+          <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset</span></span>
+        </div>
+
+        <div class="search-section" id="search-section">
+          <div class="search-wrap">
+            <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
+          </div>
+          <p class="search-disabled-note">City search will light up when the search endpoint ships to production.</p>
+        </div>
+
+        <p class="rail-label">Favorite cities</p>
+        <div class="rail" id="rail"></div>
+
+        <div class="ad-slot leaderboard" role="complementary" aria-label="Advertisement">
+          <span class="ad-label">Advertisement</span>
+          <span class="ad-size">728 × 90</span>
+        </div>
+
+        <p class="current-city">
+          <span class="current-city-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          Current time in <strong id="current-city-name">your city</strong>, <span class="current-city-extra" id="current-city-region">—</span>
+        </p>
       </div>
-
-      <!-- Current city (footer of card area) -->
-      <p class="current-city">
-        <span class="current-city-icon" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </span>
-        Current time in <strong id="current-city-name">your city</strong>, <span class="current-city-extra" id="current-city-region">—</span>
-      </p>
-    </div>
+    </section>
   </main>
 
   <script>
-    // ============================================================
-    // Constants
-    // ============================================================
-    const API = 'https://dev.api.dateandtime.live';
-    const DIGIT_PATTERNS = {
-      0: ["a","b","c","d","e","f"],
-      1: ["b","c"],
-      2: ["a","b","g","e","d"],
-      3: ["a","b","c","d","g"],
-      4: ["f","g","b","c"],
-      5: ["a","f","g","c","d"],
-      6: ["a","f","g","e","c","d"],
-      7: ["a","b","c"],
-      8: ["a","b","c","d","e","f","g"],
-      9: ["a","b","c","d","f","g"]
-    };
+    /* ============================================================
+       PRODUCTION API — feature-by-feature deployment
+       ============================================================
+       Each non-core feature does a best-effort fetch on boot. If the
+       endpoint isn't on production yet, the feature hides itself.
+       As you add endpoints to https://api.dateandtime.live, the
+       features auto-appear — no code change needed.
+
+       Endpoint status on production (https://api.dateandtime.live):
+         /v1/cities            ✓  live
+         /v1/time/now          ✗  not yet — sync row hides
+         /v1/time/sun          ✗  not yet — sunrise pill hides
+         /v1/onthisday         ✗  not yet — on-this-day hides
+         /v2/search            ✗  not yet — search bar shows a soft note
+    */
+    const API = 'https://api.dateandtime.live';
+
+    const DIGIT_PATTERNS = { 0:["a","b","c","d","e","f"],1:["b","c"],2:["a","b","g","e","d"],3:["a","b","c","d","g"],4:["f","g","b","c"],5:["a","f","g","c","d"],6:["a","f","g","e","c","d"],7:["a","b","c"],8:["a","b","c","d","e","f","g"],9:["a","b","c","d","f","g"] };
     const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const DEFAULT_CITIES = [
+      { name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0 },
+      { name: "London",   country: "GB", latitude: 51.5074, longitude: -0.1278, tz: "Europe/London", is_capital: 1 },
+      { name: "Tokyo",    country: "JP", latitude: 35.6762, longitude: 139.6503, tz: "Asia/Tokyo", is_capital: 1 },
+      { name: "Beijing",  country: "CN", latitude: 39.9042, longitude: 116.4074, tz: "Asia/Shanghai", is_capital: 1 },
+      { name: "Sydney",   country: "AU", latitude: -33.8688, longitude: 151.2093, tz: "Australia/Sydney", is_capital: 1 }
+    ];
+    const state = { use24Hour: true, citiesWithHome: [], allCities: [], features: { sync: false, sun: false, onthisday: false, search: false } };
 
-    const state = {
-      use24Hour: true,
-      city: null,           // { name, ascii_name, country, state_code, region, tz, latitude, longitude, is_capital }
-      cities: [],           // all cities from /api/v1/cities (for fallback detection)
-      syncOffset: 0,        // seconds (server - local)
-      syncAccuracy: 0,      // seconds
-    };
+    const CITY_PALETTE = ["peach","lavender","mint","sky","rose","lemon"];
+    function cityColor(name) { const hash = [...name].reduce((a, c) => a + c.charCodeAt(0), 0); return CITY_PALETTE[hash % CITY_PALETTE.length]; }
 
-    // ============================================================
-    // Build 7-segment digits
-    // ============================================================
     function createDigit(parent, small = false) {
       const digit = document.createElement("div");
       digit.className = small ? "seg-digit small" : "seg-digit";
-      ["a","b","c","d","e","f","g"].forEach(name => {
-        const seg = document.createElement("span");
-        const orientation = ["a","g","d"].includes(name) ? "horizontal" : "vertical";
-        seg.className = `seg ${orientation} ${name}`;
-        digit.appendChild(seg);
-      });
+      ["a","b","c","d","e","f","g"].forEach(name => { const seg = document.createElement("span"); const orientation = ["a","g","d"].includes(name) ? "horizontal" : "vertical"; seg.className = `seg ${orientation} ${name}`; digit.appendChild(seg); });
       parent.appendChild(digit);
       return digit;
     }
@@ -676,607 +430,291 @@
     const minuteDigits = [createDigit(document.getElementById("minutes")), createDigit(document.getElementById("minutes"))];
     const secondDigits = [createDigit(document.getElementById("seconds")), createDigit(document.getElementById("seconds"))];
     const hundredthDigits = [createDigit(document.getElementById("hundredths"), true), createDigit(document.getElementById("hundredths"), true)];
+    function renderDigit(el, n) { const active = new Set(DIGIT_PATTERNS[n] || []); el.classList.toggle("is-one", Number(n) === 1); el.querySelectorAll(".seg").forEach(seg => { const name = [...seg.classList].find(c => /^[a-g]$/.test(c)); seg.classList.toggle("on", active.has(name)); }); }
+    function renderTwoDigits(els, v) { const s = String(v).padStart(2, "0"); renderDigit(els[0], Number(s[0])); renderDigit(els[1], Number(s[1])); }
+    function timeIn(tz, d) { try { const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(d || new Date()); const g = t => p.find(x => x.type === t)?.value || "00"; return `${g("hour")}:${g("minute")}:${g("second")}`; } catch (e) { return "--:--:--"; } }
+    function tzAbbr(tz) { try { const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date()); return p.find(x => x.type === "timeZoneName")?.value || tz; } catch (e) { return tz; } }
+    function tzOffset(tz) { try { const local = new Date(new Date().toLocaleString("en-US", { timeZone: tz })); const utc = new Date(new Date().toLocaleString("en-US", { timeZone: "UTC" })); const m = Math.round((local - utc) / 60000); const sign = m >= 0 ? "+" : "−"; const abs = Math.abs(m); return `UTC${sign}${String(Math.floor(abs/60)).padStart(2,"0")}:${String(abs%60).padStart(2,"0")}`; } catch (e) { return "UTC"; } }
+    function getGreeting(h) { if (h >= 5 && h < 12) return "Good Morning"; if (h >= 12 && h < 17) return "Good Afternoon"; if (h >= 17 && h < 22) return "Good Evening"; return "Good Night"; }
+    function getOffHoursForTz(tz, d) {
+      try { const parts = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", weekday: "short", hour12: false }).formatToParts(d); const h = Number(parts.find(p => p.type === "hour")?.value || 0); const mn = Number(parts.find(p => p.type === "minute")?.value || 0); const wd = parts.find(p => p.type === "weekday")?.value || ""; if (wd === "Sat" || wd === "Sun") return "Weekend · reopen Mon 9:00 AM"; if (h < 9) return `Off hours · open in ${9 - h - (mn > 0 ? 1 : 0)}h`; if (h >= 17) return "Off hours · reopen 9:00 AM"; if (h >= 12) return `Working · close in ${17 - h - (mn > 0 ? 1 : 0)}h`; return `Working · lunch in ${12 - h - (mn > 0 ? 1 : 0)}h`; } catch (e) { return "—"; }
+    }
 
-    function renderDigit(el, n) {
-      const active = new Set(DIGIT_PATTERNS[n] || []);
-      el.classList.toggle("is-one", Number(n) === 1);
-      el.querySelectorAll(".seg").forEach(seg => {
-        const name = [...seg.classList].find(c => /^[a-g]$/.test(c));
-        seg.classList.toggle("on", active.has(name));
+    function buildListWithHome(home) {
+      const out = [];
+      if (home) {
+        const isInDefaults = DEFAULT_CITIES.some(c => c.tz === home.tz);
+        out.push({ ...home, _home: true });
+        if (!isInDefaults) DEFAULT_CITIES.forEach(c => out.push({ ...c }));
+        else DEFAULT_CITIES.forEach(c => { if (c.tz !== home.tz) out.push({ ...c }); });
+      } else {
+        DEFAULT_CITIES.forEach(c => out.push({ ...c }));
+      }
+      return out;
+    }
+
+    function renderRail() {
+      const rail = document.getElementById("rail");
+      rail.innerHTML = "";
+      state.citiesWithHome.forEach((c, i) => {
+        const isHome = !!c._home;
+        const color = cityColor(c.name);
+        const card = document.createElement("div");
+        card.className = "city-card";
+        card.style.background = `var(--city-${color}-bg)`;
+        card.style.borderRadius = "0.5rem";
+        card.innerHTML = `
+          <div class="city-head">
+            <span class="city-dot" style="background: var(--city-${color});"></span>
+            <span class="city-name">${c.name}</span>
+            ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
+          </div>
+          <div class="city-time" data-tz="${c.tz}" style="color: var(--city-${color});">--:--:--</div>
+          <div class="city-tz">${tzAbbr(c.tz)} · ${tzOffset(c.tz)}</div>
+        `;
+        rail.appendChild(card);
+      });
+      rail.querySelectorAll(".city-remove").forEach(btn => {
+        btn.addEventListener("click", () => { const i = Number(btn.dataset.idx); state.citiesWithHome.splice(i, 1); saveCities(); renderRail(); });
       });
     }
-    function renderTwoDigits(els, v) {
-      const s = String(v).padStart(2, "0");
-      renderDigit(els[0], Number(s[0]));
-      renderDigit(els[1], Number(s[1]));
+    function saveCities() { try { localStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
+
+    /* ----- Feature probes (graceful degradation) ----- */
+    async function probe(path) {
+      try {
+        const r = await fetch(`${API}${path}`, { method: "HEAD", cache: "no-store" });
+        return r.ok;
+      } catch (e) { return false; }
+    }
+    async function probeAll() {
+      const [sync, sun, onthisday, search] = await Promise.all([
+        probe("/v1/time/now?tz=UTC"),
+        probe("/v1/time/sun?lat=40.7&lon=-74&date=2026-01-01"),
+        probe("/v1/onthisday"),
+        probe("/v2/search?q=test")
+      ]);
+      state.features.sync = sync;
+      state.features.sun = sun;
+      state.features.onthisday = onthisday;
+      state.features.search = search;
+      // Hide UI for features that aren't ready
+      if (!sync) document.getElementById("sync-row").classList.add("is-hidden");
+      if (!onthisday) document.getElementById("onthisday").classList.add("is-hidden");
+      if (!sun) document.getElementById("home-pills").classList.add("is-hidden");
+      if (!search) document.getElementById("search-section").classList.add("is-disabled");
     }
 
-    // ============================================================
-    // Time helpers
-    // ============================================================
-    function getGreeting(hour) {
-      if (hour >= 5 && hour < 12) return "Good Morning";
-      if (hour >= 12 && hour < 17) return "Good Afternoon";
-      if (hour >= 17 && hour < 22) return "Good Evening";
-      return "Good Night";
-    }
-    function getGreetingEmoji(hour) {
-      if (hour >= 5 && hour < 12) return "🌅";
-      if (hour >= 12 && hour < 17) return "☀️";
-      if (hour >= 17 && hour < 22) return "🌆";
-      return "🌙";
-    }
-    function formatOffset(seconds) {
-      const sign = seconds >= 0 ? "" : "−";
-      const abs = Math.abs(seconds);
-      if (abs < 1) return `${sign}${abs.toFixed(1)} seconds`;
-      return `${sign}${abs.toFixed(2)} seconds`;
-    }
-    function formatOffsetPhrase(seconds) {
-      if (Math.abs(seconds) < 0.05) return "synchronized";
-      if (seconds > 0) return `${Math.abs(seconds).toFixed(1)} seconds behind`;
-      return `${Math.abs(seconds).toFixed(1)} seconds ahead`;
-    }
-    function getTimezoneAbbrev(tz, date) {
-      try {
-        const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" }).formatToParts(date);
-        const part = parts.find(p => p.type === "timeZoneName");
-        return part ? part.value : tz;
-      } catch (e) { return tz; }
-    }
-    function getTimezoneOffsetStr(tz, date) {
-      try {
-        // Get offset in minutes for the given tz at the given date
-        const local = new Date(date.toLocaleString("en-US", { timeZone: tz }));
-        const utc = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
-        const diffMin = Math.round((local - utc) / 60000);
-        const sign = diffMin >= 0 ? "+" : "−";
-        const abs = Math.abs(diffMin);
-        const h = String(Math.floor(abs / 60)).padStart(2, "0");
-        const m = String(abs % 60).padStart(2, "0");
-        return `UTC${sign}${h}:${m}`;
-      } catch (e) { return "UTC"; }
-    }
-    function formatDayDate(d) {
-      return `${WEEKDAYS[d.getDay()]}, ${MONTHS_LONG[d.getMonth()]} ${String(d.getDate()).padStart(2,"0")}, ${d.getFullYear()}`;
-    }
-    function getOffHoursText(now) {
-      const day = now.getDay();
-      const hour = now.getHours();
-      const minute = now.getMinutes();
-      if (day === 0 || day === 6) return "Weekend · Offices reopen Monday 9:00 AM";
-      if (hour < 9) {
-        const hours = 9 - hour - (minute > 0 ? 1 : 0);
-        return `Off hours · Offices open in ${hours} hour${hours === 1 ? "" : "s"}`;
-      }
-      if (hour >= 17) return "Off hours · Offices reopen tomorrow 9:00 AM";
-      if (hour >= 12) {
-        const hoursLeft = 17 - hour - (minute > 0 ? 1 : 0);
-        return `Working hours · Office closes in ${hoursLeft} hour${hoursLeft === 1 ? "" : "s"}`;
-      }
-      const hoursLeft = 12 - hour - (minute > 0 ? 1 : 0);
-      return `Working hours · Lunch in ${hoursLeft} hour${hoursLeft === 1 ? "" : "s"}`;
-    }
-
-    // ============================================================
-    // API calls
-    // ============================================================
-    async function fetchSyncAccuracy() {
-      // Round-trip against the API: measure server time vs local time
+    /* ----- Sync accuracy (when /v1/time/now is on prod) ----- */
+    async function refreshSync() {
+      if (!state.features.sync) return;
       const t0 = performance.now();
       try {
-        const res = await fetch(`${API}/api/v1/time/now?tz=UTC`, { cache: "no-store" });
+        const r = await fetch(`${API}/v1/time/now?tz=UTC`, { cache: "no-store" });
         const t1 = performance.now();
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const data = json.data || json;
-        // Prefer unix_ms (most precise)
-        let serverTime = null;
-        if (typeof data.unix_ms === "number") serverTime = new Date(data.unix_ms);
-        else if (typeof data.unix === "number") serverTime = new Date(data.unix * 1000);
-        else if (data.iso) serverTime = new Date(data.iso);
-        if (!serverTime) throw new Error("no time field");
-        const localAtT1 = new Date();
-        const offset = (serverTime - localAtT1) / 1000;
-        const accuracy = (t1 - t0) / 2000; // half round-trip, in seconds
-        return { offset, accuracy };
-      } catch (e) {
-        console.warn("Sync fetch failed:", e);
-        return { offset: 0, accuracy: 0 };
-      }
+        if (!r.ok) return;
+        const j = await r.json();
+        const d = j.data || j;
+        const st = typeof d.unix_ms === "number" ? new Date(d.unix_ms) : (d.iso ? new Date(d.iso) : null);
+        if (st) {
+          const offset = (st - new Date()) / 1000;
+          const acc = (t1 - t0) / 2000;
+          document.getElementById("clock-offset").textContent = `${Math.abs(offset).toFixed(1)} seconds`;
+          document.getElementById("clock-accuracy").textContent = `±${acc.toFixed(3)}`;
+        }
+      } catch (e) {}
     }
 
-    async function fetchSun(lat, lon, date) {
+    /* ----- Sunrise/sunset (when /v1/time/sun is on prod) ----- */
+    async function fetchSunForCity(c) {
+      if (!state.features.sun || c.latitude == null || c.longitude == null) return null;
       try {
-        const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
-        const res = await fetch(`${API}/api/v1/time/sun?lat=${lat}&lon=${lon}&date=${dateStr}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        return json.data || json;
-      } catch (e) {
-        console.warn("Sun fetch failed:", e);
-        return null;
-      }
+        const d = new Date();
+        const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        const r = await fetch(`${API}/v1/time/sun?lat=${c.latitude}&lon=${c.longitude}&date=${ds}`);
+        if (!r.ok) return null;
+        const j = await r.json();
+        return j.data || j;
+      } catch (e) { return null; }
+    }
+    function utcToLocal(utc, tz, isSunset) {
+      const m = utc.match(/^(\d{1,2}):(\d{2})/);
+      if (!m) return "—";
+      let hh = parseInt(m[1], 10), mm = parseInt(m[2], 10);
+      const now = new Date();
+      const u = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hh, mm));
+      if (isSunset && hh >= 24) { u.setUTCDate(u.getUTCDate() + 1); u.setUTCHours(u.getUTCHours() - 24); }
+      try { const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(u); const h = parts.find(p => p.type === "hour")?.value || "—"; const mn = parts.find(p => p.type === "minute")?.value || "—"; const p = parts.find(p => p.type === "dayPeriod")?.value || ""; return `${h}:${mn} ${p}`; } catch (e) { return "—"; }
     }
 
-    async function fetchOnThisDay(month, day) {
+    /* ----- On-this-day (when /v1/onthisday is on prod) ----- */
+    async function refreshOnThisDay() {
+      if (!state.features.onthisday) return;
+      const now = new Date();
       try {
-        const res = await fetch(`${API}/api/v1/onthisday?month=${month}&day=${day}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        return json.data || json;
-      } catch (e) {
-        console.warn("On-this-day fetch failed:", e);
-        return null;
-      }
+        const r = await fetch(`${API}/v1/onthisday?month=${now.getMonth()+1}&day=${now.getDate()}`, { cache: "no-store" });
+        if (!r.ok) return;
+        const j = await r.json();
+        const data = j.data || j;
+        const events = data?.events || data || [];
+        const section = document.getElementById("onthisday");
+        const el = document.getElementById("onthisday-text");
+        if (!events.length) { section.classList.add("is-hidden"); return; }
+        section.classList.remove("is-hidden");
+        const ev = events[0];
+        const year = ev.year || (ev.date && ev.date.slice(0,4)) || "—";
+        const text = ev.text || ev.description || ev.title || "";
+        el.innerHTML = `<strong>On this day in ${year}</strong> — ${text}`;
+      } catch (e) {}
     }
 
-    async function searchCities(q) {
-      try {
-        // Try v2 search first (handles 13 edge cases per the API docs)
-        const res = await fetch(`${API}/api/v2/search?q=${encodeURIComponent(q)}&limit=8`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const data = json.data || json;
-        // v2 returns { results: [...], total, ... } or just an array
-        return data.results || data || [];
-      } catch (e) {
-        // Fall back to v1 cities search
+    /* ----- City search (when /v2/search is on prod) ----- */
+    const searchInput = document.getElementById("city-search");
+    const searchResults = document.getElementById("search-results");
+    let deb = null;
+    searchInput.addEventListener("input", () => {
+      if (!state.features.search) return;
+      clearTimeout(deb);
+      const q = searchInput.value.trim();
+      if (q.length < 2) { searchResults.classList.remove("is-open"); searchResults.innerHTML = ""; return; }
+      deb = setTimeout(async () => {
         try {
-          const r2 = await fetch(`${API}/api/v1/cities/search?q=${encodeURIComponent(q)}&limit=8`);
-          if (!r2.ok) return [];
-          const j2 = await r2.json();
-          const d2 = j2.data || j2;
-          return (d2.cities || []).map(x => x.city || x);
-        } catch (e2) {
-          console.warn("Search failed:", e2);
-          return [];
-        }
-      }
-    }
+          const r = await fetch(`${API}/v2/search?q=${encodeURIComponent(q)}&limit=8`);
+          if (!r.ok) return;
+          const j = await r.json();
+          const results = (j.data?.results || j.results || []).slice(0, 8);
+          if (!results.length) { searchResults.innerHTML = '<button class="search-result" disabled><div class="search-result-name">No matches</div></button>'; searchResults.classList.add("is-open"); return; }
+          searchResults.innerHTML = results.map((c, i) => `
+            <button class="search-result" data-idx="${i}">
+              <div>
+                <div class="search-result-name">${c.name || c.asciiName || ""}${c.is_capital || c.isCapital ? " ★" : ""}</div>
+                <div class="search-result-meta">${(c.country?.name || c.country || "")} · ${c.timezone || c.tz || ""}</div>
+              </div>
+              <div class="search-result-meta">${(c.timezone || c.tz || "").split("/").pop().replace(/_/g," ")}</div>
+            </button>
+          `).join("");
+          searchResults.classList.add("is-open");
+          searchResults.querySelectorAll(".search-result[data-idx]").forEach(btn => {
+            btn.addEventListener("click", () => {
+              const c = results[Number(btn.dataset.idx)];
+              const city = { name: c.name || c.asciiName, country: c.country?.code || c.countryCode, countryName: c.country?.name, state_code: c.state_code, latitude: c.coordinates?.lat ?? c.latitude, longitude: c.coordinates?.lon ?? c.longitude, tz: c.timezone || c.tz, is_capital: c.is_capital || c.isCapital || 0 };
+              if (!state.citiesWithHome.some(x => x.tz === city.tz)) {
+                state.citiesWithHome.push(city);
+                saveCities(); renderRail();
+              }
+              searchInput.value = ""; searchResults.classList.remove("is-open"); searchResults.innerHTML = "";
+            });
+          });
+        } catch (e) {}
+      }, 200);
+    });
+    document.addEventListener("click", e => { if (!e.target.closest(".search-section")) searchResults.classList.remove("is-open"); });
 
-    async function fetchAllCities() {
-      try {
-        const res = await fetch(`${API}/api/v1/cities?limit=200`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const data = json.data || json;
-        return (data.cities || data || []).map(c => c.city || c);
-      } catch (e) {
-        console.warn("Cities fetch failed:", e);
-        return [];
-      }
-    }
-
-    // ============================================================
-    // City detection
-    // ============================================================
-    function tzToCities(tz) {
-      // Best-effort mapping: IANA tz → likely city name
-      const map = {
-        "America/New_York": [{ name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz, is_capital: 0 }],
-        "America/Los_Angeles": [{ name: "Los Angeles", country: "US", state_code: "CA", latitude: 34.0522, longitude: -118.2437, tz, is_capital: 0 }],
-        "America/Chicago": [{ name: "Chicago", country: "US", state_code: "IL", latitude: 41.8781, longitude: -87.6298, tz, is_capital: 0 }],
-        "America/Denver": [{ name: "Denver", country: "US", state_code: "CO", latitude: 39.7392, longitude: -104.9903, tz, is_capital: 0 }],
-        "America/Toronto": [{ name: "Toronto", country: "CA", state_code: "ON", latitude: 43.6532, longitude: -79.3832, tz, is_capital: 0 }],
-        "America/Mexico_City": [{ name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz, is_capital: 1 }],
-        "America/Sao_Paulo": [{ name: "São Paulo", country: "BR", latitude: -23.5505, longitude: -46.6333, tz, is_capital: 0 }],
-        "America/Argentina/Buenos_Aires": [{ name: "Buenos Aires", country: "AR", latitude: -34.6037, longitude: -58.3816, tz, is_capital: 1 }],
-        "Europe/London": [{ name: "London", country: "GB", latitude: 51.5074, longitude: -0.1278, tz, is_capital: 1 }],
-        "Europe/Paris": [{ name: "Paris", country: "FR", latitude: 48.8566, longitude: 2.3522, tz, is_capital: 1 }],
-        "Europe/Berlin": [{ name: "Berlin", country: "DE", latitude: 52.5200, longitude: 13.4050, tz, is_capital: 1 }],
-        "Europe/Madrid": [{ name: "Madrid", country: "ES", latitude: 40.4168, longitude: -3.7038, tz, is_capital: 1 }],
-        "Europe/Rome": [{ name: "Rome", country: "IT", latitude: 41.9028, longitude: 12.4964, tz, is_capital: 1 }],
-        "Europe/Moscow": [{ name: "Moscow", country: "RU", latitude: 55.7558, longitude: 37.6173, tz, is_capital: 1 }],
-        "Europe/Istanbul": [{ name: "Istanbul", country: "TR", latitude: 41.0082, longitude: 28.9784, tz, is_capital: 0 }],
-        "Africa/Lagos": [{ name: "Lagos", country: "NG", latitude: 6.5244, longitude: 3.3792, tz, is_capital: 0 }],
-        "Africa/Cairo": [{ name: "Cairo", country: "EG", latitude: 30.0444, longitude: 31.2357, tz, is_capital: 1 }],
-        "Africa/Johannesburg": [{ name: "Johannesburg", country: "ZA", latitude: -26.2041, longitude: 28.0473, tz, is_capital: 0 }],
-        "Asia/Dubai": [{ name: "Dubai", country: "AE", latitude: 25.2048, longitude: 55.2708, tz, is_capital: 0 }],
-        "Asia/Kolkata": [{ name: "Mumbai", country: "IN", latitude: 19.0760, longitude: 72.8777, tz, is_capital: 0 }],
-        "Asia/Shanghai": [{ name: "Shanghai", country: "CN", latitude: 31.2304, longitude: 121.4737, tz, is_capital: 0 }],
-        "Asia/Hong_Kong": [{ name: "Hong Kong", country: "HK", latitude: 22.3193, longitude: 114.1694, tz, is_capital: 0 }],
-        "Asia/Tokyo": [{ name: "Tokyo", country: "JP", latitude: 35.6762, longitude: 139.6503, tz, is_capital: 1 }],
-        "Asia/Seoul": [{ name: "Seoul", country: "KR", latitude: 37.5665, longitude: 126.9780, tz, is_capital: 1 }],
-        "Asia/Singapore": [{ name: "Singapore", country: "SG", latitude: 1.3521, longitude: 103.8198, tz, is_capital: 1 }],
-        "Asia/Bangkok": [{ name: "Bangkok", country: "TH", latitude: 13.7563, longitude: 100.5018, tz, is_capital: 1 }],
-        "Australia/Sydney": [{ name: "Sydney", country: "AU", latitude: -33.8688, longitude: 151.2093, tz, is_capital: 1 }],
-        "Pacific/Auckland": [{ name: "Auckland", country: "NZ", latitude: -36.8485, longitude: 174.7633, tz, is_capital: 1 }],
-      };
-      return map[tz] || null;
-    }
-
-    function findCityByTz(tz) {
-      // 1. Try hardcoded map
-      const hard = tzToCities(tz);
-      if (hard) return hard[0];
-      // 2. Search the cities list (timezone may be "America/New_York" or "America/New_York" — match exact)
-      if (state.cities.length) {
-        const match = state.cities.find(c => (c.tz || c.timezone) === tz);
-        if (match) return match;
-        // 3. Try matching by region prefix
-        const region = tz.split("/")[1]?.replace(/_/g, " ");
-        if (region) {
-          const m = state.cities.find(c => c.name?.toLowerCase() === region.toLowerCase());
-          if (m) return m;
-        }
-      }
-      return null;
-    }
-
-    function findNearestCity(lat, lon) {
-      if (!state.cities.length) return null;
-      let best = null, bestDist = Infinity;
-      for (const c of state.cities) {
-        const clat = c.latitude ?? c.lat;
-        const clon = c.longitude ?? c.lon;
-        if (typeof clat !== "number" || typeof clon !== "number") continue;
-        const d = Math.hypot(clat - lat, clon - lon);
-        if (d < bestDist) { bestDist = d; best = c; }
-      }
-      return best;
-    }
-
-    async function detectCity() {
-      const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-
-      // 1. Try geolocation (non-blocking, 3s timeout)
-      const coords = await new Promise((resolve) => {
-        if (!navigator.geolocation) return resolve(null);
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-          () => resolve(null),
-          { timeout: 3000, maximumAge: 60_000 }
-        );
-      });
-      if (coords) {
-        const nearest = findNearestCity(coords.lat, coords.lon);
-        if (nearest) return nearest;
-      }
-      // 2. Fall back to tz-based detection
-      const tzCity = findCityByTz(browserTz);
-      if (tzCity) return tzCity;
-      // 3. Last resort: NYC
-      return { name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz: browserTz, is_capital: 0 };
-    }
-
-    // ============================================================
-    // City normalization (v1 and v2 APIs return different shapes)
-    // ============================================================
-    function normalizeCity(c) {
-      if (!c) return null;
-      // Country can be a string (v1) or an object { code, name } (v2)
-      let countryCode = null, countryName = null;
-      if (typeof c.country === "string") {
-        countryCode = c.country;
-        countryName = c.country;
-      } else if (c.country && typeof c.country === "object") {
-        countryCode = c.country.code || c.countryCode;
-        countryName = c.country.name || c.countryCode;
-      } else if (c.countryCode) {
-        countryCode = c.countryCode;
-        countryName = c.country;
-      }
-      // Coordinates
-      const lat = (typeof c.latitude === "number") ? c.latitude
-                : (typeof c.lat === "number") ? c.lat
-                : (c.coordinates && typeof c.coordinates.lat === "number") ? c.coordinates.lat
-                : parseFloat(c.latitude || c.lat || c.coordinates?.lat);
-      const lon = (typeof c.longitude === "number") ? c.longitude
-                : (typeof c.lon === "number") ? c.lon
-                : (c.coordinates && typeof c.coordinates.lon === "number") ? c.coordinates.lon
-                : parseFloat(c.longitude || c.lon || c.coordinates?.lon);
-      // Timezone
-      const tz = c.tz || c.timezone;
-      // State / region
-      const state_code = c.state_code || c.stateCode || c.state || c.region;
-      return {
-        id: c.id,
-        name: c.name || c.asciiName || c.ascii_name || "your city",
-        ascii_name: c.asciiName || c.ascii_name || c.name,
-        country: countryCode,
-        countryName: countryName,
-        state_code: state_code,
-        region: c.region,
-        tz: tz,
-        latitude: isNaN(lat) ? null : lat,
-        longitude: isNaN(lon) ? null : lon,
-        is_capital: c.is_capital || c.isCapital || 0
-      };
-    }
-
-    // ============================================================
-    // State setters
-    // ============================================================
-    function setCity(city) {
-      city = normalizeCity(city) || city;
-      state.city = city;
-      const cityName = city.name || "your city";
-      const countryName = city.countryName || countryCodeToName(city.country) || city.country || "—";
-      const region = city.state_code || "";
-
-      document.getElementById("greeting-city").textContent = cityName;
-
-      // user-city-link: "City, State, Country" with city as a link-like underlined word
-      const cityLabel = region ? `${cityName}, ${region}` : cityName;
-      document.getElementById("user-city-link").textContent = cityLabel;
-      document.getElementById("user-country").textContent = countryName;
-
-      // current-city-name: "City" and current-city-region: "State, Country"
-      document.getElementById("current-city-name").textContent = cityName;
-      document.getElementById("current-city-region").textContent = region
-        ? `${region}, ${countryName}`
-        : countryName;
-
-      // Refetch sun for the new city
-      const lat = city.latitude;
-      const lon = city.longitude;
-      if (typeof lat === "number" && typeof lon === "number") {
-        fetchSun(lat, lon, new Date()).then(updateSunPill);
-      } else {
-        document.getElementById("sun-pill").textContent = "Sunrise · Sunset —";
-      }
-
-      // Persist
-      try { localStorage.setItem("tdp-city", JSON.stringify(city)); } catch (e) {}
-    }
-
-    function countryCodeToName(code) {
-      const map = { US: "United States", GB: "United Kingdom", CA: "Canada", AU: "Australia", NZ: "New Zealand", IN: "India", CN: "China", JP: "Japan", KR: "South Korea", SG: "Singapore", HK: "Hong Kong", DE: "Germany", FR: "France", IT: "Italy", ES: "Spain", PT: "Portugal", NL: "Netherlands", BE: "Belgium", CH: "Switzerland", AT: "Austria", SE: "Sweden", NO: "Norway", DK: "Denmark", FI: "Finland", IE: "Ireland", PL: "Poland", CZ: "Czechia", GR: "Greece", TR: "Turkey", RU: "Russia", UA: "Ukraine", BR: "Brazil", AR: "Argentina", CL: "Chile", CO: "Colombia", MX: "Mexico", PE: "Peru", ZA: "South Africa", EG: "Egypt", NG: "Nigeria", KE: "Kenya", MA: "Morocco", AE: "United Arab Emirates", SA: "Saudi Arabia", IL: "Israel", TH: "Thailand", VN: "Vietnam", PH: "Philippines", MY: "Malaysia", ID: "Indonesia", PK: "Pakistan", BD: "Bangladesh", LK: "Sri Lanka" };
-      return map[code] || code;
-    }
-
-    function updateSunPill(data) {
-      const el = document.getElementById("sun-pill");
-      if (!data) { el.textContent = "Sunrise · Sunset —"; return; }
-      // API returns UTC times like "09:38 UTC" / "24:13 UTC" (24:13 means next-day 00:13)
-      // We need to convert to the city's local time
-      const city = state.city;
-      const srUtc = (data.sunrise_utc || data.sunrise || "").toString();
-      const ssUtc = (data.sunset_utc || data.sunset || "").toString();
-      const cityTz = city?.tz;
-
-      function utcStrToLocal12(utcStr, tz, isSunset = false) {
-        // Parse "09:38" or "24:13" as UTC time
-        const m = utcStr.match(/^(\d{1,2}):(\d{2})/);
-        if (!m) return "—";
-        let hh = parseInt(m[1], 10);
-        const mm = parseInt(m[2], 10);
-        const today = new Date();
-        // Build a UTC date for today at that HH:MM
-        const utc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), hh, mm));
-        // Adjust for sunset "24:13" meaning next day
-        if (isSunset && hh >= 24) {
-          utc.setUTCDate(utc.getUTCDate() + 1);
-          utc.setUTCHours(utc.getUTCHours() - 24);
-        }
-        if (!tz) {
-          // Fall back to browser local
-          const local = utc;
-          const h12 = ((local.getHours() + 11) % 12) + 1;
-          const period = local.getHours() >= 12 ? "PM" : "AM";
-          return `${h12}:${String(local.getMinutes()).padStart(2,"0")} ${period}`;
-        }
-        // Format the UTC time in the target tz
-        try {
-          const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(utc);
-          const h = parts.find(p => p.type === "hour")?.value || "—";
-          const mn = parts.find(p => p.type === "minute")?.value || "—";
-          const p = parts.find(p => p.type === "dayPeriod")?.value || "";
-          return `${h}:${mn} ${p}`;
-        } catch (e) {
-          return "—";
-        }
-      }
-
-      if (srUtc && ssUtc) {
-        el.textContent = `Sunrise: ${utcStrToLocal12(srUtc, cityTz, false)} · Sunset ${utcStrToLocal12(ssUtc, cityTz, true)}`;
-      } else {
-        el.textContent = "Sunrise · Sunset —";
-      }
-    }
-
-    // ============================================================
-    // Clock tick
-    // ============================================================
+    /* ----- Update loop ----- */
     function updateClock() {
       const now = new Date();
-      const rawHours = now.getHours();
-      const period = rawHours >= 12 ? "PM" : "AM";
+      const h = now.getHours();
+      const period = h >= 12 ? "PM" : "AM";
       const periodEl = document.getElementById("period");
-
-      if (state.use24Hour) {
-        periodEl.classList.add("is-hidden");
-        renderTwoDigits(hourDigits, rawHours);
-      } else {
-        periodEl.classList.remove("is-hidden");
-        periodEl.textContent = period;
-        renderTwoDigits(hourDigits, rawHours % 12 || 12);
-      }
-
+      if (state.use24Hour) { periodEl.classList.add("is-hidden"); renderTwoDigits(hourDigits, h); }
+      else { periodEl.classList.remove("is-hidden"); periodEl.textContent = period; renderTwoDigits(hourDigits, h % 12 || 12); }
       renderTwoDigits(minuteDigits, now.getMinutes());
       renderTwoDigits(secondDigits, now.getSeconds());
       renderTwoDigits(hundredthDigits, Math.floor(now.getMilliseconds() / 10));
-
-      // Day / date
-      document.getElementById("day-date-text").textContent = formatDayDate(now);
-
-      // Timezone (always from browser)
-      const tz = state.city?.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
-      document.getElementById("tz-abbr").textContent = getTimezoneAbbrev(tz, now);
-      document.getElementById("tz-offset").textContent = getTimezoneOffsetStr(tz, now);
-
-      // Greeting (update at the hour boundary)
-      document.getElementById("greeting-time").textContent = getGreeting(rawHours);
-
-      // Off hours pill (update at the minute boundary — cheap to recompute)
-      document.getElementById("off-hours-pill").textContent = getOffHoursText(now);
-
+      document.getElementById("day-date-text").textContent = `${WEEKDAYS[now.getDay()]}, ${MONTHS_LONG[now.getMonth()]} ${String(now.getDate()).padStart(2,"0")}, ${now.getFullYear()}`;
+      const home = state.citiesWithHome[0];
+      const tz = home?.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.getElementById("tz-abbr").textContent = tzAbbr(tz);
+      document.getElementById("tz-offset").textContent = tzOffset(tz);
+      document.getElementById("greeting-time").textContent = getGreeting(h);
+      document.getElementById("greeting-city").textContent = home?.name || "your city";
+      document.getElementById("current-city-name").textContent = home?.name || "your city";
+      const region = home?.state_code || home?.countryName || home?.country || "";
+      document.getElementById("current-city-region").textContent = region;
+      document.querySelectorAll("[data-tz]").forEach(el => { el.textContent = timeIn(el.dataset.tz, now); });
+      if (home) document.getElementById("off-hours-pill").textContent = getOffHoursForTz(tz, now);
       requestAnimationFrame(updateClock);
     }
 
-    // ============================================================
-    // Sync accuracy
-    // ============================================================
-    async function refreshSync() {
-      const { offset, accuracy } = await fetchSyncAccuracy();
-      state.syncOffset = offset;
-      state.syncAccuracy = accuracy;
-      document.getElementById("clock-offset").textContent = formatOffset(offset);
-      document.getElementById("clock-accuracy").textContent = `±${accuracy.toFixed(3)}`;
-      const pill = document.getElementById("sync-pill");
-      if (Math.abs(offset) < 0.5) pill.textContent = "Your clock is synchronized";
-      else pill.textContent = `Your clock is ${formatOffsetPhrase(offset)}`;
-    }
-
-    // ============================================================
-    // Theme toggle
-    // ============================================================
-    const root = document.documentElement;
-    const btnLight = document.getElementById("theme-light");
-    const btnDark = document.getElementById("theme-dark");
-    function setTheme(theme) {
-      root.setAttribute("data-theme", theme);
-      btnLight.setAttribute("aria-pressed", String(theme === "light"));
-      btnDark.setAttribute("aria-pressed", String(theme === "dark"));
-      try { localStorage.setItem("tdp-landing-theme", theme); } catch (e) {}
-    }
-    btnLight.addEventListener("click", () => setTheme("light"));
-    btnDark.addEventListener("click", () => setTheme("dark"));
-    let savedTheme = null;
-    try { savedTheme = localStorage.getItem("tdp-landing-theme"); } catch (e) {}
-    if (savedTheme === "dark" || savedTheme === "light") setTheme(savedTheme);
+    /* ----- Theme ----- */
+    const rootEl = document.documentElement;
+    const btnL = document.getElementById("theme-light");
+    const btnD = document.getElementById("theme-dark");
+    function setTheme(t) { rootEl.setAttribute("data-theme", t); btnL.setAttribute("aria-pressed", String(t === "light")); btnD.setAttribute("aria-pressed", String(t === "dark")); try { localStorage.setItem("tdp-theme", t); } catch (e) {} }
+    btnL.addEventListener("click", () => setTheme("light"));
+    btnD.addEventListener("click", () => setTheme("dark"));
+    let savedT = null; try { savedT = localStorage.getItem("tdp-theme"); } catch (e) {}
+    if (savedT === "dark" || savedT === "light") setTheme(savedT);
     else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) setTheme("dark");
 
-    // ============================================================
-    // 12h/24h format toggle (omitted from header to keep it quiet;
-    // keyboard: T to toggle)
-    // ============================================================
-    let savedFormat = null;
-    try { savedFormat = localStorage.getItem("tdp-landing-format"); } catch (e) {}
-    if (savedFormat === "24" || savedFormat === "12") state.use24Hour = (savedFormat === "24");
-    document.addEventListener("keydown", (e) => {
-      if (e.target.matches("input, textarea")) return;
-      if (e.key === "t" || e.key === "T") {
-        state.use24Hour = !state.use24Hour;
-        try { localStorage.setItem("tdp-landing-format", state.use24Hour ? "24" : "12"); } catch (e) {}
-      }
-    });
-
-    // ============================================================
-    // City search
-    // ============================================================
-    const searchInput = document.getElementById("city-search");
-    const searchResults = document.getElementById("search-results");
-    let searchOpen = false;
-    let searchDebounce = null;
-
-    function setSearchOpen(open) {
-      searchOpen = open;
-      searchResults.classList.toggle("is-open", open);
+    /* ----- 12h/24h toggle ----- */
+    const btn12 = document.getElementById("format-12");
+    const btn24 = document.getElementById("format-24");
+    function setFormat(fmt) {
+      state.use24Hour = fmt === "24";
+      btn12.setAttribute("aria-pressed", String(!state.use24Hour));
+      btn24.setAttribute("aria-pressed", String(state.use24Hour));
+      try { localStorage.setItem("tdp-fmt", state.use24Hour ? "24" : "12"); } catch (e) {}
     }
-    function closeSearch() { setSearchOpen(false); }
+    btn12.addEventListener("click", () => setFormat("12"));
+    btn24.addEventListener("click", () => setFormat("24"));
+    let savedF = null; try { savedF = localStorage.getItem("tdp-fmt"); } catch (e) {}
+    if (savedF === "24" || savedF === "12") setFormat(savedF);
 
-    searchInput.addEventListener("input", () => {
-      clearTimeout(searchDebounce);
-      const q = searchInput.value.trim();
-      if (q.length < 2) { closeSearch(); return; }
-      searchDebounce = setTimeout(() => doSearch(q), 200);
-    });
-    searchInput.addEventListener("focus", () => { if (searchInput.value.trim().length >= 2) setSearchOpen(true); });
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest(".search-wrap")) closeSearch();
-    });
+    /* ----- Auto-detect home city ----- */
+    function tzToCity(tz) {
+      const map = { "America/New_York":{name:"New York",country:"US",state_code:"NY",latitude:40.7128,longitude:-74.0060,tz,is_capital:0},"America/Los_Angeles":{name:"Los Angeles",country:"US",state_code:"CA",latitude:34.0522,longitude:-118.2437,tz,is_capital:0},"America/Chicago":{name:"Chicago",country:"US",state_code:"IL",latitude:41.8781,longitude:-87.6298,tz,is_capital:0},"Europe/London":{name:"London",country:"GB",latitude:51.5074,longitude:-0.1278,tz,is_capital:1},"Europe/Paris":{name:"Paris",country:"FR",latitude:48.8566,longitude:2.3522,tz,is_capital:1},"Europe/Berlin":{name:"Berlin",country:"DE",latitude:52.5200,longitude:13.4050,tz,is_capital:1},"Asia/Tokyo":{name:"Tokyo",country:"JP",latitude:35.6762,longitude:139.6503,tz,is_capital:1},"Asia/Shanghai":{name:"Beijing",country:"CN",latitude:39.9042,longitude:116.4074,tz,is_capital:1},"Asia/Kolkata":{name:"Mumbai",country:"IN",latitude:19.0760,longitude:72.8777,tz,is_capital:0},"Asia/Dubai":{name:"Dubai",country:"AE",latitude:25.2048,longitude:55.2708,tz,is_capital:0},"Australia/Sydney":{name:"Sydney",country:"AU",latitude:-33.8688,longitude:151.2093,tz,is_capital:1},"America/Sao_Paulo":{name:"São Paulo",country:"BR",latitude:-23.5505,longitude:-46.6333,tz,is_capital:0} };
+      return map[tz] || null;
+    }
+    function detectHome() {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      return tzToCity(tz) || { name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz, is_capital: 0 };
+    }
 
-    async function doSearch(q) {
-      const results = await searchCities(q);
-      const normalized = results.map(normalizeCity).filter(Boolean);
-      if (!normalized.length) {
-        searchResults.innerHTML = `<button class="search-result" disabled><div><div class="search-result-name">No matches</div><div class="search-result-meta">Try another city or country</div></div></button>`;
-        setSearchOpen(true);
-        return;
+    /* ----- Boot ----- */
+    (async function init() {
+      // Probe which features are available on production
+      await probeAll();
+
+      // Load cities (the only endpoint guaranteed to be on prod)
+      try {
+        const r = await fetch(`${API}/v1/cities?limit=200`);
+        if (r.ok) {
+          const j = await r.json();
+          const data = j.data || j;
+          state.allCities = Array.isArray(data) ? data : (data.cities || []);
+          try { localStorage.setItem("tdp-cities-cache", JSON.stringify({ t: Date.now(), v: state.allCities })); } catch (e) {}
+        }
+      } catch (e) {
+        // Try cache
+        try { const c = JSON.parse(localStorage.getItem("tdp-cities-cache") || "null"); if (c && c.v) state.allCities = c.v; } catch (e2) {}
       }
-      searchResults.innerHTML = normalized.map((c, i) => {
-        const region = c.state_code ? `, ${c.state_code}` : "";
-        const countryDisplay = c.countryName || c.country || "";
-        return `
-          <button class="search-result" data-idx="${i}">
-            <div>
-              <div class="search-result-name">${c.name}${c.is_capital ? " ★" : ""}</div>
-              <div class="search-result-meta">${countryDisplay}${region} · ${c.tz || ""}</div>
-            </div>
-            <div class="search-result-meta">${(c.tz || "").split("/").pop().replace(/_/g, " ")}</div>
-          </button>
-        `;
-      }).join("");
-      setSearchOpen(true);
-      searchResults.querySelectorAll(".search-result[data-idx]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const idx = Number(btn.dataset.idx);
-          const c = normalized[idx];
-          if (c) {
-            setCity(c);
-            searchInput.value = "";
-            closeSearch();
+
+      // Build the user's city list (home + 5 defaults)
+      try {
+        const saved = JSON.parse(localStorage.getItem("tdp-cities") || "null");
+        if (Array.isArray(saved) && saved.length) state.citiesWithHome = saved;
+      } catch (e) {}
+      if (state.citiesWithHome.length === 0) {
+        const home = detectHome();
+        state.citiesWithHome = buildListWithHome(home);
+      }
+      renderRail();
+
+      // Fetch the optional features
+      const home0 = state.citiesWithHome[0];
+      if (state.features.sync) refreshSync();
+      if (state.features.sun && home0) {
+        fetchSunForCity(home0).then(sun => {
+          if (sun) {
+            const sp = document.getElementById("sun-pill");
+            sp.textContent = `Sunrise ${utcToLocal(sun.sunrise_utc || sun.sunrise, home0.tz, false)} · Sunset ${utcToLocal(sun.sunset_utc || sun.sunset, home0.tz, true)}`;
           }
         });
-      });
-    }
-
-    // ============================================================
-    // On-this-day
-    // ============================================================
-    async function refreshOnThisDay() {
-      const now = new Date();
-      const data = await fetchOnThisDay(now.getMonth() + 1, now.getDate());
-      const el = document.getElementById("onthisday-text");
-      const section = document.getElementById("onthisday");
-      if (!data) { el.innerHTML = "<strong>On this day</strong> · no entry on file"; return; }
-      const events = data.events || data.data?.events || (Array.isArray(data) ? data : []);
-      if (!events.length) {
-        // Hide the section if no events to avoid empty UI noise
-        section.style.display = "none";
-        return;
       }
-      section.style.display = "flex";
-      const ev = events[0];
-      const year = ev.year || (ev.date && ev.date.slice(0,4)) || "—";
-      const text = ev.text || ev.description || ev.title || "";
-      el.innerHTML = `<strong>On this day in ${year}</strong> — ${text}`;
-    }
+      if (state.features.onthisday) refreshOnThisDay();
 
-    // ============================================================
-    // Boot
-    // ============================================================
-    (async function init() {
-      // 1. Load cities cache (for fallback detection)
-      try {
-        const cached = localStorage.getItem("tdp-cities");
-        if (cached) state.cities = JSON.parse(cached);
-      } catch (e) {}
-      if (state.cities.length === 0) {
-        state.cities = await fetchAllCities();
-        try { localStorage.setItem("tdp-cities", JSON.stringify(state.cities)); } catch (e) {}
-      }
-
-      // 2. Detect city (or restore from localStorage)
-      let city = null;
-      try {
-        const saved = localStorage.getItem("tdp-city");
-        if (saved) city = JSON.parse(saved);
-      } catch (e) {}
-      if (!city) city = await detectCity();
-      setCity(city);
-
-      // 3. Sync accuracy (and re-measure every 30s)
-      refreshSync();
-      setInterval(refreshSync, 30_000);
-
-      // 4. On this day (and re-fetch daily)
-      refreshOnThisDay();
-      setTimeout(refreshOnThisDay, 60_000); // re-fetch in case midnight crosses
-
-      // 5. Start the rAF loop
+      // Start the rAF loop
       updateClock();
     })();
   </script>

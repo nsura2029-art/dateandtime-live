@@ -72,18 +72,37 @@
 ### 7. **Live data only**
 - **Time**: `new Date()` in the browser, `requestAnimationFrame` for 60fps tick.
 - **Per-city time**: computed in the browser with `Intl.DateTimeFormat` + the city's IANA tz.
-- **Sync accuracy**: round-trip against `/api/v1/time/now?tz=UTC`.
-- **Sunrise / sunset**: `/api/v1/time/sun?lat=…&lon=…&date=YYYY-MM-DD`, convert UTC → city-local.
-- **City search**: `/api/v2/search` (handles 13 edge cases: aliases, fuzzy, diacritics, disambiguation).
-- **City data**: `/api/v1/cities?limit=200` (cached in `localStorage`).
-- **On-this-day**: `/api/v1/onthisday?month=…&day=…` (curated, may be empty for some dates — handle gracefully).
+- **Sync accuracy**: round-trip against `/v1/time/now?tz=UTC` (when available on prod).
+- **Sunrise / sunset**: `/v1/time/sun?lat=…&lon=…&date=YYYY-MM-DD`, convert UTC → city-local (when available).
+- **City search**: `/v2/search` (handles 13 edge cases: aliases, fuzzy, diacritics, disambiguation — when available).
+- **City data**: `/v1/cities?limit=200` (cached in `localStorage`) — **the only endpoint guaranteed on production today**.
+- **On-this-day**: `/v1/onthisday?month=…&day=…` (curated, may be empty for some dates — when available).
 - **No new endpoints** without updating `docs/api/`.
 
-### 8. **3D globe page (parked)**
+### 8. **Production API — feature-by-feature deployment**
+
+The landing page is **production-only**. There is no dev reference in any deployed file. We do **not** big-bang deploy; we ship one feature at a time, gated by the corresponding endpoint being live on `https://api.dateandtime.live`.
+
+- **API base (hardcoded)**: `https://api.dateandtime.live`
+- **Probed on boot** (HEAD request; on 404, the feature UI hides gracefully):
+  - `/v1/time/now`  → sync row
+  - `/v1/time/sun`  → sunrise / sunset pill
+  - `/v1/onthisday` → on-this-day line
+  - `/v2/search`    → search bar (shows a soft note when disabled)
+- **Endpoint status** (current): only `/v1/cities` is live. Everything else 404s on prod. The page still works — it just shows fewer features. As you add each endpoint to the prod API, the matching feature auto-appears on next page load. **No code change needed.**
+- **Strategic rollout queue** (in order):
+  1. ✅ `/v1/cities` — done. The 5 default cities render.
+  2. ⏳ `/v1/time/now` — adds the "Your clock is X seconds behind" line.
+  3. ⏳ `/v1/time/sun` — adds the sunrise / sunset pill to the home city.
+  4. ⏳ `/v1/onthisday` — adds the "on this day in …" line.
+  5. ⏳ `/v2/search` — enables the search bar (currently shows a soft note).
+- **Cache**: cities list is cached in `localStorage.tdp-cities-cache` with a timestamp; future enhancement can add a TTL.
+
+### 9. **3D globe page (parked)**
 - Lives at `/globe/`. **Do not modify** until the user resumes that thread.
 - The landing page (`/`) is the active focus.
 
-### 9. **Page hierarchy**
+### 10. **Page hierarchy**
 - `/` — landing (this is the active design)
 - `/design-system/` — Widgetly + NotebookLM token reference
 - `/globe/` — parked, don't touch
