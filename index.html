@@ -1204,17 +1204,34 @@
 
     function updateClock() {
       const now = new Date();
-      const h = now.getHours();
+      const activeIdx = state.activeIdx != null ? state.activeIdx : 0;
+      const home = state.citiesWithHome[activeIdx] || state.citiesWithHome[0];
+      // Big clock shows the ACTIVE city's tz, not the browser's local
+      // time. The active city defaults to the home (position 0) and
+      // changes when the user clicks a rail card / search result /
+      // popular city. Using Intl.DateTimeFormat with the home tz gets
+      // the right hour/minute/second/weekday/date for the location.
+      const tz = home?.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit",
+        hour12: false, weekday: "short", day: "2-digit", month: "long", year: "numeric"
+      }).formatToParts(now);
+      const get = t => parts.find(p => p.type === t)?.value || "00";
+      const h = parseInt(get("hour"), 10);
+      const m = parseInt(get("minute"), 10);
+      const s = parseInt(get("second"), 10);
+      const wd = get("weekday");
+      const day = parseInt(get("day"), 10);
+      const monthName = get("month");
+      const year = get("year");
       const period = h >= 12 ? "PM" : "AM";
       const periodEl = document.getElementById("period");
       if (state.use24Hour) { periodEl.classList.add("is-hidden"); renderTwoDigits(hourDigits, h); }
       else { periodEl.classList.remove("is-hidden"); periodEl.textContent = period; renderTwoDigits(hourDigits, h % 12 || 12); }
-      renderTwoDigits(minuteDigits, now.getMinutes());
-      renderTwoDigits(secondDigits, now.getSeconds());
+      renderTwoDigits(minuteDigits, m);
+      renderTwoDigits(secondDigits, s);
       renderTwoDigits(hundredthDigits, Math.floor(now.getMilliseconds() / 10));
-      document.getElementById("day-date-text").textContent = `${WEEKDAYS[now.getDay()]}, ${MONTHS_LONG[now.getMonth()]} ${String(now.getDate()).padStart(2,"0")}, ${now.getFullYear()}`;
-      const home = state.citiesWithHome[0];
-      const tz = home?.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.getElementById("day-date-text").textContent = `${WEEKDAYS[wdToIndex(wd)]}, ${monthName} ${String(day).padStart(2,"0")}, ${year}`;
       document.getElementById("tz-abbr").textContent = tzAbbr(tz);
       document.getElementById("tz-offset").textContent = tzOffset(tz);
       document.getElementById("greeting-time").textContent = getGreeting(h);
