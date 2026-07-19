@@ -632,7 +632,7 @@
     // ============================================================
     // Constants
     // ============================================================
-    const API = 'https://api.dateandtime.live';
+    const API = 'https://dev.api.dateandtime.live';
     const DIGIT_PATTERNS = {
       0: ["a","b","c","d","e","f"],
       1: ["b","c"],
@@ -765,19 +765,18 @@
       // Round-trip against the API: measure server time vs local time
       const t0 = performance.now();
       try {
-        const res = await fetch(`${API}/api/v1/time/iso?tz=UTC`, { cache: "no-store" });
+        const res = await fetch(`${API}/api/v1/time/now?tz=UTC`, { cache: "no-store" });
         const t1 = performance.now();
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
-        const serverIso = json.iso || json.data?.iso || json.utc || json.data?.utc;
-        if (!serverIso) throw new Error("no iso field");
-        const serverTime = new Date(serverIso);
-        // Server time when response was received ≈ t1
+        const data = json.data || json;
+        // Prefer unix_ms (most precise)
+        let serverTime = null;
+        if (typeof data.unix_ms === "number") serverTime = new Date(data.unix_ms);
+        else if (typeof data.unix === "number") serverTime = new Date(data.unix * 1000);
+        else if (data.iso) serverTime = new Date(data.iso);
+        if (!serverTime) throw new Error("no time field");
         const localAtT1 = new Date();
-        // Local time when request was sent ≈ t0
-        const localAtT0 = new Date(t0);
-        // Best estimate of server time at t1: server time + (t1 - serverTime) / 2
-        // Simpler: just use (serverTime - localAtT1) as the offset, and round-trip / 2 as accuracy
         const offset = (serverTime - localAtT1) / 1000;
         const accuracy = (t1 - t0) / 2000; // half round-trip, in seconds
         return { offset, accuracy };
@@ -792,7 +791,8 @@
         const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
         const res = await fetch(`${API}/api/v1/time/sun?lat=${lat}&lon=${lon}&date=${dateStr}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
+        const json = await res.json();
+        return json.data || json;
       } catch (e) {
         console.warn("Sun fetch failed:", e);
         return null;
@@ -803,7 +803,8 @@
       try {
         const res = await fetch(`${API}/api/v1/onthisday?month=${month}&day=${day}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
+        const json = await res.json();
+        return json.data || json;
       } catch (e) {
         console.warn("On-this-day fetch failed:", e);
         return null;
@@ -812,13 +813,25 @@
 
     async function searchCities(q) {
       try {
+        // Try v2 search first (handles 13 edge cases per the API docs)
         const res = await fetch(`${API}/api/v2/search?q=${encodeURIComponent(q)}&limit=8`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
-        return json.data || json.results || json || [];
+        const data = json.data || json;
+        // v2 returns { results: [...], total, ... } or just an array
+        return data.results || data || [];
       } catch (e) {
-        console.warn("Search failed:", e);
-        return [];
+        // Fall back to v1 cities search
+        try {
+          const r2 = await fetch(`${API}/api/v1/cities/search?q=${encodeURIComponent(q)}&limit=8`);
+          if (!r2.ok) return [];
+          const j2 = await r2.json();
+          const d2 = j2.data || j2;
+          return (d2.cities || []).map(x => x.city || x);
+        } catch (e2) {
+          console.warn("Search failed:", e2);
+          return [];
+        }
       }
     }
 
@@ -827,7 +840,8 @@
         const res = await fetch(`${API}/api/v1/cities?limit=200`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
-        return json.data || json || [];
+        const data = json.data || json;
+        return (data.cities || data || []).map(c => c.city || c);
       } catch (e) {
         console.warn("Cities fetch failed:", e);
         return [];
@@ -876,14 +890,14 @@
       // 1. Try hardcoded map
       const hard = tzToCities(tz);
       if (hard) return hard[0];
-      // 2. Search the cities list
+      // 2. Search the cities list (timezone may be "America/New_York" or "America/New_York" — match exact)
       if (state.cities.length) {
-        const match = state.cities.find(c => c.tz === tz);
+        const match = state.cities.find(c => (c.tz || c.timezone) === tz);
         if (match) return match;
         // 3. Try matching by region prefix
         const region = tz.split("/")[1]?.replace(/_/g, " ");
         if (region) {
-          const m = state.cities.find(c => c.name.toLowerCase() === region.toLowerCase());
+          const m = state.cities.find(c => c.name?.toLowerCase() === region.toLowerCase());
           if (m) return m;
         }
       }
@@ -894,8 +908,10 @@
       if (!state.cities.length) return null;
       let best = null, bestDist = Infinity;
       for (const c of state.cities) {
-        if (typeof c.latitude !== "number" || typeof c.longitude !== "number") continue;
-        const d = Math.hypot(c.latitude - lat, c.longitude - lon);
+        const clat = c.latitude ?? c.lat;
+        const clon = c.longitude ?? c.lon;
+        if (typeof clat !== "number" || typeof clon !== "number") continue;
+        const d = Math.hypot(clat - lat, clon - lon);
         if (d < bestDist) { bestDist = d; best = c; }
       }
       return best;
@@ -925,20 +941,64 @@
     }
 
     // ============================================================
+    // City normalization (v1 and v2 APIs return different shapes)
+    // ============================================================
+    function normalizeCity(c) {
+      if (!c) return null;
+      // Country can be a string (v1) or an object { code, name } (v2)
+      let countryCode = null, countryName = null;
+      if (typeof c.country === "string") {
+        countryCode = c.country;
+        countryName = c.country;
+      } else if (c.country && typeof c.country === "object") {
+        countryCode = c.country.code || c.countryCode;
+        countryName = c.country.name || c.countryCode;
+      } else if (c.countryCode) {
+        countryCode = c.countryCode;
+        countryName = c.country;
+      }
+      // Coordinates
+      const lat = (typeof c.latitude === "number") ? c.latitude
+                : (typeof c.lat === "number") ? c.lat
+                : (c.coordinates && typeof c.coordinates.lat === "number") ? c.coordinates.lat
+                : parseFloat(c.latitude || c.lat || c.coordinates?.lat);
+      const lon = (typeof c.longitude === "number") ? c.longitude
+                : (typeof c.lon === "number") ? c.lon
+                : (c.coordinates && typeof c.coordinates.lon === "number") ? c.coordinates.lon
+                : parseFloat(c.longitude || c.lon || c.coordinates?.lon);
+      // Timezone
+      const tz = c.tz || c.timezone;
+      // State / region
+      const state_code = c.state_code || c.stateCode || c.state || c.region;
+      return {
+        id: c.id,
+        name: c.name || c.asciiName || c.ascii_name || "your city",
+        ascii_name: c.asciiName || c.ascii_name || c.name,
+        country: countryCode,
+        countryName: countryName,
+        state_code: state_code,
+        region: c.region,
+        tz: tz,
+        latitude: isNaN(lat) ? null : lat,
+        longitude: isNaN(lon) ? null : lon,
+        is_capital: c.is_capital || c.isCapital || 0
+      };
+    }
+
+    // ============================================================
     // State setters
     // ============================================================
     function setCity(city) {
+      city = normalizeCity(city) || city;
       state.city = city;
       const cityName = city.name || "your city";
-      const countryName = countryCodeToName(city.country) || city.country || "—";
-      const region = city.state_code || (city.region === "Americas" ? "" : city.region) || "";
+      const countryName = city.countryName || countryCodeToName(city.country) || city.country || "—";
+      const region = city.state_code || "";
 
       document.getElementById("greeting-city").textContent = cityName;
 
       // user-city-link: "City, State, Country" with city as a link-like underlined word
-      const cityLabel = region
-        ? `${cityName}, ${region}`
-        : cityName;
+      const cityLabel = region ? `${cityName}, ${region}` : cityName;
       document.getElementById("user-city-link").textContent = cityLabel;
       document.getElementById("user-country").textContent = countryName;
 
@@ -949,10 +1009,12 @@
         : countryName;
 
       // Refetch sun for the new city
-      const lat = city.latitude ?? city.lat;
-      const lon = city.longitude ?? city.lon;
+      const lat = city.latitude;
+      const lon = city.longitude;
       if (typeof lat === "number" && typeof lon === "number") {
         fetchSun(lat, lon, new Date()).then(updateSunPill);
+      } else {
+        document.getElementById("sun-pill").textContent = "Sunrise · Sunset —";
       }
 
       // Persist
@@ -967,18 +1029,48 @@
     function updateSunPill(data) {
       const el = document.getElementById("sun-pill");
       if (!data) { el.textContent = "Sunrise · Sunset —"; return; }
-      const sr = (data.sunrise || data.data?.sunrise || "").toString();
-      const ss = (data.sunset || data.data?.sunset || "").toString();
-      if (sr && ss) {
-        // Convert "04:42" to "4:42 AM" / "18:55" to "6:55 PM" in 12h
-        function to12(t) {
-          if (!t) return "—";
-          const [h, m] = t.split(":").map(Number);
-          const period = h >= 12 ? "PM" : "AM";
-          const h12 = ((h + 11) % 12) + 1;
-          return `${h12}:${String(m).padStart(2,"0")} ${period}`;
+      // API returns UTC times like "09:38 UTC" / "24:13 UTC" (24:13 means next-day 00:13)
+      // We need to convert to the city's local time
+      const city = state.city;
+      const srUtc = (data.sunrise_utc || data.sunrise || "").toString();
+      const ssUtc = (data.sunset_utc || data.sunset || "").toString();
+      const cityTz = city?.tz;
+
+      function utcStrToLocal12(utcStr, tz, isSunset = false) {
+        // Parse "09:38" or "24:13" as UTC time
+        const m = utcStr.match(/^(\d{1,2}):(\d{2})/);
+        if (!m) return "—";
+        let hh = parseInt(m[1], 10);
+        const mm = parseInt(m[2], 10);
+        const today = new Date();
+        // Build a UTC date for today at that HH:MM
+        const utc = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), hh, mm));
+        // Adjust for sunset "24:13" meaning next day
+        if (isSunset && hh >= 24) {
+          utc.setUTCDate(utc.getUTCDate() + 1);
+          utc.setUTCHours(utc.getUTCHours() - 24);
         }
-        el.textContent = `Sunrise: ${to12(sr)} · Sunset ${to12(ss)}`;
+        if (!tz) {
+          // Fall back to browser local
+          const local = utc;
+          const h12 = ((local.getHours() + 11) % 12) + 1;
+          const period = local.getHours() >= 12 ? "PM" : "AM";
+          return `${h12}:${String(local.getMinutes()).padStart(2,"0")} ${period}`;
+        }
+        // Format the UTC time in the target tz
+        try {
+          const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(utc);
+          const h = parts.find(p => p.type === "hour")?.value || "—";
+          const mn = parts.find(p => p.type === "minute")?.value || "—";
+          const p = parts.find(p => p.type === "dayPeriod")?.value || "";
+          return `${h}:${mn} ${p}`;
+        } catch (e) {
+          return "—";
+        }
+      }
+
+      if (srUtc && ssUtc) {
+        el.textContent = `Sunrise: ${utcStrToLocal12(srUtc, cityTz, false)} · Sunset ${utcStrToLocal12(ssUtc, cityTz, true)}`;
       } else {
         el.textContent = "Sunrise · Sunset —";
       }
@@ -1098,28 +1190,30 @@
 
     async function doSearch(q) {
       const results = await searchCities(q);
-      if (!results.length) {
+      const normalized = results.map(normalizeCity).filter(Boolean);
+      if (!normalized.length) {
         searchResults.innerHTML = `<button class="search-result" disabled><div><div class="search-result-name">No matches</div><div class="search-result-meta">Try another city or country</div></div></button>`;
         setSearchOpen(true);
         return;
       }
-      searchResults.innerHTML = results.map(c => {
+      searchResults.innerHTML = normalized.map((c, i) => {
         const region = c.state_code ? `, ${c.state_code}` : "";
+        const countryDisplay = c.countryName || c.country || "";
         return `
-          <button class="search-result" data-id="${c.id}">
+          <button class="search-result" data-idx="${i}">
             <div>
               <div class="search-result-name">${c.name}${c.is_capital ? " ★" : ""}</div>
-              <div class="search-result-meta">${c.country}${region} · ${c.tz}</div>
+              <div class="search-result-meta">${countryDisplay}${region} · ${c.tz || ""}</div>
             </div>
             <div class="search-result-meta">${(c.tz || "").split("/").pop().replace(/_/g, " ")}</div>
           </button>
         `;
       }).join("");
       setSearchOpen(true);
-      searchResults.querySelectorAll(".search-result[data-id]").forEach(btn => {
+      searchResults.querySelectorAll(".search-result[data-idx]").forEach(btn => {
         btn.addEventListener("click", () => {
-          const id = Number(btn.dataset.id);
-          const c = results.find(x => x.id === id);
+          const idx = Number(btn.dataset.idx);
+          const c = normalized[idx];
           if (c) {
             setCity(c);
             searchInput.value = "";
@@ -1136,12 +1230,18 @@
       const now = new Date();
       const data = await fetchOnThisDay(now.getMonth() + 1, now.getDate());
       const el = document.getElementById("onthisday-text");
-      if (!data) { el.textContent = "On this day · historical event loading…"; return; }
-      const events = data.data || data.events || (Array.isArray(data) ? data : []);
-      if (!events.length) { el.innerHTML = "<strong>On this day</strong> · no entry on file"; return; }
+      const section = document.getElementById("onthisday");
+      if (!data) { el.innerHTML = "<strong>On this day</strong> · no entry on file"; return; }
+      const events = data.events || data.data?.events || (Array.isArray(data) ? data : []);
+      if (!events.length) {
+        // Hide the section if no events to avoid empty UI noise
+        section.style.display = "none";
+        return;
+      }
+      section.style.display = "flex";
       const ev = events[0];
-      const year = ev.year || ev.date?.slice(0,4) || "—";
-      const text = ev.text || ev.description || ev.title || JSON.stringify(ev);
+      const year = ev.year || (ev.date && ev.date.slice(0,4)) || "—";
+      const text = ev.text || ev.description || ev.title || "";
       el.innerHTML = `<strong>On this day in ${year}</strong> — ${text}`;
     }
 
