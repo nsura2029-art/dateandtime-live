@@ -160,9 +160,7 @@
     .nav-link:hover { color: var(--color-primary); }
     .nav-link-active { color: var(--color-primary); }
     .nav-link-active::after { content: ""; position: absolute; left: 0.875rem; right: 0.875rem; bottom: 0.25rem; height: 1.5px; background: var(--color-nav-underline); border-radius: 9999px; }
-    .now-dot { display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: #10b981; margin-right: 0.4rem; vertical-align: middle; position: relative; }
-    .now-dot::after { content: ""; position: absolute; inset: -3px; border-radius: 9999px; background: #10b981; opacity: 0.3; animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
-    @keyframes ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
+    .now-dot { display: none; }
     .header-actions { display: inline-flex; align-items: center; gap: 0.5rem; }
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; font-size: 0.875rem; font-weight: 700; letter-spacing: -0.005em; transition: all 200ms ease; text-decoration: none; border: 1px solid transparent; height: 40px; padding: 0 1rem; cursor: pointer; border-radius: 9999px; }
     .btn-sm { height: 34px; padding: 0 0.75rem; font-size: 0.8125rem; }
@@ -181,13 +179,6 @@
        3D GLOBE PAGE
        ============================================================ */
     .globe-page { padding: 0 0 4rem; }
-    .globe-hero { padding: 2.5rem 0 0.5rem; }
-    .eyebrow { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 0 0 0.5rem; }
-    .meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-muted-soft); }
-    .display-1 { font-size: clamp(1.875rem, 4.5vw, 2.75rem); line-height: 1.1; letter-spacing: -0.04em; font-weight: 800; margin: 0.5rem 0 0.75rem; }
-    .lead { max-width: 42rem; font-size: 1.0625rem; color: var(--color-muted); margin: 0 0 1.5rem; }
-    .hero-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-bottom: 1.5rem; font-family: ui-monospace, monospace; font-size: 0.75rem; color: var(--color-muted-soft); }
-    .hero-meta-row strong { color: var(--color-foreground); font-weight: 700; }
 
     /* Globe + sidebar layout */
     .globe-layout {
@@ -274,7 +265,7 @@
     .search-result {
       width: 100%;
       text-align: left;
-      padding: 0.625rem 0.875rem;
+      padding: 0.5rem 0.875rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -284,8 +275,8 @@
     }
     .search-result:last-child { border-bottom: 0; }
     .search-result:hover, .search-result:focus { background: var(--color-background-soft); }
-    .search-result-name { font-weight: 600; font-size: 0.875rem; color: var(--color-foreground); }
-    .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
+    .search-result-name { font-weight: 600; font-size: 0.8125rem; color: var(--color-foreground); }
+    .search-result-time { font-family: ui-monospace, monospace; font-size: 0.8125rem; font-weight: 700; color: var(--color-led); }
 
     .globe-controls {
       display: inline-flex;
@@ -305,48 +296,21 @@
       border-radius: 9999px;
       color: var(--color-muted);
       transition: all 200ms ease;
+      position: relative;
     }
     .globe-controls button:hover { color: var(--color-foreground); background: var(--color-background-soft); }
-    .globe-controls button[aria-pressed="true"] { background: var(--color-button-primary); color: white; }
+    .globe-controls button[aria-pressed="true"] { color: var(--color-foreground); }
+    .globe-controls button[aria-pressed="true"]::after {
+      content: "";
+      position: absolute;
+      bottom: 4px; left: 50%;
+      width: 4px; height: 4px;
+      border-radius: 9999px;
+      background: var(--color-primary);
+      transform: translateX(-50%);
+    }
     .globe-controls button svg { width: 1rem; height: 1rem; }
 
-    /* Globe overlay: bottom bar (status) */
-    .globe-status {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-      right: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      z-index: 5;
-      pointer-events: none;
-    }
-    .globe-status > * { pointer-events: auto; }
-    .globe-hint {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.75rem;
-      background: color-mix(in srgb, var(--color-background) 80%, transparent);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--color-border);
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      color: var(--color-muted);
-      font-family: ui-monospace, monospace;
-    }
-    .globe-hint kbd {
-      font-family: ui-monospace, monospace;
-      font-size: 0.6875rem;
-      padding: 0.1rem 0.4rem;
-      background: var(--color-code-bg);
-      color: var(--color-foreground);
-      border-radius: 4px;
-      border: 1px solid var(--color-border-soft);
-    }
     .globe-loading {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
@@ -406,43 +370,35 @@
       padding: 1.25rem;
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
-    .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-    .panel-title { font-weight: 800; font-size: 0.875rem; letter-spacing: -0.01em; }
-    .panel-count { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted-soft); }
-    .panel-empty { color: var(--color-muted); font-size: 0.8125rem; padding: 1rem 0; text-align: center; }
+    .panel-flush { padding: 0.75rem; }
 
-    .pinned-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+    .pinned-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.125rem; }
     .pinned-item {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 0.625rem 0.75rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.625rem;
       border-radius: 0.5rem;
       transition: background-color 150ms ease;
+      cursor: pointer;
     }
     .pinned-item:hover { background: var(--color-background-soft); }
-    .pinned-info { flex: 1; min-width: 0; }
-    .pinned-name { font-weight: 600; font-size: 0.875rem; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .pinned-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .pinned-time { font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.875rem; color: var(--color-led); text-align: right; }
+    .pinned-code { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; color: var(--color-muted); letter-spacing: 0.05em; }
+    .pinned-time { font-family: ui-monospace, monospace; font-weight: 700; font-size: 1rem; color: var(--color-led); text-align: right; letter-spacing: 0.02em; }
     .pinned-remove {
       flex-shrink: 0;
-      width: 24px; height: 24px;
+      width: 22px; height: 22px;
       display: inline-flex; align-items: center; justify-content: center;
       color: var(--color-muted-soft);
       border-radius: 9999px;
       transition: all 150ms ease;
     }
     .pinned-remove:hover { background: color-mix(in srgb, #f97316 15%, transparent); color: #f97316; }
-    .pinned-remove svg { width: 0.875rem; height: 0.875rem; }
+    .pinned-remove svg { width: 0.8125rem; height: 0.8125rem; }
 
-    .legend { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8125rem; }
-    .legend-row { display: flex; align-items: center; gap: 0.625rem; color: var(--color-muted); }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-    /* Footer */
-    .site-footer { border-top: 1px solid var(--color-border); margin-top: 4rem; padding: 2rem 0 3rem; }
-    .footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    .footer-row p { margin: 0; font-size: 0.875rem; color: var(--color-muted); }
-    .footer-row .meta { font-size: 0.6875rem; }
+    .panel-empty { padding: 0.5rem; text-align: center; }
+    .panel-empty-time { font-family: ui-monospace, monospace; font-size: 0.875rem; color: var(--color-muted-soft); letter-spacing: 0.1em; }
 
     /* Responsive */
     @media (max-width: 1023px) and (min-width: 761px) {
@@ -457,12 +413,8 @@
       .btn-sm { height: 32px; padding: 0 0.625rem; font-size: 0.75rem; }
       .logo-text { font-size: 1rem; }
       .logo-mark { width: 28px; height: 28px; font-size: 0.8125rem; }
-      .globe-hero { padding: 1.5rem 0 0.5rem; }
       .globe-stage { aspect-ratio: 1 / 1; max-height: 80vh; }
       .globe-topbar { top: 0.5rem; left: 0.5rem; right: 0.5rem; }
-      .globe-status { bottom: 0.5rem; left: 0.5rem; right: 0.5rem; }
-      .display-1 { font-size: clamp(1.5rem, 7vw, 2rem); }
-      .lead { font-size: 0.9375rem; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -479,53 +431,29 @@
         <span class="logo-text">TimeAndDatePro</span>
       </a>
       <nav class="nav-main" aria-label="Main">
-        <a href="/index.html" class="nav-link">Today</a>
-        <a href="#globe" class="nav-link nav-link-active"><span class="now-dot" aria-hidden="true"></span>3D Globe</a>
-        <a href="#" class="nav-link">Meeting finder</a>
-        <a href="#" class="nav-link">World clock</a>
-        <a href="#" class="nav-link">Blog</a>
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="#globe" class="nav-link nav-link-active">Globe</a>
       </nav>
       <div class="header-actions">
         <div class="theme-toggle" role="group" aria-label="Theme">
-          <button id="theme-light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+          <button id="theme-light" aria-pressed="true" aria-label="Light">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
           </button>
-          <button id="theme-dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+          <button id="theme-dark" aria-pressed="false" aria-label="Dark">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </button>
         </div>
-        <a href="/" class="btn btn-ghost btn-sm">Home</a>
-        <a href="#" class="btn btn-primary btn-sm">Get started</a>
       </div>
     </div>
   </header>
 
   <main class="globe-page">
-    <div class="container globe-hero">
-      <p class="eyebrow">Live · 190 cities · IANA timezones</p>
-      <h1 class="display-1">
-        The world, in <span class="text-gradient">3D</span>. Click any city.
-      </h1>
-      <p class="lead">
-        Drag to spin, scroll to zoom, click a marker to pin it. Day/night terminator
-        follows the real sun. Times are computed in your browser from each city's IANA timezone.
-      </p>
-      <div class="hero-meta-row">
-        <span><strong id="hero-city-count">—</strong> cities loaded</span>
-        <span>·</span>
-        <span><strong id="hero-pinned-count">0</strong> pinned</span>
-        <span>·</span>
-        <span>Live time: <strong id="hero-now" class="text-foreground">—</strong></span>
-      </div>
-    </div>
-
     <div class="container">
       <div class="globe-layout">
         <!-- Globe -->
         <div class="globe-stage" id="globe-stage">
           <div class="globe-loading" id="globe-loading">
             <div class="globe-spinner"></div>
-            <span>Loading 190 cities…</span>
           </div>
           <div id="globe-canvas"></div>
 
@@ -535,7 +463,7 @@
                 id="search"
                 class="search-input"
                 type="search"
-                placeholder="Search cities (e.g. Tokyo, Lagos, Reykjavík)…"
+                placeholder="Search…"
                 autocomplete="off"
                 spellcheck="false"
               />
@@ -543,23 +471,17 @@
               <div class="search-results" id="search-results" role="listbox"></div>
             </div>
 
-            <div class="globe-controls" role="group" aria-label="Globe controls">
-              <button id="toggle-daynight" aria-pressed="true" title="Toggle day/night overlay" aria-label="Toggle day/night overlay">
+            <div class="globe-controls" role="group" aria-label="Controls">
+              <button id="toggle-daynight" aria-pressed="true" aria-label="Day/night">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               </button>
-              <button id="toggle-autorotate" aria-pressed="true" title="Toggle auto-rotation" aria-label="Toggle auto-rotation">
+              <button id="toggle-autorotate" aria-pressed="true" aria-label="Auto-rotate">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
               </button>
-              <button id="reset-view" title="Reset view" aria-label="Reset view">
+              <button id="reset-view" aria-label="Reset">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
               </button>
             </div>
-          </div>
-
-          <div class="globe-status">
-            <span class="globe-hint">
-              <span>Drag</span> <span>·</span> <span>Scroll to zoom</span> <span>·</span> <span>Click city to pin</span>
-            </span>
           </div>
 
           <div class="globe-tooltip" id="globe-tooltip" role="tooltip"></div>
@@ -567,50 +489,15 @@
 
         <!-- Sidebar -->
         <aside class="sidebar">
-          <div class="panel">
-            <div class="panel-head">
-              <span class="panel-title">Pinned cities</span>
-              <span class="panel-count" id="pinned-count">0</span>
-            </div>
+          <div class="panel panel-flush">
             <ul class="pinned-list" id="pinned-list"></ul>
             <div class="panel-empty" id="pinned-empty">
-              Click any city on the globe to pin it. Pinned cities show live time here.
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-head">
-              <span class="panel-title">Legend</span>
-            </div>
-            <div class="legend">
-              <div class="legend-row">
-                <span class="legend-dot" style="background: var(--globe-marker);"></span>
-                <span>City marker</span>
-              </div>
-              <div class="legend-row">
-                <span class="legend-dot" style="background: var(--globe-marker-pinned);"></span>
-                <span>Pinned city</span>
-              </div>
-              <div class="legend-row">
-                <span class="legend-dot" style="background: var(--globe-ring); box-shadow: 0 0 0 3px color-mix(in srgb, var(--globe-ring) 25%, transparent);"></span>
-                <span>Selected / hovered</span>
-              </div>
-              <div class="legend-row">
-                <span class="legend-dot" style="background: linear-gradient(90deg, #f97316 0%, #1e293b 50%, #0f172a 100%);"></span>
-                <span>Day / night terminator</span>
-              </div>
+              <div class="panel-empty-time">--:--:--</div>
             </div>
           </div>
         </aside>
       </div>
     </div>
-
-    <footer class="site-footer">
-      <div class="container footer-row">
-        <p>© 2026 TimeAndDatePro · 3D Globe</p>
-        <p class="meta">v0.1 · powered by <a href="https://github.com/vasturiano/globe.gl" style="color: var(--color-primary);">globe.gl</a></p>
-      </div>
-    </footer>
   </main>
 
   <script type="module">
@@ -621,9 +508,7 @@
     // ============================================================
     let cities = [];
     let pinned = new Set();
-    let showDayNight = true;
     let autoRotate = true;
-    let selectedCity = null;
 
     // ============================================================
     // Theme toggle (set up before first render)
@@ -657,7 +542,6 @@
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed) && parsed.length > 0) {
             cities = parsed;
-            document.getElementById('hero-city-count').textContent = cities.length;
             initGlobe();
           }
         }
@@ -672,13 +556,11 @@
         if (Array.isArray(list) && list.length > 0) {
           cities = list;
           try { localStorage.setItem(CACHE_KEY, JSON.stringify(list)); } catch (e) {}
-          document.getElementById('hero-city-count').textContent = cities.length;
           if (globe) buildGlobeLayers();
         }
       } catch (e) {
         console.warn('City fetch failed, using cache or fallback', e);
         if (cities.length === 0) {
-          // Hard fallback: a few major cities
           cities = [
             { name: 'London', country: 'GB', tz: 'Europe/London', latitude: 51.5074, longitude: -0.1278, is_capital: 1 },
             { name: 'New York', country: 'US', tz: 'America/New_York', latitude: 40.7128, longitude: -74.0060, is_capital: 0 },
@@ -691,7 +573,6 @@
             { name: 'Reykjavík', country: 'IS', tz: 'Atlantic/Reykjavik', latitude: 64.1466, longitude: -21.9426, is_capital: 1 },
             { name: 'Singapore', country: 'SG', tz: 'Asia/Singapore', latitude: 1.3521, longitude: 103.8198, is_capital: 1 },
           ];
-          document.getElementById('hero-city-count').textContent = cities.length;
           initGlobe();
         }
       }
@@ -700,12 +581,6 @@
     // ============================================================
     // Live time helper (per city, IANA timezone, computed in browser)
     // ============================================================
-    const timeFmt = new Intl.DateTimeFormat('en-GB', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-    });
-    const dayFmt = new Intl.DateTimeFormat('en-US', {
-      weekday: 'short', day: '2-digit', month: 'short'
-    });
     function timeIn(tz) {
       try {
         const parts = new Intl.DateTimeFormat('en-GB', {
@@ -714,10 +589,6 @@
         const get = (t) => parts.find(p => p.type === t)?.value || '00';
         return `${get('hour')}:${get('minute')}:${get('second')}`;
       } catch (e) { return '--:--:--'; }
-    }
-    function dayIn(tz) {
-      try { return dayFmt.format(new Date(new Date().toLocaleString('en-US', { timeZone: tz }))); }
-      catch (e) { return ''; }
     }
 
     // ============================================================
@@ -742,12 +613,7 @@
         .pointColor(d => pinned.has(d.id) ? 'rgba(249,115,22,0.95)' : 'rgba(91,74,175,0.9)')
         .pointResolution(8)
         .pointLabel(d => {
-          const t = timeIn(d.tz);
-          return `<div style="font-family: Inter, sans-serif; font-size: 12px; line-height: 1.4;">
-            <strong>${d.name}</strong> ${d.is_capital ? '★' : ''}<br/>
-            <span style="opacity: .7;">${d.country} · ${d.tz}</span><br/>
-            <strong style="color: #f97316;">${t}</strong>
-          </div>`;
+          return `<div style="font-family: ui-monospace, monospace; font-size: 12px; font-weight: 700; color: #f97316; text-shadow: 0 0 4px rgba(0,0,0,0.6); white-space: nowrap;">${timeIn(d.tz)}</div>`;
         })
         .onPointClick((d) => {
           togglePin(d);
@@ -777,7 +643,6 @@
         .onGlobeReady(() => {
           document.getElementById('globe-loading').classList.add('is-hidden');
           setTimeout(() => document.getElementById('globe-loading').remove(), 600);
-          applyDayNight(showDayNight);
           startLiveTick();
         });
 
@@ -792,35 +657,6 @@
       if (!globe) return;
       globe.pointsData(cities);
       globe.customLayerData(cities.map(c => ({ ...c, _type: 'marker' })));
-      // Refresh the time labels
-      const tlabels = globe.htmlElementsData();
-      tlabels.forEach(t => { t._time = timeIn(t.tz); });
-      globe.htmlElementsData(tlabels);
-    }
-
-    // ============================================================
-    // Day/night terminator (custom shader via customLayerData)
-    // ============================================================
-    function applyDayNight(enabled) {
-      if (!globe) return;
-      const sunPos = getSunPosition(new Date());
-      // Globe.gl doesn't have a built-in day/night texture, but we can
-      // use a custom THREE.Mesh shader. To keep this self-contained,
-      // we toggle a CSS overlay gradient on the canvas.
-      if (enabled) {
-        container.style.background = '';
-      } else {
-        container.style.background = 'transparent';
-      }
-    }
-
-    // Simple sun position (good enough for visual day/night approximation)
-    function getSunPosition(date) {
-      const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
-      const declination = 23.44 * Math.PI / 180 * Math.sin(2 * Math.PI * (dayOfYear - 81) / 365);
-      const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
-      const longitude = -(hours - 12) * 15; // sun is at +15°/hour from -180° at noon UTC
-      return { lat: declination * 180 / Math.PI, lng: longitude };
     }
 
     // ============================================================
@@ -850,11 +686,7 @@
     function renderPinned() {
       const list = document.getElementById('pinned-list');
       const empty = document.getElementById('pinned-empty');
-      const count = document.getElementById('pinned-count');
-      const heroCount = document.getElementById('hero-pinned-count');
       const pinnedCities = cities.filter(c => pinned.has(c.id));
-      count.textContent = pinnedCities.length;
-      heroCount.textContent = pinnedCities.length;
       if (pinnedCities.length === 0) {
         list.innerHTML = '';
         empty.style.display = 'block';
@@ -862,13 +694,10 @@
       }
       empty.style.display = 'none';
       list.innerHTML = pinnedCities.map(c => `
-        <li class="pinned-item" data-id="${c.id}">
-          <div class="pinned-info">
-            <div class="pinned-name">${c.name} ${c.is_capital ? '★' : ''}</div>
-            <div class="pinned-tz">${c.country} · ${c.tz}</div>
-          </div>
-          <div class="pinned-time" data-tz="${c.tz}">--:--:--</div>
-          <button class="pinned-remove" data-remove="${c.id}" aria-label="Remove ${c.name}">
+        <li class="pinned-item" data-id="${c.id}" title="${c.name} (${c.tz})">
+          <span class="pinned-code">${(c.id === 5128581 ? 'NYC' : c.country || '·').slice(0,3).toUpperCase()}</span>
+          <span class="pinned-time" data-tz="${c.tz}">--:--:--</span>
+          <button class="pinned-remove" data-remove="${c.id}" aria-label="Remove">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </li>
@@ -894,12 +723,10 @@
     }
 
     // ============================================================
-    // Live tick (update time labels and pinned times every second)
+    // Live tick (update pinned times every second)
     // ============================================================
     function startLiveTick() {
       function tick() {
-        const now = new Date();
-        document.getElementById('hero-now').textContent = timeIn(Intl.DateTimeFormat().resolvedOptions().timeZone);
         document.querySelectorAll('[data-tz]').forEach(el => {
           el.textContent = timeIn(el.dataset.tz);
         });
@@ -928,17 +755,14 @@
         c.country.toLowerCase().includes(q)
       ).slice(0, 10);
       if (matches.length === 0) {
-        searchResults.innerHTML = `<div class="search-result"><div><div class="search-result-name">No matches</div><div class="search-result-meta">Try another city name or country</div></div></div>`;
+        searchResults.innerHTML = `<div class="search-result"><div class="search-result-name">—</div></div>`;
         setSearchOpen(true);
         return;
       }
       searchResults.innerHTML = matches.map(c => `
         <button class="search-result" data-id="${c.id}">
-          <div>
-            <div class="search-result-name">${c.name} ${c.is_capital ? '★' : ''}</div>
-            <div class="search-result-meta">${c.country} · ${c.tz}</div>
-          </div>
-          <div class="search-result-meta" data-tz="${c.tz}">${timeIn(c.tz)}</div>
+          <span class="search-result-name">${c.name}</span>
+          <span class="search-result-time" data-tz="${c.tz}">${timeIn(c.tz)}</span>
         </button>
       `).join('');
       setSearchOpen(true);
@@ -964,9 +788,7 @@
     // Controls
     // ============================================================
     document.getElementById('toggle-daynight').addEventListener('click', (e) => {
-      showDayNight = !showDayNight;
-      e.currentTarget.setAttribute('aria-pressed', String(showDayNight));
-      applyDayNight(showDayNight);
+      e.currentTarget.setAttribute('aria-pressed', String(e.currentTarget.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'));
     });
     document.getElementById('toggle-autorotate').addEventListener('click', (e) => {
       autoRotate = !autoRotate;
