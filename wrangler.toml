@@ -16,3 +16,9 @@ exclude = [
   "**/src/**",
   ".gitignore"
 ]
+
+# Development environment — deploys to the dateandtime-live-dev Worker.
+# Source is the same as production (the [assets] block above); only the
+# Worker name differs so the dev URL stays separate.
+[env.dev]
+name = "dateandtime-live-dev"

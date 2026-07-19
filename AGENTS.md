@@ -125,6 +125,82 @@ The landing page is **production-only**. There is no dev reference in any deploy
 
 ---
 
+## Branching & deployment workflow (LOCKED 2026-07-19)
+
+The repo has **two long-lived branches** (`main` + `develop`) and **one short-lived branch per feature** (`feature/*`). Each one maps to a different Cloudflare Worker.
+
+| Branch      | Worker                | URL                                                          | Purpose                                       |
+|-------------|----------------------|--------------------------------------------------------------|-----------------------------------------------|
+| `main`      | `dateandtime-live`   | `https://dateandtime.live`                                   | **Production** — what the public sees          |
+| `develop`   | `dateandtime-live-dev` | `https://dateandtime-live-dev.nsura2029.workers.dev`        | **Dev** — integration branch, pre-prod preview |
+| `feature/*` | `dateandtime-live-dev` | `https://dateandtime-live-dev.nsura2029.workers.dev`        | **Feature preview** — replaces dev during work |
+
+A single feature preview URL. While a feature branch is checked out and deployed, the dev URL serves *that feature*'s content. Once the feature is merged into `develop` and the dev URL is re-deployed from `develop`, the dev URL serves develop's content again. Then `develop` → `main` when the next prod release ships.
+
+### Lifecycle of a feature
+
+1. **Branch from `develop`** (never from `main`):
+   ```bash
+   cd /workspace/dateandtime-live
+   git fetch origin
+   git worktree add .worktrees/feature-<name> -b feature/<name> origin/develop
+   cd .worktrees/feature-<name>
+   ```
+2. **Build + commit** in the worktree. Work freely; commits on `feature/*` are throwaway until merged.
+3. **Deploy the feature to the dev Worker** (from the worktree):
+   ```bash
+   npx wrangler deploy --env dev
+   ```
+   The dev URL now serves your feature. Verify visually and via `curl`.
+4. **Iterate** — make changes, commit, redeploy. The dev URL always reflects the latest commit on the checked-out branch.
+5. **Merge to `develop`** when the feature is good:
+   ```bash
+   cd /workspace/dateandtime-live        # back to the main checkout
+   git fetch origin
+   git checkout develop
+   git merge --ff-only feature/<name>   # must be fast-forward
+   git push <PAT> origin develop
+   git worktree remove --force .worktrees/feature-<name>
+   git branch -d feature/<name>
+   git push <PAT> origin --delete feature/<name>
+   ```
+6. **Redeploy `develop` to the dev Worker** so the dev URL now serves the integrated content:
+   ```bash
+   git checkout develop
+   npx wrangler deploy --env dev
+   ```
+7. **Promote `develop` to `main` for prod** when the next release ships:
+   ```bash
+   git checkout main
+   git merge --ff-only develop
+   git push <PAT> origin main
+   npx wrangler deploy                   # no --env → deploys to prod Worker
+   ```
+
+### Rules (always)
+
+- **Never commit directly to `main` or `develop`.** Always go through a `feature/*` worktree.
+- **Never `--no-ff` or non-fast-forward merge.** Use `--ff-only` so the feature branch is effectively rebased into develop.
+- **One feature per branch.** Don't stack multiple features on a single `feature/x`.
+- **The dev Worker is shared.** Only one `feature/*` can be deployed to it at a time. If two features are in flight, deploy-then-merge-then-deploy-then-start-next.
+- **No direct prod deploys.** Always `develop` → `main` → `wrangler deploy` (no `--env`).
+- **API endpoints still deploy feature-by-feature** (per §8). The branch workflow handles *page* changes; the API endpoint workflow handles *data* changes. They're independent.
+
+### Deploy cheat sheet
+
+```bash
+# From a feature worktree — deploys to the DEV URL
+npx wrangler deploy --env dev
+
+# From develop (main checkout) — deploys to the DEV URL
+git checkout develop && npx wrangler deploy --env dev
+
+# From main (main checkout) — deploys to the PROD URL
+git checkout main    && npx wrangler deploy
+```
+
+---
+
 ## File map
 
 ```
@@ -133,8 +209,9 @@ dateandtime-live/
 ├── design-system/index.html
 ├── globe/index.html        ← parked
 ├── docs/api/
+├── docs/ROLLOUT.md         ← API feature rollout queue
 ├── favicon.svg
 ├── src/index.js
-├── wrangler.toml
+├── wrangler.toml           ← prod + dev envs
 └── AGENTS.md               ← this file
 ```
