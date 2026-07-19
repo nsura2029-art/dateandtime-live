@@ -1681,6 +1681,11 @@
       // Wire the feedback prompt
       setupFeedbackPrompt();
 
+      // Render the pills (DST, holiday, etc.) for the home city on first load.
+      // Without this, the DST pill stays as its placeholder "—" until the
+      // user clicks a rail card / popular city / search result.
+      renderActiveCityPills();
+
       // Start the rAF loop
       updateClock();
     })();
