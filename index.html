@@ -997,24 +997,33 @@
         // API returns camelCase (countryCode, asciiName, etc.) but the rail
         // expects snake_case. Map both shapes for compatibility.
         const cName = c.name || "";
-        const cCountry = c.country || c.countryCode || c.countryName || "";
+        const cCountry = c.countryName || c.country || c.countryCode || "";
         const cCountryCode = c.countryCode || c.country || "";
         const cState = c.state_code || c.stateCode || "";
+        const cStateName = c.state_name || c.stateName || c.admin1_name || c.admin1Name || "";
         const cTz = c.tz || c.timezone || "";
         const cPop = c.population || 0;
         const cCapital = !!(c.is_capital || c.isCapital);
         const flag = countryFlag(cCountryCode);
-        // Compact timezone label (last segment) — "Kolkata" from "Asia/Kolkata"
-        const tzCity = cTz.split("/").pop().replace(/_/g, " ");
+        // Resolve a friendly state name (API field, then static map, then code)
+        const stateLabel = cStateName
+          || stateCodeToName(cCountryCode, cState)
+          || cState
+          || "";
         // Population formatted compactly: 16.3M, 547K, 12K
         const popStr = cPop >= 1000000 ? (cPop / 1000000).toFixed(1) + "M"
                      : cPop >= 1000    ? Math.round(cPop / 1000) + "K"
                      : cPop > 0        ? String(cPop) : "";
+        // Build the meta line: "Country · State · Population".
+        // We dropped the tzCity ("Paris" from "Europe/Paris") because it
+        // duplicated the city name on the main line and was confusing.
+        const metaParts = [cCountry, stateLabel, popStr].filter(Boolean).map(escapeHtml);
+        const meta = metaParts.join(" · ");
         return `
         <button class="search-result" data-idx="${i}">
           <div>
             <div class="search-result-name">${escapeHtml(cName)}${cCapital ? " ★" : ""}</div>
-            <div class="search-result-meta">${escapeHtml(cCountry)}${cState ? " · " + escapeHtml(cState) : ""} · ${escapeHtml(tzCity)}${popStr ? " · " + escapeHtml(popStr) : ""}</div>
+            <div class="search-result-meta">${meta}</div>
           </div>
           <div class="search-result-flag" aria-label="${escapeHtml(cCountryCode)}" title="${escapeHtml(cCountryCode)}">${flag || escapeHtml(cCountryCode)}</div>
         </button>
