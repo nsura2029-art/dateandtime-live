@@ -53,9 +53,78 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Same-origin proxy: /api/cities -> https://api.dateandtime.live/api/v1/cities
+    // Same-origin proxies (dev domains need this to bypass CORS):
+    //   /api/cities          -> /api/v1/cities
+    //   /api/countries       -> /api/v1/countries
+    //   /api/holidays/today  -> /api/v1/holidays/today
+    //   /api/holidays        -> /api/v1/holidays
+    //   /api/onthisday       -> /api/v1/onthisday
+    //   /api/dst/upcoming    -> /api/v1/dst/upcoming
+    //   /api/cities/:id/climate -> /api/v1/cities/:id/climate
+    //   /api/cities/:id/aliases -> /api/v1/cities/:id/aliases
+    //   /api/countries/:cca2/working-hours -> /api/v1/countries/:cca2/working-hours
+    //   /api/countries/:cca2/cities -> /api/v1/countries/:cca2/cities
+    //   /api/admin/data-quality -> /api/v1/admin/data-quality
+    //   /api/feedback/top    -> /api/v1/feedback/top
+    //   /api/search          -> /api/v2/search
     if (url.pathname === "/api/cities") {
       return proxySimple(request, url, "/api/v1/cities");
+    }
+    if (url.pathname === "/api/countries") {
+      return proxySimple(request, url, "/api/v1/countries");
+    }
+    if (url.pathname === "/api/holidays/today") {
+      return proxySimple(request, url, "/api/v1/holidays/today");
+    }
+    if (url.pathname === "/api/holidays") {
+      return proxySimple(request, url, "/api/v1/holidays");
+    }
+    if (url.pathname === "/api/holidays/upcoming") {
+      return proxySimple(request, url, "/api/v1/holidays/upcoming");
+    }
+    if (url.pathname === "/api/onthisday") {
+      return proxySimple(request, url, "/api/v1/onthisday");
+    }
+    if (url.pathname === "/api/dst/upcoming") {
+      return proxySimple(request, url, "/api/v1/dst/upcoming");
+    }
+    if (url.pathname === "/api/search") {
+      return proxySimple(request, url, "/api/v2/search");
+    }
+    if (url.pathname === "/api/admin/data-quality") {
+      return proxySimple(request, url, "/api/v1/admin/data-quality");
+    }
+    if (url.pathname === "/api/feedback/top") {
+      return proxySimple(request, url, "/api/v1/feedback/top");
+    }
+    const cityClimateMatch = url.pathname.match(/^\/api\/cities\/(\d+)\/climate$/);
+    if (cityClimateMatch) {
+      return proxySimple(request, url, `/api/v1/cities/${cityClimateMatch[1]}/climate`);
+    }
+    const cityAliasesMatch = url.pathname.match(/^\/api\/cities\/(\d+)\/aliases$/);
+    if (cityAliasesMatch) {
+      return proxySimple(request, url, `/api/v1/cities/${cityAliasesMatch[1]}/aliases`);
+    }
+    const workingHoursMatch = url.pathname.match(/^\/api\/countries\/([A-Z]{2})\/working-hours$/i);
+    if (workingHoursMatch) {
+      return proxySimple(request, url, `/api/v1/countries/${workingHoursMatch[1].toUpperCase()}/working-hours`);
+    }
+    const countryCitiesMatch = url.pathname.match(/^\/api\/countries\/([A-Z]{2})\/cities$/i);
+    if (countryCitiesMatch) {
+      return proxySimple(request, url, `/api/v1/countries/${countryCitiesMatch[1].toUpperCase()}/cities`);
+    }
+    // POST /api/feedback/:id/vote  (body forwarded, only POST allowed)
+    const voteMatch = url.pathname.match(/^\/api\/feedback\/(\d+)\/vote$/);
+    if (voteMatch) {
+      return proxyPost(request, url, `/api/v1/feedback/${voteMatch[1]}/vote`);
+    }
+    // POST /api/feedback  (create new feedback)
+    if (url.pathname === "/api/feedback" && request.method === "POST") {
+      return proxyPost(request, url, "/api/v1/feedback");
+    }
+    // GET /api/feedback (admin list)
+    if (url.pathname === "/api/feedback" && request.method === "GET") {
+      return proxySimple(request, url, "/api/v1/feedback");
     }
 
     // Local time source: /api/time/now returns the worker's current time so
@@ -137,6 +206,33 @@ async function proxySimple(request, url, upstreamPath) {
         "content-type": r.headers.get("content-type") || "application/json",
         "access-control-allow-origin": "*",
         "cache-control": "public, max-age=300"
+      }
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "upstream_unavailable" }), {
+      status: 502,
+      headers: { "content-type": "application/json", "access-control-allow-origin": "*" }
+    });
+  }
+}
+
+async function proxyPost(request, url, upstreamPath) {
+  const upstream = `https://api.dateandtime.live${upstreamPath}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}`;
+  let body;
+  try { body = await request.text(); } catch (e) {}
+  try {
+    const r = await fetch(upstream, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: body || "{}"
+    });
+    const respBody = await r.text();
+    return new Response(respBody, {
+      status: r.status,
+      headers: {
+        "content-type": r.headers.get("content-type") || "application/json",
+        "access-control-allow-origin": "*",
+        "cache-control": "no-store"
       }
     });
   } catch (e) {

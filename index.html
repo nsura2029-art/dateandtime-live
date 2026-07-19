@@ -13,7 +13,14 @@
     /api/v1/cities        ✓  live — 5,081 cities, 194 countries, 312 IANA tzs
     /api/v1/time/now      ✓  live — sync row shows real values
     /api/v1/time/sun      ✓  live — sunrise pill shows real sunrise/sunset
-    /api/v1/onthisday     ⚠  live (empty) — placeholder for Phase 2
+    /api/v1/onthisday     ✓  live — 50 curated events (Apollo 11, Moon landing, etc.)
+    /api/v1/holidays      ✓  live — 880 rows / 15 countries (Nager.Date)
+    /api/v1/dst/upcoming  ✓  live — next DST transition per tz
+    /api/v1/cities/:id/climate ✓  live — 33,945 cities × 12 months
+    /api/v1/cities/:id/aliases ✓  live — historical place_redirects
+    /api/v1/countries/:cca2/working-hours ✓  live — 21 countries
+    /api/v1/countries/:cca2/cities  ✓  live — country → admin1 → cities
+    /api/v1/feedback      ✓  live — POST creates, GET lists
     /api/v2/search        ✓  live — FTS5 with aliases ("nyc"→New York, "big smoke"→London)
 
   Production-only. No dev references in this file.
@@ -263,6 +270,22 @@
 
     /* ===== Popular cities (below the search input) ===== */
     .popular-cities-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1rem 0 0.625rem; text-align: left; }
+    /* ---- Feedback prompt (floating, contextual CTA) ---- */
+    .feedback-prompt { position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 50; }
+    .feedback-pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.9rem; border-radius: 999px; background: var(--color-card-bg); color: var(--color-foreground); border: 1px solid var(--color-pill-border); box-shadow: 0 4px 14px rgba(0,0,0,0.10); font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease; font-family: inherit; }
+    .feedback-pill:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.14); }
+    .feedback-pill svg { width: 14px; height: 14px; }
+    .feedback-panel { position: absolute; bottom: calc(100% + 0.5rem); right: 0; width: min(340px, calc(100vw - 2.5rem)); background: var(--color-card-bg); border: 1px solid var(--color-pill-border); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.18); padding: 1rem; display: none; flex-direction: column; gap: 0.6rem; }
+    .feedback-panel.is-open { display: flex; }
+    .feedback-panel h3 { margin: 0; font-size: 0.95rem; font-weight: 600; }
+    .feedback-panel p.hint { margin: 0; font-size: 0.75rem; color: var(--color-muted); }
+    .feedback-panel select, .feedback-panel input, .feedback-panel textarea { width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--color-pill-border); border-radius: 6px; background: var(--color-bg); color: var(--color-foreground); font-family: inherit; font-size: 0.8125rem; }
+    .feedback-panel textarea { min-height: 70px; resize: vertical; }
+    .feedback-panel .submit-row { display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center; }
+    .feedback-panel button.submit { background: var(--color-primary); color: #fff; border: 0; padding: 0.55rem 0.95rem; border-radius: 6px; cursor: pointer; font-size: 0.8125rem; font-weight: 500; font-family: inherit; }
+    .feedback-panel button.submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .feedback-panel .thanks { color: var(--color-primary); font-size: 0.9rem; text-align: center; padding: 0.5rem 0; margin: 0; }
+    .feedback-panel .error { color: #dc2626; font-size: 0.75rem; margin: 0; }
     .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
     .popular-city { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid var(--city-color, var(--color-border)); background: var(--city-color-bg, transparent); color: var(--color-foreground); transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; }
     .popular-city:hover { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--city-color, var(--color-primary)) 30%, transparent); }
@@ -273,6 +296,8 @@
 
     /* ===== Favorite cities label + rail ===== */
     .rail-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1.5rem 0 0.625rem; text-align: left; }
+    .city-card .climate-hint { font-size: 0.7rem; color: var(--color-muted); margin-top: 0.3rem; opacity: 0.7; }
+    .city-card .historical-hint { font-size: 0.6875rem; color: var(--color-muted); font-style: italic; margin-top: 0.2rem; opacity: 0.55; }
     .rail { display: flex; flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
     @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
     .rail::-webkit-scrollbar { height: 4px; }
@@ -396,9 +421,11 @@
         <div class="sync-row" id="sync-row" aria-live="polite">
           <span class="sync-dot" aria-hidden="true"></span>
           <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</span></span>
+          <span class="dst-countdown is-hidden" id="dst-countdown"></span>
         </div>
 
         <div class="pills" id="home-pills">
+          <span class="pill pill-purple is-hidden" id="holiday-pill"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span></span>
           <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
           <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span></span>
         </div>
@@ -430,6 +457,33 @@
     </section>
   </main>
 
+  <!-- Feedback prompt (floating, contextual CTA) -->
+  <div class="feedback-prompt is-hidden" id="feedback-prompt">
+    <div class="feedback-panel" id="feedback-panel" role="dialog" aria-label="Send feedback">
+      <h3>Send feedback</h3>
+      <p class="hint" id="feedback-context">What's on your mind?</p>
+      <select id="feedback-type" aria-label="Type of feedback">
+        <option value="feature">Feature request</option>
+        <option value="bug">Bug or issue</option>
+        <option value="city">Missing city</option>
+        <option value="praise">Praise</option>
+        <option value="other">Other</option>
+      </select>
+      <input id="feedback-title" type="text" placeholder="Short title (optional)" maxlength="80" />
+      <textarea id="feedback-body" placeholder="Tell us more..." maxlength="500" required></textarea>
+      <input id="feedback-email" type="email" placeholder="Email (optional, for follow-up)" maxlength="100" />
+      <p class="error is-hidden" id="feedback-error"></p>
+      <p class="thanks is-hidden" id="feedback-thanks">Thanks! We got it.</p>
+      <div class="submit-row">
+        <button class="submit" id="feedback-submit" type="button">Send</button>
+      </div>
+    </div>
+    <button class="feedback-pill" id="feedback-toggle" type="button" aria-label="Send feedback">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Feedback</span>
+    </button>
+  </div>
+
   <script>
     /* ============================================================
        PRODUCTION API — feature-by-feature deployment
@@ -443,8 +497,13 @@
          /api/v1/cities        ✓  live
          /api/v1/time/now      ✓  live
          /api/v1/time/sun      ✓  live
-         /api/v1/onthisday     ⚠  empty placeholder (Phase 2)
-         /api/v2/search        ✓  live
+         /api/v1/onthisday     ✓  live (50 events)
+         /api/v1/holidays      ✓  live (880 rows)
+         /api/v1/dst/upcoming  ✓  live (312 tzs)
+         /api/v1/cities/:id/climate ✓  live
+         /api/v1/cities/:id/aliases ✓  live
+         /api/v1/countries/:cca2/working-hours ✓  live
+         /api/v1/feedback      ✓  live
     */
     const API = 'https://api.dateandtime.live';
 
@@ -458,7 +517,7 @@
       { name: "Beijing",  country: "CN", latitude: 39.9042, longitude: 116.4074, tz: "Asia/Shanghai", is_capital: 1 },
       { name: "Sydney",   country: "AU", latitude: -33.8688, longitude: 151.2093, tz: "Australia/Sydney", is_capital: 1 }
     ];
-    const state = { use24Hour: true, citiesWithHome: [], allCities: [], features: { sync: false, sun: false, onthisday: false, search: false } };
+    const state = { use24Hour: true, citiesWithHome: [], allCities: [], features: { sync: false, sun: false, onthisday: false, search: false, holidays: false, dst: false, climate: false, aliases: false, workingHours: false, feedback: false } };
 
     const CITY_PALETTE = ["peach","lavender","mint","sky","rose","lemon"];
     function cityColor(name, index = -1) {
@@ -474,21 +533,21 @@
        are shown. Larger pool so we always have 10 to display even if
        the user's home overlaps with one of these. */
     const POPULAR_CITIES = [
-      { name: "Los Angeles", country: "US", state_code: "CA", latitude: 34.0522, longitude: -118.2437, tz: "America/Los_Angeles", is_capital: 0 },
-      { name: "Paris",       country: "FR", latitude: 48.8566, longitude: 2.3522, tz: "Europe/Paris", is_capital: 1 },
-      { name: "Singapore",   country: "SG", latitude: 1.3521, longitude: 103.8198, tz: "Asia/Singapore", is_capital: 1 },
-      { name: "Dubai",       country: "AE", latitude: 25.2048, longitude: 55.2708, tz: "Asia/Dubai", is_capital: 0 },
-      { name: "Hong Kong",   country: "HK", latitude: 22.3193, longitude: 114.1694, tz: "Asia/Hong_Kong", is_capital: 0 },
-      { name: "Mumbai",      country: "IN", state_code: "MH", latitude: 19.0760, longitude: 72.8777, tz: "Asia/Kolkata", is_capital: 0 },
-      { name: "Berlin",      country: "DE", latitude: 52.5200, longitude: 13.4050, tz: "Europe/Berlin", is_capital: 1 },
-      { name: "Toronto",     country: "CA", state_code: "ON", latitude: 43.6532, longitude: -79.3832, tz: "America/Toronto", is_capital: 0 },
-      { name: "São Paulo",   country: "BR", latitude: -23.5505, longitude: -46.6333, tz: "America/Sao_Paulo", is_capital: 0 },
-      { name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz: "America/Mexico_City", is_capital: 1 },
-      { name: "Rome",        country: "IT", latitude: 41.9028, longitude: 12.4964, tz: "Europe/Rome", is_capital: 1 },
-      { name: "Madrid",      country: "ES", latitude: 40.4168, longitude: -3.7038, tz: "Europe/Madrid", is_capital: 1 },
-      { name: "Istanbul",    country: "TR", latitude: 41.0082, longitude: 28.9784, tz: "Europe/Istanbul", is_capital: 0 },
-      { name: "Bangkok",     country: "TH", latitude: 13.7563, longitude: 100.5018, tz: "Asia/Bangkok", is_capital: 1 },
-      { name: "Seoul",       country: "KR", latitude: 37.5665, longitude: 126.9780, tz: "Asia/Seoul", is_capital: 1 }
+      { id: 5368361, name: "Los Angeles", country: "US", state_code: "CA", latitude: 34.0522, longitude: -118.2437, tz: "America/Los_Angeles", is_capital: 0 },
+      { id: 2988507, name: "Paris",       country: "FR", latitude: 48.8566, longitude: 2.3522, tz: "Europe/Paris", is_capital: 1 },
+      { id: 1880252, name: "Singapore",   country: "SG", latitude: 1.3521, longitude: 103.8198, tz: "Asia/Singapore", is_capital: 1 },
+      { id: 292223,  name: "Dubai",       country: "AE", latitude: 25.2048, longitude: 55.2708, tz: "Asia/Dubai", is_capital: 0 },
+      { id: 1819729, name: "Hong Kong",   country: "HK", latitude: 22.3193, longitude: 114.1694, tz: "Asia/Hong_Kong", is_capital: 0 },
+      { id: 1275339, name: "Mumbai",      country: "IN", state_code: "MH", latitude: 19.0760, longitude: 72.8777, tz: "Asia/Kolkata", is_capital: 0 },
+      { id: 2950159, name: "Berlin",      country: "DE", latitude: 52.5200, longitude: 13.4050, tz: "Europe/Berlin", is_capital: 1 },
+      { id: 6167865, name: "Toronto",     country: "CA", state_code: "ON", latitude: 43.6532, longitude: -79.3832, tz: "America/Toronto", is_capital: 0 },
+      { id: 3448439, name: "São Paulo",   country: "BR", latitude: -23.5505, longitude: -46.6333, tz: "America/Sao_Paulo", is_capital: 0 },
+      { id: 3530597, name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz: "America/Mexico_City", is_capital: 1 },
+      { id: 3169070, name: "Rome",        country: "IT", latitude: 41.9028, longitude: 12.4964, tz: "Europe/Rome", is_capital: 1 },
+      { id: 3117735, name: "Madrid",      country: "ES", latitude: 40.4168, longitude: -3.7038, tz: "Europe/Madrid", is_capital: 1 },
+      { id: 745044,  name: "Istanbul",    country: "TR", latitude: 41.0082, longitude: 28.9784, tz: "Europe/Istanbul", is_capital: 0 },
+      { id: 1609350, name: "Bangkok",     country: "TH", latitude: 13.7563, longitude: 100.5018, tz: "Asia/Bangkok", is_capital: 1 },
+      { id: 1835848, name: "Seoul",       country: "KR", latitude: 37.5665, longitude: 126.9780, tz: "Asia/Seoul", is_capital: 1 }
     ];
     const RAIL_DEFAULT_NAMES = new Set(["New York", "London", "Tokyo", "Beijing", "Sydney"]);
 
@@ -549,7 +608,12 @@
             <span class="city-day">—</span><span class="city-day-sep">, </span><span class="city-hours-diff">—</span>
           </div>
         `;
+        card.dataset.cityId = c.id || c.geoname_id || "";
         rail.appendChild(card);
+        // Enrich with climate + historical hints (only if id is known)
+        if (card.dataset.cityId) {
+          enrichCityCard(Number(card.dataset.cityId), card);
+        }
       });
       rail.querySelectorAll(".city-remove").forEach(btn => {
         btn.addEventListener("click", () => { const i = Number(btn.dataset.idx); state.citiesWithHome.splice(i, 1); saveCities(); renderRail(); renderPopularCities(); });
@@ -653,16 +717,24 @@
       } catch (e) { return false; }
     }
     async function probeAll() {
-      const [sync, sun, onthisday, search] = await Promise.all([
+      const [sync, sun, onthisday, search, holidays, dst, workingHours, feedback] = await Promise.all([
         probe("/api/v1/time/now?tz=UTC"),
         probe("/api/v1/time/sun?lat=40.7&lon=-74&date=2026-01-01"),
         probe("/api/v1/onthisday"),
-        probe("/api/v2/search?q=test")
+        probe("/api/v2/search?q=test"),
+        probe("/api/v1/holidays/today?country=US"),
+        probe("/api/dst/upcoming?tz=America/New_York"),
+        probe("/api/v1/countries/US/working-hours"),
+        probe("/api/v1/feedback/top")
       ]);
       state.features.sync = sync;
       state.features.sun = sun;
       state.features.onthisday = onthisday;
       state.features.search = search;
+      state.features.holidays = holidays;
+      state.features.dst = dst;
+      state.features.workingHours = workingHours;
+      state.features.feedback = feedback;
       // Hide UI for features that aren't ready
       // Sync row is always visible now (with a green pulsing dot, directly
       // above the off-hours + sunrise pills). The values are "—" placeholders
@@ -735,10 +807,103 @@
         if (!events.length) { section.classList.add("is-hidden"); return; }
         section.classList.remove("is-hidden");
         const ev = events[0];
-        const year = ev.year || (ev.date && ev.date.slice(0,4)) || "—";
-        const text = ev.text || ev.description || ev.title || "";
-        el.innerHTML = `<strong>On this day in ${year}</strong> — ${text}`;
+        const year = ev.year || "—";
+        const text = ev.title || ev.text || ev.description || "";
+        const desc = ev.description && ev.description !== text ? ` — ${escapeHtml(ev.description)}` : "";
+        el.innerHTML = `<strong>On this day in ${year}</strong> — ${escapeHtml(text)}${desc}`;
       } catch (e) {}
+    }
+
+    /* ----- Holidays today (for the home country's pill) ----- */
+    async function refreshHolidayPill() {
+      if (!state.features.holidays) return;
+      const home = state.citiesWithHome[0];
+      if (!home?.country) return;
+      const cc = (home.country || "").toUpperCase();
+      // only show for the 15 countries with data
+      const supported = ["US","GB","DE","FR","IT","ES","CA","AU","JP","KR","BR","MX","NL","SE","NO"];
+      if (!supported.includes(cc)) return;
+      try {
+        const r = await fetch(`${API}/api/v1/holidays/today?country=${cc}`, { cache: "no-store" });
+        if (!r.ok) return;
+        const j = await r.json();
+        const data = j.data || j;
+        const list = data?.holidays || [];
+        const pill = document.getElementById("holiday-pill");
+        const text = document.getElementById("holiday-pill-text");
+        if (!list.length) { pill.classList.add("is-hidden"); return; }
+        pill.classList.remove("is-hidden");
+        const h = list[0];
+        text.textContent = `${h.name}`;
+      } catch (e) {}
+    }
+
+    /* ----- DST countdown (for the home tz) ----- */
+    async function refreshDstCountdown() {
+      if (!state.features.dst) return;
+      const home = state.citiesWithHome[0];
+      if (!home?.tz) return;
+      try {
+        const r = await fetch(`${API}/api/v1/dst/upcoming?tz=${encodeURIComponent(home.tz)}`, { cache: "no-store" });
+        if (!r.ok) return;
+        const j = await r.json();
+        const data = j.data || j;
+        const next = data?.nextTransition;
+        const el = document.getElementById("dst-countdown");
+        if (!next?.date) { el.classList.add("is-hidden"); return; }
+        const target = new Date(next.date + "T12:00:00Z");
+        const days = Math.max(0, Math.round((target - Date.now()) / 86400000));
+        if (days > 120) { el.classList.add("is-hidden"); return; }
+        el.classList.remove("is-hidden");
+        const label = next.type === "spring_forward" ? "DST starts in" : "DST ends in";
+        el.innerHTML = `<span>·</span> <span>${label} <strong>${days} day${days === 1 ? "" : "s"}</strong></span>`;
+      } catch (e) {}
+    }
+
+    /* ----- Per-city climate + historical hints (lazy, on demand) ----- */
+    const climateCache = {};
+    const aliasesCache = {};
+    async function enrichCityCard(cityId, cardEl) {
+      if (!cityId) return;
+      // Climate (current month)
+      if (state.features.climate !== false && !climateCache[cityId]) {
+        const m = new Date().getMonth() + 1;
+        try {
+          const r = await fetch(`${API}/api/v1/cities/${cityId}/climate?month=${m}`, { cache: "no-store" });
+          if (r.ok) {
+            const j = await r.json();
+            const data = j.data || j;
+            const climate = data?.climate?.[0];
+            if (climate) {
+              climateCache[cityId] = climate;
+              const hint = document.createElement("div");
+              hint.className = "climate-hint";
+              hint.textContent = `${Math.round(climate.avg_high_c)}°/${Math.round(climate.avg_low_c)}°`;
+              cardEl.appendChild(hint);
+            }
+          }
+        } catch (e) {}
+      }
+      // Historical names
+      if (state.features.aliases !== false && !aliasesCache[cityId]) {
+        try {
+          const r = await fetch(`${API}/api/v1/cities/${cityId}/aliases`, { cache: "no-store" });
+          if (r.ok) {
+            const j = await r.json();
+            const data = j.data || j;
+            const redirects = data?.historicalNames || [];
+            aliasesCache[cityId] = redirects;
+            if (redirects.length) {
+              const last = redirects[redirects.length - 1];
+              const hint = document.createElement("div");
+              hint.className = "historical-hint";
+              const yr = last.year_to ? `until ${last.year_to}` : "";
+              hint.textContent = `was ${last.old_name}${yr ? " " + yr : ""}`;
+              cardEl.appendChild(hint);
+            }
+          }
+        } catch (e) {}
+      }
     }
 
     /* ----- City search -----
@@ -951,6 +1116,91 @@
       txt.textContent = parts.length ? parts.join(", ") : "Detecting your location…";
     }
 
+    /* ----- Feedback prompt (floating, contextual CTA) -----
+       Single, non-intrusive pill bottom-right. Click opens a tiny
+       inline form. Submission is fire-and-forget: no full page
+       redirect, no modal dialog covering the page. */
+    function setupFeedbackPrompt() {
+      const root = document.getElementById("feedback-prompt");
+      const toggle = document.getElementById("feedback-toggle");
+      const panel = document.getElementById("feedback-panel");
+      const submit = document.getElementById("feedback-submit");
+      const errorEl = document.getElementById("feedback-error");
+      const thanksEl = document.getElementById("feedback-thanks");
+      const typeEl = document.getElementById("feedback-type");
+      const titleEl = document.getElementById("feedback-title");
+      const bodyEl = document.getElementById("feedback-body");
+      const emailEl = document.getElementById("feedback-email");
+      if (!root || !toggle) return;
+      if (!state.features.feedback) {
+        // Hide silently if the API isn't available
+        return;
+      }
+      root.classList.remove("is-hidden");
+      let open = false;
+      toggle.addEventListener("click", () => {
+        open = !open;
+        panel.classList.toggle("is-open", open);
+        if (open) bodyEl.focus();
+      });
+      // Click outside closes
+      document.addEventListener("click", e => {
+        if (!open) return;
+        if (e.target.closest("#feedback-prompt")) return;
+        open = false;
+        panel.classList.remove("is-open");
+      });
+      submit.addEventListener("click", async () => {
+        const body = bodyEl.value.trim();
+        if (!body) { errorEl.textContent = "Please add a message"; errorEl.classList.remove("is-hidden"); return; }
+        errorEl.classList.add("is-hidden");
+        submit.disabled = true;
+        submit.textContent = "Sending…";
+        try {
+          const payload = {
+            type: typeEl.value,
+            title: titleEl.value.trim() || `${typeEl.value} from landing`,
+            body: body,
+            author: emailEl.value.trim() || null,
+            country_code: state.citiesWithHome[0]?.country || null,
+            status: "open",
+            created_at: Math.floor(Date.now() / 1000),
+            updated_at: Math.floor(Date.now() / 1000),
+            votes: 0
+          };
+          // The new /api/v1/feedback expects a {message, email, page, rating, context} shape.
+          // Wrap our richer payload in `context` so the admin can see it; the new
+          // POST signature is: {message, email, page, rating, context} where
+          // `message` is the body and `context` is a JSON string.
+          const r = await fetch(`/api/feedback`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: `[${typeEl.value}] ${titleEl.value.trim()}\n\n${body}`,
+              email: emailEl.value.trim() || null,
+              page: location.pathname,
+              context: JSON.stringify(payload)
+            })
+          });
+          if (r.ok) {
+            thanksEl.classList.remove("is-hidden");
+            bodyEl.value = ""; titleEl.value = ""; emailEl.value = "";
+            setTimeout(() => { thanksEl.classList.add("is-hidden"); panel.classList.remove("is-open"); open = false; submit.disabled = false; submit.textContent = "Send"; }, 2200);
+          } else {
+            errorEl.textContent = `Couldn't send (HTTP ${r.status}). Try again.`;
+            errorEl.classList.remove("is-hidden");
+            submit.disabled = false;
+            submit.textContent = "Send";
+          }
+        } catch (e) {
+          errorEl.textContent = "Network error. Try again.";
+          errorEl.classList.remove("is-hidden");
+          submit.disabled = false;
+          submit.textContent = "Send";
+        }
+      });
+    }
+
     /* ----- Boot ----- */
     (async function init() {
       // Probe which features are available on production
@@ -1007,6 +1257,13 @@
         });
       }
       if (state.features.onthisday) refreshOnThisDay();
+      if (state.features.holidays) refreshHolidayPill();
+      if (state.features.dst) refreshDstCountdown();
+      // Refresh every 5 min so the holiday + DST data stays current
+      setInterval(() => { if (state.features.holidays) refreshHolidayPill(); if (state.features.dst) refreshDstCountdown(); }, 5 * 60 * 1000);
+
+      // Wire the feedback prompt
+      setupFeedbackPrompt();
 
       // Start the rAF loop
       updateClock();
