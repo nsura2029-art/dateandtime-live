@@ -58,6 +58,25 @@ export default {
       return proxySimple(request, url, "/v1/cities");
     }
 
+    // Local time source: /api/time/now returns the worker's current time so
+    // the page can compute a real clock-drift + round-trip-accuracy without
+    // depending on the (still-empty) /v1/time/now endpoint on the prod API.
+    // Both the page and the worker run on the same machine in Cloudflare's
+    // edge, so the drift is essentially the network round-trip.
+    if (url.pathname === "/api/time/now") {
+      const t = Date.now();
+      return new Response(JSON.stringify({
+        data: { iso: new Date(t).toISOString(), unix_ms: t, tz: "UTC" }
+      }), {
+        status: 200,
+        headers: {
+          "content-type": "application/json",
+          "access-control-allow-origin": "*",
+          "cache-control": "no-store"
+        }
+      });
+    }
+
     // Get the asset (HTML or other) from the [assets] binding.
     const response = await env.ASSETS.fetch(request);
 

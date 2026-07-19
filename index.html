@@ -206,8 +206,8 @@
     .seg.e { bottom: calc(var(--thickness) * 0.42); left: 0; } .seg.c { right: 0; bottom: calc(var(--thickness) * 0.42); }
     .seg-digit.is-one .seg.b, .seg-digit.is-one .seg.c { right: calc(50% - (var(--thickness) / 2)); }
     .seg-colon { position: relative; align-self: end; justify-self: center; width: var(--colon-width); height: calc(var(--main-digit-width) * 1.82); margin: 0; filter: var(--color-glow); }
-    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.5rem; height: 0.5rem; border-radius: 2px; background: var(--color-on-segment); transform: translateX(-50%); }
-    .seg-colon::before { top: 27%; } .seg-colon::after { bottom: 27%; }
+    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.7rem; height: 0.7rem; border-radius: 3px; background: var(--color-on-segment); transform: translateX(-50%); box-shadow: 0 0 8px color-mix(in srgb, var(--color-on-segment) 60%, transparent); }
+    .seg-colon::before { top: 24%; } .seg-colon::after { bottom: 24%; }
     .seg-period-dot { align-self: end; font-family: "Courier New", monospace; font-size: clamp(1.5rem, 3.5vw, 2.5rem); font-weight: 800; color: var(--color-on-segment); margin: 0 0 clamp(4px, 0.7vw, 9px); filter: var(--color-glow); width: 0.5rem; text-align: center; line-height: 1; }
     /* AM/PM pill — same height as the .seg-digit.small (milliseconds) row, so
        it visually lines up with the hundredths digits next to it. */
@@ -390,12 +390,12 @@
         <p class="onthisday" id="onthisday"><strong>On this day</strong> · <span id="onthisday-text">—</span></p>
 
         <!-- Sync row with green pulsing dot — directly above the off-hours
-             and sunrise pills. Shows the live sync-accuracy message. When
-             /v1/time/now ships to prod the offset/accuracy values get
-             filled in; until then they show "—" placeholders. -->
+             and sunrise pills. Shows the live sync-accuracy message.
+             refreshSync() calls /api/time/now (local Worker proxy) on boot
+             to populate the offset + accuracy with real round-trip numbers. -->
         <div class="sync-row" id="sync-row" aria-live="polite">
           <span class="sync-dot" aria-hidden="true"></span>
-          <span>Your clock is <strong id="clock-offset">—</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">—</strong> seconds.</span></span>
+          <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</span></span>
         </div>
 
         <div class="pills" id="home-pills">
@@ -675,12 +675,15 @@
       if (!search) document.getElementById("search-section").classList.add("is-disabled");
     }
 
-    /* ----- Sync accuracy (when /v1/time/now is on prod) ----- */
+    /* ----- Sync accuracy (via local Worker proxy /api/time/now) -----
+       We always call this — the Worker returns its own clock, which is on
+       the same machine as the page, so the offset is essentially the
+       network round-trip time. When /v1/time/now ships on prod we can
+       switch the URL back to the upstream for a true external reference. */
     async function refreshSync() {
-      if (!state.features.sync) return;
       const t0 = performance.now();
       try {
-        const r = await fetch(`${API}/v1/time/now?tz=UTC`, { cache: "no-store" });
+        const r = await fetch(`/api/time/now?tz=UTC`, { cache: "no-store" });
         const t1 = performance.now();
         if (!r.ok) return;
         const j = await r.json();
@@ -992,7 +995,9 @@
 
       // Fetch the optional features
       const home0 = state.citiesWithHome[0];
-      if (state.features.sync) refreshSync();
+      // Always run the sync — uses the local /api/time/now Worker proxy
+      // so the offset/accuracy are real even without the prod API.
+      refreshSync();
       if (state.features.sun && home0) {
         fetchSunForCity(home0).then(sun => {
           if (sun) {
