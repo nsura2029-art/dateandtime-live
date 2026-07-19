@@ -5,11 +5,19 @@ compatibility_date = "2024-09-23"
 [assets]
 directory = "./"
 binding = "ASSETS"
+# NOTE: wrangler 4.x ignores the `exclude` field (warning: "Unexpected
+# fields found in assets field"). For the landing deploy, the api Worker's
+# 98 MB workerd binary in cloudflare/datetime-api/node_modules gets
+# included as an asset and trips the 25 MB limit. The scripts/deploy.sh
+# helper stashes that directory aside before deploying and restores it
+# after. Keep this list here anyway for documentation and for when
+# wrangler fixes the bug.
 exclude = [
   ".git/**",
   ".wrangler/**",
   ".worktrees/**",
   "node_modules/**",
+  "cloudflare/**/node_modules/**",
   "**/README.md",
   "**/*.md",
   "**/wrangler.toml",

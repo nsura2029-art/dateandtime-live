@@ -44,3 +44,5 @@ temp/
 
 # Git worktrees (each one is a separate checkout of a different branch)
 .worktrees/
+.wrangler/
+worker-configuration.d.ts

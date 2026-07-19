@@ -318,6 +318,7 @@ app.on("HEAD", "/api/v1/timezones/:id{.+}", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v1/time/now", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v1/time/sun", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v1/holidays/today", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/holidays/upcoming", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v1/holidays", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v1/onthisday", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v2/search", (c) => c.body(null, 200));
