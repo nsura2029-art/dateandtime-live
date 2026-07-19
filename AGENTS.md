@@ -1,7 +1,89 @@
 # TimeAndDatePro — Agent Guide
 
-> Read this before designing, building, or modifying **any** page on `dateandtime.live`.
-> This file is the source of truth for the visual & product direction.
+> Read this before designing, building, or modifying **any** page on `dateandtime.live`
+> or **any** table in the shared date/time reference DB.
+> This file is the source of truth for the visual & product direction, and for the
+> cross-app shared-database scope.
+
+---
+
+## Shared global reference database (date & time scope)
+
+Both `dateandtime.live` (static landing) and the broader product surface (React app,
+future tools) draw from one shared date/time reference database. The full architecture
+spec lives at **`docs/architecture/global-reference-db-spec.pdf`** (from 2026-07-19);
+this section is the working scope summary for what we're actually building first.
+
+### In scope (date & time only)
+
+1. **Geography** — countries, administrative regions, cities, place names
+2. **Time zones** — IANA identifiers, DST, historical transitions, city→tz mapping
+3. **Holidays** — country / region / city specific, fixed + rule-based
+4. **Business calendars** — business-day calculator, weekend definitions per country
+5. **Date/time formats** — per-locale date/time strings, AM/PM labels, first day of week
+6. **Date-to-words / time-to-words** — localized spoken / legal / invitation styles
+7. **Sunrise / sunset** — astronomical lookup per lat/lon/date
+8. **Seasonal / climate summaries** — vacation-planner reference data per city/month
+9. **Travel / vacation profiles** — best-month, peak/shoulder/low, weekend, calling code
+10. **Airports** + city↔airport relationships (IATA/ICAO codes, lat/lon, timezone)
+11. **Place relationships** — metro area, capital-of, airport-serves
+12. **Search** — FTS5 + alias + fuzzy + transliteration + ranking (population, capital, location)
+13. **Data sources / import history** — lineage for every entity
+
+### Out of scope (this pass)
+
+Currency / exchange rates, unit converters, calling codes as a standalone tool,
+cost estimators, crypto, waitlist, rate alerts, ad-hoc audit. These live in the
+DB tables already (see `timeanddatepro-full`) but no APIs are exposed for them yet.
+
+### Existing assets (don't re-build from scratch)
+
+- **D1 `timeanddatepro-full`** (id `c401ffb6-51db-49e6-991f-b5695f9e6a7d`) —
+  5,081 cities / 194 countries / 3,865 states / 312 IANA tz / 406 city aliases /
+  1,460 country aliases. Schema v2.3.0, seeded 2026-07-12 from GeoNames cities5000.
+  Currently **unbound** to any Worker.
+- **D1 `timeanddatepro-dev`** (id `ea1ef5ff-7132-40f4-b952-fff27621580c`) —
+  190 famous cities. Bound to `datetime-api-dev` Worker.
+- **D1 `timeanddatepro`** (id `3105810e-a602-4a5c-adee-be2f11b41893`) — prod
+  schema, 190 cities. `datetime-api` Worker is **404 on all requests** — needs redeploy.
+- **Postman collection** — `docs/api/timeanddatepro-api.postman_collection.json`
+  (46+ endpoints across 14 folders). Some endpoints are stubs (return curated
+  placeholder data); see the rollout queue.
+
+### Phased delivery plan
+
+| Phase | Scope | Status |
+|---|---|---|
+| **0** | Fix prod API Worker, point at `timeanddatepro-full`, rebuild v2 search, bump cap | ⏳ next |
+| **1** | Date/time formats + locales (CLDR seed) | ⏳ |
+| **2** | Holidays + business calendars | ⏳ |
+| **3** | Date-to-words / time-to-words (localized) | ⏳ |
+| **4** | Sunrise / sunset / seasonal | ⏳ |
+| **5** | Travel / vacation metadata + airports | ⏳ |
+| **6** | Search quality (FTS5, transliteration, ranking) | ⏳ |
+| **7** | Data quality + governance + automated checks | ⏳ |
+
+Detailed steps per phase: see the full spec PDF. The phases are independent — each
+one can ship to production behind a feature flag without breaking earlier phases.
+
+### Cross-app rule (from the spec)
+
+> All tools must reference the same canonical country, region, city, currency,
+> language, and time-zone identifiers. Do not build separate copies of country, city,
+> currency, language, or time-zone data for every tool.
+
+In practice, this means:
+- `dateandtime.live` (static landing) reads from the API at `api.dateandtime.live`
+- The React app reads from the same API
+- Future apps (e.g. `meeting.tdp`, `planner.tdp`) read from the same API
+- No app maintains its own city list, country list, or tz list
+
+### Required follow-up reads
+
+- `docs/architecture/global-reference-db-spec.pdf` — the full architecture
+- `docs/ROLLOUT.md` — API feature rollout queue
+- `AGENTS.md` §8 — production API, feature-by-feature rules
+- `AGENTS.md` "Branching & deployment workflow" — how to ship each phase
 
 ---
 
