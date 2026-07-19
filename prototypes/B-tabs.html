@@ -1,12 +1,10 @@
 <!doctype html>
 <!--
-  TimeAndDatePro — Landing Prototype B: "Tabs" (rewritten)
-  - Search: right (desktop) / below (mobile, tablet)
-  - Default 5 cities: New York, London, Tokyo, Beijing, Sydney
-  - User's home auto-detected → top of tabs, no card
-  - Sync: small text line above tabs
-  - Off hours + Sunrise: shown for the ACTIVE tab only (below the tabs)
-  - Full header preserved
+  TimeAndDatePro — Landing Prototype B: "Tabs" (rewrite v2)
+  - Restored: visible 12h/24h toggle, . after seconds, AM/PM, day/date, tz, sync, off hours, sunrise, on-this-day, full header
+  - Added: centered search bar ABOVE the tabs (search adds to tabs)
+  - Removed: search on the right, +Add tab, ⌂ home card
+  - Each city gets a deterministic NotebookLM pastel color
 -->
 <html lang="en" data-theme="light">
 <head>
@@ -36,7 +34,6 @@
       --color-nav-underline: linear-gradient(90deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
       --color-logo-gradient: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
       --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
-      --color-pill-green-bg: rgba(16,185,129,.10); --color-pill-green-fg: #047857; --color-pill-green-bd: rgba(16,185,129,.32);
       --color-pill-purple-bg: rgba(91,74,175,.10); --color-pill-purple-fg: #5b4aaf; --color-pill-purple-bd: rgba(91,74,175,.30);
       --color-pill-orange-bg: rgba(249,115,22,.10); --color-pill-orange-fg: #c2410c; --color-pill-orange-bd: rgba(249,115,22,.30);
       color-scheme: light;
@@ -59,10 +56,25 @@
       --color-nav-underline: linear-gradient(90deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
       --color-logo-gradient: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
       --color-button-primary: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
-      --color-pill-green-bg: rgba(16,185,129,.16); --color-pill-green-fg: #6ee7b7; --color-pill-green-bd: rgba(16,185,129,.35);
       --color-pill-purple-bg: rgba(167,139,250,.18); --color-pill-purple-fg: #c4b5fd; --color-pill-purple-bd: rgba(167,139,250,.40);
       --color-pill-orange-bg: rgba(249,115,22,.16); --color-pill-orange-fg: #fdba74; --color-pill-orange-bd: rgba(249,115,22,.35);
       color-scheme: dark;
+    }
+    :root {
+      --city-peach: #FFB59C; --city-peach-bg: rgba(255,181,156,0.10);
+      --city-lavender: #C4B5FD; --city-lavender-bg: rgba(196,181,253,0.10);
+      --city-mint: #6EE7B7; --city-mint-bg: rgba(110,231,183,0.10);
+      --city-sky: #7DD3FC; --city-sky-bg: rgba(125,211,252,0.10);
+      --city-rose: #FDA4AF; --city-rose-bg: rgba(253,164,175,0.10);
+      --city-lemon: #FCD34D; --city-lemon-bg: rgba(252,211,77,0.10);
+    }
+    [data-theme="dark"] {
+      --city-peach: #FF8A66; --city-peach-bg: rgba(255,138,102,0.14);
+      --city-lavender: #A78BFA; --city-lavender-bg: rgba(167,139,250,0.14);
+      --city-mint: #34D399; --city-mint-bg: rgba(52,211,153,0.14);
+      --city-sky: #38BDF8; --city-sky-bg: rgba(56,189,248,0.14);
+      --city-rose: #FB7185; --city-rose-bg: rgba(251,113,133,0.14);
+      --city-lemon: #FBBF24; --city-lemon-bg: rgba(251,191,36,0.14);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -77,7 +89,6 @@
     @media (min-width: 1024px) { .container { padding-inline: 2rem; } }
     @media (min-width: 1280px) { .container { padding-inline: 2.5rem; } }
 
-    /* FULL HEADER */
     .site-header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--color-background) 75%, transparent); backdrop-filter: saturate(180%) blur(14px); border-bottom: 1px solid var(--color-border); }
     .header-row { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 1rem; }
     .logo { display: inline-flex; align-items: center; gap: 0.5rem; }
@@ -104,21 +115,17 @@
     .theme-toggle button svg { width: 0.9rem; height: 0.9rem; }
     .theme-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
-    .hero { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); }
+    .hero { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
     .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
     .greeting-city { color: var(--color-primary); }
-    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 0 1.5rem; max-width: 42rem; }
+    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 auto 1.5rem; max-width: 42rem; }
 
-    /* Time area: clock + day/date/tz + search (right on desktop, below on mobile) */
-    .time-area { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: start; }
-    @media (min-width: 1024px) { .time-area { grid-template-columns: 2fr 1fr; gap: 2rem; align-items: center; } }
-
-    .clock-block { width: 100%; }
+    .clock-block { margin: 0 auto 0.75rem; max-width: 720px; }
     .seg-row {
-      --main-digit-width: clamp(50px, 12vw, 120px);
-      --small-digit-width: clamp(22px, 5vw, 40px);
-      --digit-gap: clamp(4px, 0.7vw, 8px);
-      --colon-width: clamp(10px, 1.4vw, 22px);
+      --main-digit-width: clamp(54px, 13vw, 132px);
+      --small-digit-width: clamp(24px, 5.5vw, 46px);
+      --digit-gap: clamp(4px, 0.7vw, 9px);
+      --colon-width: clamp(12px, 1.6vw, 22px);
       --colon-side-space: clamp(6px, 1vw, 16px);
       --period-width: clamp(36px, 4.5vw, 78px);
       display: grid;
@@ -128,6 +135,7 @@
         calc((var(--main-digit-width) * 2) + var(--digit-gap))
         calc(var(--colon-width) + (var(--colon-side-space) * 2))
         calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        0.5rem
         calc(11px + (var(--small-digit-width) * 2) + (var(--digit-gap) * 2))
         var(--period-width);
       align-items: end; justify-content: center; width: 100%; white-space: nowrap;
@@ -147,20 +155,31 @@
     .seg-colon { position: relative; align-self: end; justify-self: center; width: var(--colon-width); height: calc(var(--main-digit-width) * 1.82); margin: 0; filter: var(--color-glow); }
     .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.5rem; height: 0.5rem; border-radius: 2px; background: var(--color-on-segment); transform: translateX(-50%); }
     .seg-colon::before { top: 27%; } .seg-colon::after { bottom: 27%; }
+    .seg-period-dot { align-self: end; font-family: "Courier New", monospace; font-size: clamp(1.5rem, 3.5vw, 2.5rem); font-weight: 800; color: var(--color-on-segment); margin: 0 0 clamp(4px, 0.7vw, 9px); filter: var(--color-glow); width: 0.5rem; text-align: center; line-height: 1; }
     .seg-period { width: var(--period-width); margin: 0 0 clamp(4px, 0.6vw, 7px); padding: 0; border: 0; background: transparent; color: var(--color-period-fg); font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.65rem, 1vw, 0.85rem); font-weight: 800; letter-spacing: 0.22em; line-height: 1; white-space: nowrap; align-self: end; justify-self: start; }
     .seg-period.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
 
-    .day-date { display: flex; align-items: center; gap: 0.4rem; font-size: clamp(0.85rem, 1.3vw, 0.95rem); font-weight: 700; margin: 1rem 0 0.25rem; }
+    .format-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); border: 1px solid var(--color-border); border-radius: 9999px; margin: 0.75rem auto 0; backdrop-filter: blur(8px); }
+    .format-toggle button { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.85rem; border-radius: 9999px; font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-muted); transition: all 200ms ease; }
+    .format-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
+
+    .day-date { display: inline-flex; align-items: center; gap: 0.4rem; font-size: clamp(0.85rem, 1.3vw, 0.95rem); font-weight: 700; margin: 1rem 0 0.25rem; }
     .day-date-icon { width: 0.95rem; height: 0.95rem; color: var(--color-primary); flex-shrink: 0; }
     .timezone { font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); }
     .timezone strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, monospace; }
+    .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.8125rem, 1.2vw, 0.9rem); color: var(--color-foreground); margin: 1rem 0 0.5rem; }
+    .sync-dot { flex-shrink: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent); }
+    .sync-row strong { color: var(--color-primary); font-weight: 700; }
+    .sync-accuracy { color: var(--color-muted); }
+    .onthisday { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; color: var(--color-muted); margin: 0.25rem 0 0; }
+    .onthisday strong { color: var(--color-primary); font-weight: 700; }
 
-    /* Search (right on desktop, below on mobile) */
-    .search-wrap { position: relative; width: 100%; }
-    .search-input { width: 100%; height: 46px; padding: 0 2.5rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
+    .search-section { margin: 1.5rem auto 0.5rem; max-width: 480px; position: relative; }
+    .search-wrap { position: relative; }
+    .search-input { width: 100%; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
     .search-input::placeholder { color: var(--color-muted-soft); }
     .search-input:focus { outline: none; border-color: var(--color-primary); }
-    .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1rem; height: 1rem; pointer-events: none; }
+    .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
     .search-results { position: absolute; top: calc(100% + 0.5rem); left: 0; right: 0; max-height: 360px; overflow-y: auto; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 0.75rem; box-shadow: 0 16px 48px rgba(15, 10, 31, 0.20); display: none; z-index: 30; }
     .search-results.is-open { display: block; }
     .search-result { width: 100%; text-align: left; padding: 0.625rem 0.875rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; border-bottom: 1px solid var(--color-border-soft); }
@@ -169,50 +188,41 @@
     .search-result-name { font-weight: 600; font-size: 0.875rem; }
     .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
 
-    /* Sync (top placement — B's signature) */
-    .sync-row { display: flex; align-items: center; gap: 0.5rem; font-size: clamp(0.8125rem, 1.2vw, 0.9rem); color: var(--color-foreground); margin: 1.5rem 0 1rem; }
-    .sync-dot { flex-shrink: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent); }
-    .sync-row strong { color: var(--color-primary); font-weight: 700; }
-    .sync-accuracy { color: var(--color-muted); }
-
-    /* Tabs (city selector) */
-    .tabs { display: flex; flex-wrap: nowrap; gap: 0.4rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0.25rem 0 0.5rem; }
+    .tabs-label { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 1.5rem 0 0.625rem; }
+    .tabs { display: flex; flex-wrap: nowrap; gap: 0.4rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0.25rem 0 0.5rem; justify-content: center; }
     .tabs::-webkit-scrollbar { display: none; }
     .tab { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.875rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; color: var(--color-muted); background: transparent; border: 1px solid var(--color-border-soft); transition: all 200ms ease; }
-    .tab.is-active { background: var(--color-button-primary); color: white; border-color: transparent; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+    .tab.is-active { color: white; border-color: transparent; box-shadow: 0 2px 8px color-mix(in srgb, var(--tab-active-color, var(--color-primary)) 35%, transparent); background: var(--tab-active-color, var(--color-primary)); }
     .tab:not(.is-active):hover { color: var(--color-foreground); border-color: var(--color-border); }
-    .tab-home { font-size: 0.75rem; }
-    /* The home tab is just a subtle highlight when not active — no card */
-    .tab.is-home:not(.is-active) { background: color-mix(in srgb, var(--color-primary) 4%, transparent); }
-    .tab-add { padding: 0.5rem 0.75rem; color: var(--color-muted); border-style: dashed; }
-    .tab-add:hover { color: var(--color-primary); border-color: var(--color-primary); }
+    .tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .tab-remove { width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; color: inherit; opacity: 0.5; border-radius: 9999px; }
+    .tab-remove:hover { opacity: 1; }
+    .tab-remove svg { width: 0.65rem; height: 0.65rem; }
 
-    /* City detail (the active tab's content) */
+    /* City detail (active tab) */
     .city-detail { padding: 1rem 0 0.5rem; }
-    .city-detail-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .city-detail-name { font-size: clamp(1.125rem, 2.4vw, 1.5rem); font-weight: 800; color: var(--color-foreground); letter-spacing: -0.02em; }
+    .city-detail-head { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .city-detail-name { font-size: clamp(1.125rem, 2.4vw, 1.5rem); font-weight: 800; color: var(--color-foreground); letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 0.4rem; }
     .city-detail-name .star { color: var(--color-primary); font-size: 0.85em; }
-    .city-detail-name .home-icon { color: var(--color-primary); font-size: 0.85em; margin-right: 0.3rem; }
+    .city-detail-name .dot { width: 10px; height: 10px; border-radius: 50%; }
     .city-detail-day { font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.85rem, 1.3vw, 1rem); font-weight: 800; color: var(--color-foreground); }
     .city-detail-tz { font-family: ui-monospace, monospace; font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); margin-bottom: 0.75rem; }
     .city-detail-tz strong { color: var(--color-foreground); font-weight: 700; }
 
-    /* Pills: Off hours + Sunrise — placed for the ACTIVE tab only (B's signature) */
-    .pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; }
+    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin: 0 0 1rem; }
     .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
     .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
     .pill-orange { background: var(--color-pill-orange-bg); border-color: var(--color-pill-orange-bd); color: var(--color-pill-orange-fg); }
     .pill-icon { display: inline-flex; width: 0.85rem; height: 0.85rem; }
     .pill-icon svg { width: 100%; height: 100%; }
 
-    /* Ad */
     .ad-slot { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.25rem; background: color-mix(in srgb, var(--color-background) 70%, var(--color-background-soft)); border: 1px solid var(--color-border-soft); border-radius: 6px; color: var(--color-muted-soft); font-family: ui-monospace, monospace; margin: 1.5rem auto 1rem; }
     .ad-slot .ad-label { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; }
     .ad-slot .ad-size  { font-size: 0.75rem; font-weight: 600; }
     .ad-slot.leaderboard { width: 100%; max-width: 728px; height: 90px; }
     @media (max-width: 760px) { .ad-slot.leaderboard { max-width: 320px; height: 50px; } }
 
-    .current-city { display: flex; align-items: center; gap: 0.4rem; font-size: clamp(0.8rem, 1.1vw, 0.9rem); color: var(--color-muted); margin: 1rem 0 0; }
+    .current-city { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: clamp(0.8rem, 1.1vw, 0.9rem); color: var(--color-muted); margin: 1rem 0 0; }
     .current-city-icon { color: var(--color-primary); flex-shrink: 0; }
     .current-city strong { color: var(--color-foreground); font-weight: 700; }
     .current-city-extra { color: var(--color-primary); font-weight: 700; }
@@ -229,6 +239,7 @@
       .btn-sm { height: 32px; padding: 0 0.625rem; font-size: 0.75rem; }
       .logo-text { font-size: 0.95rem; }
       .logo-mark { width: 26px; height: 26px; font-size: 0.75rem; }
+      .seg-row { --colon-width: 10px; --colon-side-space: 6px; --period-width: 36px; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
   </style>
@@ -269,49 +280,55 @@
         <h1 class="greeting"><span id="greeting-time">Good Evening</span>, <span class="greeting-city" id="greeting-city">your city</span></h1>
         <p class="subtitle">Plan your day, meetings, holidays, and global time zones in one smart workspace.</p>
 
-        <div class="time-area">
-          <div class="clock-block">
-            <div class="seg-row" aria-label="Live current time">
-              <div id="hours" class="seg-digit-group"></div>
-              <div class="seg-colon" aria-hidden="true"></div>
-              <div id="minutes" class="seg-digit-group"></div>
-              <div class="seg-colon" aria-hidden="true"></div>
-              <div id="seconds" class="seg-digit-group"></div>
-              <div id="hundredths" class="seg-digit-group"></div>
-              <div id="period" class="seg-period is-hidden">PM</div>
-            </div>
-            <div class="day-date">
-              <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <span id="day-date-text">—</span>
-            </div>
-            <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
+        <div class="clock-block">
+          <div class="seg-row" aria-label="Live current time">
+            <div id="hours" class="seg-digit-group"></div>
+            <div class="seg-colon" aria-hidden="true"></div>
+            <div id="minutes" class="seg-digit-group"></div>
+            <div class="seg-colon" aria-hidden="true"></div>
+            <div id="seconds" class="seg-digit-group"></div>
+            <span class="seg-period-dot" aria-hidden="true">.</span>
+            <div id="hundredths" class="seg-digit-group"></div>
+            <div id="period" class="seg-period is-hidden">PM</div>
           </div>
-
-          <div class="search-wrap">
-            <input id="city-search" class="search-input" type="search" placeholder="Search city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
+          <div class="format-toggle" role="group" aria-label="Time format">
+            <button id="format-12" type="button" aria-pressed="false">12h</button>
+            <button id="format-24" type="button" aria-pressed="true">24h</button>
           </div>
         </div>
 
-        <!-- Sync row (top) -->
+        <div class="day-date">
+          <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="day-date-text">—</span>
+        </div>
+        <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
+
         <div class="sync-row">
           <span class="sync-dot" aria-hidden="true"></span>
           <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</span></span>
         </div>
 
-        <!-- Tabs -->
+        <p class="onthisday" id="onthisday"><strong>On this day</strong> · <span id="onthisday-text">loading…</span></p>
+
+        <!-- Search bar (CENTERED above tabs) -->
+        <div class="search-section">
+          <div class="search-wrap">
+            <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
+          </div>
+        </div>
+
+        <p class="tabs-label">Favorite cities</p>
+
         <div class="tabs" id="tabs" role="tablist" aria-label="Cities"></div>
 
-        <!-- City detail (active tab) -->
         <div class="city-detail" id="city-detail">
           <div class="city-detail-head">
             <div class="city-detail-name" id="detail-name">—</div>
             <div class="city-detail-day" id="detail-day">—</div>
           </div>
           <div class="city-detail-tz" id="detail-tz">—</div>
-
-          <!-- Off hours + Sunrise pills — B's signature: only for the active tab -->
           <div class="pills">
             <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
             <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset</span></span>
@@ -344,6 +361,9 @@
       { name: "Sydney",   country: "AU", latitude: -33.8688, longitude: 151.2093, tz: "Australia/Sydney", is_capital: 1 }
     ];
     const state = { use24Hour: true, citiesWithHome: [], activeIdx: 0 };
+
+    const CITY_PALETTE = ["peach","lavender","mint","sky","rose","lemon"];
+    function cityColor(name) { const hash = [...name].reduce((a, c) => a + c.charCodeAt(0), 0); return CITY_PALETTE[hash % CITY_PALETTE.length]; }
 
     function createDigit(parent, small = false) {
       const digit = document.createElement("div");
@@ -384,20 +404,33 @@
       const tabs = document.getElementById("tabs");
       tabs.innerHTML = "";
       state.citiesWithHome.forEach((c, i) => {
+        const isHome = !!c._home;
+        const color = cityColor(c.name);
         const btn = document.createElement("button");
-        btn.className = "tab" + (i === state.activeIdx ? " is-active" : "") + (c._home ? " is-home" : "");
+        btn.className = "tab" + (i === state.activeIdx ? " is-active" : "");
         btn.setAttribute("role", "tab");
         btn.setAttribute("aria-selected", String(i === state.activeIdx));
-        btn.innerHTML = (c._home ? '<span class="tab-home" aria-hidden="true">⌂</span>' : '') + `<span>${c.name}</span>`;
-        btn.addEventListener("click", () => { state.activeIdx = i; renderTabs(); renderDetail(); });
+        btn.style.setProperty("--tab-active-color", `var(--city-${color})`);
+        btn.innerHTML = `
+          <span class="tab-dot" style="background: var(--city-${color});"></span>
+          <span>${c.name}</span>
+          ${!isHome ? `<span class="tab-remove" data-remove="${i}" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>` : ''}
+        `;
+        btn.addEventListener("click", (e) => {
+          if (e.target.closest(".tab-remove")) return;
+          state.activeIdx = i; renderTabs(); renderDetail();
+        });
         tabs.appendChild(btn);
       });
-      const add = document.createElement("button");
-      add.className = "tab tab-add";
-      add.id = "add-city";
-      add.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add';
-      add.addEventListener("click", openSearch);
-      tabs.appendChild(add);
+      tabs.querySelectorAll(".tab-remove").forEach(rm => {
+        rm.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const i = Number(rm.dataset.remove);
+          if (state.activeIdx >= state.citiesWithHome.length - 1) state.activeIdx = Math.max(0, state.activeIdx - 1);
+          state.citiesWithHome.splice(i, 1);
+          saveCities(); renderTabs(); renderDetail();
+        });
+      });
     }
     function saveCities() { try { localStorage.setItem("tdp-tabs-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
 
@@ -425,7 +458,8 @@
       const c = state.citiesWithHome[state.activeIdx];
       if (!c) return;
       const now = new Date();
-      document.getElementById("detail-name").innerHTML = (c._home ? '<span class="home-icon" aria-hidden="true">⌂</span>' : '') + c.name + (c.is_capital ? ' <span class="star">★</span>' : '');
+      const color = cityColor(c.name);
+      document.getElementById("detail-name").innerHTML = `<span class="dot" style="background: var(--city-${color});"></span>${c.name}${c.is_capital ? ' <span class="star">★</span>' : ''}`;
       document.getElementById("detail-day").textContent = dateIn(c.tz, now);
       document.getElementById("detail-tz").innerHTML = `<strong>${tzAbbr(c.tz)}</strong> · ${tzOffset(c.tz)}`;
       document.getElementById("greeting-city").textContent = c.name;
@@ -438,6 +472,24 @@
       if (sun && sun.sunrise_utc && sun.sunset_utc) {
         sp.textContent = `Sunrise ${utcToLocal(sun.sunrise_utc, c.tz, false)} · Sunset ${utcToLocal(sun.sunset_utc, c.tz, true)}`;
       } else { sp.textContent = "Sunrise · Sunset —"; }
+    }
+
+    async function fetchOnThisDay(month, day) {
+      try { const r = await fetch(`${API}/api/v1/onthisday?month=${month}&day=${day}`); if (!r.ok) return null; const j = await r.json(); return j.data || j; } catch (e) { return null; }
+    }
+    function renderOnThisDay() {
+      const now = new Date();
+      fetchOnThisDay(now.getMonth() + 1, now.getDate()).then(data => {
+        const events = data?.events || [];
+        const el = document.getElementById("onthisday-text");
+        const section = document.getElementById("onthisday");
+        if (!events.length) { section.style.display = "none"; return; }
+        section.style.display = "inline-flex";
+        const ev = events[0];
+        const year = ev.year || (ev.date && ev.date.slice(0,4)) || "—";
+        const text = ev.text || ev.description || ev.title || "";
+        el.innerHTML = `<strong>On this day in ${year}</strong> — ${text}`;
+      });
     }
 
     function updateClock() {
@@ -476,23 +528,31 @@
       } catch (e) {}
     }
 
-    const root = document.documentElement;
+    const rootEl = document.documentElement;
     const btnL = document.getElementById("theme-light");
     const btnD = document.getElementById("theme-dark");
-    function setTheme(t) { root.setAttribute("data-theme", t); btnL.setAttribute("aria-pressed", String(t === "light")); btnD.setAttribute("aria-pressed", String(t === "dark")); try { localStorage.setItem("tdp-theme", t); } catch (e) {} }
+    function setTheme(t) { rootEl.setAttribute("data-theme", t); btnL.setAttribute("aria-pressed", String(t === "light")); btnD.setAttribute("aria-pressed", String(t === "dark")); try { localStorage.setItem("tdp-theme", t); } catch (e) {} }
     btnL.addEventListener("click", () => setTheme("light"));
     btnD.addEventListener("click", () => setTheme("dark"));
     let savedT = null; try { savedT = localStorage.getItem("tdp-theme"); } catch (e) {}
     if (savedT === "dark" || savedT === "light") setTheme(savedT);
     else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) setTheme("dark");
 
-    let sf = null; try { sf = localStorage.getItem("tdp-fmt"); } catch (e) {}
-    if (sf === "24" || sf === "12") state.use24Hour = (sf === "24");
-    document.addEventListener("keydown", e => { if (!e.target.matches("input,textarea") && (e.key === "t" || e.key === "T")) { state.use24Hour = !state.use24Hour; try { localStorage.setItem("tdp-fmt", state.use24Hour ? "24" : "12"); } catch (e) {} } });
+    const btn12 = document.getElementById("format-12");
+    const btn24 = document.getElementById("format-24");
+    function setFormat(fmt) {
+      state.use24Hour = fmt === "24";
+      btn12.setAttribute("aria-pressed", String(!state.use24Hour));
+      btn24.setAttribute("aria-pressed", String(state.use24Hour));
+      try { localStorage.setItem("tdp-tabs-fmt", state.use24Hour ? "24" : "12"); } catch (e) {}
+    }
+    btn12.addEventListener("click", () => setFormat("12"));
+    btn24.addEventListener("click", () => setFormat("24"));
+    let savedF = null; try { savedF = localStorage.getItem("tdp-tabs-fmt"); } catch (e) {}
+    if (savedF === "24" || savedF === "12") setFormat(savedF);
 
     const searchInput = document.getElementById("city-search");
     const searchResults = document.getElementById("search-results");
-    function openSearch() { searchInput.focus(); }
     let deb = null;
     searchInput.addEventListener("input", () => {
       clearTimeout(deb);
@@ -521,15 +581,15 @@
               if (!state.citiesWithHome.some(x => x.tz === city.tz)) {
                 state.citiesWithHome.push(city);
                 state.activeIdx = state.citiesWithHome.length - 1;
+                saveCities(); renderTabs(); renderDetail();
               }
-              saveCities(); renderTabs(); renderDetail();
               searchInput.value = ""; searchResults.classList.remove("is-open"); searchResults.innerHTML = "";
             });
           });
         } catch (e) { searchResults.innerHTML = '<button class="search-result" disabled><div class="search-result-name">Search failed</div></button>'; searchResults.classList.add("is-open"); }
       }, 200);
     });
-    document.addEventListener("click", e => { if (!e.target.closest(".search-wrap")) searchResults.classList.remove("is-open"); });
+    document.addEventListener("click", e => { if (!e.target.closest(".search-section")) searchResults.classList.remove("is-open"); });
 
     function tzToCity(tz) {
       const map = { "America/New_York":{name:"New York",country:"US",state_code:"NY",latitude:40.7128,longitude:-74.0060,tz,is_capital:0},"America/Los_Angeles":{name:"Los Angeles",country:"US",state_code:"CA",latitude:34.0522,longitude:-118.2437,tz,is_capital:0},"America/Chicago":{name:"Chicago",country:"US",state_code:"IL",latitude:41.8781,longitude:-87.6298,tz,is_capital:0},"Europe/London":{name:"London",country:"GB",latitude:51.5074,longitude:-0.1278,tz,is_capital:1},"Europe/Paris":{name:"Paris",country:"FR",latitude:48.8566,longitude:2.3522,tz,is_capital:1},"Europe/Berlin":{name:"Berlin",country:"DE",latitude:52.5200,longitude:13.4050,tz,is_capital:1},"Asia/Tokyo":{name:"Tokyo",country:"JP",latitude:35.6762,longitude:139.6503,tz,is_capital:1},"Asia/Shanghai":{name:"Beijing",country:"CN",latitude:39.9042,longitude:116.4074,tz,is_capital:1},"Asia/Kolkata":{name:"Mumbai",country:"IN",latitude:19.0760,longitude:72.8777,tz,is_capital:0},"Asia/Dubai":{name:"Dubai",country:"AE",latitude:25.2048,longitude:55.2708,tz,is_capital:0},"Australia/Sydney":{name:"Sydney",country:"AU",latitude:-33.8688,longitude:151.2093,tz,is_capital:1},"America/Sao_Paulo":{name:"São Paulo",country:"BR",latitude:-23.5505,longitude:-46.6333,tz,is_capital:0} };
@@ -550,6 +610,7 @@
     }
     renderTabs();
     renderDetail();
+    renderOnThisDay();
     refreshSync();
     setInterval(refreshSync, 30000);
     updateClock();
