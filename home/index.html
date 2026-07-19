@@ -184,7 +184,8 @@
 
     /* Clock */
     .clock-block { margin: 0 auto 0.75rem; max-width: 720px; }
-    .mono-clock { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(3.5rem, 13vw, 7rem); font-weight: 800; letter-spacing: 0.02em; line-height: 1; color: var(--color-foreground); text-align: center; font-variant-numeric: tabular-nums; text-shadow: 0 0 24px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+    .mono-clock { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(3.5rem, 13vw, 7rem); font-weight: 800; letter-spacing: 0.02em; line-height: 1; color: var(--color-foreground); text-align: center; font-variant-numeric: tabular-nums; text-shadow: 0 0 24px color-mix(in srgb, var(--color-primary) 25%, transparent); white-space: nowrap; }
+    .mono-clock .ampm { font-size: 0.32em; font-weight: 700; color: var(--color-muted); margin-left: 0.25em; letter-spacing: 0.08em; vertical-align: middle; }
     .seg-row {
       --main-digit-width: clamp(54px, 13vw, 132px);
       --small-digit-width: clamp(24px, 5.5vw, 46px);
@@ -451,7 +452,7 @@
           <span class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Public holidays: National or regional holidays for this country today. If a holiday is showing, most banks, government offices, and many shops will be closed. Plan deliveries and calls around them."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
           <span class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></span>
           <span class="pill pill-orange pill-tip" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span><span class="pill-help" aria-hidden="true">?</span></span>
-          <span class="pill pill-blue is-hidden pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
         </div>
 
         <div class="search-section" id="search-section">
@@ -621,7 +622,9 @@
     // Return whether a tz is currently in Daylight Saving Time.
     // Compares the current short offset to the standard-time offset
     // (Jan offset in Northern, Jul offset in Southern Hemisphere).
-    // Returns null if the tz has no DST.
+    // Returns { hasDST, isDST, currentOffset, standardOffset } for ANY tz.
+    // hasDST=false means the city never observes DST (e.g. Asia/Kolkata).
+    // The pill is always shown — the text just changes.
     function getDstStatus(tz) {
       if (!tz) return null;
       try {
@@ -631,15 +634,16 @@
         const jul = new Date(now.getFullYear(), 6, 15);
         const janOff = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(jan).find(p => p.type === "timeZoneName")?.value || "";
         const julOff = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(jul).find(p => p.type === "timeZoneName")?.value || "";
-        if (janOff === julOff) return null;  // no DST in this tz
-        // The standard-time offset is whichever (Jan or Jul) is NOT
-        // the current offset. In the Northern Hemisphere, standard
-        // time is Jan; in the Southern, Jul. We pick whichever is
-        // different from the current.
+        const hasDST = janOff !== julOff;
+        if (!hasDST) {
+          // No DST in this tz — just show the current offset
+          return { hasDST: false, isDST: false, currentOffset: curOff, standardOffset: curOff };
+        }
+        // Has DST — figure out if we're in DST right now
         const isNorthernDST = (now.getMonth() >= 2 && now.getMonth() <= 9);
         const standardOff = isNorthernDST ? janOff : julOff;
         const isDST = curOff !== standardOff;
-        return { isDST, currentOffset: curOff, standardOffset: standardOff };
+        return { hasDST: true, isDST, currentOffset: curOff, standardOffset: standardOff };
       } catch (e) { return null; }
     }
 
@@ -1273,14 +1277,20 @@
       const dstText = document.getElementById("dst-pill-text");
       if (dstEl && dstText) {
         const dst = getDstStatus(active.tz);
-        if (!dst) {
-          dstEl.classList.add("is-hidden");
-        } else if (dst.isDST) {
+        // Always show the pill — the text just changes based on DST status
+        if (dst) {
           dstEl.classList.remove("is-hidden");
-          dstText.textContent = `In DST · ${dst.currentOffset} (standard ${dst.standardOffset})`;
+          if (!dst.hasDST) {
+            dstText.textContent = `No DST · ${dst.currentOffset}`;
+          } else if (dst.isDST) {
+            dstText.textContent = `In DST · ${dst.currentOffset} (standard ${dst.standardOffset})`;
+          } else {
+            dstText.textContent = `Standard time · ${dst.currentOffset}`;
+          }
         } else {
+          // Fallback — show UTC offset even if we can't determine DST
           dstEl.classList.remove("is-hidden");
-          dstText.textContent = `Standard time · ${dst.currentOffset}`;
+          dstText.textContent = active.tz ? active.tz : "DST";
         }
       }
       // Holiday pill
@@ -1311,21 +1321,21 @@
       const monthName = get("month");
       const year = get("year");
       // Monospace clock with 2-digit centiseconds (hundredths of a second).
-      // Respects the 12h/24h toggle: 24h shows HH:MM:SS.cs, 12h shows h:MM:SS.cs AM/PM
+      // Respects the 12h/24h toggle: 24h shows HH:MM:SS.cs, 12h shows h:MM:SS.cs <span>AM/PM</span>
       const mm2 = String(m).padStart(2, "0");
       const ss2 = String(s).padStart(2, "0");
       const cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
-      let hourStr, suffix;
+      let hourStr, ampmHtml;
       if (state.use24Hour) {
         hourStr = String(h).padStart(2, "0");
-        suffix = "";
+        ampmHtml = "";
       } else {
         const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
         hourStr = String(h12);
-        suffix = " " + (h >= 12 ? "PM" : "AM");
+        ampmHtml = `<span class="ampm">${h >= 12 ? "PM" : "AM"}</span>`;
       }
       const monoEl = document.getElementById("monoClock");
-      if (monoEl) monoEl.textContent = `${hourStr}:${mm2}:${ss2}.${cs}${suffix}`;
+      if (monoEl) monoEl.innerHTML = `${hourStr}:${mm2}:${ss2}.${cs}${ampmHtml}`;
       document.getElementById("day-date-text").textContent = `${WEEKDAYS[wdToIndex(wd)]}, ${monthName} ${String(day).padStart(2,"0")}, ${year}`;
       document.getElementById("tz-abbr").textContent = tzAbbr(tz);
       document.getElementById("tz-offset").textContent = tzOffset(tz);
