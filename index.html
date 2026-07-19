@@ -253,12 +253,13 @@
     .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
     .search-disabled-note { display: none; padding: 0.5rem 0.75rem; font-size: 0.75rem; color: var(--color-muted); text-align: center; }
     .search-section.is-disabled .search-disabled-note { display: block; }
-    .search-section.is-disabled .search-input { display: none; }
-    .search-section.is-disabled .search-icon { display: none; }
+    /* The search input stays visible even when /v2/search is 404. The page
+       runs a local fallback against the /v1/cities list cached in
+       state.allCities, so search always works for the 190 cities we have. */
     /* Popular cities are independent of the search API — always show. */
 
-    /* ===== Popular cities (10 below the search input) ===== */
-    .popular-cities-label { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 1rem 0 0.5rem; text-align: left; }
+    /* ===== Popular cities (below the search input) ===== */
+    .popular-cities-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1rem 0 0.625rem; text-align: left; }
     .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
     .popular-city { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid var(--city-color, var(--color-border)); background: var(--city-color-bg, transparent); color: var(--color-foreground); transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; }
     .popular-city:hover { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--city-color, var(--color-primary)) 30%, transparent); }
@@ -268,7 +269,7 @@
     .popular-city.is-added { opacity: 0.4; cursor: default; pointer-events: none; }
 
     /* ===== Favorite cities label + rail ===== */
-    .rail-label { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 1.5rem 0 0.625rem; text-align: left; }
+    .rail-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1.5rem 0 0.625rem; text-align: left; }
     .rail { display: flex; flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
     @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
     .rail::-webkit-scrollbar { height: 4px; }
@@ -401,7 +402,7 @@
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
             <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
           </div>
-          <p class="search-disabled-note">City search will light up when the search endpoint ships to production.</p>
+          <p class="search-disabled-note">Loading cities…</p>
           <p class="popular-cities-label">Popular cities</p>
           <div class="popular-cities" id="popular-cities" aria-label="Popular cities to add"></div>
         </div>
@@ -461,7 +462,10 @@
       return CITY_PALETTE[hash % CITY_PALETTE.length];
     }
 
-    /* 10 popular cities shown under the search box (when input is empty) */
+    /* 15 popular cities — rendered as chips below the search box. After
+       filtering out the home city and the 5 rail defaults, the first 10
+       are shown. Larger pool so we always have 10 to display even if
+       the user's home overlaps with one of these. */
     const POPULAR_CITIES = [
       { name: "Los Angeles", country: "US", state_code: "CA", latitude: 34.0522, longitude: -118.2437, tz: "America/Los_Angeles", is_capital: 0 },
       { name: "Paris",       country: "FR", latitude: 48.8566, longitude: 2.3522, tz: "Europe/Paris", is_capital: 1 },
@@ -472,8 +476,14 @@
       { name: "Berlin",      country: "DE", latitude: 52.5200, longitude: 13.4050, tz: "Europe/Berlin", is_capital: 1 },
       { name: "Toronto",     country: "CA", state_code: "ON", latitude: 43.6532, longitude: -79.3832, tz: "America/Toronto", is_capital: 0 },
       { name: "São Paulo",   country: "BR", latitude: -23.5505, longitude: -46.6333, tz: "America/Sao_Paulo", is_capital: 0 },
-      { name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz: "America/Mexico_City", is_capital: 1 }
+      { name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz: "America/Mexico_City", is_capital: 1 },
+      { name: "Rome",        country: "IT", latitude: 41.9028, longitude: 12.4964, tz: "Europe/Rome", is_capital: 1 },
+      { name: "Madrid",      country: "ES", latitude: 40.4168, longitude: -3.7038, tz: "Europe/Madrid", is_capital: 1 },
+      { name: "Istanbul",    country: "TR", latitude: 41.0082, longitude: 28.9784, tz: "Europe/Istanbul", is_capital: 0 },
+      { name: "Bangkok",     country: "TH", latitude: 13.7563, longitude: 100.5018, tz: "Asia/Bangkok", is_capital: 1 },
+      { name: "Seoul",       country: "KR", latitude: 37.5665, longitude: 126.9780, tz: "Asia/Seoul", is_capital: 1 }
     ];
+    const RAIL_DEFAULT_NAMES = new Set(["New York", "London", "Tokyo", "Beijing", "Sydney"]);
 
     function createDigit(parent, small = false) {
       const digit = document.createElement("div");
@@ -540,15 +550,25 @@
     }
     function saveCities() { try { localStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
 
-    /* ----- Popular cities (10 chips below the search box) -----
-       Each chip is color-coded with the same NotebookLM palette as the rail,
-       so the user gets a visual hint of which color the city will use when
-       added. Click to add to the rail. */
+    /* ----- Popular cities (chips below the search box) -----
+       Filtered to exclude the home city and the 5 rail defaults, so the
+       user only sees cities they can actually add. First 10 of the
+       filtered list are shown. Each chip is color-coded with the same
+       NotebookLM palette as the rail. Click to add. */
     function renderPopularCities() {
       const wrap = document.getElementById("popular-cities");
       if (!wrap) return;
       wrap.innerHTML = "";
-      POPULAR_CITIES.forEach((c, i) => {
+      const home = state.citiesWithHome[0];
+      const homeTz = home ? home.tz : null;
+      const homeName = home ? (home.name || "").toLowerCase() : null;
+      const filtered = POPULAR_CITIES.filter(c => {
+        if (homeTz && c.tz === homeTz) return false;       // exclude the home tz
+        if (homeName && c.name.toLowerCase() === homeName) return false; // exclude the home name
+        if (RAIL_DEFAULT_NAMES.has(c.name)) return false;  // exclude rail defaults
+        return true;
+      }).slice(0, 10);
+      filtered.forEach((c, i) => {
         const color = cityColor(c.name, i);
         const already = state.citiesWithHome.some(x => x.tz === c.tz);
         const btn = document.createElement("button");
@@ -708,45 +728,79 @@
       } catch (e) {}
     }
 
-    /* ----- City search (when /v2/search is on prod) ----- */
+    /* ----- City search -----
+       Strategy: try /v2/search (when on prod) first; fall back to a local
+       client-side filter against state.allCities (the 190-city list from
+       /v1/cities). The local fallback always works and matches the cities
+       the user can already see in the rail. */
     const searchInput = document.getElementById("city-search");
     const searchResults = document.getElementById("search-results");
     let deb = null;
+
+    function localSearch(q) {
+      // Filter the cached 190 cities by name. Returns up to 8 results.
+      const needle = q.toLowerCase();
+      const matches = state.allCities.filter(c => {
+        const name = (c.name || "").toLowerCase();
+        const ascii = (c.ascii_name || "").toLowerCase();
+        return name.includes(needle) || ascii.includes(needle);
+      }).slice(0, 8);
+      return matches;
+    }
+
+    function renderSearchResults(results, q) {
+      if (!results.length) {
+        searchResults.innerHTML = '<button class="search-result" disabled><div class="search-result-name">No matches for "' + escapeHtml(q) + '"</div></button>';
+        searchResults.classList.add("is-open");
+        return;
+      }
+      searchResults.innerHTML = results.map((c, i) => `
+        <button class="search-result" data-idx="${i}">
+          <div>
+            <div class="search-result-name">${escapeHtml(c.name || "")}${(c.is_capital || c.isCapital) ? " ★" : ""}</div>
+            <div class="search-result-meta">${escapeHtml(c.country || "")}${c.state_code ? " · " + escapeHtml(c.state_code) : ""} · ${escapeHtml(c.tz || "")}</div>
+          </div>
+          <div class="search-result-meta">${escapeHtml((c.tz || "").split("/").pop().replace(/_/g, " "))}</div>
+        </button>
+      `).join("");
+      searchResults.classList.add("is-open");
+      searchResults.querySelectorAll(".search-result[data-idx]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const c = results[Number(btn.dataset.idx)];
+          if (!state.citiesWithHome.some(x => x.tz === c.tz)) {
+            state.citiesWithHome.push({
+              name: c.name, country: c.country, state_code: c.state_code,
+              latitude: c.latitude, longitude: c.longitude, tz: c.tz, is_capital: c.is_capital || 0
+            });
+            saveCities(); renderRail(); renderPopularCities();
+          }
+          searchInput.value = "";
+          searchResults.classList.remove("is-open");
+          searchResults.innerHTML = "";
+        });
+      });
+    }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch])); }
+
     searchInput.addEventListener("input", () => {
-      if (!state.features.search) return;
       clearTimeout(deb);
       const q = searchInput.value.trim();
       if (q.length < 2) { searchResults.classList.remove("is-open"); searchResults.innerHTML = ""; return; }
       deb = setTimeout(async () => {
-        try {
-          const r = await fetch(`${API}/v2/search?q=${encodeURIComponent(q)}&limit=8`);
-          if (!r.ok) return;
-          const j = await r.json();
-          const results = (j.data?.results || j.results || []).slice(0, 8);
-          if (!results.length) { searchResults.innerHTML = '<button class="search-result" disabled><div class="search-result-name">No matches</div></button>'; searchResults.classList.add("is-open"); return; }
-          searchResults.innerHTML = results.map((c, i) => `
-            <button class="search-result" data-idx="${i}">
-              <div>
-                <div class="search-result-name">${c.name || c.asciiName || ""}${c.is_capital || c.isCapital ? " ★" : ""}</div>
-                <div class="search-result-meta">${(c.country?.name || c.country || "")} · ${c.timezone || c.tz || ""}</div>
-              </div>
-              <div class="search-result-meta">${(c.timezone || c.tz || "").split("/").pop().replace(/_/g," ")}</div>
-            </button>
-          `).join("");
-          searchResults.classList.add("is-open");
-          searchResults.querySelectorAll(".search-result[data-idx]").forEach(btn => {
-            btn.addEventListener("click", () => {
-              const c = results[Number(btn.dataset.idx)];
-              const city = { name: c.name || c.asciiName, country: c.country?.code || c.countryCode, countryName: c.country?.name, state_code: c.state_code, latitude: c.coordinates?.lat ?? c.latitude, longitude: c.coordinates?.lon ?? c.longitude, tz: c.timezone || c.tz, is_capital: c.is_capital || c.isCapital || 0 };
-              if (!state.citiesWithHome.some(x => x.tz === city.tz)) {
-                state.citiesWithHome.push(city);
-                saveCities(); renderRail(); renderPopularCities();
-              }
-              searchInput.value = ""; searchResults.classList.remove("is-open"); searchResults.innerHTML = "";
-            });
-          });
-        } catch (e) {}
-      }, 200);
+        // Try the prod endpoint first; fall back to local search.
+        if (state.features.search) {
+          try {
+            const r = await fetch(`${API}/v2/search?q=${encodeURIComponent(q)}&limit=8`);
+            if (r.ok) {
+              const j = await r.json();
+              const results = (j.data?.results || j.results || []).slice(0, 8);
+              renderSearchResults(results, q);
+              return;
+            }
+          } catch (e) {}
+        }
+        renderSearchResults(localSearch(q), q);
+      }, 150);
     });
     document.addEventListener("click", e => { if (!e.target.closest(".search-section")) searchResults.classList.remove("is-open"); });
 
@@ -861,9 +915,11 @@
       // Probe which features are available on production
       await probeAll();
 
-      // Load cities (the only endpoint guaranteed to be on prod)
+      // Load cities via same-origin Worker proxy (/api/cities -> the prod API).
+      // The Worker proxies the request server-side so we avoid CORS issues
+      // (the prod API only sends Access-Control-Allow-Origin for dateandtime.live).
       try {
-        const r = await fetch(`${API}/v1/cities?limit=200`);
+        const r = await fetch(`/api/cities?limit=200`);
         if (r.ok) {
           const j = await r.json();
           const data = j.data || j;
@@ -883,6 +939,13 @@
       if (state.citiesWithHome.length === 0) {
         const home = detectHome();
         state.citiesWithHome = buildListWithHome(home);
+      }
+
+      // If the local cities list loaded (even though /v2/search is 404), the
+      // search input is fully usable via the client-side fallback. Lift the
+      // 'is-disabled' lock so the "no list loaded" note doesn't show.
+      if (state.allCities.length > 0) {
+        document.getElementById("search-section").classList.remove("is-disabled");
       }
       // Render the green live-location pill (uses the same home the rail uses)
       renderLiveLocation(state.citiesWithHome[0] || null);
