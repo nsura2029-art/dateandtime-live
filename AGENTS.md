@@ -286,17 +286,39 @@ git checkout main    && npx wrangler deploy
 
 ---
 
+## Frozen landing rule (LOCKED 2026-07-19)
+
+`index.html` is the **production landing** for `dateandtime.live/` and is a
+**release artifact**. Do not modify its design, hero, or main flow without
+explicit user approval. Small header-only edits (e.g. nav link hrefs) are OK
+when explicitly requested.
+
+All new landing variants, SEO city pages, and feature pages live as
+**separate files at their own routes**, each with its own review/approval
+cycle. Examples:
+- `home/index.html` → `/home` (SEO-friendly hero variant)
+- `time/in/{slug}.html` → `/time/in/{slug}` (per-city today pages, future)
+- `globe/index.html` → `/globe` (parked 3D globe)
+
+When creating a new page:
+1. Copy `index.html` as a starting point (gets all the API wiring + theme for free)
+2. Override only the hero/title/meta — keep clock, pills, rail, theme, footer
+3. Add a route in the header nav if it should be a primary entry point
+4. The new page is its own experiment surface — deploy to dev for approval,
+   promote to prod only after explicit "yes"
+
 ## File map
 
 ```
 dateandtime-live/
-├── index.html              ← landing (active)
+├── index.html              ← /        (FROZEN — current "Good Night" landing)
+├── home/index.html         ← /home/   (NEW — SEO-friendly landing, alt hero)
 ├── design-system/index.html
-├── globe/index.html        ← parked
-├── docs/api/
-├── docs/ROLLOUT.md         ← API feature rollout queue
-├── favicon.svg
-├── src/index.js
-├── wrangler.toml           ← prod + dev envs
+├── globe/index.html        ← /globe/  (parked)
+├── (future) time/in/{slug}/index.html  ← /time/in/{slug}/  (per-city today pages)
+├── assets/flags/           ← 242 country flag PNGs (CC0, ~70KB)
+├── src/index.js            ← Worker (proxies + __location injection)
+├── cloudflare/datetime-api/  ← Hono API (33,945 cities + 408 tz + 880 holidays)
+├── scripts/deploy.sh       ← dev default, prod requires "yes"
 └── AGENTS.md               ← this file
 ```
