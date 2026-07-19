@@ -242,8 +242,10 @@
     .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin: 0.75rem 0 0; }
     .pills.is-hidden { display: none; }
     .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
+    .pill.is-hidden { display: none; }
     .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
     .pill-orange { background: var(--color-pill-orange-bg); border-color: var(--color-pill-orange-bd); color: var(--color-pill-orange-fg); }
+    .flag { display: inline-block; font-size: 0.95rem; line-height: 1; margin-right: 0.35rem; vertical-align: -0.05em; }
     .pill-icon { display: inline-flex; width: 0.85rem; height: 0.85rem; }
     .pill-icon svg { width: 100%; height: 100%; }
 
@@ -938,13 +940,15 @@
         // expects snake_case. Map both shapes for compatibility.
         const cName = c.name || "";
         const cCountry = c.country || c.countryCode || c.countryName || "";
+        const cCountryCode = c.countryCode || c.country || "";
         const cState = c.state_code || c.stateCode || "";
         const cTz = c.tz || c.timezone || "";
         const cCapital = !!(c.is_capital || c.isCapital);
+        const flag = countryFlag(cCountryCode);
         return `
         <button class="search-result" data-idx="${i}">
           <div>
-            <div class="search-result-name">${escapeHtml(cName)}${cCapital ? " ★" : ""}</div>
+            <div class="search-result-name">${flag ? `<span class="flag" aria-label="${escapeHtml(cCountryCode)}">${flag}</span>` : ""}${escapeHtml(cName)}${cCapital ? " ★" : ""}</div>
             <div class="search-result-meta">${escapeHtml(cCountry)}${cState ? " · " + escapeHtml(cState) : ""} · ${escapeHtml(cTz)}</div>
           </div>
           <div class="search-result-meta">${escapeHtml(cTz.split("/").pop().replace(/_/g, " "))}</div>
@@ -960,22 +964,53 @@
           const cLon = c.longitude;
           const cTz = c.tz || c.timezone || "";
           const cCountry = c.country || c.countryCode || c.countryName || "";
+          const cCountryName = c.countryName || c.country || cCountry || "";
           const cState = c.state_code || c.stateCode || "";
           const cCapital = c.is_capital || c.isCapital || 0;
-          if (!state.citiesWithHome.some(x => x.tz === cTz)) {
-            state.citiesWithHome.push({
-              id: cId, name: c.name, country: cCountry, state_code: cState,
-              latitude: cLat, longitude: cLon, tz: cTz, is_capital: cCapital
-            });
-            saveCities(); renderRail(); renderPopularCities();
+          const cityObj = {
+            id: cId, name: c.name, country: cCountry, countryName: cCountryName,
+            state_code: cState, latitude: cLat, longitude: cLon, tz: cTz, is_capital: cCapital
+          };
+          // Clicking a search result makes that city the NEW home (moves to
+          // position 0). This switches the hero clock, sun pill, DST
+          // countdown, holiday pill, and "current time in" footer all to
+          // the selected city. The previous home becomes a regular rail card.
+          const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cTz);
+          if (existingIdx >= 0) {
+            // Already in the rail — just move to position 0 (make it home)
+            const [existing] = state.citiesWithHome.splice(existingIdx, 1);
+            existing._home = true;
+            state.citiesWithHome.unshift(existing);
+          } else {
+            // New city — make it home, demote the current home
+            const oldHome = state.citiesWithHome[0];
+            if (oldHome) delete oldHome._home;
+            cityObj._home = true;
+            state.citiesWithHome.unshift(cityObj);
           }
+          saveCities();
+          renderRail();
+          renderPopularCities();
+          onHomeChanged();
           searchInput.value = "";
           searchResults.classList.remove("is-open");
           searchResults.innerHTML = "";
+          // Smooth scroll back to the top so the user sees the new home
+          window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
     }
     function escapeHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch])); }
+
+    /* Country flag from ISO 3166-1 alpha-2 code. Each A-Z letter maps to a
+       regional indicator symbol (U+1F1E6..U+1F1FF). "US" → 🇺🇸. */
+    function countryFlag(cc) {
+      if (!cc) return "";
+      const code = cc.trim().toUpperCase();
+      if (code.length !== 2) return code;
+      const A = 0x1F1E6 - 65;
+      return String.fromCodePoint(code.charCodeAt(0) + A, code.charCodeAt(1) + A);
+    }
 
     searchInput.addEventListener("input", () => {
       clearTimeout(deb);
@@ -1216,6 +1251,29 @@
           submit.textContent = "Send";
         }
       });
+    }
+
+    /* ----- When the home city changes (user clicks a search result
+       or a rail card), refresh every UI element that depends on the home
+       city's location, timezone, and country. ----- */
+    function onHomeChanged() {
+      const home = state.citiesWithHome[0];
+      if (!home) return;
+      // Live-location pill
+      renderLiveLocation(home);
+      // Sun-pill (only if the sun API is live)
+      if (state.features.sun) {
+        fetchSunForCity(home).then(sun => {
+          if (sun) {
+            const sp = document.getElementById("sun-pill");
+            sp.innerHTML = `Sunrise ${utcToLocal(sun.sunrise_utc || sun.sunrise, home.tz, false)} · Sunset ${utcToLocal(sun.sunset_utc || sun.sunset, home.tz, true)}`;
+          }
+        });
+      }
+      // DST countdown
+      if (state.features.dst) refreshDstCountdown();
+      // Holiday pill
+      if (state.features.holidays) refreshHolidayPill();
     }
 
     /* ----- Boot ----- */

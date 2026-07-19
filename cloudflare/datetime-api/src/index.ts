@@ -696,7 +696,8 @@ function computeSun(lat: number, lon: number, date: Date, isSunrise: boolean): D
 
   const tzOffset = -date.getTimezoneOffset() / 60;
   const solarNoon = 12 - lon / 15 - eqTime / 60;
-  const result = isSunrise ? solarNoon + localHourAngle / 15 : solarNoon - localHourAngle / 15;
+  // localHourAngle is -H for sunrise and +H for sunset, so we always add it
+  const result = solarNoon + localHourAngle / 15;
   const hours = Math.floor(result);
   const minutes = Math.round((result - hours) * 60);
   const d = new Date(date);
