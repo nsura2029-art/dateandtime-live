@@ -37,17 +37,29 @@
  *   GET  /api/v1/timezones/:id          — get timezone
  *   GET  /api/v1/time/now?tz=...        — current time for tz
  *   GET  /api/v1/time/sun?lat&lon&date  — sunrise/sunset
- *   GET  /api/v1/holidays/today?cc      — today's holidays (Phase 2)
- *   GET  /api/v1/holidays?cc=&year=     — holidays for a year (Phase 2)
- *   GET  /api/v1/onthisday              — on-this-day events (Phase 2)
+ *   GET  /api/v1/holidays/today?cc      — today's holidays (Phase 2, now live)
+ *   GET  /api/v1/holidays/upcoming?cc&days — upcoming holidays (Phase 2, now live)
+ *   GET  /api/v1/holidays?cc=&year=     — holidays for a year (Phase 2, now live)
+ *   GET  /api/v1/countries/:cca2/working-hours — business calendar (Phase 2, now live)
+ *   GET  /api/v1/onthisday              — on-this-day events (Phase 2, now live)
+ *   GET  /api/v1/dst/upcoming?tz=...    — next DST transition (Phase 4, now live)
+ *   GET  /api/v1/cities/:id/climate     — climate for a city (Phase 4, now live)
+ *   GET  /api/v1/cities/:id/aliases     — historical names (Phase 6, now live)
+ *   GET  /api/v1/countries/:cca2/cities — cities in a country (new)
+ *   GET  /api/v1/admin/data-quality     — run quality checks (Phase 7, now live)
+ *   POST /api/v1/feedback/:id/vote      — vote on feedback (Phase 7, now live)
+ *   GET  /api/v1/feedback/top           — top voted feedback (Phase 7, now live)
  *   POST /api/v1/feedback               — submit feedback
  *   GET  /api/v1/feedback               — list feedback
  *   GET  /api/v2/search?q=...           — advanced search (FTS5)
+ *
+ * Deferred routes (Phases 2/4/6/7) are in src/deferred-routes.ts.
  */
 
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { deferred } from "./deferred-routes";
 
 // ============== Types ==============
 
@@ -309,6 +321,18 @@ app.on("HEAD", "/api/v1/holidays/today", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v1/holidays", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v1/onthisday", (c) => c.body(null, 200));
 app.on("HEAD", "/api/v2/search", (c) => c.body(null, 200));
+// Phases 2/4/6/7 deferred routes
+app.on("HEAD", "/api/v1/holidays/today", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/holidays/upcoming", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/holidays", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/countries/:cca2/working-hours", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/onthisday", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/dst/upcoming", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/cities/:id/climate", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/cities/:id/aliases", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/countries/:cca2/cities", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/admin/data-quality", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/feedback/top", (c) => c.body(null, 200));
 
 // ---------- Root ----------
 app.get("/", (c) => c.json({
@@ -679,36 +703,6 @@ function computeSun(lat: number, lon: number, date: Date, isSunrise: boolean): D
   return d;
 }
 
-// ---------- Holidays (Phase 0 placeholder) ----------
-app.get("/api/v1/holidays/today", async (c) => {
-  const country = c.req.query("country")?.toUpperCase();
-  return c.json(ok({
-    holidays: [],
-    count: 0,
-    date: new Date().toISOString().slice(0, 10),
-    country: country ?? null,
-    note: "Holidays data is being added in Phase 2 of the shared DB plan. See docs/architecture/SHARED-DB-PLAN.md.",
-  }));
-});
-
-app.get("/api/v1/holidays", async (c) => {
-  return c.json(ok({
-    holidays: [],
-    count: 0,
-    note: "Holidays data is being added in Phase 2 of the shared DB plan. See docs/architecture/SHARED-DB-PLAN.md.",
-  }));
-});
-
-// ---------- On this day (placeholder) ----------
-app.get("/api/v1/onthisday", async (c) => {
-  return c.json(ok({
-    events: [],
-    month: new Date().getMonth() + 1,
-    day: new Date().getDate(),
-    note: "On-this-day data is a Phase 2 deliverable.",
-  }));
-});
-
 // ---------- Feedback ----------
 app.post("/api/v1/feedback", async (c) => {
   const body = await c.req.json<{ message?: string; email?: string; page?: string; rating?: number; context?: string }>();
@@ -834,6 +828,8 @@ app.get("/api/v2/search", async (c) => {
 });
 
 // ---------- 404 ----------
+// ---------- Mount deferred routes (Phases 2/4/6/7) ----------
+app.route("/api/v1", deferred);
 app.notFound((c) => c.json(fail("Not found", 404, "NOT_FOUND"), 404));
 app.onError((err, c) => {
   console.error(err);
