@@ -1,0 +1,16 @@
+name = "dateandtime-live"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+[assets]
+directory = "./"
+binding = "ASSETS"
+exclude = [
+  ".git/**",
+  "node_modules/**",
+  "**/README.md",
+  "**/*.md",
+  "**/wrangler.toml",
+  "**/src/**",
+  ".gitignore"
+]
