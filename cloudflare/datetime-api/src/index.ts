@@ -707,36 +707,41 @@ function computeSun(lat: number, lon: number, date: Date, isSunrise: boolean): D
 
 // ---------- Feedback ----------
 app.post("/api/v1/feedback", async (c) => {
-  const body = await c.req.json<{ message?: string; email?: string; page?: string; rating?: number; context?: string }>();
-  if (!body.message || body.message.length < 1) {
-    return c.json(fail("message required"), 400);
+  // Accepts the new feedback schema (type, title, body, author, country_code,
+  // status, created_at, updated_at, votes) and inserts into the feedback table.
+  // Also accepts the legacy { message } shape for backward compatibility —
+  // maps it to type="praise", title=first 80 chars, body=message.
+  const raw: any = await c.req.json().catch(() => ({}));
+  const now = Math.floor(Date.now() / 1000);
+  const type = String(raw.type || (raw.message ? "praise" : "feature"));
+  const title = String(raw.title || (typeof raw.message === "string" ? raw.message.slice(0, 80) : "untitled"));
+  const body = String(raw.body || raw.message || "");
+  const author = raw.author ? String(raw.author) : null;
+  const countryCode = raw.country_code ? String(raw.country_code) : null;
+  const status = String(raw.status || "open");
+  const votes = typeof raw.votes === "number" ? raw.votes : 0;
+  if (!body || body.length < 1) {
+    return c.json(fail("body (or message) required"), 400);
   }
-  if (body.message.length > 5000) {
-    return c.json(fail("message too long (max 5000 chars)"), 400);
+  if (body.length > 5000) {
+    return c.json(fail("body too long (max 5000 chars)"), 400);
   }
-  if (body.rating !== undefined && (body.rating < 1 || body.rating > 5)) {
-    return c.json(fail("rating must be 1-5"), 400);
-  }
-
-  const id = crypto.randomUUID();
-  const created = new Date().toISOString();
-  await c.env.DB
-    .prepare(`INSERT INTO feedback (id, message, email, page, rating, context, created_at)
-              VALUES (?, ?, ?, ?, ?, ?, ?)`)
-    .bind(id, body.message, body.email ?? null, body.page ?? null,
-      body.rating ?? null, body.context ? JSON.stringify(body.context) : null, created)
+  const result = await c.env.DB
+    .prepare(`INSERT INTO feedback (type, title, body, author, country_code, status, votes, created_at, updated_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(type, title, body, author, countryCode, status, votes, now, now)
     .run();
-
-  return c.json(ok({ id, createdAt: created }));
+  const id = result.meta?.last_row_id;
+  return c.json(ok({ id, type, title, status, createdAt: now }));
 });
 
 app.get("/api/v1/feedback", async (c) => {
   const limit = parseIntSafe(c.req.query("limit"), 50, 1, 200);
   const rows = await c.env.DB
-    .prepare(`SELECT id, message, email, page, rating, created_at
+    .prepare(`SELECT id, type, title, body, author, country_code, status, votes, created_at, updated_at
               FROM feedback ORDER BY created_at DESC LIMIT ?`)
     .bind(limit)
-    .all<{ id: string; message: string; email: string | null; page: string | null; rating: number | null; created_at: string }>();
+    .all<{ id: number; type: string; title: string; body: string; author: string | null; country_code: string | null; status: string; votes: number; created_at: number; updated_at: number }>();
   return c.json(ok({
     feedback: rows.results,
     count: rows.results.length,
