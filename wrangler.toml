@@ -5,6 +5,11 @@ compatibility_date = "2024-09-23"
 [assets]
 directory = "./"
 binding = "ASSETS"
+# run_worker_first = true so the Worker in src/index.js intercepts every
+# request and can inject window.__location into HTML responses (Cloudflare
+# IP-geolocation data). Without this, the asset is served directly and
+# the page never knows the user's city/region/country.
+run_worker_first = true
 # NOTE: wrangler 4.x ignores the `exclude` field (warning: "Unexpected
 # fields found in assets field"). For the landing deploy, the api Worker's
 # 98 MB workerd binary in cloudflare/datetime-api/node_modules gets
