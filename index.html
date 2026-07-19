@@ -263,7 +263,10 @@
     .search-result:hover, .search-result:focus-visible { background: var(--color-background-soft); }
     .search-result-name { font-weight: 600; font-size: 0.875rem; }
     .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.15rem; }
-    .search-result-flag { font-size: 1.5rem; line-height: 1; min-width: 1.75rem; text-align: center; flex-shrink: 0; }
+    .search-result-flag { display: flex; align-items: center; flex-shrink: 0; min-width: 2rem; }
+    .flag-img { display: inline-block; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); object-fit: cover; }
+    .live-location-flag { display: inline-flex; align-items: center; margin-right: 0.4rem; flex-shrink: 0; }
+    .live-location-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-left: 0.4rem; padding-left: 0.4rem; border-left: 1px solid var(--color-border); }
     .search-disabled-note { display: none; padding: 0.5rem 0.75rem; font-size: 0.75rem; color: var(--color-muted); text-align: center; }
     .search-section.is-disabled .search-disabled-note { display: block; }
     /* The search input stays visible even when /api/v2/search is 404. The page
@@ -390,8 +393,9 @@
 
         <div class="live-location is-hidden" id="live-location" aria-live="polite">
           <span class="live-location-dot" aria-hidden="true"></span>
-          <span class="live-location-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span class="live-location-flag"></span>
           <span class="live-location-text" id="live-location-text">Detecting your location…</span>
+          <span class="live-location-tz"></span>
         </div>
 
         <div class="clock-block">
@@ -622,7 +626,7 @@
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
           </div>
           <div class="city-time" data-tz="${c.tz}" style="color: var(--city-${color});">--:--:--</div>
-          <div class="city-tz">${tzAbbr(c.tz)} · ${tzOffset(c.tz)}</div>
+          <div class="city-tz">${escapeHtml(c.tz || "")}</div>
           <div class="city-day-diff" data-tz="${c.tz}" data-home-tz="${home ? home.tz : ''}">
             <span class="city-day">—</span><span class="city-day-sep">, </span><span class="city-hours-diff">—</span>
           </div>
@@ -1004,20 +1008,12 @@
         const cTz = c.tz || c.timezone || "";
         const cPop = c.population || 0;
         const cCapital = !!(c.is_capital || c.isCapital);
-        const flag = countryFlag(cCountryCode);
-        // Resolve a friendly state name (API field, then static map, then code)
-        const stateLabel = cStateName
-          || stateCodeToName(cCountryCode, cState)
-          || cState
-          || "";
-        // Population formatted compactly: 16.3M, 547K, 12K
-        const popStr = cPop >= 1000000 ? (cPop / 1000000).toFixed(1) + "M"
-                     : cPop >= 1000    ? Math.round(cPop / 1000) + "K"
-                     : cPop > 0        ? String(cPop) : "";
-        // Build the meta line: "Country · State · Population".
-        // We dropped the tzCity ("Paris" from "Europe/Paris") because it
-        // duplicated the city name on the main line and was confusing.
-        const metaParts = [cCountry, stateLabel, popStr].filter(Boolean).map(escapeHtml);
+        // New meta line: IANA timezone · UTC offset. The flag is now a
+        // real PNG on the right (was a Unicode emoji). Dropped the
+        // redundant "Country · State · Population" — the flag conveys
+        // the country, and the IANA tz is the more useful piece.
+        const offset = utcOffset(cTz);
+        const metaParts = [cTz, offset].filter(Boolean).map(escapeHtml);
         const meta = metaParts.join(" · ");
         return `
         <button class="search-result" data-idx="${i}">
@@ -1025,7 +1021,7 @@
             <div class="search-result-name">${escapeHtml(cName)}${cCapital ? " ★" : ""}</div>
             <div class="search-result-meta">${meta}</div>
           </div>
-          <div class="search-result-flag" aria-label="${escapeHtml(cCountryCode)}" title="${escapeHtml(cCountryCode)}">${flag || escapeHtml(cCountryCode)}</div>
+          <div class="search-result-flag">${flagImg(cCountryCode, 30, 20)}</div>
         </button>
       `;
       }).join("");
@@ -1078,12 +1074,42 @@
 
     /* Country flag from ISO 3166-1 alpha-2 code. Each A-Z letter maps to a
        regional indicator symbol (U+1F1E6..U+1F1FF). "US" → 🇺🇸. */
-    function countryFlag(cc) {
+    // Render a real PNG country flag (default 24×18). The assets are
+    // 242 PNGs at w40 stored in /assets/flags/{cc}.png. <img> lets the
+    // browser lazy-load them and handle aspect-ratio correctly. Falls
+    // back to the 2-letter ISO code if the PNG is missing.
+    function flagImg(cc, w, h) {
       if (!cc) return "";
-      const code = cc.trim().toUpperCase();
-      if (code.length !== 2) return code;
-      const A = 0x1F1E6 - 65;
-      return String.fromCodePoint(code.charCodeAt(0) + A, code.charCodeAt(1) + A);
+      cc = String(cc).toLowerCase();
+      const ww = w || 24;
+      const hh = h || 18;
+      return `<img class="flag-img" src="/assets/flags/${cc}.png" width="${ww}" height="${hh}" alt="${cc.toUpperCase()}" loading="lazy" decoding="async" onerror="this.replaceWith(document.createTextNode('${cc.toUpperCase()}'))">`;
+    }
+
+    // Compute the current UTC offset for an IANA timezone, formatted as
+    // "UTC+05:30" / "UTC-04:00". Uses Intl.DateTimeFormat so DST is
+    // handled automatically (e.g. EST → EDT → EST).
+    function utcOffset(tz) {
+      if (!tz) return "";
+      try {
+        const parts = new Intl.DateTimeFormat("en-US", {
+          timeZone: tz,
+          timeZoneName: "shortOffset"
+        }).formatToParts(new Date());
+        const off = (parts.find(p => p.type === "timeZoneName") || {}).value || "";
+        // "GMT+5:30" → "UTC+05:30", "GMT" → "UTC+00:00"
+        const m = off.match(/^GMT([+-])(\d{1,2})(?::(\d{2}))?$/);
+        if (m) {
+          const sign = m[1];
+          const hh = m[2].padStart(2, "0");
+          const mm = (m[3] || "00").padStart(2, "0");
+          return `UTC${sign}${hh}:${mm}`;
+        }
+        if (off === "GMT") return "UTC+00:00";
+        return off.replace(/^GMT/, "UTC");
+      } catch (e) {
+        return "";
+      }
     }
 
     searchInput.addEventListener("input", () => {
@@ -1235,19 +1261,17 @@
       if (home.nearest && home.nearest.name && home.nearest.name.toLowerCase() !== home.name.toLowerCase()) {
         parts.push(`(near ${home.nearest.name})`);
       }
-      // Resolve a friendly state/region name. Cloudflare's cf.region is
-      // sometimes empty (especially for non-US IPs), and the GeoNames
-      // admin1 code is opaque (e.g. "40" for Telangana, IN). We prefer
-      // regionFull (CF's full region name) and fall back to a built-in
-      // state-code → name map for the countries we see most.
-      const stateLabel = home.regionFull
-        || stateCodeToName(home.country, home.state_code)
-        || home.state_code
-        || "";
-      if (stateLabel) parts.push(stateLabel);
-      if (home.countryName) parts.push(home.countryName);
-      else if (home.country) parts.push(home.country);
       txt.textContent = parts.length ? parts.join(", ") : "Detecting your location…";
+      // Live location pill: real flag + city (text) + IANA tz + UTC offset
+      const flagSpan = el.querySelector(".live-location-flag");
+      if (flagSpan) {
+        flagSpan.innerHTML = home.country ? flagImg(home.country, 20, 14) : "";
+      }
+      const tzSpan = el.querySelector(".live-location-tz");
+      if (tzSpan) {
+        const off = utcOffset(home.tz);
+        tzSpan.textContent = home.tz ? (off ? `${home.tz} · ${off}` : home.tz) : "";
+      }
     }
 
     // Static map of well-known (country, admin1_code) → human-readable
