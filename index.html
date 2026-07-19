@@ -168,13 +168,8 @@
     .section + .section { margin-top: 0; }
     .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
     .section--clock { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
-    .section--search { padding: clamp(2rem, 5vw, 3rem) 0; }
+    .section--search { padding: clamp(2rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2rem); }
     .section--favorites { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
-    .section--onthisday-section { padding: clamp(2rem, 5vw, 3rem) 0; }
-    .section--footer-note { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(3rem, 6vw, 4rem); }
-    .section-eyebrow { display: inline-block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--color-primary); margin-bottom: 0.5rem; }
-    .section-title { font-size: clamp(1.125rem, 2.4vw, 1.5rem); font-weight: 800; letter-spacing: -0.01em; margin: 0 0 0.5rem; color: var(--color-foreground); }
-    .section-subtitle { font-size: clamp(0.8125rem, 1.3vw, 0.9rem); color: var(--color-muted-soft); margin: 0 auto 1.5rem; max-width: 36rem; line-height: 1.5; }
     /* Backwards-compat: keep .hero as alias for .section--hero */
     .hero { padding: clamp(2rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2.5rem); text-align: center; position: relative; }
     .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
@@ -381,18 +376,6 @@
     .ad-slot.hero-ad { width: 100%; max-width: 728px; height: 90px; margin-top: 1.5rem; }
     @media (max-width: 760px) { .ad-slot.hero-ad { max-width: 320px; height: 50px; } }
 
-    /* === OnThisDay section card === */
-    .onthisday-card { max-width: 720px; margin: 1rem auto 0; padding: 1.5rem 1.75rem; background: var(--color-card-bg, var(--color-background)); border: 1px solid var(--color-border); border-radius: 1rem; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .onthisday-card .event-year { font-family: ui-monospace, "SF Mono", monospace; font-size: 0.875rem; color: var(--color-primary); font-weight: 700; }
-    .onthisday-card .event-category { display: inline-block; font-size: 0.6875rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: color-mix(in srgb, var(--color-primary) 12%, transparent); color: var(--color-primary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-left: 0.5rem; }
-    .onthisday-card .event-title { font-size: clamp(1.125rem, 2.4vw, 1.375rem); font-weight: 800; margin: 0.5rem 0 0.4rem; line-height: 1.25; color: var(--color-foreground); }
-    .onthisday-card .event-desc { font-size: 0.9375rem; color: var(--color-muted-soft); margin: 0 0 0.75rem; line-height: 1.5; }
-    .onthisday-card .event-link { display: inline-block; font-size: 0.8125rem; font-weight: 700; color: var(--color-primary); text-decoration: none; }
-    .onthisday-card .event-link:hover { text-decoration: underline; }
-    .onthisday-loading { text-align: center; color: var(--color-muted); padding: 1rem 0; }
-    .onthisday-section-more { text-align: center; margin: 1.25rem 0 0; }
-    .onthisday-section-link { display: inline-block; font-size: 0.875rem; font-weight: 700; color: var(--color-primary); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent); border-radius: 9999px; }
-    .onthisday-section-link:hover { background: color-mix(in srgb, var(--color-primary) 8%, transparent); }
 
     .current-city { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: clamp(0.8rem, 1.1vw, 0.9rem); color: var(--color-muted); margin: 1rem 0 0; }
     .current-city-icon { color: var(--color-primary); flex-shrink: 0; }
@@ -523,10 +506,6 @@
     <!-- ============================================== -->
     <section class="section section--search">
       <div class="container">
-        <p class="section-eyebrow">Add cities</p>
-        <h2 class="section-title">Build your world clock</h2>
-        <p class="section-subtitle">Search any city worldwide, or pick a popular one below to add it to your favorites rail.</p>
-
         <div class="search-section" id="search-section">
           <div class="search-wrap">
             <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
@@ -545,11 +524,7 @@
     <!-- ============================================== -->
     <section class="section section--favorites">
       <div class="container">
-        <p class="section-eyebrow">Your world clock</p>
-        <h2 class="section-title">Favorite cities</h2>
-        <p class="section-subtitle">Click any city to update the big clock + pills. The first one (⌂) is your home and stays put.</p>
-
-        <p class="rail-label is-hidden">Favorite cities</p>
+        <p class="rail-label">Favorite cities</p>
         <div class="rail" id="rail"></div>
 
         <div class="ad-slot leaderboard" role="complementary" aria-label="Advertisement">
@@ -559,34 +534,6 @@
       </div>
     </section>
 
-    <!-- ============================================== -->
-    <!-- SECTION 5: ON THIS DAY (full-width event of the day) -->
-    <!-- ============================================== -->
-    <section class="section section--onthisday-section">
-      <div class="container">
-        <p class="section-eyebrow">On this day</p>
-        <h2 class="section-title" id="onthisday-section-title">Today in history</h2>
-        <p class="section-subtitle">A historical event, famous birthday, or cultural milestone that happened on this date.</p>
-
-        <div id="onthisday-section-card" class="onthisday-card">
-          <div class="onthisday-loading">Loading today's events…</div>
-        </div>
-
-        <p class="onthisday-section-more"><a href="/onthisday/" class="onthisday-section-link">Browse all on-this-day events →</a></p>
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- SECTION 6: FOOTER NOTE — closing with "Current time in [city]" -->
-    <!-- ============================================== -->
-    <section class="section section--footer-note">
-      <div class="container">
-        <p class="current-city">
-          <span class="current-city-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-          Current time in <strong id="current-city-name">your city</strong>, <span class="current-city-extra" id="current-city-region">—</span>
-        </p>
-      </div>
-    </section>
   </main>
 
   <!-- Feedback prompt (floating, contextual CTA) -->
@@ -1109,40 +1056,6 @@
       const u = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hh, mm));
       if (isSunset && hh >= 24) { u.setUTCDate(u.getUTCDate() + 1); u.setUTCHours(u.getUTCHours() - 24); }
       try { const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(u); const h = parts.find(p => p.type === "hour")?.value || "—"; const mn = parts.find(p => p.type === "minute")?.value || "—"; const p = parts.find(p => p.type === "dayPeriod")?.value || ""; return `${h}:${mn} ${p}`; } catch (e) { return "—"; }
-    }
-
-    /* ----- On-this-day SECTION CARD (full event of the day) ----- */
-    async function loadOnThisDaySection() {
-      const cardEl = document.getElementById("onthisday-section-card");
-      if (!cardEl) return;
-      try {
-        const loc = (window.__location || {});
-        const cc = loc.country || "";
-        let url = `${API}/api/v1/onthisday/today`;
-        if (cc) url += `?country=${cc}`;
-        const r = await fetch(url, { cache: "no-store" });
-        if (!r.ok) return;
-        const j = await r.json();
-        const events = (j.data && j.data.events) || [];
-        if (!events.length) {
-          cardEl.innerHTML = '<p class="onthisday-loading">No events recorded for today yet.</p>';
-          return;
-        }
-        const e = events[0];
-        const yearStr = e.year ? `<span class="event-year">${e.year}</span>` : '';
-        const catBadge = e.category ? `<span class="event-category">${e.category}</span>` : '';
-        const link = e.wikipedia_url ? `<a class="event-link" href="${e.wikipedia_url}" target="_blank" rel="noopener">Read on Wikipedia →</a>` : '';
-        cardEl.innerHTML = `
-          <div>
-            <div>${yearStr}${catBadge}</div>
-            <h3 class="event-title">${escapeHtml(e.title)}</h3>
-            ${e.description ? `<p class="event-desc">${escapeHtml(e.description)}</p>` : ''}
-            ${link}
-          </div>
-        `;
-      } catch (e) {
-        cardEl.innerHTML = '<p class="onthisday-loading">Failed to load on-this-day events.</p>';
-      }
     }
 
     /* ----- On-this-day (when /api/v1/onthisday is on prod) ----- */
@@ -1875,10 +1788,7 @@
           }
         });
       }
-      if (state.features.onthisday) {
-        refreshOnThisDay();
-        loadOnThisDaySection();
-      }
+      if (state.features.onthisday) refreshOnThisDay();
       if (state.features.holidays) refreshHolidayPill();
       if (state.features.dst) refreshDstCountdown();
       // Refresh every 5 min so the holiday + DST data stays current

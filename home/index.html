@@ -163,7 +163,15 @@
     .theme-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
     /* ===== HERO (centered) ===== */
-    .hero { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
+    /* === SECTION SYSTEM: clean gaps + visual differentiation === */
+    .section { padding: clamp(2rem, 5vw, 3.5rem) 0; text-align: center; position: relative; }
+    .section + .section { margin-top: 0; }
+    .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+    .section--clock { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--search { padding: clamp(2rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2rem); }
+    .section--favorites { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    /* Backwards-compat: keep .hero as alias for .section--hero */
+    .hero { padding: clamp(2rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2.5rem); text-align: center; position: relative; }
     .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
     .greeting-city { color: var(--color-primary); }
     .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.5vw, 1.1rem); margin: 0.5rem auto 0.5rem; max-width: 42rem; line-height: 1.5; }
@@ -365,6 +373,9 @@
     .ad-slot .ad-size  { font-size: 0.75rem; font-weight: 600; }
     .ad-slot.leaderboard { width: 100%; max-width: 728px; height: 90px; }
     @media (max-width: 760px) { .ad-slot.leaderboard { max-width: 320px; height: 50px; } }
+    .ad-slot.hero-ad { width: 100%; max-width: 728px; height: 90px; margin-top: 1.5rem; }
+    @media (max-width: 760px) { .ad-slot.hero-ad { max-width: 320px; height: 50px; } }
+
 
     .current-city { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: clamp(0.8rem, 1.1vw, 0.9rem); color: var(--color-muted); margin: 1rem 0 0; }
     .current-city-icon { color: var(--color-primary); flex-shrink: 0; }
@@ -420,11 +431,11 @@
   </header>
 
   <main>
-    <section class="hero">
+    <!-- ============================================== -->
+    <!-- SECTION 1: HERO — H1 + subhead + live location + 3-line description -->
+    <!-- ============================================== -->
+    <section class="section section--hero">
       <div class="container">
-        <h1 class="greeting-seo">Current time in <span class="greeting-city" id="greeting-city">your city</span></h1>
-        <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
-
         <div class="live-location is-hidden" id="live-location" aria-live="polite">
           <span class="live-location-dot" aria-hidden="true"></span>
           <span class="live-location-flag"></span>
@@ -432,12 +443,27 @@
           <span class="live-location-tz"></span>
         </div>
 
+        <h1 class="greeting-seo">Current time in <span class="greeting-city" id="greeting-city">your city</span></h1>
+        <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
+
         <div class="hero-supporting">
           <p class="hero-line">Whether you're planning a meeting, traveling internationally, or working remotely —</p>
           <p class="hero-line">dateandtime.live gives you everything you need instantly.</p>
           <p class="hero-line">Auto-detect your location or search any city worldwide to see accurate local time and trusted time zone information.</p>
         </div>
 
+        <div class="ad-slot hero-ad" role="complementary" aria-label="Advertisement">
+          <span class="ad-label">Advertisement</span>
+          <span class="ad-size">728 × 90</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 2: CLOCK — big mono clock + pills (subtle background tint) -->
+    <!-- ============================================== -->
+    <section class="section section--clock">
+      <div class="container">
         <div class="clock-block">
           <div class="mono-clock" id="monoClock" aria-label="Live current time" title="Live local time · updates every frame. Use the 12h/24h toggle below to change the format.">--:--:--.--</div>
           <div class="format-toggle" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
@@ -451,8 +477,6 @@
           <span id="day-date-text" class="day-date-text">—</span>
         </div>
         <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
-
-        <p class="onthisday" id="onthisday"><strong>On this day</strong> · <span id="onthisday-text">—</span></p>
 
         <!-- Sync row with green pulsing dot — directly above the off-hours
              and sunrise pills. Shows the live sync-accuracy message.
@@ -473,6 +497,15 @@
           <span class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
         </div>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 3: SEARCH & POPULAR CITIES — add cities to your rail -->
+    <!-- ============================================== -->
+    <section class="section section--search">
+      <div class="container">
         <div class="search-section" id="search-section">
           <div class="search-wrap">
             <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
@@ -483,7 +516,14 @@
           <p class="popular-cities-label">Popular cities</p>
           <div class="popular-cities" id="popular-cities" aria-label="Popular cities to add"></div>
         </div>
+      </div>
+    </section>
 
+    <!-- ============================================== -->
+    <!-- SECTION 4: FAVORITE CITIES RAIL (subtle background tint) -->
+    <!-- ============================================== -->
+    <section class="section section--favorites">
+      <div class="container">
         <p class="rail-label">Favorite cities</p>
         <div class="rail" id="rail"></div>
 
@@ -491,13 +531,9 @@
           <span class="ad-label">Advertisement</span>
           <span class="ad-size">728 × 90</span>
         </div>
-
-        <p class="current-city">
-          <span class="current-city-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-          Current time in <strong id="current-city-name">your city</strong>, <span class="current-city-extra" id="current-city-region">—</span>
-        </p>
       </div>
     </section>
+
   </main>
 
   <!-- Feedback prompt (floating, contextual CTA) -->
