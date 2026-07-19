@@ -847,6 +847,27 @@
       } catch (e) { return null; }
     }
     function utcToLocal(utc, tz, isSunset) {
+      if (!utc) return "—";
+      // Accept either "HH:MM" (the old shape) or a full ISO timestamp
+      // (the current /api/v1/time/sun shape: "2026-07-19T00:21:00.000Z").
+      // The ISO form is the source of truth — we parse it and convert
+      // directly with Intl.DateTimeFormat so the user's tz and DST are
+      // handled correctly.
+      const isoMatch = utc.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+      if (isoMatch) {
+        const [, y, mo, d, h, mi] = isoMatch.map(Number);
+        const u = new Date(Date.UTC(y, mo - 1, d, h, mi));
+        try {
+          const parts = new Intl.DateTimeFormat("en-US", {
+            timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true
+          }).formatToParts(u);
+          const hh = parts.find(p => p.type === "hour")?.value || "—";
+          const mm = parts.find(p => p.type === "minute")?.value || "—";
+          const p = parts.find(p => p.type === "dayPeriod")?.value || "";
+          return `${hh}:${mm} ${p}`.trim();
+        } catch (e) { return "—"; }
+      }
+      // Fallback: "HH:MM" — interpret as today's UTC time
       const m = utc.match(/^(\d{1,2}):(\d{2})/);
       if (!m) return "—";
       let hh = parseInt(m[1], 10), mm = parseInt(m[2], 10);
