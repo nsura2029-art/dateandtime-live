@@ -344,7 +344,7 @@
     .city-remove { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-muted-soft); border-radius: 9999px; }
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
-    .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--color-foreground); }
     .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.4rem; text-align: center; }
     .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
     .city-day { font-weight: 600; }
@@ -615,7 +615,19 @@
     const hundredthDigits = hundredthsEl ? [createDigit(hundredthsEl, true), createDigit(hundredthsEl, true)] : [null, null];
     function renderDigit(el, n) { const active = new Set(DIGIT_PATTERNS[n] || []); el.classList.toggle("is-one", Number(n) === 1); el.querySelectorAll(".seg").forEach(seg => { const name = [...seg.classList].find(c => /^[a-g]$/.test(c)); seg.classList.toggle("on", active.has(name)); }); }
     function renderTwoDigits(els, v) { const s = String(v).padStart(2, "0"); renderDigit(els[0], Number(s[0])); renderDigit(els[1], Number(s[1])); }
-    function timeIn(tz, d) { try { const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(d || new Date()); const g = t => p.find(x => x.type === t)?.value || "00"; return `${g("hour")}:${g("minute")}:${g("second")}`; } catch (e) { return "--:--:--"; } }
+    // Format a time for a tz as HH:MM:SS.cs (2-digit centiseconds).
+    // Intl.DateTimeFormat only goes down to seconds, so we compute the
+    // centiseconds from the local clock and add them to the tz's seconds.
+    // The result is precise within ~50ms of the local clock tick.
+    function timeIn(tz, d) {
+      try {
+        const now = d || new Date();
+        const cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
+        const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(now);
+        const g = t => p.find(x => x.type === t)?.value || "00";
+        return `${g("hour")}:${g("minute")}:${g("second")}.${cs}`;
+      } catch (e) { return "--:--:--.--"; }
+    }
     function tzAbbr(tz) { try { const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date()); return p.find(x => x.type === "timeZoneName")?.value || tz; } catch (e) { return tz; } }
     function tzOffset(tz) { try { const local = new Date(new Date().toLocaleString("en-US", { timeZone: tz })); const utc = new Date(new Date().toLocaleString("en-US", { timeZone: "UTC" })); const m = Math.round((local - utc) / 60000); const sign = m >= 0 ? "+" : "−"; const abs = Math.abs(m); return `UTC${sign}${String(Math.floor(abs/60)).padStart(2,"0")}:${String(abs%60).padStart(2,"0")}`; } catch (e) { return "UTC"; } }
     function getGreeting(h) { if (h >= 5 && h < 12) return "Good Morning"; if (h >= 12 && h < 17) return "Good Afternoon"; if (h >= 17 && h < 22) return "Good Evening"; return "Good Night"; }
@@ -716,7 +728,7 @@
             <span class="city-name">${escapeHtml(c.name)}</span>
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
           </div>
-          <div class="city-time" data-tz="${c.tz}" style="color: var(--city-${color});">--:--:--</div>
+          <div class="city-time" data-tz="${c.tz}">--:--:--.--</div>
           <div class="city-tz">${escapeHtml(c.tz || "")}</div>
           <div class="city-day-diff" data-tz="${c.tz}" data-home-tz="${home ? home.tz : ''}">
             <span class="city-day">—</span><span class="city-day-sep">, </span><span class="city-hours-diff">—</span>
