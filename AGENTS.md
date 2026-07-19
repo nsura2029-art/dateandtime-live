@@ -286,19 +286,30 @@ git checkout main    && npx wrangler deploy
 
 ---
 
-## Frozen landing rule (LOCKED 2026-07-19)
+## Default landing = the SEO-friendly home (2026-07-19, user-approved)
 
-`index.html` is the **production landing** for `dateandtime.live/` and is a
-**release artifact**. Do not modify its design, hero, or main flow without
-explicit user approval. Small header-only edits (e.g. nav link hrefs) are OK
-when explicitly requested.
+`index.html` IS the new SEO-friendly landing (formerly `home/index.html`).
+Per explicit user request on 2026-07-19, the /home content was promoted to
+the root `/` route. `/home` now 301-redirects to `/` (handled in `src/index.js`).
+The "Home" nav link in the header points to `/`.
+
+Previous "Good Night" landing has been replaced. The user said the SEO
+hero variant was better and wanted it as the default.
+
+`home/index.html` is kept as an alias (still rendered if accessed directly
+before the redirect kicks in) and as a backup of the current landing.
+
+**Future variants still need approval** — small header-only edits OK when
+explicitly requested, but the hero/main flow is now production-stable and
+should not change without explicit "yes".
 
 All new landing variants, SEO city pages, and feature pages live as
 **separate files at their own routes**, each with its own review/approval
 cycle. Examples:
-- `home/index.html` → `/home` (SEO-friendly hero variant)
 - `time/in/{slug}.html` → `/time/in/{slug}` (per-city today pages, future)
 - `globe/index.html` → `/globe` (parked 3D globe)
+- `holidays/index.html` → `/holidays` (holiday browser, shipped)
+- `onthisday/index.html` → `/onthisday` (on-this-day browser, shipped)
 
 When creating a new page:
 1. Copy `index.html` as a starting point (gets all the API wiring + theme for free)
@@ -311,12 +322,14 @@ When creating a new page:
 
 ```
 dateandtime-live/
-├── index.html              ← /        (FROZEN — current "Good Night" landing)
-├── home/index.html         ← /home/   (NEW — SEO-friendly landing, alt hero)
+├── index.html              ← /        (SEO-friendly landing, ex-/home)
+├── home/index.html         ← /home/   (alias, 301-redirects to /)
 ├── design-system/index.html
 ├── globe/index.html        ← /globe/  (parked)
 ├── (future) time/in/{slug}/index.html  ← /time/in/{slug}/  (per-city today pages)
-├── assets/flags/           ← 242 country flag PNGs (CC0, ~70KB)
+├── holidays/index.html      ← /holidays/ (browse all holidays by country/religion)
+├── onthisday/index.html     ← /onthisday/ (browse by date/category)
+├── assets/flags/           ← 249 country flag PNGs (CC0, ~70KB)
 ├── src/index.js            ← Worker (proxies + __location injection)
 ├── cloudflare/datetime-api/  ← Hono API (33,945 cities + 408 tz + 880 holidays)
 ├── scripts/deploy.sh       ← dev default, prod requires "yes"

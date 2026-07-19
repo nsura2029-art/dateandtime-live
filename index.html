@@ -29,10 +29,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TimeAndDatePro</title>
-  <meta name="description" content="Local time, day, date, sunrise, sunset. Live from your browser." />
+  <title>Current Time in Your City — Live, Accurate | dateandtime.live</title>
+  <meta name="description" content="Current time in your city. Real-time clock, IANA time zone, UTC offset, DST status, sunrise & sunset, holidays, and business hours — all in one place. Auto-detected from your location or searchable by city." />
   <meta name="theme-color" content="#5b4aaf" />
-  <meta property="og:title" content="TimeAndDatePro" />
+  <meta property="og:title" content="Current Time in Your City — Live, Accurate" />
   <meta property="og:description" content="Time, day, date. Everywhere." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
@@ -166,7 +166,12 @@
     .hero { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
     .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
     .greeting-city { color: var(--color-primary); }
-    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 auto 1rem; max-width: 42rem; }
+    .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.5vw, 1.1rem); margin: 0.5rem auto 0.5rem; max-width: 42rem; line-height: 1.5; }
+    .subtitle strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.05em; }
+    .greeting-seo { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 0.5rem; }
+    .hero-supporting { font-size: clamp(0.8125rem, 1.3vw, 0.9rem); color: var(--color-muted-soft); line-height: 1.6; margin: 1.25rem auto 0; max-width: 40rem; padding: 0 1rem; }
+    .hero-supporting .hero-line { margin: 0; padding: 0; }
+    .clock-block { margin: 2.5rem auto 0.75rem; max-width: 720px; }
 
     /* ===== Live location indicator (green pulse + "City, State, Country") ===== */
     .live-location { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.875rem; margin: 0 auto 1.25rem; background: color-mix(in srgb, #10b981 12%, transparent); border: 1px solid color-mix(in srgb, #10b981 35%, transparent); border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; color: #047857; backdrop-filter: blur(6px); transition: opacity 300ms ease; }
@@ -181,6 +186,8 @@
 
     /* Clock */
     .clock-block { margin: 0 auto 0.75rem; max-width: 720px; }
+    .mono-clock { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(3.5rem, 13vw, 7rem); font-weight: 800; letter-spacing: 0.02em; line-height: 1; color: var(--color-foreground); text-align: center; font-variant-numeric: tabular-nums; text-shadow: 0 0 24px color-mix(in srgb, var(--color-primary) 25%, transparent); white-space: nowrap; }
+    .mono-clock .ampm { font-size: 0.32em; font-weight: 700; color: var(--color-muted); margin-left: 0.25em; letter-spacing: 0.08em; vertical-align: middle; }
     .seg-row {
       --main-digit-width: clamp(54px, 13vw, 132px);
       --small-digit-width: clamp(24px, 5.5vw, 46px);
@@ -243,7 +250,19 @@
     .pills.is-hidden { display: none; }
     .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
     .pill.is-hidden { display: none; }
+    /* Tooltip on pills (hover or focus) */
+    .pill-tip { position: relative; cursor: help; }
+    .pill-tip .pill-help { display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: rgba(31, 26, 58, 0.12); color: inherit; font-size: 0.65rem; font-weight: 700; margin-left: 0.15rem; flex-shrink: 0; }
+    .pill-tip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 0.6rem); left: 50%; transform: translateX(-50%) translateY(4px); background: #1f1a3a; color: #faf7f2; padding: 0.65rem 0.85rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 500; line-height: 1.45; width: max-content; max-width: 22rem; opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+    .pill-tip::before { content: ""; position: absolute; bottom: calc(100% + 0.35rem); left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #1f1a3a; opacity: 0; transition: opacity 180ms ease; z-index: 100; }
+    .pill-tip:hover::after, .pill-tip:focus::after, .pill-tip:hover::before, .pill-tip:focus::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+    [data-theme="dark"] .pill-tip::after { background: #faf7f2; color: #1f1a3a; }
+    [data-theme="dark"] .pill-tip::before { border-top-color: #faf7f2; }
     .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
+    .pill-green { background: rgba(209, 250, 229, 0.76); border-color: rgba(110, 231, 183, 0.3); color: #047857; }
+    [data-theme="dark"] .pill-green { background: rgba(5, 150, 105, 0.18); border-color: rgba(110, 231, 183, 0.25); color: #6ee7b7; }
+    .pill-rose { background: rgba(254, 205, 211, 0.76); border-color: rgba(251, 113, 133, 0.3); color: #9f1239; }
+    [data-theme="dark"] .pill-rose { background: rgba(159, 18, 57, 0.18); border-color: rgba(251, 113, 133, 0.25); color: #fda4af; }
     .pill-blue { background: rgba(219, 234, 254, 0.76); border-color: rgba(147, 197, 253, 0.3); color: #1e40af; }
     [data-theme="dark"] .pill-blue { background: rgba(30, 64, 175, 0.18); border-color: rgba(147, 197, 253, 0.25); color: #93c5fd; }
     .city-card.is-active { box-shadow: 0 0 0 2px var(--color-primary), 0 4px 12px rgba(0,0,0,0.08); }
@@ -314,20 +333,26 @@
     [data-theme="dark"] .city-card.is-home { box-shadow: 0 0 0 2px color-mix(in srgb, #fbbf24 70%, transparent), 0 4px 16px rgba(251, 191, 36, 0.2); }
     .city-card .home-badge { position: absolute; top: 0.4rem; right: 0.5rem; display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.4rem; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 9999px; text-transform: uppercase; box-shadow: 0 1px 3px rgba(245, 158, 11, 0.4); pointer-events: none; }
     .city-card .home-badge-icon { font-size: 0.75rem; line-height: 1; }
-    .rail { display: flex; flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
-    @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
-    .rail::-webkit-scrollbar { height: 4px; }
-    .rail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
-    .city-card { flex: 0 0 auto; min-width: 200px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; text-align: center; }
-    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.4rem; }
+    /* Responsive grid: 2 cols on mobile, 3 on tablet, 4 on desktop.
+       Left-to-right alignment is automatic with CSS Grid. */
+    .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding: 0.5rem 0.25rem 1rem; }
+    @media (min-width: 600px) { .rail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .rail::-webkit-scrollbar { display: none; }
+    .city-card { padding: 1.125rem 1.25rem; transition: opacity 200ms ease, transform 120ms ease, box-shadow 120ms ease; text-align: center; min-width: 0; }
+    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.75rem; position: relative; }
     .city-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; }
+    /* Green live dot — same style as the hero live-location pill */
+    .live-pulse { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #10b981; position: relative; }
+    .live-pulse::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; background: #10b981; opacity: 0.3; animation: city-pulse 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    @keyframes city-pulse { 75%, 100% { transform: scale(2.2); opacity: 0; } }
     .city-name { font-size: 0.8125rem; font-weight: 700; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13rem; }
     .city-remove { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-muted-soft); border-radius: 9999px; }
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
-    .city-time { font-family: "Courier New", ui-monospace, monospace; font-size: 1.125rem; font-weight: 800; letter-spacing: 0.02em; text-align: center; }
-    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.2rem; text-align: center; }
-    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
+    .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--color-foreground); }
+    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.4rem; text-align: center; }
+    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
     .city-day { font-weight: 600; }
     .city-day-sep { color: var(--color-muted-soft); }
     .city-hours-diff { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-foreground); padding: 0.05rem 0.35rem; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
@@ -373,7 +398,7 @@
       </a>
       <nav class="nav-main" aria-label="Main">
         <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
-        <a href="/home" class="nav-link">Home</a>
+        <a href="/" class="nav-link nav-link-active" aria-current="page">Home</a>
         <a href="/globe/" class="nav-link">3D Globe</a>
         <a href="#" class="nav-link">Meeting finder</a>
         <a href="#" class="nav-link">World clock</a>
@@ -397,8 +422,8 @@
   <main>
     <section class="hero">
       <div class="container">
-        <h1 class="greeting"><span id="greeting-time">Good Evening</span>, <span class="greeting-city" id="greeting-city">your city</span></h1>
-        <p class="subtitle">Plan your day, meetings, holidays, and global time zones in one smart workspace.</p>
+        <h1 class="greeting-seo">Current time in <span class="greeting-city" id="greeting-city">your city</span></h1>
+        <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
 
         <div class="live-location is-hidden" id="live-location" aria-live="polite">
           <span class="live-location-dot" aria-hidden="true"></span>
@@ -407,20 +432,17 @@
           <span class="live-location-tz"></span>
         </div>
 
+        <div class="hero-supporting">
+          <p class="hero-line">Whether you're planning a meeting, traveling internationally, or working remotely —</p>
+          <p class="hero-line">dateandtime.live gives you everything you need instantly.</p>
+          <p class="hero-line">Auto-detect your location or search any city worldwide to see accurate local time and trusted time zone information.</p>
+        </div>
+
         <div class="clock-block">
-          <div class="seg-row" aria-label="Live current time">
-            <div id="hours" class="seg-digit-group"></div>
-            <div class="seg-colon" aria-hidden="true"></div>
-            <div id="minutes" class="seg-digit-group"></div>
-            <div class="seg-colon" aria-hidden="true"></div>
-            <div id="seconds" class="seg-digit-group"></div>
-            <span class="seg-period-dot" aria-hidden="true">.</span>
-            <div id="hundredths" class="seg-digit-group"></div>
-            <div id="period" class="seg-period is-hidden">PM</div>
-          </div>
-          <div class="format-toggle" role="group" aria-label="Time format">
-            <button id="format-12" type="button" aria-pressed="false">12h</button>
-            <button id="format-24" type="button" aria-pressed="true">24h</button>
+          <div class="mono-clock" id="monoClock" aria-label="Live current time" title="Live local time · updates every frame. Use the 12h/24h toggle below to change the format.">--:--:--.--</div>
+          <div class="format-toggle" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
+            <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
+            <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
           </div>
         </div>
 
@@ -443,10 +465,12 @@
         </div>
 
         <div class="pills" id="home-pills">
-          <span class="pill pill-purple is-hidden" id="holiday-pill"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span></span>
-          <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
-          <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span></span>
-          <span class="pill pill-blue is-hidden" id="dst-pill"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span></span>
+          <span class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Today's holiday: A public or religious holiday for this country today. Banks, government offices, and many shops will be closed. Plan calls, deliveries, and meetings accordingly."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-green is-hidden pill-tip" id="next-holiday-pill" tabindex="0" data-tip="Next holiday: The next upcoming public or religious holiday for this country. Click to see all holidays in the calendar."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="next-holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-rose is-hidden pill-tip" id="onthisday-pill" tabindex="0" data-tip="On this day: A historical event, famous birthday, or cultural milestone that happened on today's date. Click to see more."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="onthisday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-orange pill-tip" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
         </div>
 
         <div class="search-section" id="search-section">
@@ -586,13 +610,32 @@
       parent.appendChild(digit);
       return digit;
     }
-    const hourDigits = [createDigit(document.getElementById("hours")), createDigit(document.getElementById("hours"))];
-    const minuteDigits = [createDigit(document.getElementById("minutes")), createDigit(document.getElementById("minutes"))];
-    const secondDigits = [createDigit(document.getElementById("seconds")), createDigit(document.getElementById("seconds"))];
-    const hundredthDigits = [createDigit(document.getElementById("hundredths"), true), createDigit(document.getElementById("hundredths"), true)];
+    // The 7-segment digits only exist on the / landing (index.html) which has the
+    // seg-digit-group elements. The /home landing uses a monospace text element
+    // instead, so these should be null (and updateClock handles the null case).
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+    const hundredthsEl = document.getElementById("hundredths");
+    const hourDigits = hoursEl ? [createDigit(hoursEl), createDigit(hoursEl)] : [null, null];
+    const minuteDigits = minutesEl ? [createDigit(minutesEl), createDigit(minutesEl)] : [null, null];
+    const secondDigits = secondsEl ? [createDigit(secondsEl), createDigit(secondsEl)] : [null, null];
+    const hundredthDigits = hundredthsEl ? [createDigit(hundredthsEl, true), createDigit(hundredthsEl, true)] : [null, null];
     function renderDigit(el, n) { const active = new Set(DIGIT_PATTERNS[n] || []); el.classList.toggle("is-one", Number(n) === 1); el.querySelectorAll(".seg").forEach(seg => { const name = [...seg.classList].find(c => /^[a-g]$/.test(c)); seg.classList.toggle("on", active.has(name)); }); }
     function renderTwoDigits(els, v) { const s = String(v).padStart(2, "0"); renderDigit(els[0], Number(s[0])); renderDigit(els[1], Number(s[1])); }
-    function timeIn(tz, d) { try { const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(d || new Date()); const g = t => p.find(x => x.type === t)?.value || "00"; return `${g("hour")}:${g("minute")}:${g("second")}`; } catch (e) { return "--:--:--"; } }
+    // Format a time for a tz as HH:MM:SS.cs (2-digit centiseconds).
+    // Intl.DateTimeFormat only goes down to seconds, so we compute the
+    // centiseconds from the local clock and add them to the tz's seconds.
+    // The result is precise within ~50ms of the local clock tick.
+    function timeIn(tz, d) {
+      try {
+        const now = d || new Date();
+        const cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
+        const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(now);
+        const g = t => p.find(x => x.type === t)?.value || "00";
+        return `${g("hour")}:${g("minute")}:${g("second")}.${cs}`;
+      } catch (e) { return "--:--:--.--"; }
+    }
     function tzAbbr(tz) { try { const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date()); return p.find(x => x.type === "timeZoneName")?.value || tz; } catch (e) { return tz; } }
     function tzOffset(tz) { try { const local = new Date(new Date().toLocaleString("en-US", { timeZone: tz })); const utc = new Date(new Date().toLocaleString("en-US", { timeZone: "UTC" })); const m = Math.round((local - utc) / 60000); const sign = m >= 0 ? "+" : "−"; const abs = Math.abs(m); return `UTC${sign}${String(Math.floor(abs/60)).padStart(2,"0")}:${String(abs%60).padStart(2,"0")}`; } catch (e) { return "UTC"; } }
     function getGreeting(h) { if (h >= 5 && h < 12) return "Good Morning"; if (h >= 12 && h < 17) return "Good Afternoon"; if (h >= 17 && h < 22) return "Good Evening"; return "Good Night"; }
@@ -609,7 +652,9 @@
     // Return whether a tz is currently in Daylight Saving Time.
     // Compares the current short offset to the standard-time offset
     // (Jan offset in Northern, Jul offset in Southern Hemisphere).
-    // Returns null if the tz has no DST.
+    // Returns { hasDST, isDST, currentOffset, standardOffset } for ANY tz.
+    // hasDST=false means the city never observes DST (e.g. Asia/Kolkata).
+    // The pill is always shown — the text just changes.
     function getDstStatus(tz) {
       if (!tz) return null;
       try {
@@ -619,15 +664,16 @@
         const jul = new Date(now.getFullYear(), 6, 15);
         const janOff = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(jan).find(p => p.type === "timeZoneName")?.value || "";
         const julOff = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(jul).find(p => p.type === "timeZoneName")?.value || "";
-        if (janOff === julOff) return null;  // no DST in this tz
-        // The standard-time offset is whichever (Jan or Jul) is NOT
-        // the current offset. In the Northern Hemisphere, standard
-        // time is Jan; in the Southern, Jul. We pick whichever is
-        // different from the current.
+        const hasDST = janOff !== julOff;
+        if (!hasDST) {
+          // No DST in this tz — just show the current offset
+          return { hasDST: false, isDST: false, currentOffset: curOff, standardOffset: curOff };
+        }
+        // Has DST — figure out if we're in DST right now
         const isNorthernDST = (now.getMonth() >= 2 && now.getMonth() <= 9);
         const standardOff = isNorthernDST ? janOff : julOff;
         const isDST = curOff !== standardOff;
-        return { isDST, currentOffset: curOff, standardOffset: standardOff };
+        return { hasDST: true, isDST, currentOffset: curOff, standardOffset: standardOff };
       } catch (e) { return null; }
     }
 
@@ -645,7 +691,7 @@
     }
 
     // Maximum number of cards in the rail: home (position 0) + 5 others.
-    const RAIL_MAX = 6;
+    const RAIL_MAX = 10;
     // Always ensure the home is at position 0 of the rail. Called before
     // every render and before saveCities() so the home can never be lost
     // (not by clicking, not by removing, not by stale sessionStorage).
@@ -686,11 +732,11 @@
         if (clickable) card.classList.add("is-clickable");
         card.innerHTML = `
           <div class="city-head">
-            <span class="city-dot" style="background: var(--city-${color});"></span>
+            <span class="live-pulse" aria-hidden="true"></span>
             <span class="city-name">${escapeHtml(c.name)}</span>
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
           </div>
-          <div class="city-time" data-tz="${c.tz}" style="color: var(--city-${color});">--:--:--</div>
+          <div class="city-time" data-tz="${c.tz}">--:--:--.--</div>
           <div class="city-tz">${escapeHtml(c.tz || "")}</div>
           <div class="city-day-diff" data-tz="${c.tz}" data-home-tz="${home ? home.tz : ''}">
             <span class="city-day">—</span><span class="city-day-sep">, </span><span class="city-hours-diff">—</span>
@@ -727,6 +773,10 @@
           saveCities();
           renderRail();
           renderActiveCityPills();
+          updateClock();
+          // Scroll the hero (clock) into view so the user immediately
+          // sees the time change for the city they just clicked.
+          window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
       rail.querySelectorAll(".city-remove").forEach(btn => {
@@ -758,6 +808,28 @@
        user only sees cities they can actually add. First 10 of the
        filtered list are shown. Each chip is color-coded with the same
        NotebookLM palette as the rail. Click to add. */
+    // Add a city to the rail. The new city is INSERTED right after the home
+    // (position 1), so it appears prominently next to the user's home city.
+    // If the rail is full (length >= RAIL_MAX), the LAST non-home entry is
+    // dropped to make room. This way:
+    //   - The new city is always visible (not sliced off)
+    //   - The new city appears "next" to home (position 1)
+    //   - state.activeIdx points to it
+    //   - Home at position 0 is never touched
+    function addCityToRail(cityObj) {
+      ensureHomeFirst();
+      const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cityObj.tz);
+      if (existingIdx >= 0) return existingIdx;
+      // Insert the new city at position 1 (right after home)
+      const insertAt = 1;
+      // If the array is already full, drop the last entry first
+      if (state.citiesWithHome.length >= RAIL_MAX) {
+        state.citiesWithHome.length = RAIL_MAX - 1;
+      }
+      state.citiesWithHome.splice(insertAt, 0, cityObj);
+      return insertAt;
+    }
+
     function renderPopularCities() {
       const wrap = document.getElementById("popular-cities");
       if (!wrap) return;
@@ -787,19 +859,12 @@
             // Clicking a popular city adds it to the rail and makes it the
             // ACTIVE city (highlights it, switches the big clock + pills).
             // The home (position 0) stays the user's home city.
-            const existingIdx = state.citiesWithHome.findIndex(x => x.tz === c.tz);
-            let newIdx;
-            if (existingIdx >= 0) {
-              newIdx = existingIdx;
-            } else {
-              state.citiesWithHome.push({ ...c });
-              newIdx = state.citiesWithHome.length - 1;
-            }
-            state.activeIdx = newIdx;
+            state.activeIdx = addCityToRail({ ...c });
             saveCities();
             renderRail();
             renderPopularCities();
             renderActiveCityPills();
+            updateClock();
             window.scrollTo({ top: 0, behavior: "smooth" });
           });
         }
@@ -996,10 +1061,49 @@
         const list = data?.holidays || [];
         const pill = document.getElementById("holiday-pill");
         const text = document.getElementById("holiday-pill-text");
-        if (!list.length) { pill.classList.add("is-hidden"); return; }
-        pill.classList.remove("is-hidden");
-        const h = list[0];
-        text.textContent = `${h.name}`;
+        if (!list.length) { pill.classList.add("is-hidden"); } else {
+          pill.classList.remove("is-hidden");
+          const h = list[0];
+          text.textContent = `${h.name}`;
+        }
+        // If no holiday today, try upcoming (next 7 days)
+        if (!list.length) {
+          try {
+            const r2 = await fetch(`${API}/api/v1/holidays/upcoming?country=${cc}&days=7&limit=1`, { cache: "no-store" });
+            if (r2.ok) {
+              const j2 = await r2.json();
+              const nextList = j2.data?.holidays || [];
+              const nextPill = document.getElementById("next-holiday-pill");
+              const nextText = document.getElementById("next-holiday-pill-text");
+              if (nextList.length) {
+                const nh = nextList[0];
+                const d = new Date(nh.date);
+                const days = Math.ceil((d - new Date()) / 86400000);
+                nextPill.classList.remove("is-hidden");
+                nextText.textContent = `${nh.name} · in ${days} day${days === 1 ? '' : 's'}`;
+                nextPill.onclick = () => window.open(`/calendar/${new Date().getFullYear()}/${d.getMonth() + 1}?country=${cc}`, "_blank");
+              }
+            }
+          } catch (e2) {}
+        }
+        // OnThisDay pill (always, country-filtered)
+        try {
+          const r3 = await fetch(`${API}/api/v1/onthisday/today?country=${cc}`, { cache: "no-store" });
+          if (r3.ok) {
+            const j3 = await r3.json();
+            const evList = j3.data?.events || [];
+            const otdPill = document.getElementById("onthisday-pill");
+            const otdText = document.getElementById("onthisday-pill-text");
+            if (evList.length) {
+              const e = evList[0];
+              const yearStr = e.year ? ` (${e.year})` : '';
+              otdPill.classList.remove("is-hidden");
+              const title = e.title.length > 40 ? e.title.slice(0, 40) + "…" : e.title;
+              otdText.textContent = `${title}${yearStr}`;
+              if (e.wikipedia_url) otdPill.onclick = () => window.open(e.wikipedia_url, "_blank");
+            }
+          }
+        } catch (e3) {}
       } catch (e) {}
     }
 
@@ -1146,20 +1250,12 @@
           // isn't there) and makes it the ACTIVE city (highlighted +
           // switches the big clock and pills). The home (position 0) stays
           // the user's home city.
-          const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cTz);
-          let newIdx;
-          if (existingIdx >= 0) {
-            newIdx = existingIdx;
-          } else {
-            // New city — append to the rail (not the home slot)
-            state.citiesWithHome.push(cityObj);
-            newIdx = state.citiesWithHome.length - 1;
-          }
-          state.activeIdx = newIdx;
+          state.activeIdx = addCityToRail(cityObj);
           saveCities();
           renderRail();
           renderPopularCities();
           renderActiveCityPills();
+          updateClock();
           searchInput.value = "";
           searchResults.classList.remove("is-open");
           searchResults.innerHTML = "";
@@ -1261,14 +1357,20 @@
       const dstText = document.getElementById("dst-pill-text");
       if (dstEl && dstText) {
         const dst = getDstStatus(active.tz);
-        if (!dst) {
-          dstEl.classList.add("is-hidden");
-        } else if (dst.isDST) {
+        // Always show the pill — the text just changes based on DST status
+        if (dst) {
           dstEl.classList.remove("is-hidden");
-          dstText.textContent = `In DST · ${dst.currentOffset} (standard ${dst.standardOffset})`;
+          if (!dst.hasDST) {
+            dstText.textContent = `No DST · ${dst.currentOffset}`;
+          } else if (dst.isDST) {
+            dstText.textContent = `In DST · ${dst.currentOffset} (standard ${dst.standardOffset})`;
+          } else {
+            dstText.textContent = `Standard time · ${dst.currentOffset}`;
+          }
         } else {
+          // Fallback — show UTC offset even if we can't determine DST
           dstEl.classList.remove("is-hidden");
-          dstText.textContent = `Standard time · ${dst.currentOffset}`;
+          dstText.textContent = active.tz ? active.tz : "DST";
         }
       }
       // Holiday pill
@@ -1283,11 +1385,8 @@
       const now = new Date();
       const activeIdx = state.activeIdx != null ? state.activeIdx : 0;
       const home = state.citiesWithHome[activeIdx] || state.citiesWithHome[0];
-      // Big clock shows the ACTIVE city's tz, not the browser's local
-      // time. The active city defaults to the home (position 0) and
-      // changes when the user clicks a rail card / search result /
-      // popular city. Using Intl.DateTimeFormat with the home tz gets
-      // the right hour/minute/second/weekday/date for the location.
+      // Big clock shows the ACTIVE city's tz in clean monospace HH:MM:SS.mmm
+      // (milliseconds included). The active city defaults to the home (position 0).
       const tz = home?.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
       const parts = new Intl.DateTimeFormat("en-GB", {
         timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit",
@@ -1301,17 +1400,34 @@
       const day = parseInt(get("day"), 10);
       const monthName = get("month");
       const year = get("year");
-      const period = h >= 12 ? "PM" : "AM";
-      const periodEl = document.getElementById("period");
-      if (state.use24Hour) { periodEl.classList.add("is-hidden"); renderTwoDigits(hourDigits, h); }
-      else { periodEl.classList.remove("is-hidden"); periodEl.textContent = period; renderTwoDigits(hourDigits, h % 12 || 12); }
-      renderTwoDigits(minuteDigits, m);
-      renderTwoDigits(secondDigits, s);
-      renderTwoDigits(hundredthDigits, Math.floor(now.getMilliseconds() / 10));
+      // Monospace clock with 2-digit centiseconds (hundredths of a second).
+      // Respects the 12h/24h toggle: 24h shows HH:MM:SS.cs, 12h shows h:MM:SS.cs <span>AM/PM</span>
+      const mm2 = String(m).padStart(2, "0");
+      const ss2 = String(s).padStart(2, "0");
+      const cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
+      let hourStr, ampmHtml;
+      if (state.use24Hour) {
+        hourStr = String(h).padStart(2, "0");
+        ampmHtml = "";
+      } else {
+        const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+        hourStr = String(h12);
+        ampmHtml = `<span class="ampm">${h >= 12 ? "PM" : "AM"}</span>`;
+      }
+      const monoEl = document.getElementById("monoClock");
+      if (monoEl) monoEl.innerHTML = `${hourStr}:${mm2}:${ss2}.${cs}${ampmHtml}`;
       document.getElementById("day-date-text").textContent = `${WEEKDAYS[wdToIndex(wd)]}, ${monthName} ${String(day).padStart(2,"0")}, ${year}`;
       document.getElementById("tz-abbr").textContent = tzAbbr(tz);
       document.getElementById("tz-offset").textContent = tzOffset(tz);
-      document.getElementById("greeting-time").textContent = getGreeting(h);
+      // The /home landing uses SEO-friendly "Current time in [city]" + "It's 2:23:45 PM in [city] right now"
+      // instead of the casual "Good Evening, [city]". We update the live time and city on every tick.
+      const heroT = document.getElementById("hero-current-time");
+      const heroC = document.getElementById("hero-current-city");
+      if (heroT) {
+        const t = timeIn(tz, now);
+        heroT.textContent = t.replace(/\.\d+$/, "") + (state.use24Hour ? "" : " " + (h >= 12 ? "PM" : "AM"));
+      }
+      if (heroC) heroC.textContent = home?.name || "your city";
       document.getElementById("greeting-city").textContent = home?.name || "your city";
       document.getElementById("current-city-name").textContent = home?.name || "your city";
       const regionParts = [];
@@ -1644,6 +1760,11 @@
 
       // Wire the feedback prompt
       setupFeedbackPrompt();
+
+      // Render the pills (DST, holiday, etc.) for the home city on first load.
+      // Without this, the DST pill stays as its placeholder "—" until the
+      // user clicks a rail card / popular city / search result.
+      renderActiveCityPills();
 
       // Start the rAF loop
       updateClock();

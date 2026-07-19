@@ -146,6 +146,11 @@ export default {
       });
     }
 
+    // Redirect /home → / (the home page IS the default landing now)
+    if (url.pathname === "/home" || url.pathname === "/home/") {
+      return Response.redirect(new URL("/" + url.search), 301);
+    }
+
     // Get the asset (HTML or other) from the [assets] binding.
     const response = await env.ASSETS.fetch(request);
 
