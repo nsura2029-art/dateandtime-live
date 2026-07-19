@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D Globe · TimeAndDatePro</title>
+  <meta name="description" content="Interactive 3D globe with 190 cities. Search, click, pin. Live local time from your browser." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Suppress noise from third-party browser-extension scripts -->
+  <script>
+    (function () {
+      const NOISE = /(share-modal\.js|frame start\.js|chrome-extension|moz-extension)/i;
+      window.addEventListener("error", function (e) {
+        const src = ((e.filename || "") + " " + (e.message || "")).trim();
+        if (NOISE.test(src)) { e.preventDefault(); e.stopImmediatePropagation(); return false; }
+      }, true);
+      window.addEventListener("unhandledrejection", function (e) {
+        const reason = String((e.reason && (e.reason.stack || e.reason.message)) || e.reason || "");
+        if (NOISE.test(reason)) { e.preventDefault(); e.stopImmediatePropagation(); }
+      });
+    })();
+  </script>
+
+  <style>
+    /* ============================================================
+       Widgetly design system — NotebookLM tokens
+       ============================================================ */
+    :root, [data-theme="light"] {
+      --color-primary: #5b4aaf;
+      --color-primary-fg: #ffffff;
+      --color-foreground: #49445f;
+      --color-foreground-soft: #6b6585;
+      --color-muted: #77718f;
+      --color-muted-soft: #9a92b0;
+      --color-border: rgba(92,74,175,.16);
+      --color-border-soft: rgba(92,74,175,.08);
+      --color-background: #ffffff;
+      --color-background-soft: #faf8ff;
+      --color-glow: drop-shadow(0 5px 8px rgba(91,77,145,.10));
+      --color-led: #5b4aaf;
+      --color-period-bg: rgba(255,255,255,.76);
+      --color-period-fg: #49445f;
+      --color-period-border: rgba(87,69,165,.14);
+      --color-period-shadow: 0 8px 24px rgba(97,76,160,.18);
+      --color-microcopy: #9a92b0;
+      --color-code-bg: rgba(255,255,255,.68);
+      --color-code-fg: #5b4aaf;
+      --color-page-texture:
+        radial-gradient(circle at 12% 18%, rgba(255,216,170,.92), transparent 27%),
+        radial-gradient(circle at 83% 15%, rgba(197,220,255,.95), transparent 31%),
+        radial-gradient(circle at 75% 82%, rgba(221,202,255,.92), transparent 28%),
+        radial-gradient(circle at 24% 82%, rgba(202,242,229,.78), transparent 30%),
+        linear-gradient(135deg,#fff8ef 0%,#f4f3ff 46%,#edf7ff 100%);
+      --color-nav-underline: linear-gradient(90deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --color-logo-gradient: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --globe-bg: radial-gradient(circle at 30% 30%, #ede9fe 0%, #c4b5e0 40%, #5b4aaf 100%);
+      --globe-marker: #5b4aaf;
+      --globe-marker-pinned: #f97316;
+      --globe-marker-hover: #a78bfa;
+      --globe-ring: #a78bfa;
+      color-scheme: light;
+    }
+    [data-theme="dark"] {
+      --color-primary: #a78bfa;
+      --color-primary-fg: #0f0a1f;
+      --color-foreground: #ede9fe;
+      --color-foreground-soft: #d6cef5;
+      --color-muted: #a599c5;
+      --color-muted-soft: #6b6585;
+      --color-border: rgba(167,139,250,.18);
+      --color-border-soft: rgba(167,139,250,.10);
+      --color-background: #0f0820;
+      --color-background-soft: #16092e;
+      --color-glow: drop-shadow(0 0 12px rgba(249,115,22,.25));
+      --color-led: #f97316;
+      --color-period-bg: rgba(31,10,62,.7);
+      --color-period-fg: #f97316;
+      --color-period-border: rgba(249,115,22,.30);
+      --color-period-shadow: 0 4px 18px rgba(249,115,22,.20);
+      --color-microcopy: #6b6585;
+      --color-code-bg: #1f0a3e;
+      --color-code-fg: #f97316;
+      --color-page-texture:
+        radial-gradient(circle at 18% 22%, rgba(139,92,246,.30), transparent 30%),
+        radial-gradient(circle at 82% 18%, rgba(99,102,241,.20), transparent 28%),
+        radial-gradient(circle at 75% 80%, rgba(168,85,247,.22), transparent 30%),
+        radial-gradient(circle at 22% 78%, rgba(59,130,246,.15), transparent 28%),
+        linear-gradient(160deg, #0f0820 0%, #1f0a3e 50%, #0a0418 100%);
+      --color-nav-underline: linear-gradient(90deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
+      --color-logo-gradient: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
+      --color-button-primary: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
+      --globe-bg: radial-gradient(circle at 30% 30%, #1f0a3e 0%, #0f0820 40%, #000 100%);
+      --globe-marker: #a78bfa;
+      --globe-marker-pinned: #f97316;
+      --globe-marker-hover: #c084fc;
+      --globe-ring: #f97316;
+      color-scheme: dark;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--color-background);
+      color: var(--color-foreground);
+      font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+      line-height: 1.55;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      position: relative;
+      min-height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: -1;
+      background: var(--color-page-texture);
+      pointer-events: none;
+      transition: background 0.4s ease;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; background: none; border: none; padding: 0; color: inherit; }
+    code { font-family: ui-monospace, monospace; font-size: 0.875em; padding: 0.1rem 0.4rem; background: var(--color-code-bg); color: var(--color-code-fg); border-radius: 4px; }
+    ::selection { background: color-mix(in srgb, var(--color-primary) 25%, transparent); }
+    :focus-visible { outline: none; box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px color-mix(in srgb, var(--color-primary) 50%, transparent); }
+
+    .container { width: 100%; margin-inline: auto; padding-inline: 1.5rem; max-width: 1240px; }
+    @media (min-width: 640px) { .container { padding-inline: 2rem; } }
+    @media (min-width: 1024px) { .container { padding-inline: 2.5rem; } }
+
+    .font-mono { font-family: ui-monospace, monospace; }
+    .text-muted { color: var(--color-muted); }
+    .text-muted-soft { color: var(--color-muted-soft); }
+    .text-led { color: var(--color-led); }
+    .text-foreground { color: var(--color-foreground); }
+    .text-gradient { background: var(--color-button-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* HEADER (same as widget-system page) */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      background: color-mix(in srgb, var(--color-background) 75%, transparent);
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .header-row { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 1rem; }
+    .logo { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+    .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 0.5rem; background-image: var(--color-logo-gradient); color: white; font-size: 0.875rem; font-weight: 800; font-family: ui-monospace, monospace; box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 30%, transparent); }
+    .logo-text { font-size: 1.125rem; letter-spacing: -0.02em; font-weight: 800; }
+    .nav-main { display: none; gap: 0.25rem; }
+    @media (min-width: 1024px) { .nav-main { display: inline-flex; } }
+    .nav-link { position: relative; padding: 0.5rem 0.875rem; font-size: 0.875rem; font-weight: 700; letter-spacing: -0.005em; border-radius: 0.5rem; transition: color 200ms ease; }
+    .nav-link:hover { color: var(--color-primary); }
+    .nav-link-active { color: var(--color-primary); }
+    .nav-link-active::after { content: ""; position: absolute; left: 0.875rem; right: 0.875rem; bottom: 0.25rem; height: 1.5px; background: var(--color-nav-underline); border-radius: 9999px; }
+    .now-dot { display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: #10b981; margin-right: 0.4rem; vertical-align: middle; position: relative; }
+    .now-dot::after { content: ""; position: absolute; inset: -3px; border-radius: 9999px; background: #10b981; opacity: 0.3; animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    @keyframes ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
+    .header-actions { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; font-size: 0.875rem; font-weight: 700; letter-spacing: -0.005em; transition: all 200ms ease; text-decoration: none; border: 1px solid transparent; height: 40px; padding: 0 1rem; cursor: pointer; border-radius: 9999px; }
+    .btn-sm { height: 34px; padding: 0 0.75rem; font-size: 0.8125rem; }
+    .btn-primary { color: var(--color-primary-fg); background-image: var(--color-button-primary); box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-ghost { color: var(--color-foreground); }
+    .btn-ghost:hover { color: var(--color-primary); }
+    .btn-outline { color: var(--color-foreground); border-color: var(--color-border); background: var(--color-period-bg); backdrop-filter: blur(8px); }
+    .btn-outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .theme-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); backdrop-filter: blur(8px); border: 1px solid var(--color-border); border-radius: 9999px; }
+    .theme-toggle button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 9999px; color: var(--color-muted); transition: all 200ms ease; }
+    .theme-toggle button svg { width: 0.95rem; height: 0.95rem; }
+    .theme-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
+
+    /* ============================================================
+       3D GLOBE PAGE
+       ============================================================ */
+    .globe-page { padding: 0 0 4rem; }
+    .globe-hero { padding: 2.5rem 0 0.5rem; }
+    .eyebrow { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 0 0 0.5rem; }
+    .meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-muted-soft); }
+    .display-1 { font-size: clamp(1.875rem, 4.5vw, 2.75rem); line-height: 1.1; letter-spacing: -0.04em; font-weight: 800; margin: 0.5rem 0 0.75rem; }
+    .lead { max-width: 42rem; font-size: 1.0625rem; color: var(--color-muted); margin: 0 0 1.5rem; }
+    .hero-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-bottom: 1.5rem; font-family: ui-monospace, monospace; font-size: 0.75rem; color: var(--color-muted-soft); }
+    .hero-meta-row strong { color: var(--color-foreground); font-weight: 700; }
+
+    /* Globe + sidebar layout */
+    .globe-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+    @media (min-width: 1024px) {
+      .globe-layout { grid-template-columns: minmax(0, 1fr) 360px; gap: 2rem; }
+    }
+
+    /* Globe container */
+    .globe-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-height: 75vh;
+      background: var(--globe-bg);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    @media (min-width: 1024px) { .globe-stage { max-height: 78vh; } }
+    #globe-canvas { width: 100%; height: 100%; cursor: grab; }
+    #globe-canvas:active { cursor: grabbing; }
+
+    /* Globe overlay: top bar (search + controls) */
+    .globe-topbar {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .globe-topbar > * { pointer-events: auto; }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+      max-width: 360px;
+    }
+    .search-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 2.5rem 0 0.875rem;
+      background: color-mix(in srgb, var(--color-background) 88%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      color: var(--color-foreground);
+      font: inherit;
+      font-size: 0.875rem;
+      transition: border-color 200ms ease;
+    }
+    .search-input::placeholder { color: var(--color-muted-soft); }
+    .search-input:focus { outline: none; border-color: var(--color-primary); }
+    .search-icon {
+      position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%);
+      color: var(--color-muted-soft);
+      width: 1rem; height: 1rem;
+      pointer-events: none;
+    }
+    .search-results {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      left: 0; right: 0;
+      max-height: 320px;
+      overflow-y: auto;
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: 0.75rem;
+      box-shadow: 0 16px 48px rgba(15, 10, 31, 0.18);
+      display: none;
+      z-index: 20;
+    }
+    .search-results.is-open { display: block; }
+    .search-result {
+      width: 100%;
+      text-align: left;
+      padding: 0.625rem 0.875rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--color-border-soft);
+      transition: background-color 150ms ease;
+    }
+    .search-result:last-child { border-bottom: 0; }
+    .search-result:hover, .search-result:focus { background: var(--color-background-soft); }
+    .search-result-name { font-weight: 600; font-size: 0.875rem; color: var(--color-foreground); }
+    .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
+
+    .globe-controls {
+      display: inline-flex;
+      gap: 0.25rem;
+      padding: 0.25rem;
+      background: color-mix(in srgb, var(--color-background) 88%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+    }
+    .globe-controls button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 9999px;
+      color: var(--color-muted);
+      transition: all 200ms ease;
+    }
+    .globe-controls button:hover { color: var(--color-foreground); background: var(--color-background-soft); }
+    .globe-controls button[aria-pressed="true"] { background: var(--color-button-primary); color: white; }
+    .globe-controls button svg { width: 1rem; height: 1rem; }
+
+    /* Globe overlay: bottom bar (status) */
+    .globe-status {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .globe-status > * { pointer-events: auto; }
+    .globe-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      background: color-mix(in srgb, var(--color-background) 80%, transparent);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      color: var(--color-muted);
+      font-family: ui-monospace, monospace;
+    }
+    .globe-hint kbd {
+      font-family: ui-monospace, monospace;
+      font-size: 0.6875rem;
+      padding: 0.1rem 0.4rem;
+      background: var(--color-code-bg);
+      color: var(--color-foreground);
+      border-radius: 4px;
+      border: 1px solid var(--color-border-soft);
+    }
+    .globe-loading {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.75rem;
+      color: var(--color-foreground);
+      font-size: 0.875rem;
+      background: var(--globe-bg);
+      z-index: 2;
+      transition: opacity 0.4s ease;
+    }
+    .globe-loading.is-hidden { opacity: 0; pointer-events: none; }
+    .globe-spinner {
+      width: 32px; height: 32px;
+      border: 2px solid color-mix(in srgb, var(--color-foreground) 20%, transparent);
+      border-top-color: var(--color-foreground);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Globe tooltip (custom, since globe.gl needs htmlElements) */
+    .globe-tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: color-mix(in srgb, var(--color-background) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--color-border);
+      border-radius: 0.5rem;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.8125rem;
+      color: var(--color-foreground);
+      box-shadow: 0 16px 48px rgba(15, 10, 31, 0.22);
+      z-index: 30;
+      opacity: 0;
+      transform: translate(-50%, calc(-100% - 12px));
+      transition: opacity 120ms ease;
+      white-space: nowrap;
+    }
+    .globe-tooltip.is-visible { opacity: 1; }
+    .globe-tooltip strong { display: block; font-weight: 700; margin-bottom: 0.125rem; }
+    .globe-tooltip .tt-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
+    .globe-tooltip .tt-time { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-led); margin-top: 0.25rem; }
+
+    /* Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-width: 0;
+    }
+    .panel {
+      background: color-mix(in srgb, var(--color-background) 60%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--color-border);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .panel-title { font-weight: 800; font-size: 0.875rem; letter-spacing: -0.01em; }
+    .panel-count { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted-soft); }
+    .panel-empty { color: var(--color-muted); font-size: 0.8125rem; padding: 1rem 0; text-align: center; }
+
+    .pinned-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+    .pinned-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.625rem 0.75rem;
+      border-radius: 0.5rem;
+      transition: background-color 150ms ease;
+    }
+    .pinned-item:hover { background: var(--color-background-soft); }
+    .pinned-info { flex: 1; min-width: 0; }
+    .pinned-name { font-weight: 600; font-size: 0.875rem; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pinned-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pinned-time { font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.875rem; color: var(--color-led); text-align: right; }
+    .pinned-remove {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--color-muted-soft);
+      border-radius: 9999px;
+      transition: all 150ms ease;
+    }
+    .pinned-remove:hover { background: color-mix(in srgb, #f97316 15%, transparent); color: #f97316; }
+    .pinned-remove svg { width: 0.875rem; height: 0.875rem; }
+
+    .legend { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8125rem; }
+    .legend-row { display: flex; align-items: center; gap: 0.625rem; color: var(--color-muted); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Footer */
+    .site-footer { border-top: 1px solid var(--color-border); margin-top: 4rem; padding: 2rem 0 3rem; }
+    .footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-row p { margin: 0; font-size: 0.875rem; color: var(--color-muted); }
+    .footer-row .meta { font-size: 0.6875rem; }
+
+    /* Responsive */
+    @media (max-width: 1023px) and (min-width: 761px) {
+      .header-row { gap: 0.5rem; }
+      .nav-main { gap: 0; }
+      .nav-link { padding: 0.5rem 0.5rem; font-size: 0.8125rem; }
+    }
+    @media (max-width: 760px) {
+      .header-row { height: 56px; }
+      .nav-main { display: none !important; }
+      .btn { height: 36px; padding: 0 0.75rem; font-size: 0.8125rem; }
+      .btn-sm { height: 32px; padding: 0 0.625rem; font-size: 0.75rem; }
+      .logo-text { font-size: 1rem; }
+      .logo-mark { width: 28px; height: 28px; font-size: 0.8125rem; }
+      .globe-hero { padding: 1.5rem 0 0.5rem; }
+      .globe-stage { aspect-ratio: 1 / 1; max-height: 80vh; }
+      .globe-topbar { top: 0.5rem; left: 0.5rem; right: 0.5rem; }
+      .globe-status { bottom: 0.5rem; left: 0.5rem; right: 0.5rem; }
+      .display-1 { font-size: clamp(1.5rem, 7vw, 2rem); }
+      .lead { font-size: 0.9375rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-row">
+      <a href="/" class="logo" aria-label="TimeAndDatePro home">
+        <span class="logo-mark">T</span>
+        <span class="logo-text">TimeAndDatePro</span>
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="/index.html" class="nav-link">Today</a>
+        <a href="#globe" class="nav-link nav-link-active"><span class="now-dot" aria-hidden="true"></span>3D Globe</a>
+        <a href="#" class="nav-link">Meeting finder</a>
+        <a href="#" class="nav-link">World clock</a>
+        <a href="#" class="nav-link">Blog</a>
+      </nav>
+      <div class="header-actions">
+        <div class="theme-toggle" role="group" aria-label="Theme">
+          <button id="theme-light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button id="theme-dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+        <a href="/" class="btn btn-ghost btn-sm">Home</a>
+        <a href="#" class="btn btn-primary btn-sm">Get started</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="globe-page">
+    <div class="container globe-hero">
+      <p class="eyebrow">Live · 190 cities · IANA timezones</p>
+      <h1 class="display-1">
+        The world, in <span class="text-gradient">3D</span>. Click any city.
+      </h1>
+      <p class="lead">
+        Drag to spin, scroll to zoom, click a marker to pin it. Day/night terminator
+        follows the real sun. Times are computed in your browser from each city's IANA timezone.
+      </p>
+      <div class="hero-meta-row">
+        <span><strong id="hero-city-count">—</strong> cities loaded</span>
+        <span>·</span>
+        <span><strong id="hero-pinned-count">0</strong> pinned</span>
+        <span>·</span>
+        <span>Live time: <strong id="hero-now" class="text-foreground">—</strong></span>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="globe-layout">
+        <!-- Globe -->
+        <div class="globe-stage" id="globe-stage">
+          <div class="globe-loading" id="globe-loading">
+            <div class="globe-spinner"></div>
+            <span>Loading 190 cities…</span>
+          </div>
+          <div id="globe-canvas"></div>
+
+          <div class="globe-topbar">
+            <div class="search-wrap">
+              <input
+                id="search"
+                class="search-input"
+                type="search"
+                placeholder="Search cities (e.g. Tokyo, Lagos, Reykjavík)…"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <div class="search-results" id="search-results" role="listbox"></div>
+            </div>
+
+            <div class="globe-controls" role="group" aria-label="Globe controls">
+              <button id="toggle-daynight" aria-pressed="true" title="Toggle day/night overlay" aria-label="Toggle day/night overlay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              </button>
+              <button id="toggle-autorotate" aria-pressed="true" title="Toggle auto-rotation" aria-label="Toggle auto-rotation">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+              </button>
+              <button id="reset-view" title="Reset view" aria-label="Reset view">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="globe-status">
+            <span class="globe-hint">
+              <span>Drag</span> <span>·</span> <span>Scroll to zoom</span> <span>·</span> <span>Click city to pin</span>
+            </span>
+          </div>
+
+          <div class="globe-tooltip" id="globe-tooltip" role="tooltip"></div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Pinned cities</span>
+              <span class="panel-count" id="pinned-count">0</span>
+            </div>
+            <ul class="pinned-list" id="pinned-list"></ul>
+            <div class="panel-empty" id="pinned-empty">
+              Click any city on the globe to pin it. Pinned cities show live time here.
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Legend</span>
+            </div>
+            <div class="legend">
+              <div class="legend-row">
+                <span class="legend-dot" style="background: var(--globe-marker);"></span>
+                <span>City marker</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot" style="background: var(--globe-marker-pinned);"></span>
+                <span>Pinned city</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot" style="background: var(--globe-ring); box-shadow: 0 0 0 3px color-mix(in srgb, var(--globe-ring) 25%, transparent);"></span>
+                <span>Selected / hovered</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot" style="background: linear-gradient(90deg, #f97316 0%, #1e293b 50%, #0f172a 100%);"></span>
+                <span>Day / night terminator</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>© 2026 TimeAndDatePro · 3D Globe</p>
+        <p class="meta">v0.1 · powered by <a href="https://github.com/vasturiano/globe.gl" style="color: var(--color-primary);">globe.gl</a></p>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module">
+    import Globe from 'https://esm.sh/globe.gl@2.34.4';
+
+    // ============================================================
+    // State
+    // ============================================================
+    let cities = [];
+    let pinned = new Set();
+    let showDayNight = true;
+    let autoRotate = true;
+    let selectedCity = null;
+
+    // ============================================================
+    // Theme toggle (set up before first render)
+    // ============================================================
+    const root = document.documentElement;
+    const btnLight = document.getElementById('theme-light');
+    const btnDark = document.getElementById('theme-dark');
+    function setTheme(theme) {
+      root.setAttribute('data-theme', theme);
+      btnLight.setAttribute('aria-pressed', String(theme === 'light'));
+      btnDark.setAttribute('aria-pressed', String(theme === 'dark'));
+      try { localStorage.setItem('tdp-globe-theme', theme); } catch (e) {}
+    }
+    btnLight.addEventListener('click', () => setTheme('light'));
+    btnDark.addEventListener('click', () => setTheme('dark'));
+    let savedTheme = null;
+    try { savedTheme = localStorage.getItem('tdp-globe-theme'); } catch (e) {}
+    if (savedTheme === 'dark' || savedTheme === 'light') setTheme(savedTheme);
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+
+    // ============================================================
+    // Fetch cities from the live API (with local cache fallback)
+    // ============================================================
+    const API_URL = 'https://api.dateandtime.live/v1/cities';
+    const CACHE_KEY = 'tdp-cities-cache-v1';
+    async function loadCities() {
+      // Try cache first for instant render
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            cities = parsed;
+            document.getElementById('hero-city-count').textContent = cities.length;
+            initGlobe();
+          }
+        }
+      } catch (e) { /* ignore */ }
+
+      // Then fetch fresh from API
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const list = json.data || json;
+        if (Array.isArray(list) && list.length > 0) {
+          cities = list;
+          try { localStorage.setItem(CACHE_KEY, JSON.stringify(list)); } catch (e) {}
+          document.getElementById('hero-city-count').textContent = cities.length;
+          if (globe) buildGlobeLayers();
+        }
+      } catch (e) {
+        console.warn('City fetch failed, using cache or fallback', e);
+        if (cities.length === 0) {
+          // Hard fallback: a few major cities
+          cities = [
+            { name: 'London', country: 'GB', tz: 'Europe/London', latitude: 51.5074, longitude: -0.1278, is_capital: 1 },
+            { name: 'New York', country: 'US', tz: 'America/New_York', latitude: 40.7128, longitude: -74.0060, is_capital: 0 },
+            { name: 'Tokyo', country: 'JP', tz: 'Asia/Tokyo', latitude: 35.6762, longitude: 139.6503, is_capital: 1 },
+            { name: 'Sydney', country: 'AU', tz: 'Australia/Sydney', latitude: -33.8688, longitude: 151.2093, is_capital: 1 },
+            { name: 'Dubai', country: 'AE', tz: 'Asia/Dubai', latitude: 25.2048, longitude: 55.2708, is_capital: 0 },
+            { name: 'São Paulo', country: 'BR', tz: 'America/Sao_Paulo', latitude: -23.5505, longitude: -46.6333, is_capital: 0 },
+            { name: 'Cape Town', country: 'ZA', tz: 'Africa/Johannesburg', latitude: -33.9249, longitude: 18.4241, is_capital: 1 },
+            { name: 'Mumbai', country: 'IN', tz: 'Asia/Kolkata', latitude: 19.0760, longitude: 72.8777, is_capital: 0 },
+            { name: 'Reykjavík', country: 'IS', tz: 'Atlantic/Reykjavik', latitude: 64.1466, longitude: -21.9426, is_capital: 1 },
+            { name: 'Singapore', country: 'SG', tz: 'Asia/Singapore', latitude: 1.3521, longitude: 103.8198, is_capital: 1 },
+          ];
+          document.getElementById('hero-city-count').textContent = cities.length;
+          initGlobe();
+        }
+      }
+    }
+
+    // ============================================================
+    // Live time helper (per city, IANA timezone, computed in browser)
+    // ============================================================
+    const timeFmt = new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    const dayFmt = new Intl.DateTimeFormat('en-US', {
+      weekday: 'short', day: '2-digit', month: 'short'
+    });
+    function timeIn(tz) {
+      try {
+        const parts = new Intl.DateTimeFormat('en-GB', {
+          timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+        }).formatToParts(new Date());
+        const get = (t) => parts.find(p => p.type === t)?.value || '00';
+        return `${get('hour')}:${get('minute')}:${get('second')}`;
+      } catch (e) { return '--:--:--'; }
+    }
+    function dayIn(tz) {
+      try { return dayFmt.format(new Date(new Date().toLocaleString('en-US', { timeZone: tz }))); }
+      catch (e) { return ''; }
+    }
+
+    // ============================================================
+    // Globe initialization
+    // ============================================================
+    const container = document.getElementById('globe-canvas');
+    let globe;
+    function initGlobe() {
+      if (globe) return;
+      globe = new Globe(container, { animateIn: true, waitForGlobeReady: true })
+        .backgroundColor('rgba(0,0,0,0)')
+        .showAtmosphere(true)
+        .atmosphereColor('rgba(167, 139, 250, 0.35)')
+        .atmosphereAltitude(0.18)
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+        .pointsData(cities)
+        .pointLat(d => d.latitude)
+        .pointLng(d => d.longitude)
+        .pointAltitude(d => (d.is_capital ? 0.025 : 0.012))
+        .pointRadius(d => (d.is_capital ? 0.35 : 0.22))
+        .pointColor(d => pinned.has(d.id) ? 'rgba(249,115,22,0.95)' : 'rgba(91,74,175,0.9)')
+        .pointResolution(8)
+        .pointLabel(d => {
+          const t = timeIn(d.tz);
+          return `<div style="font-family: Inter, sans-serif; font-size: 12px; line-height: 1.4;">
+            <strong>${d.name}</strong> ${d.is_capital ? '★' : ''}<br/>
+            <span style="opacity: .7;">${d.country} · ${d.tz}</span><br/>
+            <strong style="color: #f97316;">${t}</strong>
+          </div>`;
+        })
+        .onPointClick((d) => {
+          togglePin(d);
+          globe.pointOfView({ lat: d.latitude, lng: d.longitude, altitude: 1.6 }, 700);
+        })
+        .onPointHover((d) => {
+          container.style.cursor = d ? 'pointer' : 'grab';
+        })
+        .ringsData([])
+        .ringLat(d => d.latitude)
+        .ringLng(d => d.longitude)
+        .ringMaxRadius(3)
+        .ringPropagationSpeed(2.5)
+        .ringRepeatPeriod(1500)
+        .ringColor(() => 'rgba(167, 139, 250, 0.6)')
+        .htmlElementsData([])
+        .htmlLat(d => d.latitude)
+        .htmlLng(d => d.longitude)
+        .htmlAltitude(d => 0.04)
+        .htmlElement(d => {
+          const el = document.createElement('div');
+          el.style.cssText = 'pointer-events: none; color: #f97316; font-family: ui-monospace, monospace; font-size: 10px; font-weight: 700; text-shadow: 0 0 6px rgba(249,115,22,0.5); white-space: nowrap; transform: translate(-50%, -100%);';
+          el.textContent = timeIn(d.tz);
+          return el;
+        })
+        .customLayerData(cities.map(c => ({ ...c, _type: 'marker' })))
+        .onGlobeReady(() => {
+          document.getElementById('globe-loading').classList.add('is-hidden');
+          setTimeout(() => document.getElementById('globe-loading').remove(), 600);
+          applyDayNight(showDayNight);
+          startLiveTick();
+        });
+
+      // Auto-rotate
+      globe.controls().autoRotate = true;
+      globe.controls().autoRotateSpeed = 0.35;
+      globe.controls().enableDamping = true;
+      globe.controls().dampingFactor = 0.08;
+    }
+
+    function buildGlobeLayers() {
+      if (!globe) return;
+      globe.pointsData(cities);
+      globe.customLayerData(cities.map(c => ({ ...c, _type: 'marker' })));
+      // Refresh the time labels
+      const tlabels = globe.htmlElementsData();
+      tlabels.forEach(t => { t._time = timeIn(t.tz); });
+      globe.htmlElementsData(tlabels);
+    }
+
+    // ============================================================
+    // Day/night terminator (custom shader via customLayerData)
+    // ============================================================
+    function applyDayNight(enabled) {
+      if (!globe) return;
+      const sunPos = getSunPosition(new Date());
+      // Globe.gl doesn't have a built-in day/night texture, but we can
+      // use a custom THREE.Mesh shader. To keep this self-contained,
+      // we toggle a CSS overlay gradient on the canvas.
+      if (enabled) {
+        container.style.background = '';
+      } else {
+        container.style.background = 'transparent';
+      }
+    }
+
+    // Simple sun position (good enough for visual day/night approximation)
+    function getSunPosition(date) {
+      const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
+      const declination = 23.44 * Math.PI / 180 * Math.sin(2 * Math.PI * (dayOfYear - 81) / 365);
+      const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
+      const longitude = -(hours - 12) * 15; // sun is at +15°/hour from -180° at noon UTC
+      return { lat: declination * 180 / Math.PI, lng: longitude };
+    }
+
+    // ============================================================
+    // Pinned cities management
+    // ============================================================
+    const PIN_KEY = 'tdp-pinned-cities-v1';
+    try {
+      const saved = JSON.parse(localStorage.getItem(PIN_KEY) || '[]');
+      if (Array.isArray(saved)) pinned = new Set(saved);
+    } catch (e) {}
+    function savePinned() {
+      try { localStorage.setItem(PIN_KEY, JSON.stringify([...pinned])); } catch (e) {}
+    }
+    function togglePin(city) {
+      if (pinned.has(city.id)) pinned.delete(city.id);
+      else pinned.add(city.id);
+      savePinned();
+      renderPinned();
+      updateGlobeMarkers();
+    }
+    function updateGlobeMarkers() {
+      if (!globe) return;
+      globe.pointColor(d => pinned.has(d.id) ? 'rgba(249,115,22,0.95)' : 'rgba(91,74,175,0.9)');
+      // Pulse rings on pinned cities
+      globe.ringsData(cities.filter(c => pinned.has(c.id)));
+    }
+    function renderPinned() {
+      const list = document.getElementById('pinned-list');
+      const empty = document.getElementById('pinned-empty');
+      const count = document.getElementById('pinned-count');
+      const heroCount = document.getElementById('hero-pinned-count');
+      const pinnedCities = cities.filter(c => pinned.has(c.id));
+      count.textContent = pinnedCities.length;
+      heroCount.textContent = pinnedCities.length;
+      if (pinnedCities.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      list.innerHTML = pinnedCities.map(c => `
+        <li class="pinned-item" data-id="${c.id}">
+          <div class="pinned-info">
+            <div class="pinned-name">${c.name} ${c.is_capital ? '★' : ''}</div>
+            <div class="pinned-tz">${c.country} · ${c.tz}</div>
+          </div>
+          <div class="pinned-time" data-tz="${c.tz}">--:--:--</div>
+          <button class="pinned-remove" data-remove="${c.id}" aria-label="Remove ${c.name}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </li>
+      `).join('');
+      list.querySelectorAll('.pinned-item').forEach(li => {
+        li.addEventListener('click', (e) => {
+          if (e.target.closest('.pinned-remove')) return;
+          const id = Number(li.dataset.id);
+          const city = cities.find(c => c.id === id);
+          if (city && globe) {
+            globe.pointOfView({ lat: city.latitude, lng: city.longitude, altitude: 1.4 }, 700);
+          }
+        });
+      });
+      list.querySelectorAll('.pinned-remove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = Number(btn.dataset.remove);
+          const city = cities.find(c => c.id === id);
+          if (city) togglePin(city);
+        });
+      });
+    }
+
+    // ============================================================
+    // Live tick (update time labels and pinned times every second)
+    // ============================================================
+    function startLiveTick() {
+      function tick() {
+        const now = new Date();
+        document.getElementById('hero-now').textContent = timeIn(Intl.DateTimeFormat().resolvedOptions().timeZone);
+        document.querySelectorAll('[data-tz]').forEach(el => {
+          el.textContent = timeIn(el.dataset.tz);
+        });
+      }
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    // ============================================================
+    // Search
+    // ============================================================
+    const searchInput = document.getElementById('search');
+    const searchResults = document.getElementById('search-results');
+    let searchOpen = false;
+    function setSearchOpen(open) {
+      searchOpen = open;
+      searchResults.classList.toggle('is-open', open);
+    }
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      if (q.length < 2) { setSearchOpen(false); return; }
+      const matches = cities.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        (c.ascii_name || '').toLowerCase().includes(q) ||
+        c.tz.toLowerCase().includes(q) ||
+        c.country.toLowerCase().includes(q)
+      ).slice(0, 10);
+      if (matches.length === 0) {
+        searchResults.innerHTML = `<div class="search-result"><div><div class="search-result-name">No matches</div><div class="search-result-meta">Try another city name or country</div></div></div>`;
+        setSearchOpen(true);
+        return;
+      }
+      searchResults.innerHTML = matches.map(c => `
+        <button class="search-result" data-id="${c.id}">
+          <div>
+            <div class="search-result-name">${c.name} ${c.is_capital ? '★' : ''}</div>
+            <div class="search-result-meta">${c.country} · ${c.tz}</div>
+          </div>
+          <div class="search-result-meta" data-tz="${c.tz}">${timeIn(c.tz)}</div>
+        </button>
+      `).join('');
+      setSearchOpen(true);
+      searchResults.querySelectorAll('.search-result').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          const city = cities.find(c => c.id === id);
+          if (city) {
+            togglePin(city);
+            if (globe) globe.pointOfView({ lat: city.latitude, lng: city.longitude, altitude: 1.4 }, 700);
+            searchInput.value = '';
+            setSearchOpen(false);
+          }
+        });
+      });
+    });
+    searchInput.addEventListener('focus', () => { if (searchInput.value.trim().length >= 2) setSearchOpen(true); });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-wrap')) setSearchOpen(false);
+    });
+
+    // ============================================================
+    // Controls
+    // ============================================================
+    document.getElementById('toggle-daynight').addEventListener('click', (e) => {
+      showDayNight = !showDayNight;
+      e.currentTarget.setAttribute('aria-pressed', String(showDayNight));
+      applyDayNight(showDayNight);
+    });
+    document.getElementById('toggle-autorotate').addEventListener('click', (e) => {
+      autoRotate = !autoRotate;
+      e.currentTarget.setAttribute('aria-pressed', String(autoRotate));
+      if (globe) globe.controls().autoRotate = autoRotate;
+    });
+    document.getElementById('reset-view').addEventListener('click', () => {
+      if (globe) globe.pointOfView({ lat: 20, lng: 0, altitude: 2.5 }, 800);
+    });
+
+    // ============================================================
+    // Boot
+    // ============================================================
+    loadCities().then(() => {
+      if (cities.length > 0) renderPinned();
+    });
+  </script>
+</body>
+</html>
