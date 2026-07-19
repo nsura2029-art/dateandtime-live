@@ -262,15 +262,21 @@
     @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
     .rail::-webkit-scrollbar { height: 4px; }
     .rail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
-    .city-card { flex: 0 0 auto; min-width: 140px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; }
+    .city-card { flex: 0 0 auto; min-width: 200px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; }
     .city-head { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem; }
     .city-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; }
-    .city-name { font-size: 0.8125rem; font-weight: 700; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 8.5rem; }
+    .city-name { font-size: 0.8125rem; font-weight: 700; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13rem; }
     .city-remove { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-muted-soft); border-radius: 9999px; }
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
     .city-time { font-family: "Courier New", ui-monospace, monospace; font-size: 1.125rem; font-weight: 800; letter-spacing: 0.02em; }
     .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.2rem; }
+    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+    .city-day { font-weight: 600; }
+    .city-day-sep { color: var(--color-muted-soft); }
+    .city-hours-diff { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-foreground); padding: 0.05rem 0.35rem; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
+    .city-hours-diff.is-positive { color: #047857; background: color-mix(in srgb, #10b981 15%, transparent); }
+    .city-hours-diff.is-negative { color: #b45309; background: color-mix(in srgb, #f59e0b 15%, transparent); }
 
     /* ===== Ad slot ===== */
     .ad-slot { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.25rem; background: color-mix(in srgb, var(--color-background) 70%, var(--color-background-soft)); border: 1px solid var(--color-border-soft); border-radius: 6px; color: var(--color-muted-soft); font-family: ui-monospace, monospace; margin: 1.5rem auto 1rem; }
@@ -375,7 +381,7 @@
 
         <div class="pills" id="home-pills">
           <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
-          <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset</span></span>
+          <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span></span>
         </div>
 
         <div class="search-section" id="search-section">
@@ -473,6 +479,7 @@
     function renderRail() {
       const rail = document.getElementById("rail");
       rail.innerHTML = "";
+      const home = state.citiesWithHome[0];
       state.citiesWithHome.forEach((c, i) => {
         const isHome = !!c._home;
         const color = cityColor(c.name);
@@ -488,6 +495,9 @@
           </div>
           <div class="city-time" data-tz="${c.tz}" style="color: var(--city-${color});">--:--:--</div>
           <div class="city-tz">${tzAbbr(c.tz)} · ${tzOffset(c.tz)}</div>
+          <div class="city-day-diff" data-tz="${c.tz}" data-home-tz="${home ? home.tz : ''}">
+            <span class="city-day">—</span><span class="city-day-sep">, </span><span class="city-hours-diff">—</span>
+          </div>
         `;
         rail.appendChild(card);
       });
@@ -496,6 +506,52 @@
       });
     }
     function saveCities() { try { localStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
+
+    /* ----- Day + hours diff helpers (relative to the home city) ----- */
+    function tzOffsetHours(tz, date) {
+      // Returns the offset in hours (fractional ignored) for the tz at the given date.
+      try {
+        const utc = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
+        const local = new Date(date.toLocaleString("en-US", { timeZone: tz }));
+        return Math.round((local - utc) / 3600000);
+      } catch (e) { return 0; }
+    }
+    function dayWord(diffDays) {
+      if (diffDays === 0) return "today";
+      if (diffDays === 1) return "tomorrow";
+      if (diffDays === -1) return "yesterday";
+      if (diffDays > 0) return `+${diffDays} days`;
+      return `${diffDays} days`;
+    }
+    function dayDiff(homeTz, cityTz, now) {
+      try {
+        const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: homeTz, year: "numeric", month: "2-digit", day: "2-digit" });
+        const fmt2 = new Intl.DateTimeFormat("en-CA", { timeZone: cityTz, year: "numeric", month: "2-digit", day: "2-digit" });
+        const homeD = new Date(fmt.format(now));
+        const cityD = new Date(fmt2.format(now));
+        return Math.round((cityD - homeD) / 86400000);
+      } catch (e) { return 0; }
+    }
+    function updateCityDayDiffs(now) {
+      const home = state.citiesWithHome[0];
+      const homeTz = home ? home.tz : null;
+      if (!homeTz) return;
+      document.querySelectorAll(".city-day-diff").forEach(el => {
+        const cityTz = el.dataset.tz;
+        if (!cityTz) return;
+        const diff = dayDiff(homeTz, cityTz, now);
+        const hours = tzOffsetHours(cityTz, now) - tzOffsetHours(homeTz, now);
+        const dayEl = el.querySelector(".city-day");
+        const hoursEl = el.querySelector(".city-hours-diff");
+        if (dayEl) dayEl.textContent = dayWord(diff);
+        if (hoursEl) {
+          const sign = hours > 0 ? "+" : (hours < 0 ? "" : "+");
+          hoursEl.textContent = `${sign}${hours} H`;
+          hoursEl.classList.toggle("is-positive", hours > 0);
+          hoursEl.classList.toggle("is-negative", hours < 0);
+        }
+      });
+    }
 
     /* ----- Feature probes (graceful degradation) ----- */
     async function probe(path) {
@@ -518,7 +574,9 @@
       // Hide UI for features that aren't ready
       if (!sync) document.getElementById("sync-row").classList.add("is-hidden");
       if (!onthisday) document.getElementById("onthisday").classList.add("is-hidden");
-      if (!sun) document.getElementById("home-pills").classList.add("is-hidden");
+      // The home-pills (off-hours + sunrise) always show. Sunrise is a static
+      // placeholder ("Sunrise · Sunset —") until the /v1/time/sun endpoint
+      // is wired on the prod API.
       if (!search) document.getElementById("search-section").classList.add("is-disabled");
     }
 
@@ -652,8 +710,9 @@
       if (home?.countryName) regionParts.push(home.countryName);
       else if (home?.country) regionParts.push(home.country);
       document.getElementById("current-city-region").textContent = regionParts.join(", ");
-      document.querySelectorAll("[data-tz]").forEach(el => { el.textContent = timeIn(el.dataset.tz, now); });
+      document.querySelectorAll(".city-time[data-tz]").forEach(el => { el.textContent = timeIn(el.dataset.tz, now); });
       if (home) document.getElementById("off-hours-pill").textContent = getOffHoursForTz(tz, now);
+      updateCityDayDiffs(now);
       requestAnimationFrame(updateClock);
     }
 
