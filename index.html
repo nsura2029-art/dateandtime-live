@@ -244,6 +244,9 @@
     .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
     .pill.is-hidden { display: none; }
     .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
+    .pill-blue { background: rgba(219, 234, 254, 0.76); border-color: rgba(147, 197, 253, 0.3); color: #1e40af; }
+    [data-theme="dark"] .pill-blue { background: rgba(30, 64, 175, 0.18); border-color: rgba(147, 197, 253, 0.25); color: #93c5fd; }
+    .city-card.is-active { box-shadow: 0 0 0 2px var(--color-primary), 0 4px 12px rgba(0,0,0,0.08); }
     .pill-orange { background: var(--color-pill-orange-bg); border-color: var(--color-pill-orange-bd); color: var(--color-pill-orange-fg); }
     .flag { display: inline-block; font-size: 0.95rem; line-height: 1; margin-right: 0.35rem; vertical-align: -0.05em; }
     .pill-icon { display: inline-flex; width: 0.85rem; height: 0.85rem; }
@@ -437,6 +440,7 @@
           <span class="pill pill-purple is-hidden" id="holiday-pill"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span></span>
           <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
           <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span></span>
+          <span class="pill pill-blue is-hidden" id="dst-pill"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span></span>
         </div>
 
         <div class="search-section" id="search-section">
@@ -703,23 +707,22 @@
         btn.innerHTML = `<span class="popular-city-dot" aria-hidden="true"></span><span>${c.name}</span>${already ? '' : '<span class="popular-city-add" aria-hidden="true">+</span>'}`;
         if (!already) {
           btn.addEventListener("click", () => {
-            // Clicking a popular city makes it the NEW home (moves to
-            // position 0). Same UX as clicking a search result.
+            // Clicking a popular city adds it to the rail and makes it the
+            // ACTIVE city (highlights it, switches the big clock + pills).
+            // The home (position 0) stays the user's home city.
             const existingIdx = state.citiesWithHome.findIndex(x => x.tz === c.tz);
-            if (existingIdx === 0) return;  // already home
-            if (existingIdx > 0) {
-              const [existing] = state.citiesWithHome.splice(existingIdx, 1);
-              existing._home = true;
-              state.citiesWithHome.unshift(existing);
+            let newIdx;
+            if (existingIdx >= 0) {
+              newIdx = existingIdx;
             } else {
-              const oldHome = state.citiesWithHome[0];
-              if (oldHome) delete oldHome._home;
-              state.citiesWithHome.unshift({ ...c, _home: true });
+              state.citiesWithHome.push({ ...c });
+              newIdx = state.citiesWithHome.length - 1;
             }
+            state.activeIdx = newIdx;
             saveCities();
             renderRail();
             renderPopularCities();
-            onHomeChanged();
+            renderActiveCityPills();
             window.scrollTo({ top: 0, behavior: "smooth" });
           });
         }
@@ -1062,31 +1065,28 @@
             id: cId, name: c.name, country: cCountry, countryName: cCountryName,
             state_code: cState, latitude: cLat, longitude: cLon, tz: cTz, is_capital: cCapital
           };
-          // Clicking a search result makes that city the NEW home (moves to
-          // position 0). This switches the hero clock, sun pill, DST
-          // countdown, holiday pill, and "current time in" footer all to
-          // the selected city. The previous home becomes a regular rail card.
+          // Clicking a search result adds the city to the rail (if it
+          // isn't there) and makes it the ACTIVE city (highlighted +
+          // switches the big clock and pills). The home (position 0) stays
+          // the user's home city.
           const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cTz);
+          let newIdx;
           if (existingIdx >= 0) {
-            // Already in the rail — just move to position 0 (make it home)
-            const [existing] = state.citiesWithHome.splice(existingIdx, 1);
-            existing._home = true;
-            state.citiesWithHome.unshift(existing);
+            newIdx = existingIdx;
           } else {
-            // New city — make it home, demote the current home
-            const oldHome = state.citiesWithHome[0];
-            if (oldHome) delete oldHome._home;
-            cityObj._home = true;
-            state.citiesWithHome.unshift(cityObj);
+            // New city — append to the rail (not the home slot)
+            state.citiesWithHome.push(cityObj);
+            newIdx = state.citiesWithHome.length - 1;
           }
+          state.activeIdx = newIdx;
           saveCities();
           renderRail();
           renderPopularCities();
-          onHomeChanged();
+          renderActiveCityPills();
           searchInput.value = "";
           searchResults.classList.remove("is-open");
           searchResults.innerHTML = "";
-          // Smooth scroll back to the top so the user sees the new home
+          // Smooth scroll back to the top so the user sees the clock change
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
@@ -1156,6 +1156,52 @@
     document.addEventListener("click", e => { if (!e.target.closest(".search-section")) searchResults.classList.remove("is-open"); });
 
     /* ----- Update loop ----- */
+    // Apply the "active" state to the selected city (in the rail) and
+    // update the pills / hero to reflect that city. The home (position 0)
+    // never changes — clicking just changes which card is visually active
+    // and which city the big clock + pills show.
+    function renderActiveCityPills() {
+      const idx = state.activeIdx != null ? state.activeIdx : 0;
+      const active = state.citiesWithHome[idx] || state.citiesWithHome[0];
+      if (!active) return;
+      // Mark the active card in the rail (so it gets a ring + lift)
+      document.querySelectorAll(".city-card").forEach((c, i) => {
+        c.classList.toggle("is-active", i === idx);
+      });
+      // Update the live-location pill to show the active city's flag + tz
+      renderLiveLocation(active);
+      // Sun pill
+      if (state.features.sun) {
+        fetchSunForCity(active).then(sun => {
+          if (sun) {
+            const sp = document.getElementById("sun-pill");
+            sp.textContent = `Sunrise ${utcToLocal(sun.sunrise_utc || sun.sunrise, active.tz, false)} · Sunset ${utcToLocal(sun.sunset_utc || sun.sunset, active.tz, true)}`;
+          }
+        });
+      }
+      // DST pill (always-on, no API needed — uses Intl.DateTimeFormat)
+      const dstEl = document.getElementById("dst-pill");
+      const dstText = document.getElementById("dst-pill-text");
+      if (dstEl && dstText) {
+        const dst = getDstStatus(active.tz);
+        if (!dst) {
+          dstEl.classList.add("is-hidden");
+        } else if (dst.isDST) {
+          dstEl.classList.remove("is-hidden");
+          dstText.textContent = `In DST · ${dst.currentOffset} (standard ${dst.standardOffset})`;
+        } else {
+          dstEl.classList.remove("is-hidden");
+          dstText.textContent = `Standard time · ${dst.currentOffset}`;
+        }
+      }
+      // Holiday pill
+      if (state.features.holidays) refreshHolidayPill();
+      // DST countdown
+      if (state.features.dst) refreshDstCountdown();
+      // Trigger updateClock to refresh the time
+      updateClock();
+    }
+
     function updateClock() {
       const now = new Date();
       const h = now.getHours();
