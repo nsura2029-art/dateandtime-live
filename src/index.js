@@ -148,7 +148,7 @@ export default {
 
     // Redirect /home → / (the home page IS the default landing now)
     if (url.pathname === "/home" || url.pathname === "/home/") {
-      return Response.redirect(new URL("/" + url.search), 301);
+      return new Response(null, { status: 301, headers: { Location: "/" + url.search } });
     }
 
     // Get the asset (HTML or other) from the [assets] binding.
