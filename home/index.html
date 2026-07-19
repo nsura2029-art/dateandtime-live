@@ -583,10 +583,17 @@
       parent.appendChild(digit);
       return digit;
     }
-    const hourDigits = [createDigit(document.getElementById("hours")), createDigit(document.getElementById("hours"))];
-    const minuteDigits = [createDigit(document.getElementById("minutes")), createDigit(document.getElementById("minutes"))];
-    const secondDigits = [createDigit(document.getElementById("seconds")), createDigit(document.getElementById("seconds"))];
-    const hundredthDigits = [createDigit(document.getElementById("hundredths"), true), createDigit(document.getElementById("hundredths"), true)];
+    // The 7-segment digits only exist on the / landing (index.html) which has the
+    // seg-digit-group elements. The /home landing uses a monospace text element
+    // instead, so these should be null (and updateClock handles the null case).
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+    const hundredthsEl = document.getElementById("hundredths");
+    const hourDigits = hoursEl ? [createDigit(hoursEl), createDigit(hoursEl)] : [null, null];
+    const minuteDigits = minutesEl ? [createDigit(minutesEl), createDigit(minutesEl)] : [null, null];
+    const secondDigits = secondsEl ? [createDigit(secondsEl), createDigit(secondsEl)] : [null, null];
+    const hundredthDigits = hundredthsEl ? [createDigit(hundredthsEl, true), createDigit(hundredthsEl, true)] : [null, null];
     function renderDigit(el, n) { const active = new Set(DIGIT_PATTERNS[n] || []); el.classList.toggle("is-one", Number(n) === 1); el.querySelectorAll(".seg").forEach(seg => { const name = [...seg.classList].find(c => /^[a-g]$/.test(c)); seg.classList.toggle("on", active.has(name)); }); }
     function renderTwoDigits(els, v) { const s = String(v).padStart(2, "0"); renderDigit(els[0], Number(s[0])); renderDigit(els[1], Number(s[1])); }
     function timeIn(tz, d) { try { const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(d || new Date()); const g = t => p.find(x => x.type === t)?.value || "00"; return `${g("hour")}:${g("minute")}:${g("second")}`; } catch (e) { return "--:--:--"; } }
