@@ -309,6 +309,11 @@
     .city-card .historical-hint { font-size: 0.6875rem; color: var(--color-muted); font-style: italic; margin-top: 0.2rem; opacity: 0.55; }
     .city-card.is-clickable { cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease; }
     .city-card.is-clickable:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    /* Home card — always at position 0, never removable, gold-tinted ring */
+    .city-card.is-home { position: relative; box-shadow: 0 0 0 2px color-mix(in srgb, #f59e0b 60%, transparent), 0 4px 16px rgba(245, 158, 11, 0.15); }
+    [data-theme="dark"] .city-card.is-home { box-shadow: 0 0 0 2px color-mix(in srgb, #fbbf24 70%, transparent), 0 4px 16px rgba(251, 191, 36, 0.2); }
+    .city-card .home-badge { position: absolute; top: 0.4rem; right: 0.5rem; display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.4rem; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 9999px; text-transform: uppercase; box-shadow: 0 1px 3px rgba(245, 158, 11, 0.4); pointer-events: none; }
+    .city-card .home-badge-icon { font-size: 0.75rem; line-height: 1; }
     .rail { display: flex; flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
     @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
     .rail::-webkit-scrollbar { height: 4px; }
@@ -638,7 +643,32 @@
       return out;
     }
 
+    // Maximum number of cards in the rail: home (position 0) + 5 others.
+    const RAIL_MAX = 6;
+    // Always ensure the home is at position 0 of the rail. Called before
+    // every render and before saveCities() so the home can never be lost
+    // (not by clicking, not by removing, not by stale sessionStorage).
+    function ensureHomeFirst() {
+      if (!state.citiesWithHome.length) return;
+      // Find the home (the one with _home=true, or the first one)
+      const homeIdx = state.citiesWithHome.findIndex(c => c._home);
+      if (homeIdx > 0) {
+        // Home is somewhere else — move it to position 0
+        const [home] = state.citiesWithHome.splice(homeIdx, 1);
+        state.citiesWithHome.unshift(home);
+      } else if (homeIdx === -1) {
+        // No _home flag — the first card IS the home
+        state.citiesWithHome[0]._home = true;
+      }
+      // Trim to RAIL_MAX (keep home + 5 most recent)
+      if (state.citiesWithHome.length > RAIL_MAX) {
+        state.citiesWithHome = state.citiesWithHome.slice(0, RAIL_MAX);
+      }
+    }
+
     function renderRail() {
+      // Defensive: home always at position 0, trimmed to RAIL_MAX
+      ensureHomeFirst();
       const rail = document.getElementById("rail");
       rail.innerHTML = "";
       const home = state.citiesWithHome[0];
@@ -646,18 +676,17 @@
         const isHome = !!c._home || i === 0;
         const color = cityColor(c.name, i);
         const card = document.createElement("div");
-        card.className = "city-card";
+        card.className = "city-card" + (isHome ? " is-home" : "");
         card.style.background = `var(--city-${color}-bg)`;
         card.style.borderRadius = "0.5rem";
-        // Only the home card gets the cursor pointer + click handler.
-        // Other cards have a remove button but aren't clickable (clicking
-        // them would be ambiguous — the home is already position 0).
-        const clickable = !isHome && i > 0;
+        // Home is NEVER clickable (no "set as new home" — it IS the home).
+        // Other cards are clickable to switch the active view.
+        const clickable = !isHome;
         if (clickable) card.classList.add("is-clickable");
         card.innerHTML = `
           <div class="city-head">
             <span class="city-dot" style="background: var(--city-${color});"></span>
-            <span class="city-name">${isHome ? '<span aria-label="Home" title="Your home">⌂</span> ' : ''}${c.name}</span>
+            <span class="city-name">${escapeHtml(c.name)}</span>
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
           </div>
           <div class="city-time" data-tz="${c.tz}" style="color: var(--city-${color});">--:--:--</div>
@@ -668,44 +697,60 @@
         `;
         card.dataset.cityId = c.id || c.geoname_id || "";
         card.dataset.idx = String(i);
+        // Home gets a "⌂ Home" badge in the bottom-right of the card
+        if (isHome) {
+          const homeBadge = document.createElement("div");
+          homeBadge.className = "home-badge";
+          homeBadge.innerHTML = `<span class="home-badge-icon" aria-hidden="true">⌂</span><span class="home-badge-text">Home</span>`;
+          homeBadge.title = `${c.name} is your detected home — always at position 0`;
+          card.appendChild(homeBadge);
+        }
         rail.appendChild(card);
         // Enrich with climate + historical hints (only if id is known)
         if (card.dataset.cityId) {
           enrichCityCard(Number(card.dataset.cityId), card);
         }
       });
-      // Click a non-home rail card → make it the new home
+      // Click a non-home rail card → make it the ACTIVE city (highlights
+      // it + switches the big clock + pills). The home at position 0
+      // never changes — it stays the user's auto-detected home.
       rail.querySelectorAll(".city-card.is-clickable").forEach(card => {
         card.addEventListener("click", e => {
           // Don't trigger on remove-button click
           if (e.target.closest(".city-remove")) return;
           const i = Number(card.dataset.idx);
-          if (i <= 0) return;
-          // Move this city to position 0
-          const [picked] = state.citiesWithHome.splice(i, 1);
-          picked._home = true;
-          const oldHome = state.citiesWithHome[0];
-          if (oldHome) delete oldHome._home;
-          state.citiesWithHome.unshift(picked);
+          if (i <= 0) return;  // home isn't clickable, but defensive
+          // Mark as active (visual + clock change). The home (position 0)
+          // is never affected.
+          state.activeIdx = i;
           saveCities();
           renderRail();
-          renderPopularCities();
-          onHomeChanged();
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          renderActiveCityPills();
         });
       });
       rail.querySelectorAll(".city-remove").forEach(btn => {
         btn.addEventListener("click", e => {
           e.stopPropagation();
           const i = Number(btn.dataset.idx);
+          // Defensive: never let the home be removed via the X button.
+          // The home (position 0) has no X button in the HTML, but this
+          // guards against stale markup / scripted events.
+          if (i <= 0) return;
           state.citiesWithHome.splice(i, 1);
+          // If we removed the active city, fall back to the home
+          if (state.activeIdx === i) state.activeIdx = 0;
+          else if (state.activeIdx > i) state.activeIdx -= 1;
           saveCities();
           renderRail();
           renderPopularCities();
+          renderActiveCityPills();
         });
       });
     }
-    function saveCities() { try { sessionStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
+    function saveCities() { 
+      ensureHomeFirst();  // belt-and-suspenders: home stays at position 0
+      try { sessionStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} 
+    }
 
     /* ----- Popular cities (chips below the search box) -----
        Filtered to exclude the home city and the 5 rail defaults, so the
@@ -1554,7 +1599,12 @@
       // session is back to "your city" via detectHome().
       try {
         const saved = JSON.parse(sessionStorage.getItem("tdp-cities") || "null");
-        if (Array.isArray(saved) && saved.length) state.citiesWithHome = saved;
+        if (Array.isArray(saved) && saved.length) {
+          // If a stale session had a different "home" (e.g. user changed
+          // their IP/location), reset to the freshly-detected home.
+          // We always re-detect and re-anchor.
+          state.citiesWithHome = saved;
+        }
       } catch (e) {}
       if (state.citiesWithHome.length === 0) {
         const home = detectHome();
