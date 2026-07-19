@@ -41,3 +41,6 @@ build/
 # OS temp
 tmp/
 temp/
+
+# Git worktrees (each one is a separate checkout of a different branch)
+.worktrees/
