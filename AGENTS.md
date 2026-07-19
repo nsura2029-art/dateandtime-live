@@ -54,7 +54,7 @@ DB tables already (see `timeanddatepro-full`) but no APIs are exposed for them y
 
 | Phase | Scope | Status |
 |---|---|---|
-| **0** | Fix prod API Worker, point at `timeanddatepro-full`, rebuild v2 search, bump cap | ⏳ next |
+| **0** | Fix prod API Worker, point at `timeanddatepro-full`, rebuild v2 search, bump cap | ✅ **shipped 2026-07-19** — `cloudflare/datetime-api/` on Hono, 5,081 cities / 194 countries / 312 IANA tzs / 206 aliases, FTS5 covers names + aliases, prod (`api.dateandtime.live`) + dev (`dev.api.dateandtime.live`) both live, all landing features (sync, sunrise, search, cities) now show real data |
 | **1** | Date/time formats + locales (CLDR seed) | ⏳ |
 | **2** | Holidays + business calendars | ⏳ |
 | **3** | Date-to-words / time-to-words (localized) | ⏳ |
