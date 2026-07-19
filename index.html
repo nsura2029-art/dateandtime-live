@@ -258,11 +258,12 @@
     .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
     .search-results { position: absolute; top: calc(100% + 0.5rem); left: 0; right: 0; max-height: 360px; overflow-y: auto; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 0.75rem; box-shadow: 0 16px 48px rgba(15, 10, 31, 0.20); display: none; z-index: 30; }
     .search-results.is-open { display: block; }
-    .search-result { width: 100%; text-align: left; padding: 0.625rem 0.875rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; border-bottom: 1px solid var(--color-border-soft); }
+    .search-result { width: 100%; text-align: left; padding: 0.625rem 0.875rem; display: flex; align-items: center; justify-content: space-between; gap: 0.875rem; border-bottom: 1px solid var(--color-border-soft); }
     .search-result:last-child { border-bottom: 0; }
     .search-result:hover, .search-result:focus-visible { background: var(--color-background-soft); }
     .search-result-name { font-weight: 600; font-size: 0.875rem; }
-    .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
+    .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.15rem; }
+    .search-result-flag { font-size: 1.5rem; line-height: 1; min-width: 1.75rem; text-align: center; flex-shrink: 0; }
     .search-disabled-note { display: none; padding: 0.5rem 0.75rem; font-size: 0.75rem; color: var(--color-muted); text-align: center; }
     .search-section.is-disabled .search-disabled-note { display: block; }
     /* The search input stays visible even when /api/v2/search is 404. The page
@@ -952,15 +953,22 @@
         const cCountryCode = c.countryCode || c.country || "";
         const cState = c.state_code || c.stateCode || "";
         const cTz = c.tz || c.timezone || "";
+        const cPop = c.population || 0;
         const cCapital = !!(c.is_capital || c.isCapital);
         const flag = countryFlag(cCountryCode);
+        // Compact timezone label (last segment) — "Kolkata" from "Asia/Kolkata"
+        const tzCity = cTz.split("/").pop().replace(/_/g, " ");
+        // Population formatted compactly: 16.3M, 547K, 12K
+        const popStr = cPop >= 1000000 ? (cPop / 1000000).toFixed(1) + "M"
+                     : cPop >= 1000    ? Math.round(cPop / 1000) + "K"
+                     : cPop > 0        ? String(cPop) : "";
         return `
         <button class="search-result" data-idx="${i}">
           <div>
-            <div class="search-result-name">${flag ? `<span class="flag" aria-label="${escapeHtml(cCountryCode)}">${flag}</span>` : ""}${escapeHtml(cName)}${cCapital ? " ★" : ""}</div>
-            <div class="search-result-meta">${escapeHtml(cCountry)}${cState ? " · " + escapeHtml(cState) : ""} · ${escapeHtml(cTz)}</div>
+            <div class="search-result-name">${escapeHtml(cName)}${cCapital ? " ★" : ""}</div>
+            <div class="search-result-meta">${escapeHtml(cCountry)}${cState ? " · " + escapeHtml(cState) : ""} · ${escapeHtml(tzCity)}${popStr ? " · " + escapeHtml(popStr) : ""}</div>
           </div>
-          <div class="search-result-meta">${escapeHtml(cTz.split("/").pop().replace(/_/g, " "))}</div>
+          <div class="search-result-flag" aria-label="${escapeHtml(cCountryCode)}" title="${escapeHtml(cCountryCode)}">${flag || escapeHtml(cCountryCode)}</div>
         </button>
       `;
       }).join("");
