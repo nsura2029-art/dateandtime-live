@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Holidays & Observances — All Countries & Religions | dateandtime.live</title>
+  <meta name="description" content="Browse public holidays and religious observances for 100+ countries. Christian, Jewish, Muslim, Hindu, Buddhist, Sikh, Jain holidays. Filter by country, religion, and year." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/holidays/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-bg: #faf7f2;
+      --color-bg-soft: #f4ede0;
+      --color-fg: #1f1a3a;
+      --color-fg-soft: #4a4569;
+      --color-muted: #8a85a8;
+      --color-border: rgba(31, 26, 58, 0.08);
+      --color-border-soft: rgba(31, 26, 58, 0.05);
+      --color-primary: #5b4aaf;
+      --color-primary-soft: rgba(91, 74, 175, 0.12);
+    }
+    [data-theme="dark"] {
+      --color-bg: #1a1530;
+      --color-bg-soft: #251e3f;
+      --color-fg: #faf7f2;
+      --color-fg-soft: #d5d0e8;
+      --color-muted: #8a85a8;
+      --color-border: rgba(250, 247, 242, 0.1);
+      --color-border-soft: rgba(250, 247, 242, 0.05);
+      --color-primary: #a594f9;
+      --color-primary-soft: rgba(165, 148, 249, 0.18);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-fg); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+    h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.5rem; }
+    .subtitle { font-size: 1rem; color: var(--color-fg-soft); margin: 0 0 1.5rem; }
+    .filters { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.5rem 0; padding: 1rem; background: var(--color-bg-soft); border: 1px solid var(--color-border); border-radius: 0.75rem; }
+    .filter { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; min-width: 140px; }
+    .filter label { font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .filter select, .filter input { padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-bg); color: var(--color-fg); font-family: inherit; font-size: 0.875rem; }
+    .months-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+    .month-card { background: var(--color-bg-soft); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1.25rem; }
+    .month-name { font-weight: 700; font-size: 1rem; margin: 0 0 0.75rem; color: var(--color-primary); }
+    .holiday-list { list-style: none; margin: 0; padding: 0; }
+    .holiday-item { padding: 0.5rem 0; border-bottom: 1px solid var(--color-border-soft); display: flex; gap: 0.75rem; align-items: baseline; }
+    .holiday-item:last-child { border-bottom: 0; }
+    .holiday-date { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--color-muted); min-width: 2.5rem; }
+    .holiday-name { flex: 1; font-size: 0.875rem; }
+    .holiday-religion { font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: var(--color-primary-soft); color: var(--color-primary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .loading { text-align: center; padding: 3rem; color: var(--color-muted); }
+    .stats { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1rem 0 1.5rem; padding: 1rem 1.25rem; background: var(--color-bg-soft); border-radius: 0.75rem; border: 1px solid var(--color-border); }
+    .stat { display: flex; flex-direction: column; }
+    .stat-num { font-size: 1.5rem; font-weight: 800; color: var(--color-primary); }
+    .stat-label { font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-primary); text-decoration: none; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; }
+    .back-link:hover { text-decoration: underline; }
+    .religion-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    .religion-pill { padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--color-border); background: var(--color-bg); cursor: pointer; transition: all 120ms; }
+    .religion-pill:hover, .religion-pill.is-active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← Back to home</a>
+    <h1>Holidays & Observances</h1>
+    <p class="subtitle">Public holidays, religious observances, and national days for 100+ countries. Filter by country, year, or religion.</p>
+
+    <div class="filters">
+      <div class="filter">
+        <label for="country">Country</label>
+        <select id="country"><option value="">All countries</option></select>
+      </div>
+      <div class="filter">
+        <label for="year">Year</label>
+        <select id="year">
+          <option>2024</option><option>2025</option>
+          <option selected>2026</option>
+          <option>2027</option><option>2028</option>
+        </select>
+      </div>
+      <div class="filter">
+        <label for="search">Search</label>
+        <input type="search" id="search" placeholder="e.g. Christmas, Diwali, Eid…" />
+      </div>
+    </div>
+
+    <div class="religion-pills" id="religion-pills"></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="months-grid" id="months-grid">
+      <div class="loading">Loading holidays…</div>
+    </div>
+  </div>
+
+  <script>
+    const API = (function () {
+      const h = location.hostname;
+      if (h === "dateandtime.live" || h.endsWith(".dateandtime.live")) return "https://api.dateandtime.live";
+      if (h.endsWith(".workers.dev")) return "https://dev.api.dateandtime.live";
+      return "";
+    })();
+    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const RELIGION_COLORS = {
+      christian: "#5b4aaf", muslim: "#10b981", jewish: "#3b82f6",
+      hindu: "#f59e0b", buddhist: "#ef4444", sikh: "#8b5cf6",
+      jain: "#ec4899", secular: "#6b7280", national: "#0ea5e9"
+    };
+
+    let allHolidays = [];
+    let activeReligion = "";
+
+    async function loadCountries() {
+      try {
+        const r = await fetch(`${API}/api/v1/countries?limit=300`);
+        const j = await r.json();
+        const list = (j.data || j).sort((a, b) => a.name.localeCompare(b.name));
+        const sel = document.getElementById("country");
+        list.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.cca2; opt.textContent = c.name;
+          sel.appendChild(opt);
+        });
+        const loc = window.__location || {};
+        if (loc.country) sel.value = loc.country;
+      } catch (e) {}
+    }
+
+    async function loadReligions() {
+      try {
+        const r = await fetch(`${API}/api/v1/religions`);
+        const j = await r.json();
+        const wrap = document.getElementById("religion-pills");
+        wrap.innerHTML = '<button class="religion-pill is-active" data-rel="">All</button>';
+        (j.data?.religions || []).forEach(r => {
+          const btn = document.createElement("button");
+          btn.className = "religion-pill";
+          btn.dataset.rel = r.religion;
+          btn.textContent = `${r.religion} (${r.country_count})`;
+          btn.onclick = () => {
+            document.querySelectorAll(".religion-pill").forEach(p => p.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            activeReligion = btn.dataset.rel;
+            loadHolidays();
+          };
+          wrap.appendChild(btn);
+        });
+      } catch (e) {}
+    }
+
+    async function loadHolidays() {
+      const country = document.getElementById("country").value;
+      const year = document.getElementById("year").value;
+      const search = document.getElementById("search").value.trim();
+      const grid = document.getElementById("months-grid");
+      grid.innerHTML = '<div class="loading">Loading…</div>';
+      try {
+        let url = `${API}/api/v1/holidays?year=${year}&limit=2000`;
+        if (country) url += `&country=${country}`;
+        if (activeReligion) url += `&religion=${activeReligion}`;
+        const r = await fetch(url, { cache: "no-store" });
+        if (!r.ok) throw new Error("API error");
+        const j = await r.json();
+        allHolidays = (j.data?.holidays || []).filter(h => {
+          if (search && !h.name.toLowerCase().includes(search.toLowerCase())) return false;
+          return true;
+        });
+        renderMonths();
+        renderStats();
+      } catch (e) {
+        grid.innerHTML = `<div class="loading">Failed to load: ${e.message}</div>`;
+      }
+    }
+
+    function renderStats() {
+      const total = allHolidays.length;
+      const countries = new Set(allHolidays.map(h => h.country_code)).size;
+      const religions = new Set(allHolidays.map(h => h.religion).filter(Boolean)).size;
+      document.getElementById("stats").innerHTML = `
+        <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Holidays</div></div>
+        <div class="stat"><div class="stat-num">${countries}</div><div class="stat-label">Countries</div></div>
+        <div class="stat"><div class="stat-num">${religions}</div><div class="stat-label">Religions</div></div>
+      `;
+    }
+
+    function renderMonths() {
+      const grid = document.getElementById("months-grid");
+      if (!allHolidays.length) {
+        grid.innerHTML = '<div class="loading">No holidays found. Try a different filter.</div>';
+        return;
+      }
+      const byMonth = {};
+      allHolidays.forEach(h => {
+        const m = parseInt(h.date.slice(5, 7)) - 1;
+        if (!byMonth[m]) byMonth[m] = [];
+        byMonth[m].push(h);
+      });
+      let html = "";
+      for (let m = 0; m < 12; m++) {
+        if (!byMonth[m]) continue;
+        const list = byMonth[m].sort((a, b) => a.date.localeCompare(b.date));
+        html += `<div class="month-card">
+          <h3 class="month-name">${MONTHS[m]}</h3>
+          <ul class="holiday-list">
+            ${list.map(h => `
+              <li class="holiday-item">
+                <span class="holiday-date">${h.date.slice(8, 10)}</span>
+                <span class="holiday-name">
+                  <a href="${h.wikipedia_url || '#'}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">${escapeHtml(h.name)}</a>
+                </span>
+                ${h.religion ? `<span class="holiday-religion" style="background:${RELIGION_COLORS[h.religion] || '#6b7280'}22;color:${RELIGION_COLORS[h.religion] || '#6b7280'}">${h.religion}</span>` : ''}
+              </li>
+            `).join("")}
+          </ul>
+        </div>`;
+      }
+      grid.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    document.getElementById("country").addEventListener("change", loadHolidays);
+    document.getElementById("year").addEventListener("change", loadHolidays);
+    let searchDeb;
+    document.getElementById("search").addEventListener("input", () => {
+      clearTimeout(searchDeb);
+      searchDeb = setTimeout(loadHolidays, 250);
+    });
+
+    (async function init() {
+      await Promise.all([loadCountries(), loadReligions()]);
+      loadHolidays();
+    })();
+  </script>
+</body>
+</html>

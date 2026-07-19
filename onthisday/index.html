@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>On This Day — Famous Events, Births, Deaths & More | dateandtime.live</title>
+  <meta name="description" content="Historical events, famous birthdays, iconic deaths, sports milestones, scientific discoveries, and cultural moments that happened on this day throughout history." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/onthisday/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-bg: #faf7f2;
+      --color-bg-soft: #f4ede0;
+      --color-fg: #1f1a3a;
+      --color-fg-soft: #4a4569;
+      --color-muted: #8a85a8;
+      --color-border: rgba(31, 26, 58, 0.08);
+      --color-border-soft: rgba(31, 26, 58, 0.05);
+      --color-primary: #5b4aaf;
+      --color-primary-soft: rgba(91, 74, 175, 0.12);
+    }
+    [data-theme="dark"] {
+      --color-bg: #1a1530;
+      --color-bg-soft: #251e3f;
+      --color-fg: #faf7f2;
+      --color-fg-soft: #d5d0e8;
+      --color-muted: #8a85a8;
+      --color-border: rgba(250, 247, 242, 0.1);
+      --color-border-soft: rgba(250, 247, 242, 0.05);
+      --color-primary: #a594f9;
+      --color-primary-soft: rgba(165, 148, 249, 0.18);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-fg); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+    h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.5rem; }
+    .subtitle { font-size: 1rem; color: var(--color-fg-soft); margin: 0 0 1.5rem; }
+    .date-nav { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin: 1.5rem 0; }
+    .date-nav button { padding: 0.5rem 1rem; background: var(--color-bg-soft); border: 1px solid var(--color-border); border-radius: 0.5rem; cursor: pointer; font-family: inherit; font-size: 0.875rem; color: var(--color-fg); }
+    .date-nav button:hover { background: var(--color-primary-soft); }
+    .date-nav .current-date { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; min-width: 12rem; text-align: center; }
+    .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; }
+    .filter-pill { padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--color-border); background: var(--color-bg); cursor: pointer; transition: all 120ms; }
+    .filter-pill:hover, .filter-pill.is-active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .event-list { display: flex; flex-direction: column; gap: 1rem; }
+    .event-card { background: var(--color-bg-soft); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1.25rem; }
+    .event-card[data-importance="5"] { border-left: 4px solid var(--color-primary); }
+    .event-card[data-importance="4"] { border-left: 4px solid #5b4aaf88; }
+    .event-head { display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap; margin-bottom: 0.5rem; }
+    .event-year { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 800; color: var(--color-primary); }
+    .event-category { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: var(--color-primary-soft); color: var(--color-primary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .event-title { font-size: 1.125rem; font-weight: 700; margin: 0.25rem 0; }
+    .event-desc { color: var(--color-fg-soft); font-size: 0.9rem; margin: 0; }
+    .event-link { display: inline-block; margin-top: 0.5rem; color: var(--color-primary); text-decoration: none; font-size: 0.8rem; font-weight: 600; }
+    .event-link:hover { text-decoration: underline; }
+    .loading { text-align: center; padding: 3rem; color: var(--color-muted); }
+    .empty { text-align: center; padding: 3rem; color: var(--color-muted); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-primary); text-decoration: none; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; }
+    .back-link:hover { text-decoration: underline; }
+    .date-input { padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-bg); color: var(--color-fg); font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← Back to home</a>
+    <h1>On This Day</h1>
+    <p class="subtitle">Historical events, famous births, deaths, and cultural milestones that happened on this date throughout history.</p>
+
+    <div class="date-nav">
+      <button id="prev-day">← Previous</button>
+      <input type="date" id="date-input" class="date-input" />
+      <button id="next-day">Next →</button>
+      <button id="today-btn">Today</button>
+    </div>
+
+    <div class="filters" id="category-filters">
+      <button class="filter-pill is-active" data-cat="">All</button>
+    </div>
+
+    <div class="event-list" id="event-list">
+      <div class="loading">Loading…</div>
+    </div>
+  </div>
+
+  <script>
+    const API = (function () {
+      const h = location.hostname;
+      if (h === "dateandtime.live" || h.endsWith(".dateandtime.live")) return "https://api.dateandtime.live";
+      if (h.endsWith(".workers.dev")) return "https://dev.api.dateandtime.live";
+      return "";
+    })();
+    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+    let currentDate = new Date();
+    let activeCategory = "";
+    let categories = [];
+
+    function fmtDate(d) {
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function fmtDatePretty(d) {
+      return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+    }
+
+    async function loadCategories() {
+      try {
+        const r = await fetch(`${API}/api/v1/onthisday/categories`);
+        const j = await r.json();
+        categories = j.data?.categories || [];
+        const wrap = document.getElementById("category-filters");
+        wrap.innerHTML = '<button class="filter-pill is-active" data-cat="">All</button>';
+        categories.forEach(c => {
+          const btn = document.createElement("button");
+          btn.className = "filter-pill";
+          btn.dataset.cat = c.category;
+          btn.textContent = `${c.category} (${c.n})`;
+          btn.onclick = () => {
+            document.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            activeCategory = btn.dataset.cat;
+            loadEvents();
+          };
+          wrap.appendChild(btn);
+        });
+      } catch (e) {}
+    }
+
+    async function loadEvents() {
+      const list = document.getElementById("event-list");
+      list.innerHTML = '<div class="loading">Loading…</div>';
+      const ds = fmtDate(currentDate);
+      const month = currentDate.getMonth() + 1;
+      const day = currentDate.getDate();
+      try {
+        let url = `${API}/api/v1/onthisday?month=${month}&day=${day}&limit=100`;
+        if (activeCategory) url += `&category=${activeCategory}`;
+        const r = await fetch(url, { cache: "no-store" });
+        if (!r.ok) throw new Error("API error");
+        const j = await r.json();
+        const events = (j.data?.events || []).sort((a, b) => b.importance - a.importance || (b.year || 0) - (a.year || 0));
+        if (!events.length) {
+          list.innerHTML = '<div class="empty">No events recorded for this day yet.</div>';
+          return;
+        }
+        list.innerHTML = events.map(e => `
+          <div class="event-card" data-importance="${e.importance}">
+            <div class="event-head">
+              <span class="event-year">${e.year || '—'}</span>
+              <span class="event-category">${e.category}</span>
+              ${e.subcategory ? `<span class="event-category" style="background: #00000010; color: var(--color-fg-soft);">${e.subcategory}</span>` : ''}
+              ${e.country_codes && e.country_codes.length ? `<span class="event-category" style="background: #00000010; color: var(--color-fg-soft);">${e.country_codes.map(c => c.toUpperCase()).join(' · ')}</span>` : ''}
+            </div>
+            <h3 class="event-title">${escapeHtml(e.title)}</h3>
+            ${e.description ? `<p class="event-desc">${escapeHtml(e.description)}</p>` : ''}
+            ${e.wikipedia_url ? `<a class="event-link" href="${e.wikipedia_url}" target="_blank" rel="noopener">Read on Wikipedia →</a>` : ''}
+          </div>
+        `).join("");
+      } catch (e) {
+        list.innerHTML = `<div class="empty">Failed to load: ${e.message}</div>`;
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    document.getElementById("date-input").addEventListener("change", (e) => {
+      if (e.target.value) {
+        currentDate = new Date(e.target.value + "T12:00:00");
+        loadEvents();
+      }
+    });
+    document.getElementById("prev-day").onclick = () => {
+      currentDate.setDate(currentDate.getDate() - 1);
+      document.getElementById("date-input").value = fmtDate(currentDate);
+      loadEvents();
+    };
+    document.getElementById("next-day").onclick = () => {
+      currentDate.setDate(currentDate.getDate() + 1);
+      document.getElementById("date-input").value = fmtDate(currentDate);
+      loadEvents();
+    };
+    document.getElementById("today-btn").onclick = () => {
+      currentDate = new Date();
+      document.getElementById("date-input").value = fmtDate(currentDate);
+      loadEvents();
+    };
+
+    (async function init() {
+      document.getElementById("date-input").value = fmtDate(currentDate);
+      await loadCategories();
+      loadEvents();
+    })();
+  </script>
+</body>
+</html>
