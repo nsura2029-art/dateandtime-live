@@ -1,0 +1,475 @@
+<!doctype html>
+<!--
+  TimeAndDatePro — Landing Prototype B: "Tabs"
+  Tabbed city selector. The clock stays as the hero; tabs below pick which
+  city drives the day/date/timezone/sun/off-hours info shown beneath.
+-->
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>B · Tabs · TimeAndDatePro</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root, [data-theme="light"] {
+      --color-primary: #5b4aaf; --color-primary-fg: #ffffff;
+      --color-foreground: #49445f; --color-foreground-soft: #6b6585;
+      --color-muted: #77718f; --color-muted-soft: #9a92b0;
+      --color-border: rgba(92,74,175,.16); --color-border-soft: rgba(92,74,175,.08);
+      --color-background: #ffffff; --color-background-soft: #faf8ff;
+      --color-glow: drop-shadow(0 5px 8px rgba(91,77,145,.10));
+      --color-on-segment: #47435f; --color-off-segment: transparent; --color-off-segment-opacity: 0;
+      --color-period-bg: rgba(255,255,255,.76); --color-period-fg: #49445f;
+      --color-page-texture:
+        radial-gradient(circle at 12% 18%, rgba(255,216,170,.92), transparent 27%),
+        radial-gradient(circle at 83% 15%, rgba(197,220,255,.95), transparent 31%),
+        radial-gradient(circle at 75% 82%, rgba(221,202,255,.92), transparent 28%),
+        radial-gradient(circle at 24% 82%, rgba(202,242,229,.78), transparent 30%),
+        linear-gradient(135deg,#fff8ef 0%,#f4f3ff 46%,#edf7ff 100%);
+      --color-logo-gradient: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --color-ad-bg: color-mix(in srgb, var(--color-background) 70%, var(--color-background-soft));
+      --color-ad-fg: var(--color-muted-soft);
+      --color-ad-border: var(--color-border-soft);
+      --color-pill-green-bg: rgba(16,185,129,.10); --color-pill-green-fg: #047857; --color-pill-green-bd: rgba(16,185,129,.32);
+      --color-pill-purple-bg: rgba(91,74,175,.10); --color-pill-purple-fg: #5b4aaf; --color-pill-purple-bd: rgba(91,74,175,.30);
+      --color-pill-orange-bg: rgba(249,115,22,.10); --color-pill-orange-fg: #c2410c; --color-pill-orange-bd: rgba(249,115,22,.30);
+      color-scheme: light;
+    }
+    [data-theme="dark"] {
+      --color-primary: #a78bfa; --color-primary-fg: #0f0a1f;
+      --color-foreground: #ede9fe; --color-foreground-soft: #d6cef5;
+      --color-muted: #a599c5; --color-muted-soft: #6b6585;
+      --color-border: rgba(167,139,250,.18); --color-border-soft: rgba(167,139,250,.10);
+      --color-background: #0f0820; --color-background-soft: #16092e;
+      --color-glow: drop-shadow(0 0 12px rgba(249,115,22,.25));
+      --color-on-segment: #f97316; --color-off-segment: transparent; --color-off-segment-opacity: 0;
+      --color-period-bg: rgba(31,10,62,.7); --color-period-fg: #f97316;
+      --color-page-texture:
+        radial-gradient(circle at 18% 22%, rgba(139,92,246,.30), transparent 30%),
+        radial-gradient(circle at 82% 18%, rgba(99,102,241,.20), transparent 28%),
+        radial-gradient(circle at 75% 80%, rgba(168,85,247,.22), transparent 30%),
+        radial-gradient(circle at 22% 78%, rgba(59,130,246,.15), transparent 28%),
+        linear-gradient(160deg, #0f0820 0%, #1f0a3e 50%, #0a0418 100%);
+      --color-logo-gradient: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
+      --color-button-primary: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
+      --color-ad-bg: rgba(15,8,32,.55); --color-ad-fg: var(--color-muted-soft); --color-ad-border: var(--color-border-soft);
+      --color-pill-green-bg: rgba(16,185,129,.16); --color-pill-green-fg: #6ee7b7; --color-pill-green-bd: rgba(16,185,129,.35);
+      --color-pill-purple-bg: rgba(167,139,250,.18); --color-pill-purple-fg: #c4b5fd; --color-pill-purple-bd: rgba(167,139,250,.40);
+      --color-pill-orange-bg: rgba(249,115,22,.16); --color-pill-orange-fg: #fdba74; --color-pill-orange-bd: rgba(249,115,22,.35);
+      color-scheme: dark;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body { margin: 0; min-height: 100vh; background: var(--color-background); color: var(--color-foreground); font-family: "Inter", ui-sans-serif, system-ui, sans-serif; line-height: 1.55; transition: background-color .4s ease, color .4s ease; position: relative; }
+    body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--color-page-texture); pointer-events: none; transition: background .4s ease; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; background: none; border: none; padding: 0; color: inherit; }
+    ::selection { background: color-mix(in srgb, var(--color-primary) 25%, transparent); }
+    .container { width: 100%; margin-inline: auto; padding-inline: 1.25rem; max-width: 1240px; }
+    @media (min-width: 640px) { .container { padding-inline: 1.5rem; } }
+    @media (min-width: 1024px) { .container { padding-inline: 2rem; } }
+    @media (min-width: 1280px) { .container { padding-inline: 2.5rem; } }
+
+    /* Header */
+    .site-header { padding: 1rem 0 0.5rem; }
+    .header-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+    .logo { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 0.4rem; background-image: var(--color-logo-gradient); color: white; font-size: 0.75rem; font-weight: 800; font-family: ui-monospace, monospace; }
+    .logo-text { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.02em; }
+    .theme-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem; background: var(--color-period-bg); border: 1px solid var(--color-border); border-radius: 9999px; }
+    .theme-toggle button { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 9999px; color: var(--color-muted); }
+    .theme-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; }
+    .theme-toggle button svg { width: 0.85rem; height: 0.85rem; }
+
+    /* Hero */
+    .hero { padding: 1.5rem 0 2rem; }
+    .greeting { font-size: clamp(1.5rem, 5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
+    .greeting-city { color: var(--color-primary); }
+    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 0 1.5rem; max-width: 42rem; }
+
+    /* Clock */
+    .clock-block { margin: 0 0 1.5rem; }
+    .clock-tz { text-align: center; font-family: ui-monospace, monospace; font-size: clamp(0.7rem, 1vw, 0.85rem); color: var(--color-muted); margin: 0.5rem 0 0; }
+    .clock-tz strong { color: var(--color-foreground); font-weight: 700; }
+    .seg-row {
+      --main-digit-width: clamp(48px, 13vw, 120px);
+      --small-digit-width: clamp(22px, 5vw, 42px);
+      --digit-gap: clamp(4px, 0.7vw, 9px);
+      --colon-width: clamp(10px, 1.4vw, 22px);
+      --colon-side-space: clamp(6px, 1vw, 16px);
+      --period-width: clamp(36px, 4.5vw, 78px);
+      display: grid;
+      grid-template-columns:
+        calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        calc(var(--colon-width) + (var(--colon-side-space) * 2))
+        calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        calc(var(--colon-width) + (var(--colon-side-space) * 2))
+        calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        calc(11px + (var(--small-digit-width) * 2) + (var(--digit-gap) * 2))
+        var(--period-width);
+      align-items: end; justify-content: center; width: 100%; white-space: nowrap;
+    }
+    .seg-digit-group { display: flex; align-items: flex-end; gap: var(--digit-gap); flex: 0 0 auto; }
+    .seg-digit { --width: var(--main-digit-width); --height: calc(var(--width) * 1.82); --thickness: calc(var(--width) * .18); position: relative; width: var(--width); height: var(--height); min-width: var(--width); max-width: var(--width); flex: 0 0 var(--width); filter: var(--color-glow); }
+    .seg-digit.small { --width: var(--small-digit-width); --height: calc(var(--width) * 1.82); --thickness: calc(var(--width) * .18); }
+    .seg { position: absolute; background: var(--color-off-segment); opacity: var(--color-off-segment-opacity); transition: background 45ms linear, opacity 45ms linear, box-shadow 45ms linear; }
+    [data-theme="dark"] .seg { box-shadow: inset 0 0 0 0.5px rgba(0,0,0,.4); }
+    .seg.on { z-index: 1; background: var(--color-on-segment); opacity: 1; box-shadow: 0 0 6px color-mix(in srgb, var(--color-on-segment) 35%, transparent); }
+    .seg.horizontal { left: var(--thickness); width: calc(100% - (var(--thickness) * 2)); height: var(--thickness); clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); }
+    .seg.vertical { width: var(--thickness); height: calc(50% - (var(--thickness) * 0.55)); clip-path: polygon(0 8%, 50% 0, 100% 8%, 100% 92%, 50% 100%, 0 92%); }
+    .seg.a { top: 0; } .seg.g { top: 50%; transform: translateY(-50%); } .seg.d { bottom: 0; }
+    .seg.f { top: calc(var(--thickness) * 0.42); left: 0; } .seg.b { top: calc(var(--thickness) * 0.42); right: 0; }
+    .seg.e { bottom: calc(var(--thickness) * 0.42); left: 0; } .seg.c { right: 0; bottom: calc(var(--thickness) * 0.42); }
+    .seg-digit.is-one .seg.b, .seg-digit.is-one .seg.c { right: calc(50% - (var(--thickness) / 2)); }
+    .seg-colon { position: relative; align-self: end; justify-self: center; width: var(--colon-width); height: calc(var(--main-digit-width) * 1.82); margin: 0; filter: var(--color-glow); }
+    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.5rem; height: 0.5rem; border-radius: 2px; background: var(--color-on-segment); transform: translateX(-50%); }
+    .seg-colon::before { top: 27%; } .seg-colon::after { bottom: 27%; }
+    .seg-period { width: var(--period-width); margin: 0 0 clamp(4px, 0.6vw, 7px); padding: 0; border: 0; background: transparent; color: var(--color-period-fg); font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.65rem, 1vw, 0.85rem); font-weight: 800; letter-spacing: 0.22em; line-height: 1; white-space: nowrap; align-self: end; justify-self: start; }
+    .seg-period.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+
+    /* Tabs (city selector) */
+    .tabs { display: flex; flex-wrap: nowrap; gap: 0.4rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0.25rem 0 0.75rem; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.875rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; color: var(--color-muted); background: transparent; border: 1px solid var(--color-border-soft); transition: all 200ms ease; }
+    .tab.is-active { background: var(--color-button-primary); color: white; border-color: transparent; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+    .tab:not(.is-active):hover { color: var(--color-foreground); border-color: var(--color-border); }
+    .tab-home { font-size: 0.75rem; }
+    .tab-add { padding: 0.5rem 0.75rem; color: var(--color-muted); border-style: dashed; }
+    .tab-add:hover { color: var(--color-primary); border-color: var(--color-primary); }
+
+    /* City detail (the active tab's content) */
+    .city-detail { padding: 1rem 0 0.5rem; }
+    .city-detail-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .city-detail-name { font-size: clamp(1.125rem, 2.4vw, 1.5rem); font-weight: 800; color: var(--color-foreground); letter-spacing: -0.02em; }
+    .city-detail-name .star { color: var(--color-primary); font-size: 0.85em; }
+    .city-detail-day { font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.85rem, 1.3vw, 1rem); font-weight: 800; color: var(--color-foreground); }
+    .city-detail-tz { font-family: ui-monospace, monospace; font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); margin-bottom: 0.75rem; }
+    .city-detail-tz strong { color: var(--color-foreground); font-weight: 700; }
+
+    /* Sync row */
+    .sync-row { display: flex; align-items: center; gap: 0.4rem; font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); margin: 0.75rem 0 0.5rem; }
+    .sync-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 2px color-mix(in srgb, #10b981 25%, transparent); flex-shrink: 0; }
+    .sync-row strong { color: var(--color-foreground); font-weight: 700; }
+
+    /* Pills */
+    .pills { display: flex; flex-wrap: wrap; gap: 0.375rem; margin: 0 0 1rem; }
+    .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.7rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
+    .pill-green { background: var(--color-pill-green-bg); border-color: var(--color-pill-green-bd); color: var(--color-pill-green-fg); }
+    .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
+    .pill-orange { background: var(--color-pill-orange-bg); border-color: var(--color-pill-orange-bd); color: var(--color-pill-orange-fg); }
+    .pill-icon { display: inline-flex; width: 0.85rem; height: 0.85rem; }
+    .pill-icon svg { width: 100%; height: 100%; }
+
+    /* Ad */
+    .ad-slot { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.25rem; background: var(--color-ad-bg); border: 1px solid var(--color-ad-border); border-radius: 6px; color: var(--color-ad-fg); font-family: ui-monospace, monospace; margin: 1.5rem auto 1rem; }
+    .ad-slot .ad-label { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; }
+    .ad-slot .ad-size  { font-size: 0.75rem; font-weight: 600; }
+    .ad-slot.leaderboard { width: 100%; max-width: 728px; height: 90px; }
+    .ad-slot.medrec { width: 300px; height: 250px; }
+    @media (max-width: 760px) { .ad-slot.leaderboard { max-width: 320px; height: 50px; } }
+
+    /* Current city */
+    .current-city { display: flex; align-items: center; gap: 0.4rem; font-size: clamp(0.8rem, 1.1vw, 0.9rem); color: var(--color-muted); margin: 1rem 0 2rem; }
+    .current-city-icon { color: var(--color-primary); flex-shrink: 0; }
+    .current-city strong { color: var(--color-foreground); font-weight: 700; }
+    .current-city-extra { color: var(--color-primary); font-weight: 700; }
+
+    /* Search popover (same as A) */
+    .search-popover { position: fixed; inset: 0; z-index: 100; display: none; align-items: flex-end; justify-content: center; background: color-mix(in srgb, var(--color-background) 50%, transparent); backdrop-filter: blur(8px); padding: 1rem; }
+    .search-popover.is-open { display: flex; }
+    @media (min-width: 760px) { .search-popover { align-items: center; } }
+    .search-box { background: var(--color-background); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; width: 100%; max-width: 480px; box-shadow: 0 16px 48px rgba(15,10,31,0.20); }
+    .search-box input { width: 100%; height: 44px; padding: 0 1rem; background: var(--color-background-soft); border: 1px solid var(--color-border); border-radius: 0.5rem; color: var(--color-foreground); font: inherit; font-size: 0.875rem; }
+    .search-box input:focus { outline: none; border-color: var(--color-primary); }
+    .search-results { max-height: 320px; overflow-y: auto; margin-top: 0.75rem; }
+    .search-result { width: 100%; text-align: left; padding: 0.625rem 0.5rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; border-radius: 0.5rem; }
+    .search-result:hover { background: var(--color-background-soft); }
+    .search-result-name { font-weight: 600; font-size: 0.875rem; }
+    .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="site-header">
+      <div class="header-row">
+        <a href="/" class="logo"><span class="logo-mark">T</span><span class="logo-text">TimeAndDatePro</span></a>
+        <div class="theme-toggle" role="group" aria-label="Theme">
+          <button id="theme-light" aria-pressed="true" aria-label="Light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button id="theme-dark" aria-pressed="false" aria-label="Dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="hero">
+      <h1 class="greeting"><span id="greeting-time">Good Evening</span>, <span class="greeting-city" id="greeting-city">your city</span></h1>
+      <p class="subtitle">Plan your day, meetings, holidays, and global time zones in one smart workspace.</p>
+
+      <!-- Clock -->
+      <div class="clock-block">
+        <div class="seg-row" aria-label="Live current time">
+          <div id="hours" class="seg-digit-group"></div>
+          <div class="seg-colon" aria-hidden="true"></div>
+          <div id="minutes" class="seg-digit-group"></div>
+          <div class="seg-colon" aria-hidden="true"></div>
+          <div id="seconds" class="seg-digit-group"></div>
+          <div id="hundredths" class="seg-digit-group"></div>
+          <div id="period" class="seg-period is-hidden">PM</div>
+        </div>
+        <p class="clock-tz" id="active-tz-line">Showing local browser time</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs" id="tabs" role="tablist" aria-label="Cities">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- City detail -->
+      <div class="city-detail" id="city-detail">
+        <div class="city-detail-head">
+          <div class="city-detail-name" id="detail-name">—</div>
+          <div class="city-detail-day" id="detail-day">—</div>
+        </div>
+        <div class="city-detail-tz" id="detail-tz">—</div>
+
+        <div class="sync-row">
+          <span class="sync-dot" aria-hidden="true"></span>
+          <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind · Accuracy <strong id="clock-accuracy">±0.000s</strong></span>
+        </div>
+
+        <div class="pills">
+          <span class="pill pill-green"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span id="sync-pill">Synchronized</span></span>
+          <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
+          <span class="pill pill-orange"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset</span></span>
+        </div>
+      </div>
+
+      <div class="ad-slot leaderboard" role="complementary" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <span class="ad-size">728 × 90</span>
+      </div>
+
+      <p class="current-city">
+        <span class="current-city-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+        Current time in <strong id="current-city-name">your city</strong>, <span class="current-city-extra" id="current-city-region">—</span>
+      </p>
+    </main>
+  </div>
+
+  <!-- Search popover -->
+  <div class="search-popover" id="search-popover" role="dialog" aria-label="Search city">
+    <div class="search-box">
+      <input id="city-search" type="search" placeholder="Search city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" />
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://dev.api.dateandtime.live';
+    const DIGIT_PATTERNS = { 0:["a","b","c","d","e","f"],1:["b","c"],2:["a","b","g","e","d"],3:["a","b","c","d","g"],4:["f","g","b","c"],5:["a","f","g","c","d"],6:["a","f","g","e","c","d"],7:["a","b","c"],8:["a","b","c","d","e","f","g"],9:["a","b","c","d","f","g"] };
+    const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const state = { use24Hour: true, cities: [], activeIdx: 0 };
+
+    function createDigit(parent, small = false) {
+      const digit = document.createElement("div");
+      digit.className = small ? "seg-digit small" : "seg-digit";
+      ["a","b","c","d","e","f","g"].forEach(name => { const seg = document.createElement("span"); const orientation = ["a","g","d"].includes(name) ? "horizontal" : "vertical"; seg.className = `seg ${orientation} ${name}`; digit.appendChild(seg); });
+      parent.appendChild(digit);
+      return digit;
+    }
+    const hourDigits = [createDigit(document.getElementById("hours")), createDigit(document.getElementById("hours"))];
+    const minuteDigits = [createDigit(document.getElementById("minutes")), createDigit(document.getElementById("minutes"))];
+    const secondDigits = [createDigit(document.getElementById("seconds")), createDigit(document.getElementById("seconds"))];
+    const hundredthDigits = [createDigit(document.getElementById("hundredths"), true), createDigit(document.getElementById("hundredths"), true)];
+    function renderDigit(el, n) { const active = new Set(DIGIT_PATTERNS[n] || []); el.classList.toggle("is-one", Number(n) === 1); el.querySelectorAll(".seg").forEach(seg => { const name = [...seg.classList].find(c => /^[a-g]$/.test(c)); seg.classList.toggle("on", active.has(name)); }); }
+    function renderTwoDigits(els, v) { const s = String(v).padStart(2, "0"); renderDigit(els[0], Number(s[0])); renderDigit(els[1], Number(s[1])); }
+    function timeIn(tz, d) { try { const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(d || new Date()); const g = t => p.find(x => x.type === t)?.value || "00"; return `${g("hour")}:${g("minute")}:${g("second")}`; } catch (e) { return "--:--:--"; } }
+    function dateIn(tz, d) { try { return new Intl.DateTimeFormat("en-US", { timeZone: tz, weekday: "long", year: "numeric", month: "long", day: "2-digit" }).format(d || new Date()); } catch (e) { return ""; } }
+    function tzAbbr(tz) { try { const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date()); return p.find(x => x.type === "timeZoneName")?.value || tz; } catch (e) { return tz; } }
+    function tzOffset(tz) { try { const local = new Date(new Date().toLocaleString("en-US", { timeZone: tz })); const utc = new Date(new Date().toLocaleString("en-US", { timeZone: "UTC" })); const m = Math.round((local - utc) / 60000); const sign = m >= 0 ? "+" : "−"; const abs = Math.abs(m); return `UTC${sign}${String(Math.floor(abs/60)).padStart(2,"0")}:${String(abs%60).padStart(2,"0")}`; } catch (e) { return "UTC"; } }
+    function getGreeting(h) { if (h >= 5 && h < 12) return "Good Morning"; if (h >= 12 && h < 17) return "Good Afternoon"; if (h >= 17 && h < 22) return "Good Evening"; return "Good Night"; }
+    function getOffHours(d) { const day = d.getDay(), h = d.getHours(), mn = d.getMinutes(); if (day === 0 || day === 6) return "Weekend · reopen Mon 9:00 AM"; if (h < 9) return `Off hours · open in ${9 - h - (mn > 0 ? 1 : 0)}h`; if (h >= 17) return "Off hours · reopen 9:00 AM"; if (h >= 12) return `Working · close in ${17 - h - (mn > 0 ? 1 : 0)}h`; return `Working · lunch in ${12 - h - (mn > 0 ? 1 : 0)}h`; }
+
+    function renderTabs() {
+      const tabs = document.getElementById("tabs");
+      tabs.innerHTML = "";
+      state.cities.forEach((c, i) => {
+        const btn = document.createElement("button");
+        btn.className = "tab" + (i === state.activeIdx ? " is-active" : "");
+        btn.setAttribute("role", "tab");
+        btn.setAttribute("aria-selected", String(i === state.activeIdx));
+        btn.innerHTML = (c._home ? '<span class="tab-home" aria-hidden="true">⌂</span>' : '') + `<span>${c.name}</span>`;
+        btn.addEventListener("click", () => { state.activeIdx = i; renderTabs(); renderDetail(); });
+        tabs.appendChild(btn);
+      });
+      const add = document.createElement("button");
+      add.className = "tab tab-add";
+      add.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add';
+      add.addEventListener("click", () => openSearch());
+      tabs.appendChild(add);
+    }
+
+    async function fetchSun(lat, lon) {
+      try {
+        const d = new Date();
+        const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        const r = await fetch(`${API}/api/v1/time/sun?lat=${lat}&lon=${lon}&date=${ds}`);
+        const j = await r.json();
+        return j.data || j;
+      } catch (e) { return null; }
+    }
+
+    async function renderDetail() {
+      const c = state.cities[state.activeIdx];
+      if (!c) return;
+      const now = new Date();
+      document.getElementById("detail-name").innerHTML = c.name + (c.is_capital ? ' <span class="star">★</span>' : '');
+      document.getElementById("detail-day").textContent = dateIn(c.tz, now);
+      document.getElementById("detail-tz").innerHTML = `<strong>${tzAbbr(c.tz)}</strong> · ${tzOffset(c.tz)}`;
+      document.getElementById("active-tz-line").textContent = `Showing local browser time · ${c.name}`;
+      document.getElementById("off-hours-pill").textContent = getOffHours(now);
+      document.getElementById("greeting-city").textContent = c.name;
+      document.getElementById("current-city-name").textContent = c.name;
+      const region = c.state_code || c.countryName || c.country || "";
+      document.getElementById("current-city-region").textContent = region;
+      // Sun
+      if (c.latitude != null && c.longitude != null) {
+        const sun = await fetchSun(c.latitude, c.longitude);
+        const sp = document.getElementById("sun-pill");
+        if (sun && sun.sunrise_utc && sun.sunset_utc) {
+          function utcToLocal(utc, tz, isSunset) {
+            const m = utc.match(/^(\d{1,2}):(\d{2})/);
+            if (!m) return "—";
+            let hh = parseInt(m[1], 10), mm = parseInt(m[2], 10);
+            const u = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hh, mm));
+            if (isSunset && hh >= 24) { u.setUTCDate(u.getUTCDate() + 1); u.setUTCHours(u.getUTCHours() - 24); }
+            try { const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(u); const h = parts.find(p => p.type === "hour")?.value || "—"; const mn = parts.find(p => p.type === "minute")?.value || "—"; const p = parts.find(p => p.type === "dayPeriod")?.value || ""; return `${h}:${mn} ${p}`; } catch (e) { return "—"; }
+          }
+          sp.textContent = `Sunrise ${utcToLocal(sun.sunrise_utc, c.tz, false)} · Sunset ${utcToLocal(sun.sunset_utc, c.tz, true)}`;
+        } else { sp.textContent = "Sunrise · Sunset —"; }
+      } else { document.getElementById("sun-pill").textContent = "Sunrise · Sunset —"; }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours();
+      const period = h >= 12 ? "PM" : "AM";
+      const periodEl = document.getElementById("period");
+      if (state.use24Hour) { periodEl.classList.add("is-hidden"); renderTwoDigits(hourDigits, h); }
+      else { periodEl.classList.remove("is-hidden"); periodEl.textContent = period; renderTwoDigits(hourDigits, h % 12 || 12); }
+      renderTwoDigits(minuteDigits, now.getMinutes());
+      renderTwoDigits(secondDigits, now.getSeconds());
+      renderTwoDigits(hundredthDigits, Math.floor(now.getMilliseconds() / 10));
+      document.getElementById("greeting-time").textContent = getGreeting(h);
+      requestAnimationFrame(updateClock);
+    }
+
+    // Theme
+    const root = document.documentElement;
+    const btnL = document.getElementById("theme-light");
+    const btnD = document.getElementById("theme-dark");
+    function setTheme(t) { root.setAttribute("data-theme", t); btnL.setAttribute("aria-pressed", String(t === "light")); btnD.setAttribute("aria-pressed", String(t === "dark")); try { localStorage.setItem("tdp-theme", t); } catch (e) {} }
+    btnL.addEventListener("click", () => setTheme("light"));
+    btnD.addEventListener("click", () => setTheme("dark"));
+    let savedT = null; try { savedT = localStorage.getItem("tdp-theme"); } catch (e) {}
+    if (savedT === "dark" || savedT === "light") setTheme(savedT);
+    else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) setTheme("dark");
+
+    let sf = null; try { sf = localStorage.getItem("tdp-fmt"); } catch (e) {}
+    if (sf === "24" || sf === "12") state.use24Hour = (sf === "24");
+    document.addEventListener("keydown", e => { if (!e.target.matches("input,textarea") && (e.key === "t" || e.key === "T")) { state.use24Hour = !state.use24Hour; try { localStorage.setItem("tdp-fmt", state.use24Hour ? "24" : "12"); } catch (e) {} } });
+
+    // Sync
+    async function refreshSync() {
+      const t0 = performance.now();
+      try {
+        const r = await fetch(`${API}/api/v1/time/now?tz=UTC`, { cache: "no-store" });
+        const t1 = performance.now();
+        const j = await r.json();
+        const d = j.data || j;
+        const st = typeof d.unix_ms === "number" ? new Date(d.unix_ms) : (d.iso ? new Date(d.iso) : null);
+        if (st) {
+          const offset = (st - new Date()) / 1000;
+          const acc = (t1 - t0) / 2000;
+          document.getElementById("clock-offset").textContent = `${Math.abs(offset).toFixed(1)} seconds`;
+          document.getElementById("clock-accuracy").textContent = `±${acc.toFixed(3)}s`;
+          document.getElementById("sync-pill").textContent = Math.abs(offset) < 0.5 ? "Synchronized" : `${Math.abs(offset).toFixed(1)}s off`;
+        }
+      } catch (e) {}
+    }
+
+    // Search
+    const popover = document.getElementById("search-popover");
+    const searchInput = document.getElementById("city-search");
+    const searchResults = document.getElementById("search-results");
+    function openSearch() { popover.classList.add("is-open"); setTimeout(() => searchInput.focus(), 100); }
+    popover.addEventListener("click", e => { if (e.target === popover) popover.classList.remove("is-open"); });
+    let deb = null;
+    searchInput.addEventListener("input", () => {
+      clearTimeout(deb);
+      const q = searchInput.value.trim();
+      if (q.length < 2) { searchResults.innerHTML = ""; return; }
+      deb = setTimeout(async () => {
+        try {
+          const r = await fetch(`${API}/api/v2/search?q=${encodeURIComponent(q)}&limit=8`);
+          const j = await r.json();
+          const results = (j.data?.results || j.results || []).slice(0, 8);
+          if (!results.length) { searchResults.innerHTML = '<div class="search-result"><div class="search-result-name">No matches</div></div>'; return; }
+          searchResults.innerHTML = results.map((c, i) => `
+            <button class="search-result" data-idx="${i}">
+              <div>
+                <div class="search-result-name">${c.name || c.asciiName || ""}${c.is_capital || c.isCapital ? " ★" : ""}</div>
+                <div class="search-result-meta">${(c.country?.name || c.country || "")} · ${c.timezone || c.tz || ""}</div>
+              </div>
+              <div class="search-result-meta">${(c.timezone || c.tz || "").split("/").pop().replace(/_/g," ")}</div>
+            </button>
+          `).join("");
+          searchResults.querySelectorAll(".search-result[data-idx]").forEach(btn => {
+            btn.addEventListener("click", () => {
+              const c = results[Number(btn.dataset.idx)];
+              const city = { name: c.name || c.asciiName, country: c.country?.code || c.countryCode, countryName: c.country?.name, state_code: c.state_code, latitude: c.coordinates?.lat ?? c.latitude, longitude: c.coordinates?.lon ?? c.longitude, tz: c.timezone || c.tz, is_capital: c.is_capital || c.isCapital || 0 };
+              state.cities.push(city);
+              try { localStorage.setItem("tdp-cities-tabs", JSON.stringify(state.cities)); } catch (e) {}
+              state.activeIdx = state.cities.length - 1;
+              renderTabs(); renderDetail();
+              popover.classList.remove("is-open");
+              searchInput.value = ""; searchResults.innerHTML = "";
+            });
+          });
+        } catch (e) { searchResults.innerHTML = '<div class="search-result"><div class="search-result-name">Search failed</div></div>'; }
+      }, 200);
+    });
+
+    // Boot
+    try {
+      const saved = JSON.parse(localStorage.getItem("tdp-cities-tabs") || "null");
+      if (Array.isArray(saved) && saved.length) state.cities = saved;
+    } catch (e) {}
+    if (state.cities.length === 0) {
+      state.cities = [
+        { name: "New York", country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0, _home: true },
+        { name: "London", country: "GB", latitude: 51.5074, longitude: -0.1278, tz: "Europe/London", is_capital: 1 },
+        { name: "Tokyo", country: "JP", latitude: 35.6762, longitude: 139.6503, tz: "Asia/Tokyo", is_capital: 1 },
+        { name: "Sydney", country: "AU", latitude: -33.8688, longitude: 151.2093, tz: "Australia/Sydney", is_capital: 1 },
+        { name: "Dubai", country: "AE", latitude: 25.2048, longitude: 55.2708, tz: "Asia/Dubai", is_capital: 0 }
+      ];
+    }
+    renderTabs();
+    renderDetail();
+    refreshSync();
+    setInterval(refreshSync, 30000);
+    updateClock();
+  </script>
+</body>
+</html>
