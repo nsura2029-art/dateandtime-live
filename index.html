@@ -220,9 +220,10 @@
     .day-date-icon { width: 0.95rem; height: 0.95rem; color: var(--color-primary); flex-shrink: 0; }
     .timezone { font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); }
     .timezone strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, monospace; }
-    .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.8125rem, 1.2vw, 0.9rem); color: var(--color-foreground); margin: 1rem 0 0.5rem; }
+    .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.8125rem, 1.2vw, 0.9rem); color: var(--color-foreground); margin: 0.75rem 0 0.25rem; }
     .sync-row.is-hidden { display: none; }
-    .sync-dot { flex-shrink: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent); }
+    .sync-dot { position: relative; flex-shrink: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent); }
+    .sync-dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; background: #10b981; opacity: 0.3; animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
     .sync-row strong { color: var(--color-primary); font-weight: 700; }
     .sync-accuracy { color: var(--color-muted); }
     .onthisday { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; color: var(--color-muted); margin: 0.25rem 0 0; }
@@ -384,12 +385,16 @@
         </div>
         <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
 
-        <div class="sync-row" id="sync-row">
-          <span class="sync-dot" aria-hidden="true"></span>
-          <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</span></span>
-        </div>
-
         <p class="onthisday" id="onthisday"><strong>On this day</strong> · <span id="onthisday-text">—</span></p>
+
+        <!-- Sync row with green pulsing dot — directly above the off-hours
+             and sunrise pills. Shows the live sync-accuracy message. When
+             /v1/time/now ships to prod the offset/accuracy values get
+             filled in; until then they show "—" placeholders. -->
+        <div class="sync-row" id="sync-row" aria-live="polite">
+          <span class="sync-dot" aria-hidden="true"></span>
+          <span>Your clock is <strong id="clock-offset">—</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">—</strong> seconds.</span></span>
+        </div>
 
         <div class="pills" id="home-pills">
           <span class="pill pill-purple"><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span></span>
@@ -657,7 +662,10 @@
       state.features.onthisday = onthisday;
       state.features.search = search;
       // Hide UI for features that aren't ready
-      if (!sync) document.getElementById("sync-row").classList.add("is-hidden");
+      // Sync row is always visible now (with a green pulsing dot, directly
+      // above the off-hours + sunrise pills). The values are "—" placeholders
+      // until /v1/time/now ships; refreshSync() fills them in when the API
+      // is on prod.
       if (!onthisday) document.getElementById("onthisday").classList.add("is-hidden");
       // The home-pills (off-hours + sunrise) always show. Sunrise is a static
       // placeholder ("Sunrise · Sunset —") until the /v1/time/sun endpoint
@@ -867,7 +875,9 @@
     }
     function detectHome() {
       const loc = (typeof window !== "undefined" && window.__location) || null;
-      // Prefer Cloudflare's IP-geolocation (injected by the Worker)
+      // Prefer Cloudflare's IP-geolocation (injected by the Worker). This
+      // gives us the user's actual city even when it's a small community
+      // (e.g. "Wesley Chapel") that isn't in the famous-cities DB.
       if (loc && loc.city) {
         return {
           name: loc.city,
@@ -875,10 +885,27 @@
           countryName: loc.country ? (new Intl.DisplayNames(["en"], { type: "region" }).of(loc.country) || "") : "",
           state_code: loc.regionCode || "",
           regionFull: loc.region || "",
-          latitude: parseFloat(loc.latitude) || 0,
-          longitude: parseFloat(loc.longitude) || 0,
+          latitude: typeof loc.latitude === "number" ? loc.latitude : 0,
+          longitude: typeof loc.longitude === "number" ? loc.longitude : 0,
           tz: loc.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-          is_capital: 0
+          is_capital: 0,
+          nearest: loc.nearest || null   // { name, country, state_code, tz, distanceKm } or null
+        };
+      }
+      // Fall back to the nearest DB city (Worker-computed via lat/lon)
+      if (loc && loc.nearest && loc.nearest.name) {
+        const n = loc.nearest;
+        return {
+          name: n.name,
+          country: n.country || "",
+          countryName: n.country ? (new Intl.DisplayNames(["en"], { type: "region" }).of(n.country) || "") : "",
+          state_code: n.state_code || "",
+          regionFull: loc.region || "",
+          latitude: typeof loc.latitude === "number" ? loc.latitude : 0,
+          longitude: typeof loc.longitude === "number" ? loc.longitude : 0,
+          tz: n.tz || loc.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+          is_capital: 0,
+          nearest: null
         };
       }
       // Fall back to IANA tz heuristic
@@ -894,7 +921,13 @@
       return { name: "New York", country: "US", state_code: "NY", countryName: "United States", regionFull: "New York", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0 };
     }
 
-    /* ----- Live location pill (green dot + "City, State, Country") ----- */
+    /* ----- Live location pill (green dot + "City, State, Country") -----
+       We prefer Cloudflare's IP-geolocation (the user's actual city, e.g.
+       "Wesley Chapel" — even if it's too small to be in the famous-cities
+       DB). When the CF city is missing we fall back to the closest DB city
+       computed server-side in the Worker. The pill always shows the user's
+       most-accurate city plus "(near X)" if there's a closer well-known
+       city from our DB, so the user gets a useful hint about the metro. */
     function renderLiveLocation(home) {
       const el = document.getElementById("live-location");
       const txt = document.getElementById("live-location-text");
@@ -903,6 +936,9 @@
       el.classList.remove("is-hidden");
       const parts = [];
       if (home.name) parts.push(home.name);
+      if (home.nearest && home.nearest.name && home.nearest.name.toLowerCase() !== home.name.toLowerCase()) {
+        parts.push(`(near ${home.nearest.name})`);
+      }
       if (home.regionFull) parts.push(home.regionFull);
       else if (home.state_code) parts.push(home.state_code);
       if (home.countryName) parts.push(home.countryName);
