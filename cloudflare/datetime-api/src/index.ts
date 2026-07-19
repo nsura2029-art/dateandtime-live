@@ -282,11 +282,33 @@ app.use("*", cors({
     if (allowed.includes(origin)) return origin;
     return allowed[0] ?? null;
   },
-  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
   allowHeaders: ["Content-Type", "Authorization"],
   maxAge: 86400,
   credentials: false,
 }));
+
+// ---------- HEAD support (for landing feature-flag probes) ----------
+// Hono doesn't auto-handle HEAD. We register explicit HEAD routes for the
+// probe endpoints so the landing's HEAD probes return 200 when the endpoint
+// is live and 404 otherwise.
+app.on("HEAD", "/api/v1/health", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/cities", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/cities/search", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/cities/near", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/cities/:id", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/popular/cities", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/popular/defaults", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/countries", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/countries/:cca2", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/timezones", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/timezones/:id{.+}", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/time/now", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/time/sun", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/holidays/today", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/holidays", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v1/onthisday", (c) => c.body(null, 200));
+app.on("HEAD", "/api/v2/search", (c) => c.body(null, 200));
 
 // ---------- Root ----------
 app.get("/", (c) => c.json({
