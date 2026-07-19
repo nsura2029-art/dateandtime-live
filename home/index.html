@@ -170,6 +170,8 @@
     .subtitle strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.05em; }
     .greeting-seo { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 0.5rem; }
     .hero-supporting { font-size: clamp(0.8125rem, 1.3vw, 0.9rem); color: var(--color-muted-soft); line-height: 1.6; margin: 1.25rem auto 0; max-width: 40rem; padding: 0 1rem; }
+    .hero-supporting .hero-line { margin: 0; padding: 0; }
+    .clock-block { margin: 2.5rem auto 0.75rem; max-width: 720px; }
 
     /* ===== Live location indicator (green pulse + "City, State, Country") ===== */
     .live-location { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.875rem; margin: 0 auto 1.25rem; background: color-mix(in srgb, #10b981 12%, transparent); border: 1px solid color-mix(in srgb, #10b981 35%, transparent); border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; color: #047857; backdrop-filter: blur(6px); transition: opacity 300ms ease; }
@@ -420,7 +422,11 @@
           <span class="live-location-tz"></span>
         </div>
 
-        <p class="hero-supporting">Whether you're planning a meeting, traveling internationally, working remotely, or simply checking the current time, dateandtime.live gives you everything you need instantly. Automatically detect your location or search any city worldwide to see accurate local time and trusted time zone information.</p>
+        <div class="hero-supporting">
+          <p class="hero-line">Whether you're planning a meeting, traveling internationally, or working remotely —</p>
+          <p class="hero-line">dateandtime.live gives you everything you need instantly.</p>
+          <p class="hero-line">Auto-detect your location or search any city worldwide to see accurate local time and trusted time zone information.</p>
+        </div>
 
         <div class="clock-block">
           <div class="mono-clock" id="monoClock" aria-label="Live current time" title="Live local time · updates every frame. Use the 12h/24h toggle below to change the format.">--:--:--.--</div>
