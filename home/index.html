@@ -29,10 +29,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TimeAndDatePro</title>
-  <meta name="description" content="Local time, day, date, sunrise, sunset. Live from your browser." />
+  <title>Current Time in Your City — Live, Accurate | dateandtime.live</title>
+  <meta name="description" content="Current time in your city. Real-time clock, IANA time zone, UTC offset, DST status, sunrise & sunset, holidays, and business hours — all in one place. Auto-detected from your location or searchable by city." />
   <meta name="theme-color" content="#5b4aaf" />
-  <meta property="og:title" content="TimeAndDatePro" />
+  <meta property="og:title" content="Current Time in Your City — Live, Accurate" />
   <meta property="og:description" content="Time, day, date. Everywhere." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
@@ -166,7 +166,10 @@
     .hero { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem); text-align: center; }
     .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
     .greeting-city { color: var(--color-primary); }
-    .subtitle { color: var(--color-muted); font-size: clamp(0.85rem, 1.2vw, 0.95rem); margin: 0 auto 1rem; max-width: 42rem; }
+    .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.5vw, 1.1rem); margin: 0.5rem auto 0.5rem; max-width: 42rem; line-height: 1.5; }
+    .subtitle strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.05em; }
+    .greeting-seo { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 0.5rem; }
+    .hero-supporting { font-size: clamp(0.8125rem, 1.3vw, 0.9rem); color: var(--color-muted-soft); line-height: 1.6; margin: 1.25rem auto 0; max-width: 40rem; padding: 0 1rem; }
 
     /* ===== Live location indicator (green pulse + "City, State, Country") ===== */
     .live-location { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.875rem; margin: 0 auto 1.25rem; background: color-mix(in srgb, #10b981 12%, transparent); border: 1px solid color-mix(in srgb, #10b981 35%, transparent); border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; color: #047857; backdrop-filter: blur(6px); transition: opacity 300ms ease; }
@@ -373,7 +376,7 @@
       </a>
       <nav class="nav-main" aria-label="Main">
         <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
-        <a href="/home" class="nav-link">Home</a>
+        <a href="/home" class="nav-link nav-link-active" aria-current="page">Home</a>
         <a href="/globe/" class="nav-link">3D Globe</a>
         <a href="#" class="nav-link">Meeting finder</a>
         <a href="#" class="nav-link">World clock</a>
@@ -397,8 +400,8 @@
   <main>
     <section class="hero">
       <div class="container">
-        <h1 class="greeting"><span id="greeting-time">Good Evening</span>, <span class="greeting-city" id="greeting-city">your city</span></h1>
-        <p class="subtitle">Plan your day, meetings, holidays, and global time zones in one smart workspace.</p>
+        <h1 class="greeting-seo">Current time in <span class="greeting-city" id="greeting-city">your city</span></h1>
+        <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
 
         <div class="live-location is-hidden" id="live-location" aria-live="polite">
           <span class="live-location-dot" aria-hidden="true"></span>
@@ -406,6 +409,8 @@
           <span class="live-location-text" id="live-location-text">Detecting your location…</span>
           <span class="live-location-tz"></span>
         </div>
+
+        <p class="hero-supporting">Whether you're planning a meeting, traveling internationally, working remotely, or simply checking the current time, dateandtime.live gives you everything you need instantly. Automatically detect your location or search any city worldwide to see accurate local time and trusted time zone information.</p>
 
         <div class="clock-block">
           <div class="seg-row" aria-label="Live current time">
@@ -1311,7 +1316,15 @@
       document.getElementById("day-date-text").textContent = `${WEEKDAYS[wdToIndex(wd)]}, ${monthName} ${String(day).padStart(2,"0")}, ${year}`;
       document.getElementById("tz-abbr").textContent = tzAbbr(tz);
       document.getElementById("tz-offset").textContent = tzOffset(tz);
-      document.getElementById("greeting-time").textContent = getGreeting(h);
+      // The /home landing uses SEO-friendly "Current time in [city]" + "It's 2:23:45 PM in [city] right now"
+      // instead of the casual "Good Evening, [city]". We update the live time and city on every tick.
+      const heroT = document.getElementById("hero-current-time");
+      const heroC = document.getElementById("hero-current-city");
+      if (heroT) {
+        const t = timeIn(tz, now);
+        heroT.textContent = t.replace(/\.\d+$/, "") + (state.use24Hour ? "" : " " + (h >= 12 ? "PM" : "AM"));
+      }
+      if (heroC) heroC.textContent = home?.name || "your city";
       document.getElementById("greeting-city").textContent = home?.name || "your city";
       document.getElementById("current-city-name").textContent = home?.name || "your city";
       const regionParts = [];
