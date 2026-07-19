@@ -132,8 +132,10 @@ The repo has **two long-lived branches** (`main` + `develop`) and **one short-li
 | Branch      | Worker                | URL                                                          | Purpose                                       |
 |-------------|----------------------|--------------------------------------------------------------|-----------------------------------------------|
 | `main`      | `dateandtime-live`   | `https://dateandtime.live`                                   | **Production** — what the public sees          |
-| `develop`   | `dateandtime-live-dev` | `https://dateandtime-live-dev.nsura2029.workers.dev`        | **Dev** — integration branch, pre-prod preview |
-| `feature/*` | `dateandtime-live-dev` | `https://dateandtime-live-dev.nsura2029.workers.dev`        | **Feature preview** — replaces dev during work |
+| `develop`   | `tdp-landing-dev`    | `https://tdp-landing-dev.nsura2029.workers.dev`              | **Dev** — integration branch, pre-prod preview |
+| `feature/*` | `tdp-landing-dev`    | `https://tdp-landing-dev.nsura2029.workers.dev`              | **Feature preview** — replaces dev during work |
+
+> **Why the weird Worker name?** Anything close to `dateandtime-live` (e.g. `dateandtime-live-dev`) gets flagged by Chrome as a lookalike of `dateandtime.live` and shows a "Did you mean...?" phishing warning. The brand-prefixed `tdp-landing-dev` reads as its own thing and passes Chrome's check.
 
 A single feature preview URL. While a feature branch is checked out and deployed, the dev URL serves *that feature*'s content. Once the feature is merged into `develop` and the dev URL is re-deployed from `develop`, the dev URL serves develop's content again. Then `develop` → `main` when the next prod release ships.
 

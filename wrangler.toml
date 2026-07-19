@@ -17,8 +17,12 @@ exclude = [
   ".gitignore"
 ]
 
-# Development environment — deploys to the dateandtime-live-dev Worker.
+# Development environment — deploys to the tdp-landing-dev Worker.
 # Source is the same as production (the [assets] block above); only the
 # Worker name differs so the dev URL stays separate.
+#
+# NOTE: the Worker name intentionally has no visual similarity to
+# "dateandtime.live" — Chrome flags "dateandtime-live-dev" as a lookalike
+# of the prod domain. "tdp-landing-dev" reads as its own thing.
 [env.dev]
-name = "dateandtime-live-dev"
+name = "tdp-landing-dev"
