@@ -10,11 +10,11 @@
   prod API, the features will auto-appear — no code change needed.
 
   Endpoint status on production (https://api.dateandtime.live):
-    /v1/cities            ✓  live — used for the 5 default cities + search
-    /v1/time/now          ✗  not yet on prod — sync row hides
-    /v1/time/sun          ✗  not yet on prod — sunrise pill hides
-    /v1/onthisday         ✗  not yet on prod — on-this-day hides
-    /v2/search            ✗  not yet on prod — search bar shows a soft note
+    /api/v1/cities        ✓  live — 5,081 cities, 194 countries, 312 IANA tzs
+    /api/v1/time/now      ✓  live — sync row shows real values
+    /api/v1/time/sun      ✓  live — sunrise pill shows real sunrise/sunset
+    /api/v1/onthisday     ⚠  live (empty) — placeholder for Phase 2
+    /api/v2/search        ✓  live — FTS5 with aliases ("nyc"→New York, "big smoke"→London)
 
   Production-only. No dev references in this file.
 -->
@@ -256,9 +256,9 @@
     .search-result-meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
     .search-disabled-note { display: none; padding: 0.5rem 0.75rem; font-size: 0.75rem; color: var(--color-muted); text-align: center; }
     .search-section.is-disabled .search-disabled-note { display: block; }
-    /* The search input stays visible even when /v2/search is 404. The page
-       runs a local fallback against the /v1/cities list cached in
-       state.allCities, so search always works for the 190 cities we have. */
+    /* The search input stays visible even when /api/v2/search is 404. The page
+       runs a local fallback against the /api/v1/cities list cached in
+       state.allCities, so search always works for the 5,081 cities we have. */
     /* Popular cities are independent of the search API — always show. */
 
     /* ===== Popular cities (below the search input) ===== */
@@ -440,11 +440,11 @@
        features auto-appear — no code change needed.
 
        Endpoint status on production (https://api.dateandtime.live):
-         /v1/cities            ✓  live
-         /v1/time/now          ✗  not yet — sync row hides
-         /v1/time/sun          ✗  not yet — sunrise pill hides
-         /v1/onthisday         ✗  not yet — on-this-day hides
-         /v2/search            ✗  not yet — search bar shows a soft note
+         /api/v1/cities        ✓  live
+         /api/v1/time/now      ✓  live
+         /api/v1/time/sun      ✓  live
+         /api/v1/onthisday     ⚠  empty placeholder (Phase 2)
+         /api/v2/search        ✓  live
     */
     const API = 'https://api.dateandtime.live';
 
@@ -654,10 +654,10 @@
     }
     async function probeAll() {
       const [sync, sun, onthisday, search] = await Promise.all([
-        probe("/v1/time/now?tz=UTC"),
-        probe("/v1/time/sun?lat=40.7&lon=-74&date=2026-01-01"),
-        probe("/v1/onthisday"),
-        probe("/v2/search?q=test")
+        probe("/api/v1/time/now?tz=UTC"),
+        probe("/api/v1/time/sun?lat=40.7&lon=-74&date=2026-01-01"),
+        probe("/api/v1/onthisday"),
+        probe("/api/v2/search?q=test")
       ]);
       state.features.sync = sync;
       state.features.sun = sun;
@@ -666,11 +666,11 @@
       // Hide UI for features that aren't ready
       // Sync row is always visible now (with a green pulsing dot, directly
       // above the off-hours + sunrise pills). The values are "—" placeholders
-      // until /v1/time/now ships; refreshSync() fills them in when the API
+      // until /api/v1/time/now ships; refreshSync() fills them in when the API
       // is on prod.
       if (!onthisday) document.getElementById("onthisday").classList.add("is-hidden");
       // The home-pills (off-hours + sunrise) always show. Sunrise is a static
-      // placeholder ("Sunrise · Sunset —") until the /v1/time/sun endpoint
+      // placeholder ("Sunrise · Sunset —") until the /api/v1/time/sun endpoint
       // is wired on the prod API.
       if (!search) document.getElementById("search-section").classList.add("is-disabled");
     }
@@ -678,7 +678,7 @@
     /* ----- Sync accuracy (via local Worker proxy /api/time/now) -----
        We always call this — the Worker returns its own clock, which is on
        the same machine as the page, so the offset is essentially the
-       network round-trip time. When /v1/time/now ships on prod we can
+       network round-trip time. When /api/v1/time/now ships on prod we can
        switch the URL back to the upstream for a true external reference. */
     async function refreshSync() {
       const t0 = performance.now();
@@ -698,13 +698,13 @@
       } catch (e) {}
     }
 
-    /* ----- Sunrise/sunset (when /v1/time/sun is on prod) ----- */
+    /* ----- Sunrise/sunset (when /api/v1/time/sun is on prod) ----- */
     async function fetchSunForCity(c) {
       if (!state.features.sun || c.latitude == null || c.longitude == null) return null;
       try {
         const d = new Date();
         const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-        const r = await fetch(`${API}/v1/time/sun?lat=${c.latitude}&lon=${c.longitude}&date=${ds}`);
+        const r = await fetch(`${API}/api/v1/time/sun?lat=${c.latitude}&lon=${c.longitude}&date=${ds}`);
         if (!r.ok) return null;
         const j = await r.json();
         return j.data || j;
@@ -720,12 +720,12 @@
       try { const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(u); const h = parts.find(p => p.type === "hour")?.value || "—"; const mn = parts.find(p => p.type === "minute")?.value || "—"; const p = parts.find(p => p.type === "dayPeriod")?.value || ""; return `${h}:${mn} ${p}`; } catch (e) { return "—"; }
     }
 
-    /* ----- On-this-day (when /v1/onthisday is on prod) ----- */
+    /* ----- On-this-day (when /api/v1/onthisday is on prod) ----- */
     async function refreshOnThisDay() {
       if (!state.features.onthisday) return;
       const now = new Date();
       try {
-        const r = await fetch(`${API}/v1/onthisday?month=${now.getMonth()+1}&day=${now.getDate()}`, { cache: "no-store" });
+        const r = await fetch(`${API}/api/v1/onthisday?month=${now.getMonth()+1}&day=${now.getDate()}`, { cache: "no-store" });
         if (!r.ok) return;
         const j = await r.json();
         const data = j.data || j;
@@ -742,9 +742,9 @@
     }
 
     /* ----- City search -----
-       Strategy: try /v2/search (when on prod) first; fall back to a local
-       client-side filter against state.allCities (the 190-city list from
-       /v1/cities). The local fallback always works and matches the cities
+       Strategy: try /api/v2/search (when on prod) first; fall back to a local
+       client-side filter against state.allCities (the 5,081-city list from
+       /api/v1/cities). The local fallback always works and matches the cities
        the user can already see in the rail. */
     const searchInput = document.getElementById("city-search");
     const searchResults = document.getElementById("search-results");
@@ -803,7 +803,7 @@
         // Try the prod endpoint first; fall back to local search.
         if (state.features.search) {
           try {
-            const r = await fetch(`${API}/v2/search?q=${encodeURIComponent(q)}&limit=8`);
+            const r = await fetch(`${API}/api/v2/search?q=${encodeURIComponent(q)}&limit=8`);
             if (r.ok) {
               const j = await r.json();
               const results = (j.data?.results || j.results || []).slice(0, 8);
@@ -982,7 +982,7 @@
         state.citiesWithHome = buildListWithHome(home);
       }
 
-      // If the local cities list loaded (even though /v2/search is 404), the
+      // If the local cities list loaded (even though /api/v2/search is 404), the
       // search input is fully usable via the client-side fallback. Lift the
       // 'is-disabled' lock so the "no list loaded" note doesn't show.
       if (state.allCities.length > 0) {

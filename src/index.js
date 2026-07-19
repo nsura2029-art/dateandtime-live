@@ -21,7 +21,7 @@ const CITIES_TTL_MS = 5 * 60 * 1000;
 async function getCities() {
   const now = Date.now();
   if (citiesCache.data && (now - citiesCache.at) < CITIES_TTL_MS) return citiesCache.data;
-  const r = await fetch("https://api.dateandtime.live/v1/cities?limit=200", { headers: { "Accept": "application/json" } });
+  const r = await fetch("https://api.dateandtime.live/api/v1/cities?limit=500", { headers: { "Accept": "application/json" } });
   if (!r.ok) throw new Error("cities upstream " + r.status);
   const j = await r.json();
   const data = j.data || j;
@@ -53,9 +53,9 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Same-origin proxy: /api/cities -> https://api.dateandtime.live/v1/cities
+    // Same-origin proxy: /api/cities -> https://api.dateandtime.live/api/v1/cities
     if (url.pathname === "/api/cities") {
-      return proxySimple(request, url, "/v1/cities");
+      return proxySimple(request, url, "/api/v1/cities");
     }
 
     // Local time source: /api/time/now returns the worker's current time so
@@ -107,9 +107,9 @@ export default {
       if (n && n.city) {
         location.nearest = {
           name: n.city.name,
-          country: n.city.country || "",
-          state_code: n.city.state_code || "",
-          tz: n.city.tz || "",
+          country: n.city.countryName || n.city.country || "",
+          state_code: n.city.stateCode || n.city.state_code || "",
+          tz: n.city.timezone || n.city.tz || "",
           distanceKm: Math.round(n.distanceKm * 10) / 10
         };
       }
@@ -127,7 +127,7 @@ export default {
 };
 
 async function proxySimple(request, url, upstreamPath) {
-  const upstream = `https://api.dateandtime.live${upstreamPath}?${url.searchParams.toString()}`;
+  const upstream = `https://api.dateandtime.live${upstreamPath}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}`;
   try {
     const r = await fetch(upstream, { headers: { "Accept": "application/json" } });
     const body = await r.text();
