@@ -59,7 +59,8 @@ deferred.get("/holidays/today", async (c) => {
   const today = now.toISOString().slice(0, 10);
 
   let sql = `SELECT id, country_code, region_code, city_id, name, type, date,
-             observed_date, year, fixed, global_holiday, launch_year, source, confidence
+             observed_date, year, fixed, global_holiday, religion, observance_type,
+             wikipedia_url, description, launch_year, source, confidence
              FROM holidays
              WHERE (date = ? OR observed_date = ?)`;
   const params: (string | number)[] = [today, today];
@@ -68,7 +69,11 @@ deferred.get("/holidays/today", async (c) => {
     sql += ` AND country_code = ?`;
     params.push(country);
   }
-
+  const religion = c.req.query("religion");
+  if (religion) {
+    sql += ` AND (religion = ? OR country_code = '*' AND religion = ?)`;
+    params.push(religion, religion);
+  }
   sql += ` ORDER BY global_holiday DESC, country_code, name LIMIT 200`;
 
   const rows = await c.env.DB.prepare(sql).bind(...params).all<HolidayRow>();
@@ -98,7 +103,7 @@ deferred.get("/holidays/upcoming", async (c) => {
   const futureStr = future.toISOString().slice(0, 10);
 
   let sql = `SELECT id, country_code, region_code, name, type, date, observed_date,
-             year, fixed, global_holiday, source
+             year, fixed, global_holiday, religion, observance_type, wikipedia_url, source
              FROM holidays
              WHERE date >= ? AND date <= ?`;
   const params: (string | number)[] = [today, futureStr];
@@ -134,7 +139,7 @@ deferred.get("/holidays", async (c) => {
   }
 
   let sql = `SELECT id, country_code, region_code, name, type, date, observed_date,
-             year, fixed, global_holiday, source
+             year, fixed, global_holiday, religion, observance_type, wikipedia_url, source
              FROM holidays WHERE year = ?`;
   const params: (string | number)[] = [year];
 
@@ -245,20 +250,57 @@ deferred.get("/onthisday", async (c) => {
     return c.json({ success: false, error: { code: "BAD_REQUEST", message: "day must be 1-31" } }, 400);
   }
 
-  const rows = await c.env.DB
-    .prepare(`SELECT id, month, day, year, title, description, category, source, confidence
-              FROM onthisday WHERE month = ? AND day = ?
-              ORDER BY year DESC, id LIMIT 50`)
-    .bind(month, day)
-    .all<{ id: number; month: number; day: number; year: number | null; title: string; description: string | null; category: string; source: string; confidence: number }>();
+  // Optional filters
+  const country = c.req.query("country")?.toUpperCase();
+  const category = c.req.query("category");
+  const religion = c.req.query("religion");
+  const limit = Math.min(parseInt(c.req.query("limit") ?? "50", 10) || 50, 200);
+
+  let sql = `SELECT id, month, day, year, end_year, category, subcategory,
+             country_codes, religion, title, description, importance,
+             wikipedia_url, image_url, source
+             FROM onthisday_events
+             WHERE month = ? AND day = ?`;
+  const params: (string | number)[] = [month, day];
+
+  if (country) {
+    sql += ` AND (country_codes LIKE ? OR country_codes IS NULL)`;
+    params.push(`%"${country}"%`);
+  }
+  if (category) {
+    sql += ` AND category = ?`;
+    params.push(category);
+  }
+  if (religion) {
+    sql += ` AND religion = ?`;
+    params.push(religion);
+  }
+  sql += ` ORDER BY importance DESC, year DESC LIMIT ?`;
+  params.push(limit);
+
+  const rows = await c.env.DB.prepare(sql).bind(...params).all<{
+    id: number; month: number; day: number; year: number | null; end_year: number | null;
+    category: string; subcategory: string | null; country_codes: string | null;
+    religion: string | null; title: string; description: string | null;
+    importance: number; wikipedia_url: string | null; image_url: string | null; source: string;
+  }>();
+
+  // Parse country_codes JSON
+  const events = rows.results.map(e => ({
+    ...e,
+    country_codes: e.country_codes ? JSON.parse(e.country_codes) : null
+  }));
 
   return c.json({
     success: true,
     data: {
       month,
       day,
-      events: rows.results,
-      count: rows.results.length,
+      country: country ?? null,
+      category: category ?? null,
+      religion: religion ?? null,
+      events,
+      count: events.length,
     },
   });
 });
@@ -699,5 +741,268 @@ deferred.get("/feedback/top", async (c) => {
       type: type ?? null,
       status,
     },
+  });
+});
+
+// ============================================================
+// Country religions (new)
+// ============================================================
+deferred.get("/religions", async (c) => {
+  const rows = await c.env.DB
+    .prepare(`SELECT DISTINCT religion, COUNT(*) as country_count
+              FROM country_religions
+              GROUP BY religion
+              ORDER BY country_count DESC`)
+    .all<{ religion: string; country_count: number }>();
+  return c.json({ success: true, data: { religions: rows.results, count: rows.results.length } });
+});
+
+deferred.get("/countries/:cca2/religions", async (c) => {
+  const cca2 = c.req.param("cca2").toUpperCase();
+  const rows = await c.env.DB
+    .prepare(`SELECT religion, percentage, is_official
+              FROM country_religions
+              WHERE country_code = ?
+              ORDER BY percentage DESC`)
+    .bind(cca2)
+    .all<{ religion: string; percentage: number | null; is_official: number }>();
+  if (!rows.results.length) {
+    return c.json({ success: false, error: { code: "NOT_FOUND", message: `No data for ${cca2}` } }, 404);
+  }
+  return c.json({ success: true, data: { country: cca2, religions: rows.results } });
+});
+
+// ============================================================
+// Calendar (new) — full year / month grid
+// ============================================================
+deferred.get("/calendar/:year/:month", async (c) => {
+  const year = parseInt(c.req.param("year"), 10);
+  const month = parseInt(c.req.param("month"), 10);
+  const country = c.req.query("country")?.toUpperCase();
+  const religion = c.req.query("religion");
+
+  if (isNaN(year) || year < 1900 || year > 2100) {
+    return c.json({ success: false, error: { code: "BAD_REQUEST", message: "year 1900-2100" } }, 400);
+  }
+  if (isNaN(month) || month < 1 || month > 12) {
+    return c.json({ success: false, error: { code: "BAD_REQUEST", message: "month 1-12" } }, 400);
+  }
+
+  const startDate = `${year}-${String(month).padStart(2, "0")}-01`;
+  const lastDay = new Date(year, month, 0).getDate();
+  const endDate = `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+
+  // Holidays
+  let hSql = `SELECT id, country_code, name, type, date, observed_date, religion, observance_type, wikipedia_url
+              FROM holidays
+              WHERE (date >= ? AND date <= ?) OR (observed_date >= ? AND observed_date <= ?)`;
+  const hParams: string[] = [startDate, endDate, startDate, endDate];
+  if (country) {
+    hSql += ` AND (country_code = ? OR country_code = '*')`;
+    hParams.push(country);
+  }
+  if (religion) {
+    hSql += ` AND (religion = ? OR (country_code = '*' AND religion = ?))`;
+    hParams.push(religion, religion);
+  }
+  const hRows = await c.env.DB.prepare(hSql).bind(...hParams).all<{
+    id: number; country_code: string; name: string; type: string;
+    date: string; observed_date: string | null; religion: string | null;
+    observance_type: string | null; wikipedia_url: string | null;
+  }>();
+
+  // OnThisDay for the month
+  const otdRows = await c.env.DB
+    .prepare(`SELECT id, day, year, category, subcategory, country_codes, religion, title, description, importance, wikipedia_url
+              FROM onthisday_events
+              WHERE month = ?
+              ORDER BY day, importance DESC, year DESC`)
+    .bind(month)
+    .all<{
+      id: number; day: number; year: number | null; category: string;
+      subcategory: string | null; country_codes: string | null; religion: string | null;
+      title: string; description: string | null; importance: number; wikipedia_url: string | null;
+    }>();
+
+  // Build a day map
+  const days: Record<string, { holidays: any[]; events: any[] }> = {};
+  for (let d = 1; d <= lastDay; d++) {
+    const key = String(d).padStart(2, "0");
+    days[key] = { holidays: [], events: [] };
+  }
+  for (const h of hRows.results) {
+    const d = (h.observed_date || h.date).slice(8, 10);
+    if (days[d]) days[d].holidays.push(h);
+  }
+  for (const e of otdRows.results) {
+    const d = String(e.day).padStart(2, "0");
+    if (days[d]) {
+      days[d].events.push({
+        ...e,
+        country_codes: e.country_codes ? JSON.parse(e.country_codes) : null
+      });
+    }
+  }
+
+  return c.json({
+    success: true,
+    data: {
+      year, month, country: country ?? null, religion: religion ?? null,
+      days, lastDay
+    },
+  });
+});
+
+// ============================================================
+// OnThisDay categories
+// ============================================================
+deferred.get("/onthisday/categories", async (c) => {
+  const rows = await c.env.DB
+    .prepare(`SELECT category, COUNT(*) as n
+              FROM onthisday_events
+              GROUP BY category
+              ORDER BY n DESC`)
+    .all<{ category: string; n: number }>();
+  return c.json({ success: true, data: { categories: rows.results } });
+});
+
+// ============================================================
+// OnThisDay range (multi-day feed)
+// ============================================================
+deferred.get("/onthisday/range", async (c) => {
+  const start = c.req.query("start");  // YYYY-MM-DD
+  const end = c.req.query("end");
+  const country = c.req.query("country")?.toUpperCase();
+  const limit = Math.min(parseInt(c.req.query("limit") ?? "100", 10) || 100, 500);
+
+  if (!start || !end) {
+    return c.json({ success: false, error: { code: "BAD_REQUEST", message: "start/end required" } }, 400);
+  }
+  const s = new Date(start);
+  const e = new Date(end);
+  if (isNaN(s.getTime()) || isNaN(e.getTime())) {
+    return c.json({ success: false, error: { code: "BAD_REQUEST", message: "invalid date" } }, 400);
+  }
+
+  // Collect (month, day) pairs in the range
+  const pairs: number[] = [];
+  const seen = new Set<string>();
+  for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const key = `${m}-${day}`;
+    if (!seen.has(key)) { seen.add(key); pairs.push(m, day); }
+  }
+  if (!pairs.length) return c.json({ success: true, data: { start, end, events: [], count: 0 } });
+
+  // Build WHERE month=? AND day=? OR ... for each pair
+  const orClauses = pairs.reduce((acc, _, i) => {
+    if (i % 2 === 0) acc.push(`(month = ? AND day = ?)`);
+    return acc;
+  }, [] as string[]).join(" OR ");
+
+  let sql = `SELECT id, month, day, year, category, subcategory, country_codes, religion,
+             title, description, importance, wikipedia_url
+             FROM onthisday_events
+             WHERE ${orClauses}`;
+  if (country) sql += ` AND (country_codes LIKE ? OR country_codes IS NULL)`;
+  sql += ` ORDER BY month, day, importance DESC LIMIT ?`;
+
+  const allParams: (string | number)[] = [...pairs];
+  if (country) allParams.push(`%"${country}"%`);
+  allParams.push(limit);
+
+  const rows = await c.env.DB.prepare(sql).bind(...allParams).all<any>();
+
+  const events = rows.results.map((e: any) => ({
+    ...e,
+    country_codes: e.country_codes ? JSON.parse(e.country_codes) : null,
+    date: `${new Date(s.getFullYear(), e.month - 1, e.day).toISOString().slice(0, 10)}`
+  }));
+
+  return c.json({ success: true, data: { start, end, country: country ?? null, events, count: events.length } });
+});
+
+// ============================================================
+// OnThisDay smart (home page — pick the most important event for today)
+// ============================================================
+deferred.get("/onthisday/today", async (c) => {
+  const country = c.req.query("country")?.toUpperCase();
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+
+  let sql = `SELECT id, year, category, subcategory, country_codes, religion,
+             title, description, importance, wikipedia_url
+             FROM onthisday_events
+             WHERE month = ? AND day = ?`;
+  const params: (string | number)[] = [month, day];
+  if (country) {
+    sql += ` AND (country_codes LIKE ? OR country_codes IS NULL)`;
+    params.push(`%"${country}"%`);
+  }
+  sql += ` ORDER BY importance DESC, year DESC LIMIT 5`;
+  const rows = await c.env.DB.prepare(sql).bind(...params).all<any>();
+  const events = rows.results.map(e => ({
+    ...e, country_codes: e.country_codes ? JSON.parse(e.country_codes) : null
+  }));
+  return c.json({ success: true, data: { date: now.toISOString().slice(0, 10), month, day, country: country ?? null, events } });
+});
+
+// ============================================================
+// Religion-filtered holidays
+// ============================================================
+deferred.get("/holidays/religion/:religion", async (c) => {
+  const religion = c.req.param("religion").toLowerCase();
+  const country = c.req.query("country")?.toUpperCase();
+  const year = parseInt(c.req.query("year") ?? new Date().getFullYear().toString(), 10);
+
+  let sql = `SELECT id, country_code, name, type, date, observed_date, religion, observance_type, wikipedia_url
+              FROM holidays
+              WHERE year = ? AND religion = ?`;
+  const params: (string | number)[] = [year, religion];
+  if (country) {
+    sql += ` AND (country_code = ? OR country_code = '*')`;
+    params.push(country);
+  }
+  sql += ` ORDER BY date, country_code, name LIMIT 500`;
+
+  const rows = await c.env.DB.prepare(sql).bind(...params).all<any>();
+  return c.json({
+    success: true,
+    data: {
+      religion, year, country: country ?? null,
+      holidays: rows.results, count: rows.results.length
+    }
+  });
+});
+
+// ============================================================
+// Search holidays by name
+// ============================================================
+deferred.get("/holidays/search", async (c) => {
+  const q = c.req.query("q")?.trim();
+  if (!q || q.length < 2) {
+    return c.json({ success: false, error: { code: "BAD_REQUEST", message: "q must be 2+ chars" } }, 400);
+  }
+  const country = c.req.query("country")?.toUpperCase();
+  const year = parseInt(c.req.query("year") ?? new Date().getFullYear().toString(), 10);
+  const limit = Math.min(parseInt(c.req.query("limit") ?? "30", 10) || 30, 200);
+
+  let sql = `SELECT id, country_code, name, type, date, observed_date, religion, observance_type, wikipedia_url
+              FROM holidays
+              WHERE year = ? AND LOWER(name) LIKE ?`;
+  const params: (string | number)[] = [year, `%${q.toLowerCase()}%`];
+  if (country) {
+    sql += ` AND (country_code = ? OR country_code = '*')`;
+    params.push(country);
+  }
+  sql += ` ORDER BY date, country_code LIMIT ?`;
+  params.push(limit);
+
+  const rows = await c.env.DB.prepare(sql).bind(...params).all<any>();
+  return c.json({
+    success: true,
+    data: { query: q, country: country ?? null, year, holidays: rows.results, count: rows.results.length }
   });
 });

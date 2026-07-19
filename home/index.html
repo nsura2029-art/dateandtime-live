@@ -259,6 +259,10 @@
     [data-theme="dark"] .pill-tip::after { background: #faf7f2; color: #1f1a3a; }
     [data-theme="dark"] .pill-tip::before { border-top-color: #faf7f2; }
     .pill-purple { background: var(--color-pill-purple-bg); border-color: var(--color-pill-purple-bd); color: var(--color-pill-purple-fg); }
+    .pill-green { background: rgba(209, 250, 229, 0.76); border-color: rgba(110, 231, 183, 0.3); color: #047857; }
+    [data-theme="dark"] .pill-green { background: rgba(5, 150, 105, 0.18); border-color: rgba(110, 231, 183, 0.25); color: #6ee7b7; }
+    .pill-rose { background: rgba(254, 205, 211, 0.76); border-color: rgba(251, 113, 133, 0.3); color: #9f1239; }
+    [data-theme="dark"] .pill-rose { background: rgba(159, 18, 57, 0.18); border-color: rgba(251, 113, 133, 0.25); color: #fda4af; }
     .pill-blue { background: rgba(219, 234, 254, 0.76); border-color: rgba(147, 197, 253, 0.3); color: #1e40af; }
     [data-theme="dark"] .pill-blue { background: rgba(30, 64, 175, 0.18); border-color: rgba(147, 197, 253, 0.25); color: #93c5fd; }
     .city-card.is-active { box-shadow: 0 0 0 2px var(--color-primary), 0 4px 12px rgba(0,0,0,0.08); }
@@ -461,7 +465,9 @@
         </div>
 
         <div class="pills" id="home-pills">
-          <span class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Public holidays: National or regional holidays for this country today. If a holiday is showing, most banks, government offices, and many shops will be closed. Plan deliveries and calls around them."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Today's holiday: A public or religious holiday for this country today. Banks, government offices, and many shops will be closed. Plan calls, deliveries, and meetings accordingly."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-green is-hidden pill-tip" id="next-holiday-pill" tabindex="0" data-tip="Next holiday: The next upcoming public or religious holiday for this country. Click to see all holidays in the calendar."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="next-holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <span class="pill pill-rose is-hidden pill-tip" id="onthisday-pill" tabindex="0" data-tip="On this day: A historical event, famous birthday, or cultural milestone that happened on today's date. Click to see more."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="onthisday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
           <span class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></span>
           <span class="pill pill-orange pill-tip" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span><span class="pill-help" aria-hidden="true">?</span></span>
           <span class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
@@ -1055,10 +1061,49 @@
         const list = data?.holidays || [];
         const pill = document.getElementById("holiday-pill");
         const text = document.getElementById("holiday-pill-text");
-        if (!list.length) { pill.classList.add("is-hidden"); return; }
-        pill.classList.remove("is-hidden");
-        const h = list[0];
-        text.textContent = `${h.name}`;
+        if (!list.length) { pill.classList.add("is-hidden"); } else {
+          pill.classList.remove("is-hidden");
+          const h = list[0];
+          text.textContent = `${h.name}`;
+        }
+        // If no holiday today, try upcoming (next 7 days)
+        if (!list.length) {
+          try {
+            const r2 = await fetch(`${API}/api/v1/holidays/upcoming?country=${cc}&days=7&limit=1`, { cache: "no-store" });
+            if (r2.ok) {
+              const j2 = await r2.json();
+              const nextList = j2.data?.holidays || [];
+              const nextPill = document.getElementById("next-holiday-pill");
+              const nextText = document.getElementById("next-holiday-pill-text");
+              if (nextList.length) {
+                const nh = nextList[0];
+                const d = new Date(nh.date);
+                const days = Math.ceil((d - new Date()) / 86400000);
+                nextPill.classList.remove("is-hidden");
+                nextText.textContent = `${nh.name} · in ${days} day${days === 1 ? '' : 's'}`;
+                nextPill.onclick = () => window.open(`/calendar/${new Date().getFullYear()}/${d.getMonth() + 1}?country=${cc}`, "_blank");
+              }
+            }
+          } catch (e2) {}
+        }
+        // OnThisDay pill (always, country-filtered)
+        try {
+          const r3 = await fetch(`${API}/api/v1/onthisday/today?country=${cc}`, { cache: "no-store" });
+          if (r3.ok) {
+            const j3 = await r3.json();
+            const evList = j3.data?.events || [];
+            const otdPill = document.getElementById("onthisday-pill");
+            const otdText = document.getElementById("onthisday-pill-text");
+            if (evList.length) {
+              const e = evList[0];
+              const yearStr = e.year ? ` (${e.year})` : '';
+              otdPill.classList.remove("is-hidden");
+              const title = e.title.length > 40 ? e.title.slice(0, 40) + "…" : e.title;
+              otdText.textContent = `${title}${yearStr}`;
+              if (e.wikipedia_url) otdPill.onclick = () => window.open(e.wikipedia_url, "_blank");
+            }
+          }
+        } catch (e3) {}
       } catch (e) {}
     }
 
