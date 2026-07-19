@@ -666,7 +666,7 @@
         });
       });
     }
-    function saveCities() { try { localStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
+    function saveCities() { try { sessionStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
 
     /* ----- Popular cities (chips below the search box) -----
        Filtered to exclude the home city and the 5 rail defaults, so the
@@ -1226,11 +1226,46 @@
       if (home.nearest && home.nearest.name && home.nearest.name.toLowerCase() !== home.name.toLowerCase()) {
         parts.push(`(near ${home.nearest.name})`);
       }
-      if (home.regionFull) parts.push(home.regionFull);
-      else if (home.state_code) parts.push(home.state_code);
+      // Resolve a friendly state/region name. Cloudflare's cf.region is
+      // sometimes empty (especially for non-US IPs), and the GeoNames
+      // admin1 code is opaque (e.g. "40" for Telangana, IN). We prefer
+      // regionFull (CF's full region name) and fall back to a built-in
+      // state-code → name map for the countries we see most.
+      const stateLabel = home.regionFull
+        || stateCodeToName(home.country, home.state_code)
+        || home.state_code
+        || "";
+      if (stateLabel) parts.push(stateLabel);
       if (home.countryName) parts.push(home.countryName);
       else if (home.country) parts.push(home.country);
       txt.textContent = parts.length ? parts.join(", ") : "Detecting your location…";
+    }
+
+    // Static map of well-known (country, admin1_code) → human-readable
+    // state/region name. Used when Cloudflare's cf.region is missing and
+    // the GeoNames admin1 code is opaque (e.g. "40" for Telangana, IN).
+    // We don't need to be exhaustive — anything missing falls back to the
+    // raw code, which is still better than nothing.
+    const STATE_NAMES = {
+      // India (ISO 3166-2:IN codes)
+      "IN.40": "Telangana", "IN.36": "Maharashtra", "IN.02": "Andhra Pradesh",
+      "IN.07": "Delhi", "IN.24": "Gujarat", "IN.19": "Karnataka", "IN.20": "Kerala",
+      "IN.33": "Tamil Nadu", "IN.32": "Rajasthan", "IN.16": "Uttar Pradesh",
+      "IN.28": "West Bengal", "IN.09": "Haryana", "IN.12": "Punjab", "IN.30": "Odisha",
+      "IN.21": "Assam", "IN.18": "Bihar", "IN.11": "Goa", "IN.13": "Himachal Pradesh",
+      "IN.05": "Chandigarh", "IN.06": "Dadra and Nagar Haveli and Daman and Diu",
+      "IN.14": "Jammu and Kashmir", "IN.34": "Tripura", "IN.23": "Manipur",
+      "IN.22": "Meghalaya", "IN.31": "Nagaland", "IN.26": "Mizoram",
+      "IN.25": "Sikkim", "IN.27": "Arunachal Pradesh", "IN.04": "Chhattisgarh",
+      "IN.03": "Jharkhand", "IN.35": "Uttarakhand",
+      // US (just a few common ones; cf.region usually fills these)
+      "US.NY": "New York", "US.CA": "California", "US.TX": "Texas",
+      "US.FL": "Florida", "US.IL": "Illinois", "US.WA": "Washington",
+      "US.MA": "Massachusetts", "US.GA": "Georgia", "US.PA": "Pennsylvania",
+    };
+    function stateCodeToName(country, code) {
+      if (!country || !code) return "";
+      return STATE_NAMES[`${country}.${code}`] || "";
     }
 
     /* ----- Feedback prompt (floating, contextual CTA) -----
@@ -1363,8 +1398,12 @@
       }
 
       // Build the user's city list (home + 5 defaults)
+      // We use sessionStorage (not localStorage) so a new browser session
+      // starts from the auto-detected home. The user's manual selection
+      // lives for the session only — close the tab/browser and the next
+      // session is back to "your city" via detectHome().
       try {
-        const saved = JSON.parse(localStorage.getItem("tdp-cities") || "null");
+        const saved = JSON.parse(sessionStorage.getItem("tdp-cities") || "null");
         if (Array.isArray(saved) && saved.length) state.citiesWithHome = saved;
       } catch (e) {}
       if (state.citiesWithHome.length === 0) {
