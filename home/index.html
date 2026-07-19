@@ -334,13 +334,17 @@
     .rail::-webkit-scrollbar { height: 4px; }
     .rail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
     .city-card { flex: 0 0 auto; min-width: 200px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; text-align: center; }
-    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.4rem; }
+    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.4rem; position: relative; }
     .city-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; }
+    /* Green live dot — same style as the hero live-location pill */
+    .live-pulse { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #10b981; position: relative; }
+    .live-pulse::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; background: #10b981; opacity: 0.3; animation: city-pulse 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    @keyframes city-pulse { 75%, 100% { transform: scale(2.2); opacity: 0; } }
     .city-name { font-size: 0.8125rem; font-weight: 700; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13rem; }
     .city-remove { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-muted-soft); border-radius: 9999px; }
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
-    .city-time { font-family: "Courier New", ui-monospace, monospace; font-size: 1.125rem; font-weight: 800; letter-spacing: 0.02em; text-align: center; }
+    .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; }
     .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.2rem; text-align: center; }
     .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
     .city-day { font-weight: 600; }
@@ -708,6 +712,7 @@
         if (clickable) card.classList.add("is-clickable");
         card.innerHTML = `
           <div class="city-head">
+            <span class="live-pulse" aria-hidden="true"></span>
             <span class="city-dot" style="background: var(--city-${color});"></span>
             <span class="city-name">${escapeHtml(c.name)}</span>
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
