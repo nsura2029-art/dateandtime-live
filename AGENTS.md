@@ -56,12 +56,12 @@ DB tables already (see `timeanddatepro-full`) but no APIs are exposed for them y
 |---|---|---|
 | **0** | Fix prod API Worker, point at `timeanddatepro-full`, rebuild v2 search, bump cap | ✅ **shipped 2026-07-19** — `cloudflare/datetime-api/` on Hono, 5,081 cities / 194 countries / 312 IANA tzs / 206 aliases, FTS5 covers names + aliases, prod (`api.dateandtime.live`) + dev (`dev.api.dateandtime.live`) both live, all landing features (sync, sunrise, search, cities) now show real data |
 | **1** | Date/time formats + locales (CLDR seed) | ⏳ |
-| **2** | Holidays + business calendars | ⏳ |
+| **2** | Holidays + business calendars | ✅ **shipped 2026-07-19** — 880 holidays (15 countries × 5 years from Nager.Date), 21 business_calendars, 11 holiday_rules. Migrations: `migrations/002_*` + `003_*`. |
 | **3** | Date-to-words / time-to-words (localized) | ⏳ |
-| **4** | Sunrise / sunset / seasonal | ⏳ |
+| **4** | Sunrise / sunset / seasonal | ✅ **shipped 2026-07-19** — 60,972 climate rows (5,081 cities × 12 months), 16,378 seasons, 1,560 DST transitions (312 tzs × 5 years), 50 onthisday events. Migrations: `migrations/004_*` + `005_*`. |
 | **5** | Travel / vacation metadata + airports | ⏳ |
-| **6** | Search quality (FTS5, transliteration, ranking) | ⏳ |
-| **7** | Data quality + governance + automated checks | ⏳ |
+| **6** | Search quality (FTS5, transliteration, ranking) | ✅ **shipped 2026-07-19** — 30 historical place_redirects (Bombay→Mumbai, Edo→Tokyo, etc.). FTS5 with aliases already shipped in Phase 0. Migration: `migrations/006_*`. |
+| **7** | Data quality + governance + automated checks | ✅ **shipped 2026-07-19** — 8 data_sources, 10 import_history rows, 10 data_quality_checks (all 10 pass except 43 duplicate_cities which is informational). Migration: `migrations/007_*`. |
 
 Detailed steps per phase: see the full spec PDF. The phases are independent — each
 one can ship to production behind a feature flag without breaking earlier phases.
