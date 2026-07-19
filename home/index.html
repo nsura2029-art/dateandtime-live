@@ -785,6 +785,23 @@
        user only sees cities they can actually add. First 10 of the
        filtered list are shown. Each chip is color-coded with the same
        NotebookLM palette as the rail. Click to add. */
+    // Add a city to the rail, replacing the oldest non-home city if full.
+    // This makes sure the new city is always visible (not sliced off) and
+    // state.activeIdx points to it. Home at position 0 is never touched.
+    function addCityToRail(cityObj) {
+      ensureHomeFirst();
+      const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cityObj.tz);
+      if (existingIdx >= 0) return existingIdx;
+      // Home is at 0. If the array is already full (home + 5 others = 6),
+      // drop the oldest non-home entry (last in the array) BEFORE adding.
+      // This keeps the new city visible and preserves home + 4 most recent.
+      if (state.citiesWithHome.length >= RAIL_MAX) {
+        state.citiesWithHome = state.citiesWithHome.slice(0, RAIL_MAX - 1);
+      }
+      state.citiesWithHome.push(cityObj);
+      return state.citiesWithHome.length - 1;
+    }
+
     function renderPopularCities() {
       const wrap = document.getElementById("popular-cities");
       if (!wrap) return;
@@ -814,19 +831,12 @@
             // Clicking a popular city adds it to the rail and makes it the
             // ACTIVE city (highlights it, switches the big clock + pills).
             // The home (position 0) stays the user's home city.
-            const existingIdx = state.citiesWithHome.findIndex(x => x.tz === c.tz);
-            let newIdx;
-            if (existingIdx >= 0) {
-              newIdx = existingIdx;
-            } else {
-              state.citiesWithHome.push({ ...c });
-              newIdx = state.citiesWithHome.length - 1;
-            }
-            state.activeIdx = newIdx;
+            state.activeIdx = addCityToRail({ ...c });
             saveCities();
             renderRail();
             renderPopularCities();
             renderActiveCityPills();
+            updateClock();
             window.scrollTo({ top: 0, behavior: "smooth" });
           });
         }
@@ -1173,20 +1183,12 @@
           // isn't there) and makes it the ACTIVE city (highlighted +
           // switches the big clock and pills). The home (position 0) stays
           // the user's home city.
-          const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cTz);
-          let newIdx;
-          if (existingIdx >= 0) {
-            newIdx = existingIdx;
-          } else {
-            // New city — append to the rail (not the home slot)
-            state.citiesWithHome.push(cityObj);
-            newIdx = state.citiesWithHome.length - 1;
-          }
-          state.activeIdx = newIdx;
+          state.activeIdx = addCityToRail(cityObj);
           saveCities();
           renderRail();
           renderPopularCities();
           renderActiveCityPills();
+          updateClock();
           searchInput.value = "";
           searchResults.classList.remove("is-open");
           searchResults.innerHTML = "";
