@@ -3,25 +3,41 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Widget Design System (NotebookLM) — TimeAndDatePro</title>
-  <meta name="description" content="Widgetly design system with NotebookLM color tokens. Light (pastel gradient + purple) and dark (deep purple + orange LED)." />
+  <title>TimeAndDatePro</title>
+  <meta name="description" content="TimeAndDatePro — local time, day, and date. 190 cities, live from your browser." />
   <meta name="theme-color" content="#5b4aaf" />
+  <meta property="og:title" content="TimeAndDatePro" />
+  <meta property="og:description" content="Time, day, date. Everywhere." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
+
+  <!-- Suppress noise from third-party browser-extension scripts -->
+  <script>
+    (function () {
+      const NOISE = /(share-modal\.js|frame start\.js|chrome-extension|moz-extension)/i;
+      window.addEventListener("error", function (e) {
+        const src = ((e.filename || "") + " " + (e.message || "")).trim();
+        if (NOISE.test(src)) { e.preventDefault(); e.stopImmediatePropagation(); return false; }
+      }, true);
+      window.addEventListener("unhandledrejection", function (e) {
+        const reason = String((e.reason && (e.reason.stack || e.reason.message)) || e.reason || "");
+        if (NOISE.test(reason)) { e.preventDefault(); e.stopImmediatePropagation(); }
+      });
+    })();
+  </script>
+
   <style>
     /* ============================================================
-       Widgetly design system — NotebookLM color tokens
-       Light: pastel multi-radial gradient (peach, lavender, blue, mint) + purple
-       Dark : deep purple bg + orange LED
+       Widgetly design tokens — NotebookLM
        ============================================================ */
-    :root,
-    [data-theme="light"] {
+    :root, [data-theme="light"] {
       --color-primary: #5b4aaf;
       --color-primary-fg: #ffffff;
       --color-foreground: #49445f;
@@ -32,20 +48,16 @@
       --color-border-soft: rgba(92,74,175,.08);
       --color-background: #ffffff;
       --color-background-soft: #faf8ff;
+      --color-glow: drop-shadow(0 5px 8px rgba(91,77,145,.10));
       --color-on-segment: #47435f;
       --color-off-segment: transparent;
       --color-off-segment-border: transparent;
       --color-off-segment-border-opacity: 0;
       --color-off-segment-opacity: 0;
-      --color-glow: drop-shadow(0 5px 8px rgba(91,77,145,.10));
-      --color-led: #5b4aaf;
       --color-period-bg: rgba(255,255,255,.76);
       --color-period-fg: #49445f;
       --color-period-border: rgba(87,69,165,.14);
       --color-period-shadow: 0 8px 24px rgba(97,76,160,.18);
-      --color-microcopy: #9a92b0;
-      --color-code-bg: rgba(255,255,255,.68);
-      --color-code-fg: #5b4aaf;
       --color-page-texture:
         radial-gradient(circle at 12% 18%, rgba(255,216,170,.92), transparent 27%),
         radial-gradient(circle at 83% 15%, rgba(197,220,255,.95), transparent 31%),
@@ -57,7 +69,6 @@
       --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
       color-scheme: light;
     }
-
     [data-theme="dark"] {
       --color-primary: #a78bfa;
       --color-primary-fg: #0f0a1f;
@@ -67,80 +78,65 @@
       --color-muted-soft: #6b6585;
       --color-border: rgba(167,139,250,.18);
       --color-border-soft: rgba(167,139,250,.10);
-      --color-background: #16092e;
-      --color-background-soft: #1f0a3e;
+      --color-background: #0f0820;
+      --color-background-soft: #16092e;
+      --color-glow: drop-shadow(0 0 12px rgba(249,115,22,.25));
       --color-on-segment: #f97316;
       --color-off-segment: transparent;
       --color-off-segment-border: transparent;
       --color-off-segment-border-opacity: 0;
       --color-off-segment-opacity: 0;
-      --color-glow: drop-shadow(0 0 12px rgba(249,115,22,.25));
-      --color-led: #f97316;
-      --color-period-bg: #1f0a3e;
+      --color-period-bg: rgba(31,10,62,.7);
       --color-period-fg: #f97316;
-      --color-period-border: rgba(249,115,22,.32);
-      --color-period-shadow: 0 4px 18px rgba(249,115,22,.22);
-      --color-microcopy: #6b6585;
-      --color-code-bg: #1f0a3e;
-      --color-code-fg: #f97316;
+      --color-period-border: rgba(249,115,22,.30);
+      --color-period-shadow: 0 4px 18px rgba(249,115,22,.20);
       --color-page-texture:
-        radial-gradient(circle at 18% 22%, rgba(139,92,246,.25), transparent 30%),
-        radial-gradient(circle at 82% 18%, rgba(99,102,241,.18), transparent 28%),
-        radial-gradient(circle at 75% 80%, rgba(168,85,247,.20), transparent 30%),
-        radial-gradient(circle at 22% 78%, rgba(59,130,246,.14), transparent 28%),
-        linear-gradient(160deg, #16092e 0%, #1f0a3e 50%, #0f0a1f 100%);
+        radial-gradient(circle at 18% 22%, rgba(139,92,246,.30), transparent 30%),
+        radial-gradient(circle at 82% 18%, rgba(99,102,241,.20), transparent 28%),
+        radial-gradient(circle at 75% 80%, rgba(168,85,247,.22), transparent 30%),
+        radial-gradient(circle at 22% 78%, rgba(59,130,246,.15), transparent 28%),
+        linear-gradient(160deg, #0f0820 0%, #1f0a3e 50%, #0a0418 100%);
       --color-nav-underline: linear-gradient(90deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
       --color-logo-gradient: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
       --color-button-primary: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
       color-scheme: dark;
     }
 
-    *,
-    *::before,
-    *::after { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; scroll-behavior: smooth; }
     body {
       margin: 0;
+      min-height: 100vh;
       background: var(--color-background);
       color: var(--color-foreground);
       font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
       line-height: 1.55;
       transition: background-color 0.4s ease, color 0.4s ease;
       position: relative;
-      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     body::before {
       content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
+      position: fixed; inset: 0; z-index: -1;
       background: var(--color-page-texture);
       pointer-events: none;
       transition: background 0.4s ease;
     }
     a { color: inherit; text-decoration: none; }
     button { font: inherit; cursor: pointer; background: none; border: none; padding: 0; color: inherit; }
-    code { font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace; font-size: 0.875em; padding: 0.1rem 0.4rem; background: var(--color-code-bg); color: var(--color-code-fg); border-radius: 4px; }
-    ::selection { background: color-mix(in srgb, var(--color-primary) 25%, transparent); color: var(--color-foreground); }
+    ::selection { background: color-mix(in srgb, var(--color-primary) 25%, transparent); }
     :focus-visible { outline: none; box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px color-mix(in srgb, var(--color-primary) 50%, transparent); }
 
     .container { width: 100%; margin-inline: auto; padding-inline: 1.5rem; max-width: 1240px; }
     @media (min-width: 640px) { .container { padding-inline: 2rem; } }
     @media (min-width: 1024px) { .container { padding-inline: 2.5rem; } }
 
-    .font-mono { font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace; }
-    .text-muted { color: var(--color-muted); }
-    .text-muted-soft { color: var(--color-muted-soft); }
-    .text-led { color: var(--color-led); }
-    .text-foreground { color: var(--color-foreground); }
-
     /* ============================================================
        HEADER
        ============================================================ */
     .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      position: sticky; top: 0; z-index: 50;
       background: color-mix(in srgb, var(--color-background) 75%, transparent);
       backdrop-filter: saturate(180%) blur(14px);
       -webkit-backdrop-filter: saturate(180%) blur(14px);
@@ -148,7 +144,7 @@
     }
     .header-row { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 1rem; }
     .logo { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; }
-    .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 0.5rem; background-image: var(--color-logo-gradient); color: white; font-size: 0.875rem; font-weight: 700; font-family: ui-monospace, monospace; box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 30%, transparent); }
+    .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 0.5rem; background-image: var(--color-logo-gradient); color: white; font-size: 0.875rem; font-weight: 800; font-family: ui-monospace, monospace; box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 30%, transparent); }
     .logo-text { font-size: 1.125rem; letter-spacing: -0.02em; font-weight: 800; }
     .nav-main { display: none; gap: 0.25rem; }
     @media (min-width: 1024px) { .nav-main { display: inline-flex; } }
@@ -159,57 +155,44 @@
     .now-dot { display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: #10b981; margin-right: 0.4rem; vertical-align: middle; position: relative; }
     .now-dot::after { content: ""; position: absolute; inset: -3px; border-radius: 9999px; background: #10b981; opacity: 0.3; animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
     @keyframes ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
-
     .header-actions { display: inline-flex; align-items: center; gap: 0.5rem; }
-
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap; font-size: 0.875rem; font-weight: 700; letter-spacing: -0.005em; transition: all 200ms ease; text-decoration: none; border: 1px solid transparent; height: 40px; padding: 0 1rem; cursor: pointer; border-radius: 9999px; }
     .btn-sm { height: 34px; padding: 0 0.75rem; font-size: 0.8125rem; }
     .btn-primary { color: var(--color-primary-fg); background-image: var(--color-button-primary); box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 25%, transparent); }
     .btn-primary:hover { filter: brightness(1.05); }
     .btn-ghost { color: var(--color-foreground); }
     .btn-ghost:hover { color: var(--color-primary); }
-    .btn-outline { color: var(--color-foreground); border-color: var(--color-border); background: var(--color-period-bg); backdrop-filter: blur(8px); }
-    .btn-outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
-
-    .theme-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.25rem;
-      background: var(--color-period-bg);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--color-border);
-      border-radius: 9999px;
-    }
-    .theme-toggle button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      border-radius: 9999px;
-      color: var(--color-muted);
-      transition: all 200ms ease;
-    }
+    .theme-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); backdrop-filter: blur(8px); border: 1px solid var(--color-border); border-radius: 9999px; }
+    .theme-toggle button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 9999px; color: var(--color-muted); transition: all 200ms ease; }
     .theme-toggle button svg { width: 0.95rem; height: 0.95rem; }
-    .theme-toggle button[aria-pressed="true"] {
-      background: var(--color-button-primary);
-      color: white;
-      box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent);
-    }
+    .theme-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
     /* ============================================================
-       SEVEN-SEGMENT CLOCK
+       LANDING HERO — centered time
        ============================================================ */
-    .seg-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 2vw, 2rem); width: 100%; }
-    .seg-label { margin-bottom: clamp(1.25rem, 2.5vw, 2rem); color: var(--color-muted); font-size: clamp(0.875rem, 1.5vw, 1.125rem); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s ease; }
+    main.landing {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(2rem, 6vw, 4rem) 1.5rem clamp(3rem, 8vw, 5rem);
+    }
+    .seg-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 1100px;
+    }
     .seg-row {
-      --main-digit-width: clamp(68px, 9vw, 118px);
-      --small-digit-width: clamp(30px, 4vw, 50px);
-      --digit-gap: 8px;
-      --colon-width: 18px;
-      --colon-side-space: 12px;
-      --period-width: 58px;
+      --main-digit-width: clamp(64px, 10vw, 130px);
+      --small-digit-width: clamp(28px, 4vw, 56px);
+      --digit-gap: clamp(6px, 0.8vw, 10px);
+      --colon-width: clamp(14px, 1.6vw, 22px);
+      --colon-side-space: clamp(8px, 1.2vw, 16px);
+      --period-width: clamp(48px, 6vw, 78px);
 
       display: grid;
       grid-template-columns:
@@ -218,24 +201,14 @@
         calc((var(--main-digit-width) * 2) + var(--digit-gap))
         calc(var(--colon-width) + (var(--colon-side-space) * 2))
         calc((var(--main-digit-width) * 2) + var(--digit-gap))
-        calc(11px + (var(--small-digit-width) * 2) + (var(--digit-gap) * 2))
         var(--period-width);
 
       align-items: end;
       justify-content: center;
-      column-gap: 0;
       width: 100%;
       white-space: nowrap;
     }
-
-    .seg-digit-group{
-display:flex;
-align-items:flex-end;
-gap:var(--digit-gap);
-flex:0 0 auto;
-}
-
-    /* Every hour, minute, and second digit uses exactly the same box. */
+    .seg-digit-group { display: flex; align-items: flex-end; gap: var(--digit-gap); flex: 0 0 auto; }
     .seg-digit {
       --width: var(--main-digit-width);
       --height: calc(var(--width) * 1.82);
@@ -248,48 +221,19 @@ flex:0 0 auto;
       flex: 0 0 var(--width);
       filter: var(--color-glow);
     }
-
-    .seg-digit.small {
-      --width: var(--small-digit-width);
-      --height: calc(var(--width) * 1.82);
-      --thickness: calc(var(--width) * .18);
-    }
-
     .seg { position: absolute; background: var(--color-off-segment); border: 1px solid color-mix(in srgb, var(--color-off-segment-border) calc(var(--color-off-segment-border-opacity) * 100%), transparent); opacity: var(--color-off-segment-opacity); transition: background 45ms linear, border-color 45ms linear, opacity 45ms linear, box-shadow 45ms linear; }
     [data-theme="dark"] .seg { box-shadow: inset 0 0 0 0.5px rgba(0,0,0,.4); }
     .seg.on { z-index: 1; background: var(--color-on-segment); border-color: transparent; opacity: 1; box-shadow: 0 0 6px color-mix(in srgb, var(--color-on-segment) 35%, transparent); }
     .seg.horizontal { left: var(--thickness); width: calc(100% - (var(--thickness) * 2)); height: var(--thickness); clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); }
-    .seg.vertical {
-      width: var(--thickness);
-      height: calc(50% - (var(--thickness) * 0.55));
-      clip-path: polygon(
-        0 8%,
-        50% 0,
-        100% 8%,
-        100% 92%,
-        50% 100%,
-        0 92%
-      );
-    }
-
+    .seg.vertical { width: var(--thickness); height: calc(50% - (var(--thickness) * 0.55)); clip-path: polygon(0 8%, 50% 0, 100% 8%, 100% 92%, 50% 100%, 0 92%); }
     .seg.a { top: 0; }
     .seg.g { top: 50%; transform: translateY(-50%); }
     .seg.d { bottom: 0; }
-
-    /* Extend the vertical strokes closer to the top, middle, and bottom.
-       This gives digit 1 the same apparent height as every other digit. */
     .seg.f { top: calc(var(--thickness) * 0.42); left: 0; }
     .seg.b { top: calc(var(--thickness) * 0.42); right: 0; }
     .seg.e { bottom: calc(var(--thickness) * 0.42); left: 0; }
     .seg.c { right: 0; bottom: calc(var(--thickness) * 0.42); }
-
-    /* Digit 1 uses the same cell size as every other number, but its two
-       illuminated bars are centered so the visual spacing around colons
-       remains balanced. */
-    .seg-digit.is-one .seg.b,
-    .seg-digit.is-one .seg.c {
-      right: calc(50% - (var(--thickness) / 2));
-    }
+    .seg-digit.is-one .seg.b, .seg-digit.is-one .seg.c { right: calc(50% - (var(--thickness) / 2)); }
     .seg-colon {
       position: relative;
       align-self: end;
@@ -299,44 +243,34 @@ flex:0 0 auto;
       margin: 0;
       filter: var(--color-glow);
     }
-    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.65rem; height: 0.65rem; border-radius: 3px; background: var(--color-on-segment); transform: translateX(-50%); }
+    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.6rem; height: 0.6rem; border-radius: 3px; background: var(--color-on-segment); transform: translateX(-50%); }
     .seg-colon::before { top: 27%; } .seg-colon::after { bottom: 27%; }
-    .seg-hundreds {
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: var(--digit-gap);
-      width: 100%;
-      margin: 0;
-      padding-bottom: 0;
-    }
-    .seg-decimal { width: clamp(7px, 0.85vw, 11px); height: clamp(7px, 0.85vw, 11px); margin: 0 1px clamp(0.45rem, 1.1vw, 0.85rem); border-radius: 2px; background: var(--color-on-segment); filter: var(--color-glow); animation: blink 1s steps(2, end) infinite; }
-    @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0.3; } }
     .seg-period {
       width: var(--period-width);
       margin: 0 0 clamp(5px, 0.7vw, 9px);
       padding: 0;
       border: 0;
-      border-radius: 0;
-      align-self: end;
-      justify-self: start;
       background: transparent;
       color: var(--color-period-fg);
-      box-shadow: none;
       font-family: "Courier New", ui-monospace, monospace;
       font-size: clamp(0.7rem, 1.15vw, 0.95rem);
       font-weight: 800;
       letter-spacing: 0.22em;
       line-height: 1;
-      opacity: 1;
-      transform: scale(1);
       white-space: nowrap;
+      align-self: end;
+      justify-self: start;
     }
-    .seg-period.is-hidden { visibility: hidden; opacity: 0; transform: scale(0.85); pointer-events: none; }
-    .seg-date { margin-top: clamp(2rem, 4vw, 3.5rem); color: var(--color-foreground); font-family: "Courier New", ui-monospace, monospace; font-size: clamp(1rem, 2.4vw, 1.875rem); font-weight: 800; letter-spacing: 0.09em; text-align: center; }
-    .seg-micro { margin-top: 1.25rem; color: var(--color-microcopy); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; text-align: center; }
-
-    /* 12h/24h format toggle (placed after the date line) */
+    .seg-period.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+    .seg-date {
+      margin-top: clamp(1.5rem, 3vw, 2.5rem);
+      color: var(--color-foreground);
+      font-family: "Courier New", ui-monospace, monospace;
+      font-size: clamp(1rem, 2.4vw, 1.875rem);
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-align: center;
+    }
     .seg-format-toggle {
       display: inline-flex;
       align-items: center;
@@ -345,7 +279,7 @@ flex:0 0 auto;
       background: var(--color-period-bg);
       border: 1px solid var(--color-border);
       border-radius: 9999px;
-      margin-top: 1rem;
+      margin-top: 1.25rem;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -370,78 +304,13 @@ flex:0 0 auto;
     }
 
     /* ============================================================
-       PAGE LAYOUT
+       Responsive
        ============================================================ */
-    .section { padding: 5rem 0; border-top: 1px solid var(--color-border-soft); }
-    .section-first { border-top: none; padding-top: 4rem; }
-    .eyebrow { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 0 0 0.5rem; }
-    .meta { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-muted-soft); }
-    .display-1 { font-size: clamp(2.25rem, 5vw, 3rem); line-height: 1.05; letter-spacing: -0.04em; font-weight: 800; margin: 0.5rem 0 1.5rem; }
-    .display-2 { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.15; letter-spacing: -0.025em; font-weight: 800; margin: 0 0 1.5rem; }
-    .lead { max-width: 48rem; font-size: 1.125rem; color: var(--color-muted); margin: 0 0 2rem; }
-    .section-head { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 3rem; }
-    @media (min-width: 768px) { .section-head { grid-template-columns: 200px 1fr; gap: 3rem; } }
-
-    /* defs */
-    .defs { list-style: none; padding: 0; margin: 0; max-width: 56rem; }
-    .defs li { display: grid; grid-template-columns: 1fr; gap: 0.25rem; padding: 1.25rem 0; border-top: 1px solid var(--color-border); }
-    @media (min-width: 768px) { .defs li { grid-template-columns: 200px 1fr; gap: 2rem; } }
-    .defs li:last-child { border-bottom: 1px solid var(--color-border); }
-    .defs dt { font-weight: 700; color: var(--color-foreground); }
-    .defs dd { margin: 0; color: var(--color-muted); font-size: 0.95rem; line-height: 1.6; }
-
-    /* Footer */
-    .site-footer { border-top: 1px solid var(--color-border); margin-top: 4rem; padding: 2rem 0 3rem; }
-    .footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    .footer-row p { margin: 0; font-size: 0.875rem; color: var(--color-muted); }
-    .footer-row .meta { font-size: 0.6875rem; }
-
-    .hero { padding: 6rem 0 5rem; }
-    .hero-eyebrow-row { display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
-    .hero-eyebrow-row .meta { color: var(--color-primary); }
-    .gradient-text { background: var(--color-button-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
-    /* swatches */
-    .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-    .swatch { display: flex; flex-direction: column; gap: 0.5rem; }
-    .swatch-chip { aspect-ratio: 4 / 3; border-radius: 0.5rem; border: 1px solid var(--color-border); }
-    .swatch-name { font-family: ui-monospace, monospace; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground); }
-    .swatch-value { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); }
-
-    /* use list */
-    .use-list { list-style: none; padding: 0; margin: 0; }
-    .use-list li { padding: 1.5rem 0; border-top: 1px solid var(--color-border); }
-    .use-list li:last-child { border-bottom: 1px solid var(--color-border); }
-    .use-list .use-num { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-muted-soft); }
-    .use-list .use-title { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.02em; margin: 0.25rem 0 0.5rem; color: var(--color-foreground); }
-    .use-list .use-desc { font-size: 0.9375rem; color: var(--color-muted); margin: 0; max-width: 48rem; line-height: 1.6; }
-
-    @media (max-width: 760px) {
-      .seg-row {
-        --main-digit-width: clamp(40px, 10.8vw, 62px);
-        --small-digit-width: clamp(18px, 4.8vw, 29px);
-        --digit-gap: 3px;
-        --colon-width: 10px;
-        --colon-side-space: 4px;
-        --period-width: 34px;
-      }
-
-      .seg-period {
-        font-size: 0.56rem;
-        letter-spacing: 0.12em;
-      }
-    }
-
-    /* Tablet: stack header nav, tighten section spacing */
     @media (max-width: 1023px) and (min-width: 761px) {
       .header-row { gap: 0.5rem; }
       .nav-main { gap: 0; }
       .nav-link { padding: 0.5rem 0.5rem; font-size: 0.8125rem; }
-      .section { padding: 4rem 0; }
-      .hero { padding: 5rem 0 4rem; }
     }
-
-    /* Mobile: hide nav, stack header actions, compress hero */
     @media (max-width: 760px) {
       .header-row { height: 56px; }
       .nav-main { display: none !important; }
@@ -449,34 +318,14 @@ flex:0 0 auto;
       .btn-sm { height: 32px; padding: 0 0.625rem; font-size: 0.75rem; }
       .logo-text { font-size: 1rem; }
       .logo-mark { width: 28px; height: 28px; font-size: 0.8125rem; }
-      .hero { padding: 3rem 0 2.5rem; }
-      .hero-eyebrow-row { margin-bottom: 1rem; }
-      .display-1 { font-size: clamp(1.875rem, 9vw, 2.5rem); }
-      .lead { font-size: 1rem; }
-      .section { padding: 3rem 0; }
-      .section-head { gap: 0.75rem; margin-bottom: 2rem; }
-      .display-2 { font-size: clamp(1.25rem, 6vw, 1.5rem); }
-      .use-list li { padding: 1.25rem 0; }
-      .use-list .use-title { font-size: 1rem; }
-      .use-list .use-desc { font-size: 0.875rem; }
-      .swatches { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-      .defs li { padding: 1rem 0; }
-      .defs dt { font-size: 0.9375rem; }
-      .defs dd { font-size: 0.875rem; }
-      .seg-card { padding: 1.5rem 0.5rem; }
-      .seg-format-toggle { margin-top: 0.875rem; }
+      main.landing { padding-top: 1.5rem; }
+      .seg-row { --colon-width: 10px; --colon-side-space: 6px; --period-width: 36px; }
+      .seg-colon::before, .seg-colon::after { width: 0.4rem; height: 0.4rem; }
+      .seg-date { font-size: 0.95rem; margin-top: 1.25rem; }
+      .seg-format-toggle { margin-top: 1rem; }
       .seg-format-toggle button { padding: 0.35rem 0.7rem; font-size: 0.625rem; }
-      .footer-row { flex-direction: column; align-items: flex-start; }
     }
-
-    /* Very small phones: even tighter */
-    @media (max-width: 380px) {
-      .container { padding-inline: 1rem; }
-      .header-actions { gap: 0.25rem; }
-      .header-actions .btn-ghost { display: none; }
-    }
-
-@media (prefers-reduced-motion: reduce) {
+    @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
   </style>
@@ -486,19 +335,17 @@ flex:0 0 auto;
   <!-- HEADER -->
   <header class="site-header">
     <div class="container header-row">
-      <a href="#" class="logo" aria-label="TimeAndDatePro home">
+      <a href="/" class="logo" aria-label="TimeAndDatePro home">
         <span class="logo-mark">T</span>
         <span class="logo-text">TimeAndDatePro</span>
       </a>
-
       <nav class="nav-main" aria-label="Main">
-        <a href="#hero" class="nav-link nav-link-active"><span class="now-dot" aria-hidden="true"></span>Today</a>
-        <a href="#meeting" class="nav-link">Meeting finder</a>
-        <a href="#clock" class="nav-link">World clock</a>
-        <a href="#navigator" class="nav-link">Timezone navigator</a>
-        <a href="#blog" class="nav-link">Blog</a>
+        <a href="/" class="nav-link nav-link-active"><span class="now-dot" aria-hidden="true"></span>Today</a>
+        <a href="/globe/" class="nav-link">3D Globe</a>
+        <a href="#" class="nav-link">Meeting finder</a>
+        <a href="#" class="nav-link">World clock</a>
+        <a href="#" class="nav-link">Blog</a>
       </nav>
-
       <div class="header-actions">
         <div class="theme-toggle" role="group" aria-label="Theme">
           <button id="theme-light" aria-pressed="true" aria-label="Light mode" title="Light mode">
@@ -508,242 +355,34 @@ flex:0 0 auto;
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </button>
         </div>
-        <a href="#" class="btn btn-ghost btn-sm">Sign in</a>
+        <a href="/" class="btn btn-ghost btn-sm">Home</a>
         <a href="#" class="btn btn-primary btn-sm">Get started</a>
       </div>
     </div>
   </header>
 
-  <main>
-    <!-- HERO -->
-    <section id="hero" class="container hero">
-      <div class="hero-eyebrow-row">
-        <p class="eyebrow" style="margin: 0;">Widget Design System · NotebookLM tokens</p>
-        <span class="meta">Live · v0.1</span>
+  <main class="landing">
+    <section class="seg-card" aria-label="Local current time">
+      <div class="seg-row" aria-label="Live current time">
+        <div id="hours" class="seg-digit-group"></div>
+        <div class="seg-colon" aria-hidden="true"></div>
+        <div id="minutes" class="seg-digit-group"></div>
+        <div class="seg-colon" aria-hidden="true"></div>
+        <div id="seconds" class="seg-digit-group"></div>
+        <div id="period" class="seg-period is-hidden">AM</div>
       </div>
-
-      <h1 class="display-1">
-        Time, told like a <span class="gradient-text">real clock</span>.<br />
-        Colored like <span class="text-led">NotebookLM</span>.
-      </h1>
-      <p class="lead">
-        A seven-segment display drawn in pure CSS — no font, no dependency. Soft
-        pastel gradients in light, deep purple with orange LED in dark. Built on
-        the Widgetly design system, with no cards, just white space and hairline
-        rules.
-      </p>
-
-      <div class="seg-card" id="seg-clock-card">
-        <div class="seg-label">Time Now</div>
-        <div class="seg-row" aria-label="Live current time">
-          <div id="hours" class="seg-digit-group"></div>
-          <div class="seg-colon" aria-hidden="true"></div>
-          <div id="minutes" class="seg-digit-group"></div>
-          <div class="seg-colon" aria-hidden="true"></div>
-          <div id="seconds" class="seg-digit-group"></div>
-          <div class="seg-hundreds" title="Hundredths of a second">
-            <span class="seg-decimal" aria-hidden="true"></span>
-            <div id="milliseconds" class="seg-digit-group"></div>
-          </div>
-          <div id="period" class="seg-period">AM</div>
-        </div>
-        <div id="date" class="seg-date">—</div>
-        <div class="seg-format-toggle" role="group" aria-label="Time format">
-          <button id="format-12" data-format="12" aria-pressed="true" type="button">12h</button>
-          <button id="format-24" data-format="24" aria-pressed="false" type="button">24h</button>
-        </div>
-        <div class="seg-micro">Live · two-digit milliseconds</div>
+      <div class="seg-date" id="date">—</div>
+      <div class="seg-format-toggle" role="group" aria-label="Time format">
+        <button id="format-12" type="button" aria-pressed="false">12h</button>
+        <button id="format-24" type="button" aria-pressed="true">24h</button>
       </div>
     </section>
-
-    <!-- §01 Design system -->
-    <section class="container section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">01</p>
-          <p class="meta">Tokens</p>
-        </div>
-        <div>
-          <h2 class="display-2">The NotebookLM-flavored design system.</h2>
-          <p class="lead" style="margin-bottom: 2rem;">
-            Same Widgetly architecture, NotebookLM color palette. Soft pastel
-            background gradients (peach, lavender, blue, mint) in light, deep
-            purple with orange LED in dark. Every token is a CSS variable.
-          </p>
-        </div>
-      </div>
-
-      <h3 class="meta" style="margin-bottom: 1rem; color: var(--color-foreground);">Color tokens · light</h3>
-      <div class="swatches">
-        <div class="swatch">
-          <div class="swatch-chip" style="background: #5b4aaf;"></div>
-          <span class="swatch-name">--color-primary</span>
-          <span class="swatch-value">#5b4aaf</span>
-        </div>
-        <div class="swatch">
-          <div class="swatch-chip" style="background: #47435f;"></div>
-          <span class="swatch-name">--color-on-segment</span>
-          <span class="swatch-value">#47435f</span>
-        </div>
-        <div class="swatch">
-          <div class="swatch-chip" style="background: #49445f;"></div>
-          <span class="swatch-name">--color-foreground</span>
-          <span class="swatch-value">#49445f</span>
-        </div>
-        <div class="swatch">
-          <div class="swatch-chip" style="background: linear-gradient(135deg,#fff8ef 0%,#f4f3ff 46%,#edf7ff 100%);"></div>
-          <span class="swatch-name">--color-background</span>
-          <span class="swatch-value">pastel gradient</span>
-        </div>
-      </div>
-
-      <h3 class="meta" style="margin: 3rem 0 1rem; color: var(--color-foreground);">Color tokens · dark</h3>
-      <div class="swatches">
-        <div class="swatch">
-          <div class="swatch-chip" style="background: #a78bfa;"></div>
-          <span class="swatch-name">--color-primary</span>
-          <span class="swatch-value">#a78bfa</span>
-        </div>
-        <div class="swatch">
-          <div class="swatch-chip" style="background: #f97316;"></div>
-          <span class="swatch-name">--color-on-segment</span>
-          <span class="swatch-value">#f97316</span>
-        </div>
-        <div class="swatch">
-          <div class="swatch-chip" style="background: #ede9fe;"></div>
-          <span class="swatch-name">--color-foreground</span>
-          <span class="swatch-value">#ede9fe</span>
-        </div>
-        <div class="swatch">
-          <div class="swatch-chip" style="background: linear-gradient(160deg, #16092e 0%, #1f0a3e 50%, #0f0a1f 100%);"></div>
-          <span class="swatch-name">--color-background</span>
-          <span class="swatch-value">deep purple</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- §02 How it works -->
-    <section class="container section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">02</p>
-          <p class="meta">Seven-segment</p>
-        </div>
-        <div>
-          <h2 class="display-2">How the display works.</h2>
-          <p class="lead" style="margin-bottom: 2rem;">
-            Each digit is a <code>div</code> with seven absolutely-positioned
-            children. Each segment is a <code>span</code> with a hexagonal
-            <code>clip-path</code>. To light up a number, we toggle the
-            <code>on</code> class on the right segment names. The 7-segment
-            pattern is hard-coded — no font, no SVG.
-          </p>
-        </div>
-      </div>
-
-      <dl class="defs">
-        <li>
-          <dt>Digit patterns</dt>
-          <dd><code>0: [a,b,c,d,e,f]</code> · <code>1: [b,c]</code> · <code>2: [a,b,g,e,d]</code> · <code>3: [a,b,c,d,g]</code> · <code>4: [f,g,b,c]</code> · <code>5: [a,f,g,c,d]</code> · <code>6: [a,f,g,e,c,d]</code> · <code>7: [a,b,c]</code> · <code>8: [a,b,c,d,e,f,g]</code> · <code>9: [a,b,c,d,f,g]</code></dd>
-        </li>
-        <li>
-          <dt>Segment shapes</dt>
-          <dd>Horizontal: <code>clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%)</code> — gives the pointy-end hexagon look. Vertical: similar but rotated.</dd>
-        </li>
-        <li>
-          <dt>The "off" state</dt>
-          <dd>In dark mode inactive segments drop to <code>opacity: .06</code> — that's what makes it look like a real LED clock instead of a "always-on" font.</dd>
-        </li>
-        <li>
-          <dt>Glow</dt>
-          <dd>Light: <code>drop-shadow(0 5px 8px rgba(91,77,145,.10))</code> for a soft purple shadow. Dark: <code>drop-shadow(0 0 12px rgba(249,115,22,.25))</code> for the LED amber glow.</dd>
-        </li>
-        <li>
-          <dt>Animation</dt>
-          <dd><code>requestAnimationFrame</code> at 60fps. The hundredths digit changes 100 times per second, the seconds digit changes once a second.</dd>
-        </li>
-        <li>
-          <dt>Theming</dt>
-          <dd>One <code>data-theme="light" | "dark"</code> attribute on the <code>&lt;html&gt;</code> element. CSS variables flip. <code>localStorage</code> persists. OS preference is respected on first visit.</dd>
-        </li>
-      </dl>
-    </section>
-
-    <!-- §03 Use cases -->
-    <section class="container section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">03</p>
-          <p class="meta">Reuse</p>
-        </div>
-        <div>
-          <h2 class="display-2">Where this clock is going.</h2>
-          <p class="lead" style="margin-bottom: 2rem;">
-            One <code>&lt;SevenSegClock&gt;</code> component, used in five pages.
-            Each page forces its own theme. The component itself doesn't care
-            about which page it's on.
-          </p>
-        </div>
-      </div>
-
-      <ul class="use-list">
-        <li>
-          <p class="use-num">USE 01</p>
-          <p class="use-title">Today · the hero clock</p>
-          <p class="use-desc">The full-size 7-segment display as the page hero. Light mode for the public landing, dark mode for the logged-in dashboard. Updates every frame.</p>
-        </li>
-        <li>
-          <p class="use-num">USE 02</p>
-          <p class="use-title">World Clock · inline city times</p>
-          <p class="use-desc">A smaller variant for each pinned city. Click a city → it lights up briefly to confirm the selection. Hovering a row keeps the time frozen so you can read it.</p>
-        </li>
-        <li>
-          <p class="use-num">USE 03</p>
-          <p class="use-title">Meeting Finder · the overlap time</p>
-          <p class="use-desc">The result of a 3-city search is the suggested meeting time. Big clock, with the city's timezone underneath. Dark mode forced — keeps the focus on the time.</p>
-        </li>
-        <li>
-          <p class="use-num">USE 04</p>
-          <p class="use-title">Timezone Navigator · the from/to times</p>
-          <p class="use-desc">Two clocks side by side, one for "from" and one for "to". When the user drags the time slider, both update. Light mode here, since it's a working/utility surface.</p>
-        </li>
-        <li>
-          <p class="use-num">USE 05</p>
-          <p class="use-title">3D Globe · the hover tooltip</p>
-          <p class="use-desc">Hovering a city on the globe shows a small 7-seg clock with that city's current time. Tooltip-scale (smaller digits, no date line, no AM/PM pill).</p>
-        </li>
-      </ul>
-    </section>
-
-    <footer class="site-footer">
-      <div class="container footer-row">
-        <p>© 2026 TimeAndDatePro · The Widgetly design system · NotebookLM tokens</p>
-        <p class="meta">v0.1 · no-cards edition · single page</p>
-      </div>
-    </footer>
   </main>
 
   <script>
-    // Suppress noise from third-party browser-extension scripts (share-modal.js, frame start.js, etc.)
-    (function () {
-      const NOISE = /(share-modal\.js|frame start\.js|chrome-extension|moz-extension)/i;
-      window.addEventListener("error", function (e) {
-        const src = ((e.filename || "") + " " + (e.message || "")).trim();
-        if (NOISE.test(src)) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          return false;
-        }
-      }, true);
-      window.addEventListener("unhandledrejection", function (e) {
-        const reason = String((e.reason && (e.reason.stack || e.reason.message)) || e.reason || "");
-        if (NOISE.test(reason)) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-        }
-      });
-    })();
-
+    // ============================================================
+    // Seven-segment digit patterns
+    // ============================================================
     const DIGIT_PATTERNS = {
       0: ["a","b","c","d","e","f"],
       1: ["b","c"],
@@ -758,11 +397,15 @@ flex:0 0 auto;
     };
     const WEEKDAYS = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
     const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-    let use24Hour = false;
 
-    function createDigit(parent, className = "") {
+    let use24Hour = true;
+
+    // ============================================================
+    // Build digits
+    // ============================================================
+    function createDigit(parent) {
       const digit = document.createElement("div");
-      digit.className = `seg-digit ${className}`.trim();
+      digit.className = "seg-digit";
       ["a","b","c","d","e","f","g"].forEach(name => {
         const seg = document.createElement("span");
         const orientation = ["a","g","d"].includes(name) ? "horizontal" : "vertical";
@@ -775,11 +418,13 @@ flex:0 0 auto;
     const hourDigits = [createDigit(document.getElementById("hours")), createDigit(document.getElementById("hours"))];
     const minuteDigits = [createDigit(document.getElementById("minutes")), createDigit(document.getElementById("minutes"))];
     const secondDigits = [createDigit(document.getElementById("seconds")), createDigit(document.getElementById("seconds"))];
-    const millisecondDigits = [createDigit(document.getElementById("milliseconds"), "small"), createDigit(document.getElementById("milliseconds"), "small")];
+
+    // ============================================================
+    // Render a single digit
+    // ============================================================
     function renderDigit(el, n) {
       const active = new Set(DIGIT_PATTERNS[n] || []);
       el.classList.toggle("is-one", Number(n) === 1);
-
       el.querySelectorAll(".seg").forEach(seg => {
         const name = [...seg.classList].find(c => /^[a-g]$/.test(c));
         seg.classList.toggle("on", active.has(name));
@@ -790,6 +435,10 @@ flex:0 0 auto;
       renderDigit(els[0], Number(s[0]));
       renderDigit(els[1], Number(s[1]));
     }
+
+    // ============================================================
+    // Clock tick
+    // ============================================================
     function updateClock() {
       const now = new Date();
       const rawHours = now.getHours();
@@ -807,14 +456,13 @@ flex:0 0 auto;
 
       renderTwoDigits(minuteDigits, now.getMinutes());
       renderTwoDigits(secondDigits, now.getSeconds());
-      renderTwoDigits(millisecondDigits, Math.floor(now.getMilliseconds() / 10));
-      document.getElementById("date").textContent = `${WEEKDAYS[now.getDay()]} - ${MONTHS[now.getMonth()]} ${String(now.getDate()).padStart(2, "0")}, ${now.getFullYear()}`;
+      document.getElementById("date").textContent = `${WEEKDAYS[now.getDay()]} · ${MONTHS[now.getMonth()]} ${String(now.getDate()).padStart(2, "0")} · ${now.getFullYear()}`;
       requestAnimationFrame(updateClock);
     }
 
-    // ===================================================================
+    // ============================================================
     // Theme toggle (set up BEFORE first render so localStorage is honored)
-    // ===================================================================
+    // ============================================================
     const root = document.documentElement;
     const btnLight = document.getElementById("theme-light");
     const btnDark = document.getElementById("theme-dark");
@@ -822,38 +470,38 @@ flex:0 0 auto;
       root.setAttribute("data-theme", theme);
       btnLight.setAttribute("aria-pressed", String(theme === "light"));
       btnDark.setAttribute("aria-pressed", String(theme === "dark"));
-      try { localStorage.setItem("tdp-notebook-theme", theme); } catch (e) {}
+      try { localStorage.setItem("tdp-landing-theme", theme); } catch (e) {}
     }
     btnLight.addEventListener("click", () => setTheme("light"));
     btnDark.addEventListener("click", () => setTheme("dark"));
     let savedTheme = null;
-    try { savedTheme = localStorage.getItem("tdp-notebook-theme"); } catch (e) {}
+    try { savedTheme = localStorage.getItem("tdp-landing-theme"); } catch (e) {}
     if (savedTheme === "dark" || savedTheme === "light") {
       setTheme(savedTheme);
     } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setTheme("dark");
     }
 
-    // ===================================================================
+    // ============================================================
     // 12h/24h format toggle (set up BEFORE first render so localStorage is honored)
-    // ===================================================================
+    // ============================================================
     const btn12 = document.getElementById("format-12");
     const btn24 = document.getElementById("format-24");
     function setFormat(fmt) {
       use24Hour = fmt === "24";
       btn12.setAttribute("aria-pressed", String(!use24Hour));
       btn24.setAttribute("aria-pressed", String(use24Hour));
-      try { localStorage.setItem("tdp-notebook-format", use24Hour ? "24" : "12"); } catch (e) {}
+      try { localStorage.setItem("tdp-landing-format", use24Hour ? "24" : "12"); } catch (e) {}
     }
     btn12.addEventListener("click", () => setFormat("12"));
     btn24.addEventListener("click", () => setFormat("24"));
     let savedFormat = null;
-    try { savedFormat = localStorage.getItem("tdp-notebook-format"); } catch (e) {}
+    try { savedFormat = localStorage.getItem("tdp-landing-format"); } catch (e) {}
     if (savedFormat === "24" || savedFormat === "12") {
       setFormat(savedFormat);
     }
 
-    // Kick off the rAF loop (use24Hour is now correctly set from localStorage)
+    // Start the rAF loop
     updateClock();
   </script>
 </body>

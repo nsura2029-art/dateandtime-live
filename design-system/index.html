@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Widget Design System (NotebookLM) — TimeAndDatePro</title>
   <meta name="description" content="Widgetly design system with NotebookLM color tokens. Light (pastel gradient + purple) and dark (deep purple + orange LED)." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -721,6 +724,26 @@ flex:0 0 auto;
   </main>
 
   <script>
+    // Suppress noise from third-party browser-extension scripts (share-modal.js, frame start.js, etc.)
+    (function () {
+      const NOISE = /(share-modal\.js|frame start\.js|chrome-extension|moz-extension)/i;
+      window.addEventListener("error", function (e) {
+        const src = ((e.filename || "") + " " + (e.message || "")).trim();
+        if (NOISE.test(src)) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      }, true);
+      window.addEventListener("unhandledrejection", function (e) {
+        const reason = String((e.reason && (e.reason.stack || e.reason.message)) || e.reason || "");
+        if (NOISE.test(reason)) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
+      });
+    })();
+
     const DIGIT_PATTERNS = {
       0: ["a","b","c","d","e","f"],
       1: ["b","c"],

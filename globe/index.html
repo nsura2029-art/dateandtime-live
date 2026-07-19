@@ -182,6 +182,146 @@
        ============================================================ */
     .globe-page { padding: 0 0 4rem; }
 
+    /* ============================================================
+       SEVEN-SEGMENT CLOCK (local time)
+       ============================================================ */
+    .seg-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 2vw, 2rem) 0;
+      width: 100%;
+    }
+    .seg-row {
+      --main-digit-width: clamp(54px, 7vw, 96px);
+      --small-digit-width: clamp(24px, 3vw, 40px);
+      --digit-gap: 6px;
+      --colon-width: 14px;
+      --colon-side-space: 10px;
+      --period-width: 48px;
+
+      display: grid;
+      grid-template-columns:
+        calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        calc(var(--colon-width) + (var(--colon-side-space) * 2))
+        calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        calc(var(--colon-width) + (var(--colon-side-space) * 2))
+        calc((var(--main-digit-width) * 2) + var(--digit-gap))
+        var(--period-width);
+
+      align-items: end;
+      justify-content: center;
+      width: 100%;
+      white-space: nowrap;
+    }
+    .seg-digit-group { display: flex; align-items: flex-end; gap: var(--digit-gap); flex: 0 0 auto; }
+    .seg-digit {
+      --width: var(--main-digit-width);
+      --height: calc(var(--width) * 1.82);
+      --thickness: calc(var(--width) * .18);
+      position: relative;
+      width: var(--width);
+      height: var(--height);
+      min-width: var(--width);
+      max-width: var(--width);
+      flex: 0 0 var(--width);
+      filter: var(--color-glow);
+    }
+    .seg { position: absolute; background: var(--color-off-segment); border: 1px solid color-mix(in srgb, var(--color-off-segment-border) calc(var(--color-off-segment-border-opacity) * 100%), transparent); opacity: var(--color-off-segment-opacity); transition: background 45ms linear, border-color 45ms linear, opacity 45ms linear, box-shadow 45ms linear; }
+    [data-theme="dark"] .seg { box-shadow: inset 0 0 0 0.5px rgba(0,0,0,.4); }
+    .seg.on { z-index: 1; background: var(--color-on-segment); border-color: transparent; opacity: 1; box-shadow: 0 0 6px color-mix(in srgb, var(--color-on-segment) 35%, transparent); }
+    .seg.horizontal { left: var(--thickness); width: calc(100% - (var(--thickness) * 2)); height: var(--thickness); clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); }
+    .seg.vertical { width: var(--thickness); height: calc(50% - (var(--thickness) * 0.55)); clip-path: polygon(0 8%, 50% 0, 100% 8%, 100% 92%, 50% 100%, 0 92%); }
+    .seg.a { top: 0; }
+    .seg.g { top: 50%; transform: translateY(-50%); }
+    .seg.d { bottom: 0; }
+    .seg.f { top: calc(var(--thickness) * 0.42); left: 0; }
+    .seg.b { top: calc(var(--thickness) * 0.42); right: 0; }
+    .seg.e { bottom: calc(var(--thickness) * 0.42); left: 0; }
+    .seg.c { right: 0; bottom: calc(var(--thickness) * 0.42); }
+    .seg-digit.is-one .seg.b, .seg-digit.is-one .seg.c { right: calc(50% - (var(--thickness) / 2)); }
+    .seg-colon {
+      position: relative;
+      align-self: end;
+      justify-self: center;
+      width: var(--colon-width);
+      height: calc(var(--main-digit-width) * 1.82);
+      margin: 0;
+      filter: var(--color-glow);
+    }
+    .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.5rem; height: 0.5rem; border-radius: 2px; background: var(--color-on-segment); transform: translateX(-50%); }
+    .seg-colon::before { top: 27%; } .seg-colon::after { bottom: 27%; }
+    .seg-period {
+      width: var(--period-width);
+      margin: 0 0 clamp(4px, 0.6vw, 7px);
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--color-period-fg);
+      font-family: "Courier New", ui-monospace, monospace;
+      font-size: clamp(0.65rem, 1vw, 0.85rem);
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      line-height: 1;
+      white-space: nowrap;
+      align-self: end;
+      justify-self: start;
+    }
+    .seg-period.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+    .seg-date {
+      margin-top: 1.25rem;
+      color: var(--color-foreground);
+      font-family: "Courier New", ui-monospace, monospace;
+      font-size: clamp(0.85rem, 1.6vw, 1.125rem);
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-align: center;
+    }
+    .seg-format-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem;
+      background: var(--color-period-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      margin-top: 0.875rem;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .seg-format-toggle button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem 0.7rem;
+      border-radius: 9999px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--color-muted);
+      transition: all 200ms ease;
+    }
+    .seg-format-toggle button[aria-pressed="true"] {
+      background: var(--color-button-primary);
+      color: white;
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent);
+    }
+    @media (max-width: 760px) {
+      .seg-row {
+        --main-digit-width: clamp(42px, 13vw, 60px);
+        --colon-width: 10px;
+        --colon-side-space: 6px;
+        --period-width: 32px;
+        --digit-gap: 4px;
+      }
+      .seg-colon::before, .seg-colon::after { width: 0.35rem; height: 0.35rem; }
+      .seg-date { font-size: 0.8rem; margin-top: 0.875rem; }
+      .seg-format-toggle button { padding: 0.3rem 0.6rem; font-size: 0.5625rem; }
+    }
+
     /* Globe + sidebar layout */
     .globe-layout {
       display: grid;
@@ -455,6 +595,25 @@
   </header>
 
   <main class="globe-page">
+    <!-- ============================================================
+         Local time (clock) — CSS-drawn 7-segment + day/date + toggle
+         ============================================================ -->
+    <section class="seg-card" aria-label="Local current time">
+      <div class="seg-row" aria-label="Live current time">
+        <div id="hours" class="seg-digit-group"></div>
+        <div class="seg-colon" aria-hidden="true"></div>
+        <div id="minutes" class="seg-digit-group"></div>
+        <div class="seg-colon" aria-hidden="true"></div>
+        <div id="seconds" class="seg-digit-group"></div>
+        <div id="period" class="seg-period is-hidden">AM</div>
+      </div>
+      <div class="seg-date" id="date">—</div>
+      <div class="seg-format-toggle" role="group" aria-label="Time format">
+        <button id="format-12" type="button" aria-pressed="false">12h</button>
+        <button id="format-24" type="button" aria-pressed="true">24h</button>
+      </div>
+    </section>
+
     <div class="container">
       <div class="globe-layout">
         <!-- Globe -->
