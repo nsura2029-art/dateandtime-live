@@ -671,7 +671,7 @@
     }
 
     // Maximum number of cards in the rail: home (position 0) + 5 others.
-    const RAIL_MAX = 6;
+    const RAIL_MAX = 10;
     // Always ensure the home is at position 0 of the rail. Called before
     // every render and before saveCities() so the home can never be lost
     // (not by clicking, not by removing, not by stale sessionStorage).
@@ -713,7 +713,6 @@
         card.innerHTML = `
           <div class="city-head">
             <span class="live-pulse" aria-hidden="true"></span>
-            <span class="city-dot" style="background: var(--city-${color});"></span>
             <span class="city-name">${escapeHtml(c.name)}</span>
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
           </div>
@@ -754,6 +753,10 @@
           saveCities();
           renderRail();
           renderActiveCityPills();
+          updateClock();
+          // Scroll the hero (clock) into view so the user immediately
+          // sees the time change for the city they just clicked.
+          window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
       rail.querySelectorAll(".city-remove").forEach(btn => {
