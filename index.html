@@ -594,6 +594,37 @@
       try { const parts = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", weekday: "short", hour12: false }).formatToParts(d); const h = Number(parts.find(p => p.type === "hour")?.value || 0); const mn = Number(parts.find(p => p.type === "minute")?.value || 0); const wd = parts.find(p => p.type === "weekday")?.value || ""; if (wd === "Sat" || wd === "Sun") return "Weekend · reopen Mon 9:00 AM"; if (h < 9) return `Off hours · open in ${9 - h - (mn > 0 ? 1 : 0)}h`; if (h >= 17) return "Off hours · reopen 9:00 AM"; if (h >= 12) return `Working · close in ${17 - h - (mn > 0 ? 1 : 0)}h`; return `Working · lunch in ${12 - h - (mn > 0 ? 1 : 0)}h`; } catch (e) { return "—"; }
     }
 
+    // Map Intl.DateTimeFormat weekday short codes to our index
+    function wdToIndex(wd) {
+      const map = { "Sun":0, "Mon":1, "Tue":2, "Wed":3, "Thu":4, "Fri":5, "Sat":6 };
+      return map[wd] != null ? map[wd] : 0;
+    }
+
+    // Return whether a tz is currently in Daylight Saving Time.
+    // Compares the current short offset to the standard-time offset
+    // (Jan offset in Northern, Jul offset in Southern Hemisphere).
+    // Returns null if the tz has no DST.
+    function getDstStatus(tz) {
+      if (!tz) return null;
+      try {
+        const now = new Date();
+        const curOff = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(now).find(p => p.type === "timeZoneName")?.value || "";
+        const jan = new Date(now.getFullYear(), 0, 15);
+        const jul = new Date(now.getFullYear(), 6, 15);
+        const janOff = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(jan).find(p => p.type === "timeZoneName")?.value || "";
+        const julOff = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "shortOffset" }).formatToParts(jul).find(p => p.type === "timeZoneName")?.value || "";
+        if (janOff === julOff) return null;  // no DST in this tz
+        // The standard-time offset is whichever (Jan or Jul) is NOT
+        // the current offset. In the Northern Hemisphere, standard
+        // time is Jan; in the Southern, Jul. We pick whichever is
+        // different from the current.
+        const isNorthernDST = (now.getMonth() >= 2 && now.getMonth() <= 9);
+        const standardOff = isNorthernDST ? janOff : julOff;
+        const isDST = curOff !== standardOff;
+        return { isDST, currentOffset: curOff, standardOffset: standardOff };
+      } catch (e) { return null; }
+    }
+
     function buildListWithHome(home) {
       const out = [];
       if (home) {
@@ -1268,6 +1299,8 @@
       btn12.setAttribute("aria-pressed", String(!state.use24Hour));
       btn24.setAttribute("aria-pressed", String(state.use24Hour));
       try { localStorage.setItem("tdp-fmt", state.use24Hour ? "24" : "12"); } catch (e) {}
+      // Re-render the clock immediately so the user sees the format switch
+      updateClock();
     }
     btn12.addEventListener("click", () => setFormat("12"));
     btn24.addEventListener("click", () => setFormat("24"));
