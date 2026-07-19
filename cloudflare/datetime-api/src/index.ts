@@ -777,13 +777,18 @@ app.get("/api/v2/search", async (c) => {
     }));
   }
 
-  // FTS5 search
+  // FTS5 search. Prefix wildcard on each word so "tok" matches "Tokyo".
+  // Unicode61 + remove_diacritics handles "munchen" → München and
+  // "sao paulo" → São Paulo. We over-fetch (limit*3) and dedupe + re-rank
+  // below so e.g. "delhi" returns just the main Delhi and "paris" returns
+  // Paris, France (not random cities starting with "pari").
   const ftsQuery = q
     .replace(/[^a-zA-Z0-9\s]/g, " ")
     .trim()
     .split(/\s+/)
     .map((w) => `${w}*`)
     .join(" ");
+  const lowerQ = q.toLowerCase().trim();
 
   const where: string[] = ["cities_fts MATCH ?"];
   const params: (string | number | null)[] = [ftsQuery];
@@ -798,24 +803,49 @@ app.get("/api/v2/search", async (c) => {
   }
 
   const whereSql = where.join(" AND ");
+
+  // Ranking + dedup:
+  //   1. dup_rank       → highest-pop entry per (country, name) wins
+  //   2. exact_match    → "Delhi" returns Delhi (11M), not New Delhi
+  //   3. population     → "Sydney" returns Sydney (AU, 5.6M), not (CA, 106K)
+  //   4. capital_rank   → capitals still get a small boost for tie-breaks
+  //   5. prefix_match   → "paris*" matches "Paris" before "Parioli"
+  //   6. rank           → FTS5 relevance for final tie-breaks
   const rows = await c.env.DB
     .prepare(`SELECT
       c.geoname_id, c.name, c.ascii_name, c.country_code, c.country_name,
       c.admin1_code, c.admin2_code, c.latitude, c.longitude, c.timezone,
       c.population, c.elevation, c.feature_code, c.is_capital,
       (SELECT GROUP_CONCAT(alias, ',') FROM city_aliases WHERE city_id = c.geoname_id) AS aliases,
-      rank
+      rank,
+      ROW_NUMBER() OVER (
+        PARTITION BY c.country_code, LOWER(c.ascii_name)
+        ORDER BY c.population DESC
+      ) AS dup_rank,
+      CASE WHEN c.is_capital = 1 THEN 0 ELSE 1 END AS capital_rank,
+      CASE WHEN LOWER(c.ascii_name) = ? OR LOWER(c.name) = ? THEN 0 ELSE 1 END AS exact_match,
+      CASE WHEN LOWER(c.ascii_name) LIKE ? || '%' OR LOWER(c.name) LIKE ? || '%' THEN 0 ELSE 1 END AS prefix_match
     FROM cities_fts
     JOIN cities c ON c.rowid = cities_fts.rowid
     WHERE ${whereSql}
-    ORDER BY rank LIMIT ?`)
-    .bind(...params, limit)
-    .all<CityRow & { rank: number }>();
+    ORDER BY
+      dup_rank,
+      exact_match,
+      c.population DESC,
+      capital_rank,
+      prefix_match,
+      rank
+    LIMIT ?`)
+    .bind(...params, lowerQ, lowerQ, lowerQ, lowerQ, limit * 3)
+    .all<CityRow & { rank: number; dup_rank: number; capital_rank: number; exact_match: number; prefix_match: number }>();
 
-  let cities = rows.results.map((r) => {
-    const { rank, ...city } = r;
-    return toCityDto(city);
-  });
+  let cities = rows.results
+    .filter((r) => r.dup_rank === 1)
+    .map((r) => {
+      const { rank, dup_rank, capital_rank, exact_match, prefix_match, ...city } = r;
+      return toCityDto(city);
+    })
+    .slice(0, limit);
   const strategy = "fts5";
 
   // Optional: add distance for ranking info

@@ -301,6 +301,8 @@
     .rail-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1.5rem 0 0.625rem; text-align: left; }
     .city-card .climate-hint { font-size: 0.7rem; color: var(--color-muted); margin-top: 0.3rem; opacity: 0.7; }
     .city-card .historical-hint { font-size: 0.6875rem; color: var(--color-muted); font-style: italic; margin-top: 0.2rem; opacity: 0.55; }
+    .city-card.is-clickable { cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease; }
+    .city-card.is-clickable:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
     .rail { display: flex; flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
     @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
     .rail::-webkit-scrollbar { height: 4px; }
@@ -602,12 +604,17 @@
       rail.innerHTML = "";
       const home = state.citiesWithHome[0];
       state.citiesWithHome.forEach((c, i) => {
-        const isHome = !!c._home;
+        const isHome = !!c._home || i === 0;
         const color = cityColor(c.name, i);
         const card = document.createElement("div");
         card.className = "city-card";
         card.style.background = `var(--city-${color}-bg)`;
         card.style.borderRadius = "0.5rem";
+        // Only the home card gets the cursor pointer + click handler.
+        // Other cards have a remove button but aren't clickable (clicking
+        // them would be ambiguous — the home is already position 0).
+        const clickable = !isHome && i > 0;
+        if (clickable) card.classList.add("is-clickable");
         card.innerHTML = `
           <div class="city-head">
             <span class="city-dot" style="background: var(--city-${color});"></span>
@@ -621,14 +628,42 @@
           </div>
         `;
         card.dataset.cityId = c.id || c.geoname_id || "";
+        card.dataset.idx = String(i);
         rail.appendChild(card);
         // Enrich with climate + historical hints (only if id is known)
         if (card.dataset.cityId) {
           enrichCityCard(Number(card.dataset.cityId), card);
         }
       });
+      // Click a non-home rail card → make it the new home
+      rail.querySelectorAll(".city-card.is-clickable").forEach(card => {
+        card.addEventListener("click", e => {
+          // Don't trigger on remove-button click
+          if (e.target.closest(".city-remove")) return;
+          const i = Number(card.dataset.idx);
+          if (i <= 0) return;
+          // Move this city to position 0
+          const [picked] = state.citiesWithHome.splice(i, 1);
+          picked._home = true;
+          const oldHome = state.citiesWithHome[0];
+          if (oldHome) delete oldHome._home;
+          state.citiesWithHome.unshift(picked);
+          saveCities();
+          renderRail();
+          renderPopularCities();
+          onHomeChanged();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
       rail.querySelectorAll(".city-remove").forEach(btn => {
-        btn.addEventListener("click", () => { const i = Number(btn.dataset.idx); state.citiesWithHome.splice(i, 1); saveCities(); renderRail(); renderPopularCities(); });
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          const i = Number(btn.dataset.idx);
+          state.citiesWithHome.splice(i, 1);
+          saveCities();
+          renderRail();
+          renderPopularCities();
+        });
       });
     }
     function saveCities() { try { localStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
@@ -664,11 +699,24 @@
         btn.innerHTML = `<span class="popular-city-dot" aria-hidden="true"></span><span>${c.name}</span>${already ? '' : '<span class="popular-city-add" aria-hidden="true">+</span>'}`;
         if (!already) {
           btn.addEventListener("click", () => {
-            if (state.citiesWithHome.some(x => x.tz === c.tz)) return;
-            state.citiesWithHome.push({ ...c });
+            // Clicking a popular city makes it the NEW home (moves to
+            // position 0). Same UX as clicking a search result.
+            const existingIdx = state.citiesWithHome.findIndex(x => x.tz === c.tz);
+            if (existingIdx === 0) return;  // already home
+            if (existingIdx > 0) {
+              const [existing] = state.citiesWithHome.splice(existingIdx, 1);
+              existing._home = true;
+              state.citiesWithHome.unshift(existing);
+            } else {
+              const oldHome = state.citiesWithHome[0];
+              if (oldHome) delete oldHome._home;
+              state.citiesWithHome.unshift({ ...c, _home: true });
+            }
             saveCities();
             renderRail();
             renderPopularCities();
+            onHomeChanged();
+            window.scrollTo({ top: 0, behavior: "smooth" });
           });
         }
         wrap.appendChild(btn);
