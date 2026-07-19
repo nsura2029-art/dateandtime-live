@@ -238,7 +238,7 @@
     .pill-icon svg { width: 100%; height: 100%; }
 
     /* ===== Search bar (CENTERED above favorite cities) ===== */
-    .search-section { margin: 1.5rem auto 0.5rem; max-width: 480px; position: relative; }
+    .search-section { margin: 1.5rem auto 0.5rem; max-width: 640px; position: relative; }
     .search-wrap { position: relative; }
     .search-input { width: 100%; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
     .search-input::placeholder { color: var(--color-muted-soft); }
@@ -255,6 +255,17 @@
     .search-section.is-disabled .search-disabled-note { display: block; }
     .search-section.is-disabled .search-input { display: none; }
     .search-section.is-disabled .search-icon { display: none; }
+    /* Popular cities are independent of the search API — always show. */
+
+    /* ===== Popular cities (10 below the search input) ===== */
+    .popular-cities-label { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 1rem 0 0.5rem; text-align: left; }
+    .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    .popular-city { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid var(--city-color, var(--color-border)); background: var(--city-color-bg, transparent); color: var(--color-foreground); transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+    .popular-city:hover { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--city-color, var(--color-primary)) 30%, transparent); }
+    .popular-city:active { transform: translateY(0); }
+    .popular-city-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--city-color); flex-shrink: 0; }
+    .popular-city-add { font-size: 0.95rem; line-height: 1; color: var(--color-muted-soft); font-weight: 400; }
+    .popular-city.is-added { opacity: 0.4; cursor: default; pointer-events: none; }
 
     /* ===== Favorite cities label + rail ===== */
     .rail-label { font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-primary); margin: 1.5rem 0 0.625rem; text-align: left; }
@@ -262,16 +273,16 @@
     @media (min-width: 1024px) { .rail { flex-wrap: wrap; overflow-x: visible; } }
     .rail::-webkit-scrollbar { height: 4px; }
     .rail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
-    .city-card { flex: 0 0 auto; min-width: 200px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; }
-    .city-head { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem; }
+    .city-card { flex: 0 0 auto; min-width: 200px; padding: 0.75rem 0.875rem; scroll-snap-align: start; transition: opacity 200ms ease; text-align: center; }
+    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.4rem; }
     .city-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; }
     .city-name { font-size: 0.8125rem; font-weight: 700; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13rem; }
     .city-remove { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-muted-soft); border-radius: 9999px; }
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
-    .city-time { font-family: "Courier New", ui-monospace, monospace; font-size: 1.125rem; font-weight: 800; letter-spacing: 0.02em; }
-    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.2rem; }
-    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+    .city-time { font-family: "Courier New", ui-monospace, monospace; font-size: 1.125rem; font-weight: 800; letter-spacing: 0.02em; text-align: center; }
+    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.2rem; text-align: center; }
+    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
     .city-day { font-weight: 600; }
     .city-day-sep { color: var(--color-muted-soft); }
     .city-hours-diff { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-foreground); padding: 0.05rem 0.35rem; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
@@ -391,6 +402,8 @@
             <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
           </div>
           <p class="search-disabled-note">City search will light up when the search endpoint ships to production.</p>
+          <p class="popular-cities-label">Popular cities</p>
+          <div class="popular-cities" id="popular-cities" aria-label="Popular cities to add"></div>
         </div>
 
         <p class="rail-label">Favorite cities</p>
@@ -440,7 +453,27 @@
     const state = { use24Hour: true, citiesWithHome: [], allCities: [], features: { sync: false, sun: false, onthisday: false, search: false } };
 
     const CITY_PALETTE = ["peach","lavender","mint","sky","rose","lemon"];
-    function cityColor(name) { const hash = [...name].reduce((a, c) => a + c.charCodeAt(0), 0); return CITY_PALETTE[hash % CITY_PALETTE.length]; }
+    function cityColor(name, index = -1) {
+      // Use the rail position when available so the first 6 cities always get
+      // distinct colors (otherwise hash-based can produce duplicates like 3×peach).
+      if (index >= 0) return CITY_PALETTE[index % CITY_PALETTE.length];
+      const hash = [...name].reduce((a, c) => a + c.charCodeAt(0), 0);
+      return CITY_PALETTE[hash % CITY_PALETTE.length];
+    }
+
+    /* 10 popular cities shown under the search box (when input is empty) */
+    const POPULAR_CITIES = [
+      { name: "Los Angeles", country: "US", state_code: "CA", latitude: 34.0522, longitude: -118.2437, tz: "America/Los_Angeles", is_capital: 0 },
+      { name: "Paris",       country: "FR", latitude: 48.8566, longitude: 2.3522, tz: "Europe/Paris", is_capital: 1 },
+      { name: "Singapore",   country: "SG", latitude: 1.3521, longitude: 103.8198, tz: "Asia/Singapore", is_capital: 1 },
+      { name: "Dubai",       country: "AE", latitude: 25.2048, longitude: 55.2708, tz: "Asia/Dubai", is_capital: 0 },
+      { name: "Hong Kong",   country: "HK", latitude: 22.3193, longitude: 114.1694, tz: "Asia/Hong_Kong", is_capital: 0 },
+      { name: "Mumbai",      country: "IN", state_code: "MH", latitude: 19.0760, longitude: 72.8777, tz: "Asia/Kolkata", is_capital: 0 },
+      { name: "Berlin",      country: "DE", latitude: 52.5200, longitude: 13.4050, tz: "Europe/Berlin", is_capital: 1 },
+      { name: "Toronto",     country: "CA", state_code: "ON", latitude: 43.6532, longitude: -79.3832, tz: "America/Toronto", is_capital: 0 },
+      { name: "São Paulo",   country: "BR", latitude: -23.5505, longitude: -46.6333, tz: "America/Sao_Paulo", is_capital: 0 },
+      { name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz: "America/Mexico_City", is_capital: 1 }
+    ];
 
     function createDigit(parent, small = false) {
       const digit = document.createElement("div");
@@ -482,7 +515,7 @@
       const home = state.citiesWithHome[0];
       state.citiesWithHome.forEach((c, i) => {
         const isHome = !!c._home;
-        const color = cityColor(c.name);
+        const color = cityColor(c.name, i);
         const card = document.createElement("div");
         card.className = "city-card";
         card.style.background = `var(--city-${color}-bg)`;
@@ -502,10 +535,42 @@
         rail.appendChild(card);
       });
       rail.querySelectorAll(".city-remove").forEach(btn => {
-        btn.addEventListener("click", () => { const i = Number(btn.dataset.idx); state.citiesWithHome.splice(i, 1); saveCities(); renderRail(); });
+        btn.addEventListener("click", () => { const i = Number(btn.dataset.idx); state.citiesWithHome.splice(i, 1); saveCities(); renderRail(); renderPopularCities(); });
       });
     }
     function saveCities() { try { localStorage.setItem("tdp-cities", JSON.stringify(state.citiesWithHome)); } catch (e) {} }
+
+    /* ----- Popular cities (10 chips below the search box) -----
+       Each chip is color-coded with the same NotebookLM palette as the rail,
+       so the user gets a visual hint of which color the city will use when
+       added. Click to add to the rail. */
+    function renderPopularCities() {
+      const wrap = document.getElementById("popular-cities");
+      if (!wrap) return;
+      wrap.innerHTML = "";
+      POPULAR_CITIES.forEach((c, i) => {
+        const color = cityColor(c.name, i);
+        const already = state.citiesWithHome.some(x => x.tz === c.tz);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "popular-city" + (already ? " is-added" : "");
+        btn.style.setProperty("--city-color", `var(--city-${color})`);
+        btn.style.setProperty("--city-color-bg", `var(--city-${color}-bg)`);
+        btn.disabled = already;
+        btn.setAttribute("aria-label", already ? `${c.name} already added` : `Add ${c.name}`);
+        btn.innerHTML = `<span class="popular-city-dot" aria-hidden="true"></span><span>${c.name}</span>${already ? '' : '<span class="popular-city-add" aria-hidden="true">+</span>'}`;
+        if (!already) {
+          btn.addEventListener("click", () => {
+            if (state.citiesWithHome.some(x => x.tz === c.tz)) return;
+            state.citiesWithHome.push({ ...c });
+            saveCities();
+            renderRail();
+            renderPopularCities();
+          });
+        }
+        wrap.appendChild(btn);
+      });
+    }
 
     /* ----- Day + hours diff helpers (relative to the home city) ----- */
     function tzOffsetHours(tz, date) {
@@ -675,7 +740,7 @@
               const city = { name: c.name || c.asciiName, country: c.country?.code || c.countryCode, countryName: c.country?.name, state_code: c.state_code, latitude: c.coordinates?.lat ?? c.latitude, longitude: c.coordinates?.lon ?? c.longitude, tz: c.timezone || c.tz, is_capital: c.is_capital || c.isCapital || 0 };
               if (!state.citiesWithHome.some(x => x.tz === city.tz)) {
                 state.citiesWithHome.push(city);
-                saveCities(); renderRail();
+                saveCities(); renderRail(); renderPopularCities();
               }
               searchInput.value = ""; searchResults.classList.remove("is-open"); searchResults.innerHTML = "";
             });
@@ -822,6 +887,7 @@
       // Render the green live-location pill (uses the same home the rail uses)
       renderLiveLocation(state.citiesWithHome[0] || null);
       renderRail();
+      renderPopularCities();
 
       // Fetch the optional features
       const home0 = state.citiesWithHome[0];
