@@ -6,13 +6,30 @@
 # gets included as an "asset" and the deploy fails. We move that directory
 # aside before deploy and restore it after.
 #
-# Usage: ./scripts/deploy.sh [dev|prod]
+# Usage:
+#   ./scripts/deploy.sh                # deploys to dev (default)
+#   ./scripts/deploy.sh dev            # same as above
+#   ./scripts/deploy.sh prod           # deploys to prod (requires explicit "yes")
+#
+# Policy: NEVER auto-deploy to prod. Always ship to dev first, test, then
+# promote to prod manually. The user gets a confirmation prompt for prod.
 set -e
 
-TARGET="${1:-prod}"
+TARGET="${1:-dev}"
 if [ "$TARGET" != "dev" ] && [ "$TARGET" != "prod" ]; then
   echo "Usage: $0 [dev|prod]" >&2
   exit 1
+fi
+
+# Prod deploy requires explicit confirmation
+if [ "$TARGET" = "prod" ]; then
+  echo "WARNING: You are about to deploy to PRODUCTION (dateandtime.live)."
+  echo "Have you tested the change on dev (tdp-landing-dev.nsura2029.workers.dev)?"
+  read -r -p "Type 'yes' to confirm: " CONFIRM
+  if [ "$CONFIRM" != "yes" ]; then
+    echo "Aborted. Deploy to dev first with: ./scripts/deploy.sh dev"
+    exit 1
+  fi
 fi
 
 API_NODE_MODULES="cloudflare/datetime-api/node_modules"
@@ -53,3 +70,11 @@ for path in /api/cities /api/holidays/today /api/holidays/upcoming /api/countrie
   status=$(curl -sIo /dev/null -w "%{http_code}" "$URL$path")
   echo "  $status $path"
 done
+
+echo
+if [ "$TARGET" = "dev" ]; then
+  echo "Next steps:"
+  echo "  1. Verify the changes at $URL"
+  echo "  2. Test all features (search, pills, feedback, etc.)"
+  echo "  3. When ready, deploy to prod with: ./scripts/deploy.sh prod"
+fi

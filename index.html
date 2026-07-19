@@ -920,8 +920,9 @@
       const needle = q.toLowerCase();
       const matches = state.allCities.filter(c => {
         const name = (c.name || "").toLowerCase();
-        const ascii = (c.ascii_name || "").toLowerCase();
-        return name.includes(needle) || ascii.includes(needle);
+        const ascii = (c.asciiName || c.ascii_name || "").toLowerCase();
+        const aliases = ((c.aliases && Array.isArray(c.aliases)) ? c.aliases.join(" ") : (c.aliases || "")).toLowerCase();
+        return name.includes(needle) || ascii.includes(needle) || aliases.includes(needle);
       }).slice(0, 8);
       return matches;
     }
@@ -932,23 +933,39 @@
         searchResults.classList.add("is-open");
         return;
       }
-      searchResults.innerHTML = results.map((c, i) => `
+      searchResults.innerHTML = results.map((c, i) => {
+        // API returns camelCase (countryCode, asciiName, etc.) but the rail
+        // expects snake_case. Map both shapes for compatibility.
+        const cName = c.name || "";
+        const cCountry = c.country || c.countryCode || c.countryName || "";
+        const cState = c.state_code || c.stateCode || "";
+        const cTz = c.tz || c.timezone || "";
+        const cCapital = !!(c.is_capital || c.isCapital);
+        return `
         <button class="search-result" data-idx="${i}">
           <div>
-            <div class="search-result-name">${escapeHtml(c.name || "")}${(c.is_capital || c.isCapital) ? " ★" : ""}</div>
-            <div class="search-result-meta">${escapeHtml(c.country || "")}${c.state_code ? " · " + escapeHtml(c.state_code) : ""} · ${escapeHtml(c.tz || "")}</div>
+            <div class="search-result-name">${escapeHtml(cName)}${cCapital ? " ★" : ""}</div>
+            <div class="search-result-meta">${escapeHtml(cCountry)}${cState ? " · " + escapeHtml(cState) : ""} · ${escapeHtml(cTz)}</div>
           </div>
-          <div class="search-result-meta">${escapeHtml((c.tz || "").split("/").pop().replace(/_/g, " "))}</div>
+          <div class="search-result-meta">${escapeHtml(cTz.split("/").pop().replace(/_/g, " "))}</div>
         </button>
-      `).join("");
+      `;
+      }).join("");
       searchResults.classList.add("is-open");
       searchResults.querySelectorAll(".search-result[data-idx]").forEach(btn => {
         btn.addEventListener("click", () => {
           const c = results[Number(btn.dataset.idx)];
-          if (!state.citiesWithHome.some(x => x.tz === c.tz)) {
+          const cId = c.id || c.geoname_id || null;
+          const cLat = c.latitude;
+          const cLon = c.longitude;
+          const cTz = c.tz || c.timezone || "";
+          const cCountry = c.country || c.countryCode || c.countryName || "";
+          const cState = c.state_code || c.stateCode || "";
+          const cCapital = c.is_capital || c.isCapital || 0;
+          if (!state.citiesWithHome.some(x => x.tz === cTz)) {
             state.citiesWithHome.push({
-              name: c.name, country: c.country, state_code: c.state_code,
-              latitude: c.latitude, longitude: c.longitude, tz: c.tz, is_capital: c.is_capital || 0
+              id: cId, name: c.name, country: cCountry, state_code: cState,
+              latitude: cLat, longitude: cLon, tz: cTz, is_capital: cCapital
             });
             saveCities(); renderRail(); renderPopularCities();
           }
@@ -971,7 +988,7 @@
             const r = await fetch(`${API}/api/v2/search?q=${encodeURIComponent(q)}&limit=8`);
             if (r.ok) {
               const j = await r.json();
-              const results = (j.data?.results || j.results || []).slice(0, 8);
+              const results = (j.data?.cities || j.cities || j.data?.results || j.results || []).slice(0, 8);
               renderSearchResults(results, q);
               return;
             }
