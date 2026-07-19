@@ -209,8 +209,10 @@
     .seg-colon::before, .seg-colon::after { content: ""; position: absolute; left: 50%; width: 0.5rem; height: 0.5rem; border-radius: 2px; background: var(--color-on-segment); transform: translateX(-50%); }
     .seg-colon::before { top: 27%; } .seg-colon::after { bottom: 27%; }
     .seg-period-dot { align-self: end; font-family: "Courier New", monospace; font-size: clamp(1.5rem, 3.5vw, 2.5rem); font-weight: 800; color: var(--color-on-segment); margin: 0 0 clamp(4px, 0.7vw, 9px); filter: var(--color-glow); width: 0.5rem; text-align: center; line-height: 1; }
-    .seg-period { width: var(--period-width); margin: 0 0 clamp(4px, 0.6vw, 7px); padding: 0; border: 0; background: transparent; color: var(--color-period-fg); font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.65rem, 1vw, 0.85rem); font-weight: 800; letter-spacing: 0.22em; line-height: 1; white-space: nowrap; align-self: end; justify-self: start; }
-    .seg-period.is-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+    /* AM/PM pill — same height as the .seg-digit.small (milliseconds) row, so
+       it visually lines up with the hundredths digits next to it. */
+    .seg-period { width: var(--period-width); height: calc(var(--small-digit-width) * 1.82); margin: 0 0 clamp(4px, 0.6vw, 7px); padding: 0; border: 0; background: transparent; color: var(--color-period-fg); font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.9rem, 1.6vw, 1.35rem); font-weight: 800; letter-spacing: 0.15em; line-height: 1; white-space: nowrap; align-self: end; justify-self: start; display: flex; align-items: center; justify-content: flex-start; }
+    .seg-period.is-hidden { display: none; }
 
     .format-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); border: 1px solid var(--color-border); border-radius: 9999px; margin: 0.75rem auto 0; backdrop-filter: blur(8px); }
     .format-toggle button { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.85rem; border-radius: 9999px; font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-muted); transition: all 200ms ease; }
