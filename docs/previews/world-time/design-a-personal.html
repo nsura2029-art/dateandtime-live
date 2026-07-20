@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Time · Personal — Design A · dateandtime.live</title>
+<style>
+:root {
+  --bg: #faf7f2;
+  --bg-soft: #f4f1ec;
+  --fg: #2a2438;
+  --fg-soft: #5a5470;
+  --muted: #8a8499;
+  --primary: #5b4aaf;
+  --primary-fg: #ffffff;
+  --primary-soft: #ede9fe;
+  --border: rgba(91,74,175,.16);
+  --border-soft: rgba(91,74,175,.08);
+  --peach: #FFB59C; --peach-bg: rgba(255,181,156,.16);
+  --lavender: #C4B5FD; --lavender-bg: rgba(196,181,253,.16);
+  --mint: #6EE7B7; --mint-bg: rgba(110,231,183,.16);
+  --sky: #7DD3FC; --sky-bg: rgba(125,211,252,.16);
+  --rose: #FDA4AF; --rose-bg: rgba(253,164,175,.16);
+  --lemon: #FCD34D; --lemon-bg: rgba(252,211,77,.16);
+  --orange: #fdba74;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; background:
+  radial-gradient(circle at 12% 18%, rgba(255,181,156,.30), transparent 28%),
+  radial-gradient(circle at 83% 15%, rgba(125,211,252,.32), transparent 31%),
+  radial-gradient(circle at 75% 82%, rgba(196,181,253,.30), transparent 28%),
+  radial-gradient(circle at 24% 82%, rgba(110,231,183,.25), transparent 30%),
+  linear-gradient(135deg, #fff8ef 0%, #f4f3ff 46%, #edf7ff 100%);
+  pointer-events: none;
+}
+.container { max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+.back { display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.875rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+.back:hover { text-decoration: underline; }
+header.eyebrow { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
+h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin: 0.25rem 0 0.5rem; }
+.lede { color: var(--fg-soft); font-size: 0.95rem; margin: 0 0 1.5rem; max-width: 60ch; }
+.tabs { display: flex; gap: 0.25rem; margin: 0 0 1.5rem; border-bottom: 1px solid var(--border-soft); overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 600; color: var(--muted); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tab:hover { color: var(--fg); }
+.tab.is-active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab .num { display: inline-block; padding: 0 0.4rem; font-size: 0.6875rem; color: var(--muted); background: var(--bg-soft); border-radius: 9999px; margin-left: 0.4rem; }
+.tab.is-active .num { background: var(--primary-soft); color: var(--primary); }
+
+/* HERO: your home clock */
+.hero { display: grid; gap: 1.5rem; padding: 1.5rem; border: 1px solid var(--border-soft); border-radius: 1rem; background: color-mix(in srgb, white 70%, transparent); backdrop-filter: blur(6px); }
+@media (min-width: 768px) { .hero { grid-template-columns: 1.2fr 1fr; align-items: center; } }
+.hero-left .loc { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--fg-soft); margin-bottom: 0.5rem; }
+.hero-left .loc .dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.25); }
+.hero-left .city { font-size: 1.25rem; font-weight: 700; color: var(--fg); }
+.hero-left .country { color: var(--muted); font-weight: 500; }
+.hero-clock { font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: clamp(3rem, 9vw, 5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--fg); margin: 0.25rem 0; }
+.hero-clock .ampm { font-size: 0.32em; color: var(--muted); font-weight: 600; margin-left: 0.3rem; vertical-align: middle; }
+.hero-clock .sec { color: var(--primary); }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.chip { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.625rem; font-size: 0.75rem; font-weight: 600; color: var(--fg); background: var(--bg-soft); border: 1px solid var(--border-soft); border-radius: 9999px; }
+.chip.green { color: #047857; background: rgba(16,185,129,.10); border-color: rgba(16,185,129,.25); }
+.chip.orange { color: #c2410c; background: rgba(249,115,22,.10); border-color: rgba(249,115,22,.25); }
+.hero-right { display: flex; flex-direction: column; gap: 0.75rem; }
+.hero-right .row { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-soft); font-size: 0.875rem; }
+.hero-right .row:last-child { border-bottom: none; }
+.hero-right .row .label { color: var(--muted); font-weight: 500; }
+.hero-right .row .val { color: var(--fg); font-weight: 600; font-family: ui-monospace, monospace; }
+.hero-right .actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem 0.875rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; border: 1px solid var(--border); background: white; color: var(--fg); cursor: pointer; }
+.btn:hover { background: var(--bg-soft); }
+.btn-primary { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
+.btn-primary:hover { background: #4a3c95; }
+
+/* GRID of city clocks */
+.section-head { display: flex; align-items: center; justify-content: space-between; margin: 2rem 0 1rem; }
+.section-head h2 { font-size: 1.25rem; font-weight: 800; margin: 0; }
+.section-head .actions { display: flex; gap: 0.5rem; }
+.section-head .count { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+.grid { display: grid; gap: 0.75rem; grid-template-columns: 1fr 1fr; }
+@media (min-width: 640px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+.tile { position: relative; padding: 1rem; border: 1px solid var(--border-soft); border-radius: 0.875rem; background: color-mix(in srgb, white 80%, transparent); overflow: hidden; }
+.tile::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--tile-color, var(--primary)); }
+.tile[data-tone=peach] { --tile-color: var(--peach); }
+.tile[data-tone=lavender] { --tile-color: var(--lavender); }
+.tile[data-tone=mint] { --tile-color: var(--mint); }
+.tile[data-tone=sky] { --tile-color: var(--sky); }
+.tile[data-tone=rose] { --tile-color: var(--rose); }
+.tile[data-tone=lemon] { --tile-color: var(--lemon); }
+.tile-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.tile-name { font-size: 0.875rem; font-weight: 700; color: var(--fg); }
+.tile-country { font-size: 0.6875rem; color: var(--muted); }
+.tile-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: var(--fg); }
+.tile-time .ampm { font-size: 0.45em; color: var(--muted); font-weight: 600; margin-left: 0.2rem; }
+.tile-meta { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.5rem; font-size: 0.6875rem; color: var(--muted); }
+.tile-meta .dot { width: 5px; height: 5px; border-radius: 50%; background: #10b981; }
+.tile-meta .dot.night { background: #6366f1; }
+.tile-remove { position: absolute; top: 0.5rem; right: 0.5rem; width: 22px; height: 22px; border: none; background: var(--bg-soft); border-radius: 50%; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; }
+.tile-remove:hover { background: var(--border); color: var(--fg); }
+.tile.home { background: color-mix(in srgb, var(--peach-bg) 70%, white); }
+.tile.home::after { content: "⌂"; position: absolute; top: 0.5rem; right: 0.5rem; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; color: var(--primary); background: var(--primary-soft); border-radius: 50%; }
+.tile.add { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 130px; border-style: dashed; cursor: pointer; color: var(--muted); }
+.tile.add:hover { color: var(--primary); border-color: var(--primary); }
+.tile.add .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+.tile.add .label { font-size: 0.8125rem; font-weight: 600; }
+
+/* TIPS */
+.tips { margin-top: 2rem; padding: 1rem 1.25rem; background: var(--primary-soft); border: 1px solid var(--border-soft); border-radius: 0.875rem; font-size: 0.8125rem; color: var(--fg-soft); }
+.tips strong { color: var(--primary); }
+.kbd { display: inline-block; padding: 0.1rem 0.4rem; font-family: ui-monospace, monospace; font-size: 0.75rem; background: white; border: 1px solid var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+<a href="00-menu-comparison.html" class="back">← Menu research</a>
+<header class="eyebrow">Design A · Personal World Clock</header>
+<h1>Where are your people right now?</h1>
+<p class="lede">Your home city, up front. Add the people you call, the offices you work with, the cities you fly to. Live clocks, DST-aware, works offline once loaded.</p>
+
+<!-- TABS -->
+<nav class="tabs">
+<button class="tab is-active">Personal <span class="num">6</span></button>
+<button class="tab">Meeting</button>
+<button class="tab">Converter</button>
+<button class="tab">Map</button>
+</nav>
+
+<!-- HERO: home clock -->
+<section class="hero">
+<div class="hero-left">
+<div class="loc"><span class="dot"></span><span>You are here</span></div>
+<div class="city">Wesley Chapel <span class="country">· Florida, US</span></div>
+<div class="hero-clock">22:32<span class="sec">.20</span><span class="ampm">EDT</span></div>
+<div class="hero-meta">
+<span class="chip green">In DST · GMT-4</span>
+<span class="chip">Sunset 8:21 PM</span>
+<span class="chip">Sunrise 6:45 AM</span>
+</div>
+</div>
+<div class="hero-right">
+<div class="row"><span class="label">Local date</span><span class="val">Sun, Jul 19 2026</span></div>
+<div class="row"><span class="label">Day length</span><span class="val">13h 36m</span></div>
+<div class="row"><span class="label">DST ends</span><span class="val">in 104 days (Nov 2)</span></div>
+<div class="row"><span class="label">Next holiday</span><span class="val">Labor Day · Sep 7</span></div>
+<div class="actions">
+<button class="btn btn-primary">+ Add city</button>
+<button class="btn">Share</button>
+</div>
+</div>
+</section>
+
+<!-- GRID of city clocks -->
+<div class="section-head">
+<div>
+<h2>Your cities</h2>
+<div class="count">5 of 9 added · click any to see more</div>
+</div>
+<div class="actions">
+<button class="btn">Sort: time</button>
+<button class="btn">+ Add</button>
+</div>
+</div>
+
+<div class="grid">
+<!-- Home -->
+<div class="tile home" data-tone="peach">
+<div class="tile-head"><div class="tile-name">Wesley Chapel</div><div class="tile-country">US · EDT</div></div>
+<div class="tile-time">22:32</div>
+<div class="tile-meta"><span class="dot"></span> Sun · Jul 19 · in DST</div>
+</div>
+<!-- Cities -->
+<div class="tile" data-tone="lavender">
+<button class="tile-remove">×</button>
+<div class="tile-head"><div class="tile-name">New York</div><div class="tile-country">US · EDT</div></div>
+<div class="tile-time">22:32</div>
+<div class="tile-meta"><span class="dot"></span> Sun · same as you</div>
+</div>
+<div class="tile" data-tone="sky">
+<button class="tile-remove">×</button>
+<div class="tile-head"><div class="tile-name">London</div><div class="tile-country">UK · BST</div></div>
+<div class="tile-time">03:32</div>
+<div class="tile-meta"><span class="dot night"></span> Mon · +5h from you</div>
+</div>
+<div class="tile" data-tone="mint">
+<button class="tile-remove">×</button>
+<div class="tile-head"><div class="tile-name">Berlin</div><div class="tile-country">DE · CEST</div></div>
+<div class="tile-time">04:32</div>
+<div class="tile-meta"><span class="dot night"></span> Mon · +6h from you</div>
+</div>
+<div class="tile" data-tone="rose">
+<button class="tile-remove">×</button>
+<div class="tile-head"><div class="tile-name">Dubai</div><div class="tile-country">AE · GST</div></div>
+<div class="tile-time">06:32</div>
+<div class="tile-meta"><span class="dot night"></span> Mon · +8h from you</div>
+</div>
+<div class="tile" data-tone="lemon">
+<button class="tile-remove">×</button>
+<div class="tile-head"><div class="tile-name">Singapore</div><div class="tile-country">SG · SGT</div></div>
+<div class="tile-time">10:32</div>
+<div class="tile-meta"><span class="dot"></span> Mon · +12h from you</div>
+</div>
+<div class="tile" data-tone="peach">
+<button class="tile-remove">×</button>
+<div class="tile-head"><div class="tile-name">Tokyo</div><div class="tile-country">JP · JST</div></div>
+<div class="tile-time">11:32</div>
+<div class="tile-meta"><span class="dot"></span> Mon · +13h from you</div>
+</div>
+<div class="tile" data-tone="lavender">
+<button class="tile-remove">×</button>
+<div class="tile-head"><div class="tile-name">Sydney</div><div class="tile-country">AU · AEST</div></div>
+<div class="tile-time">12:32</div>
+<div class="tile-meta"><span class="dot"></span> Mon · +14h from you</div>
+</div>
+<!-- Add tile -->
+<div class="tile add">
+<div class="icon">+</div>
+<div class="label">Add city</div>
+</div>
+</div>
+
+<div class="tips">
+<strong>How it works:</strong> Up to 9 saved cities (stored locally — never sent to our servers). Click any tile to see day/date/DST for that location. Press <span class="kbd">S</span> to share, <span class="kbd">/</span> to search, <span class="kbd">1-9</span> to jump to a city.
+</div>
+</div>
+</body>
+</html>

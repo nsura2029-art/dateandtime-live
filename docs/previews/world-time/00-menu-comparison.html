@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Time — Menu Items Research · dateandtime.live</title>
+<style>
+:root {
+  --bg: #faf7f2;
+  --bg-soft: #f4f1ec;
+  --fg: #2a2438;
+  --fg-soft: #5a5470;
+  --muted: #8a8499;
+  --primary: #5b4aaf;
+  --primary-soft: #ede9fe;
+  --border: rgba(91,74,175,.16);
+  --border-soft: rgba(91,74,175,.08);
+  --peach: #FFB59C; --peach-bg: rgba(255,181,156,.18);
+  --lavender: #C4B5FD; --lavender-bg: rgba(196,181,253,.18);
+  --mint: #6EE7B7; --mint-bg: rgba(110,231,183,.18);
+  --sky: #7DD3FC; --sky-bg: rgba(125,211,252,.18);
+  --rose: #FDA4AF; --rose-bg: rgba(253,164,175,.18);
+  --lemon: #FCD34D; --lemon-bg: rgba(252,211,77,.18);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; line-height: 1.55; }
+.container { max-width: 1240px; margin: 0 auto; padding: 2rem 1.25rem; }
+h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin: 0 0 0.5rem; }
+.eyebrow { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); margin-bottom: 0.5rem; }
+.lede { color: var(--fg-soft); font-size: 1.05rem; margin: 0 0 2rem; max-width: 60ch; }
+section { margin: 3rem 0; }
+h2 { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.75rem; letter-spacing: -0.01em; }
+h3 { font-size: 1.125rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+p { color: var(--fg-soft); margin: 0 0 0.75rem; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+th, td { text-align: left; padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--border-soft); }
+th { font-weight: 700; color: var(--fg); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+td { color: var(--fg-soft); }
+.check { color: var(--primary); font-weight: 700; }
+.dash { color: var(--muted); }
+.compare-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin: 1.5rem 0; }
+@media (min-width: 768px) { .compare-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .compare-grid { grid-template-columns: repeat(3, 1fr); } }
+.compare-card { border: 1px solid var(--border-soft); border-radius: 1rem; padding: 1.25rem; background: white; }
+.compare-card h4 { margin: 0 0 0.5rem; font-size: 1rem; }
+.compare-card .domain { font-size: 0.75rem; color: var(--muted); font-family: ui-monospace, monospace; margin-bottom: 0.75rem; }
+.compare-card ul { margin: 0; padding-left: 1.25rem; font-size: 0.875rem; color: var(--fg-soft); }
+.compare-card li { margin: 0.25rem 0; }
+.tree { font-family: ui-monospace, "SF Mono", monospace; font-size: 0.875rem; color: var(--fg-soft); padding: 1.25rem; background: var(--bg-soft); border-radius: 0.75rem; border: 1px solid var(--border-soft); margin: 1rem 0; }
+.tree ul { list-style: none; padding-left: 1.25rem; margin: 0; }
+.tree li { margin: 0.25rem 0; position: relative; }
+.tree li::before { content: "└─ "; color: var(--muted); }
+.tree li.head { font-weight: 700; color: var(--primary); }
+.tree li.head::before { content: ""; }
+.tree li.alt { color: var(--muted); }
+.pill { display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: var(--primary-soft); color: var(--primary); margin-right: 0.5rem; }
+.muted { color: var(--muted); font-size: 0.8125rem; }
+.back { display: inline-block; margin-bottom: 1rem; font-size: 0.875rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+.back:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+<a href="../" class="back">← All 3 designs</a>
+<div class="eyebrow">Design Research · 2026-07-19</div>
+<h1>World Time — menu structure</h1>
+<p class="lede">What 24timezones, World Time Buddy, and timeanddate.com do, what we have, and what we should ship. Pick a design below to see the mockup.</p>
+
+<section>
+<h2>📊 Reference sites — what they actually do</h2>
+<div class="compare-grid">
+  <div class="compare-card">
+    <h4>24timezones.com</h4>
+    <div class="domain">24timezones.com</div>
+    <ul>
+      <li>World Clock (custom cities)</li>
+      <li>Time Zone Converter</li>
+      <li>Time Zone Map (interactive world)</li>
+      <li>Announce event (URL share)</li>
+      <li>Clock widgets (embed for sites)</li>
+      <li>Area codes, Knowledge base</li>
+      <li><strong>Strong:</strong> map + clock widgets</li>
+      <li><strong>Weak:</strong> no meeting planner</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <h4>worldtimebuddy.com</h4>
+    <div class="domain">worldtimebuddy.com</div>
+    <ul>
+      <li>Multi-city comparison grid (THE feature)</li>
+      <li>24-hour row per city, click tiles</li>
+      <li>Drag to schedule + iCal/Google Cal export</li>
+      <li>Hour-by-hour hover conversion</li>
+      <li>Settings: weekends, timezones, calendars</li>
+      <li>Sign-in to save</li>
+      <li><strong>Strong:</strong> meeting planner (industry standard)</li>
+      <li><strong>Weak:</strong> no map, no event announcer</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <h4>timeanddate.com</h4>
+    <div class="domain">timeanddate.com/worldclock</div>
+    <ul>
+      <li>Personal World Clock (50 cities, save+share)</li>
+      <li>Meeting Planner (best time across zones)</li>
+      <li>Time Zone Converter</li>
+      <li>Time Zone Map (interactive, DST-aware)</li>
+      <li>Event Time Announcer</li>
+      <li>3 looks: Clocks / Compact / Table</li>
+      <li>Sort by city / country / time</li>
+      <li><strong>Strong:</strong> most complete, 50-city support</li>
+      <li><strong>Weak:</strong> UI feels dated</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section>
+<h2>📦 What we have (data + APIs)</h2>
+<table>
+  <thead><tr><th>Resource</th><th>Count</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr><td>Cities (with lat/lon, tz, country, pop)</td><td>33,945</td><td>GeoNames cities15000</td></tr>
+    <tr><td>Countries</td><td>242</td><td>GeoNames + zoneinfo</td></tr>
+    <tr><td>IANA timezones</td><td>408</td><td>zoneinfo bootstrap</td></tr>
+    <tr><td>Working hours (per country)</td><td>20</td><td>business_calendars table</td></tr>
+    <tr><td>Holidays</td><td>1,614</td><td>Nager.Date (39 countries × 5 years)</td></tr>
+    <tr><td>DST transitions</td><td>1,560</td><td>zoneinfo (312 tzs × 5 years)</td></tr>
+    <tr><td>On-this-day events</td><td>540</td><td>Wikipedia</td></tr>
+  </tbody>
+</table>
+<h3>Live endpoints we can hit today</h3>
+<ul style="color:var(--fg-soft)">
+  <li><code>GET /api/v1/time/now?tz=America/New_York</code> — current time + offset + abbrev</li>
+  <li><code>GET /api/v1/time/sun?lat&lon&date</code> — sunrise/sunset per city</li>
+  <li><code>GET /api/v1/dst/upcoming?tz=</code> — next DST transition</li>
+  <li><code>GET /api/v1/holidays/today?country=</code> — today's holiday per country</li>
+  <li><code>GET /api/v1/countries/US/working-hours</code> — 9-5 work hours + days</li>
+  <li><code>GET /api/v2/search?q=</code> — city search with FTS5 + aliases</li>
+</ul>
+</section>
+
+<section>
+<h2>🧭 Proposed menu structure</h2>
+<p>One <code>/world-time/</code> hub with 4 sub-tools. Each gets its own URL so they're shareable + indexable for SEO.</p>
+<div class="tree">
+<strong style="color:var(--primary)">dateandtime.live/world-time/</strong>
+<ul>
+  <li class="head">/world-time/personal/ — Personal World Clock</li>
+  <li style="padding-left:1.5rem;font-size:0.8125rem;color:var(--muted)">N cities, add/remove, save to localStorage, shareable URL</li>
+  <li class="head">/world-time/meeting/ — Meeting Planner</li>
+  <li style="padding-left:1.5rem;font-size:0.8125rem;color:var(--muted)">24-hour grid, working hours overlap, iCal export</li>
+  <li class="head">/world-time/convert/ — Time Zone Converter</li>
+  <li style="padding-left:1.5rem;font-size:0.8125rem;color:var(--muted)">"3pm NY = ? in Tokyo", date-aware</li>
+  <li class="head">/world-time/map/ — Time Zone Map</li>
+  <li style="padding-left:1.5rem;font-size:0.8125rem;color:var(--muted)">Interactive world map with day/night terminator</li>
+</ul>
+</div>
+
+<p>Or — single page with all 4 as <strong>tabs</strong> (faster, less SEO surface):</p>
+<div class="tree">
+<strong style="color:var(--primary)">dateandtime.live/world-time/</strong> (one URL, tabbed UI)
+<ul>
+  <li class="head">Tab 1: Personal</li>
+  <li class="head">Tab 2: Meeting</li>
+  <li class="head">Tab 3: Convert</li>
+  <li class="head">Tab 4: Map</li>
+</ul>
+</div>
+<p><span class="pill">My pick</span> Separate URLs — better SEO (4× the indexable pages), better shareability (someone can DM a meeting URL), better deep linking from blogs.</p>
+</section>
+
+<section>
+<h2>🎯 What we'd ship first</h2>
+<p>If we pick ONE for v1:</p>
+<table>
+<thead><tr><th>Feature</th><th>JTBD search volume</th><th>Competitor gap</th><th>Our data fit</th><th>Effort</th></tr></thead>
+<tbody>
+<tr><td>Meeting Planner</td><td>~30K/mo</td><td>World Time Buddy is the gold standard, but ugly</td><td>✅ perfect (cities + working hours)</td><td>1-2 weeks</td></tr>
+<tr><td>Time Zone Converter</td><td>~110K/mo for "time in [city]"</td><td>Easy to copy, not a moat</td><td>✅ trivial</td><td>3 days</td></tr>
+<tr><td>Personal World Clock</td><td>~5K/mo "personal world clock"</td><td>24timezones does it, but no share</td><td>✅ (cities + localStorage)</td><td>1 week</td></tr>
+<tr><td>Time Zone Map</td><td>~20K/mo</td><td>timeanddate has a great one, hard to beat</td><td>✅ (cities + sun API)</td><td>2-3 weeks (D3 + day/night math)</td></tr>
+<tr><td>Event Time Announcer</td><td>~1K/mo (low volume, high virality)</td><td>Few sites do it well</td><td>✅ (cities + shareable URL)</td><td>1 week</td></tr>
+</tbody>
+</table>
+<p>My recommendation: <span class="pill">v1</span> Personal World Clock + Meeting Planner + Time Zone Converter (3 pages, 1 shared "add city" component). Save Map and Event for v2.</p>
+</section>
+
+<section>
+<h2>👀 See the designs</h2>
+<div class="compare-grid">
+<a href="./design-a-personal.html" class="compare-card" style="text-decoration:none;color:inherit;display:block">
+<h4>Design A — Personal Hub</h4>
+<div class="domain">design-a-personal.html</div>
+<p>One big home clock + grid of saved city clocks. The "where are my people" view.</p>
+</a>
+<a href="./design-b-meeting.html" class="compare-card" style="text-decoration:none;color:inherit;display:block">
+<h4>Design B — Meeting Grid</h4>
+<div class="domain">design-b-meeting.html</div>
+<p>24-hour grid × N cities, working hours overlap highlighted, click to schedule.</p>
+</a>
+<a href="./design-c-converter.html" class="compare-card" style="text-decoration:none;color:inherit;display:block">
+<h4>Design C — Converter + Map</h4>
+<div class="domain">design-c-converter.html</div>
+<p>1:1 city converter + visual day/night terminator map.</p>
+</a>
+</div>
+</section>
+</div>
+</body>
+</html>

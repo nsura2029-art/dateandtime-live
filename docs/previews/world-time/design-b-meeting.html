@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Time · Meeting — Design B · dateandtime.live</title>
+<style>
+:root {
+  --bg: #faf7f2;
+  --bg-soft: #f4f1ec;
+  --fg: #2a2438;
+  --fg-soft: #5a5470;
+  --muted: #8a8499;
+  --primary: #5b4aaf;
+  --primary-fg: #ffffff;
+  --primary-soft: #ede9fe;
+  --border: rgba(91,74,175,.16);
+  --border-soft: rgba(91,74,175,.08);
+  --work: rgba(16,185,129,.18);
+  --work-edge: rgba(16,185,129,.55);
+  --sleep: rgba(99,102,241,.10);
+  --overlap: rgba(16,185,129,.32);
+  --overlap-2: rgba(245,158,11,.30);
+  --overlap-3: rgba(249,115,22,.30);
+  --peach: #FFB59C;
+  --lavender: #C4B5FD;
+  --mint: #6EE7B7;
+  --sky: #7DD3FC;
+  --rose: #FDA4AF;
+  --lemon: #FCD34D;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; background:
+  radial-gradient(circle at 12% 18%, rgba(196,181,253,.28), transparent 28%),
+  radial-gradient(circle at 83% 15%, rgba(125,211,252,.30), transparent 31%),
+  linear-gradient(135deg, #fff8ef 0%, #f4f3ff 46%, #edf7ff 100%);
+  pointer-events: none;
+}
+.container { max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+.back { display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.875rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+.eyebrow { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
+h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin: 0.25rem 0 0.5rem; }
+.lede { color: var(--fg-soft); font-size: 0.95rem; margin: 0 0 1.25rem; max-width: 60ch; }
+.tabs { display: flex; gap: 0.25rem; margin: 0 0 1.5rem; border-bottom: 1px solid var(--border-soft); overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 600; color: var(--muted); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tab:hover { color: var(--fg); }
+.tab.is-active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* City picker bar */
+.cities-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; padding: 1rem; background: color-mix(in srgb, white 70%, transparent); border: 1px solid var(--border-soft); border-radius: 0.875rem; margin-bottom: 1.25rem; }
+.city-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem; background: white; border: 1px solid var(--border-soft); border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; }
+.city-chip.home { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+.city-chip .x { color: var(--muted); margin-left: 0.2rem; }
+.city-chip.add { background: transparent; border-style: dashed; color: var(--muted); }
+.city-chip.add:hover { color: var(--primary); border-color: var(--primary); }
+.city-chip .now { color: var(--muted); font-weight: 500; font-family: ui-monospace, monospace; font-size: 0.75rem; margin-left: 0.4rem; }
+
+/* Date strip */
+.date-strip { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.date-strip .nav { padding: 0.4rem 0.6rem; background: white; border: 1px solid var(--border-soft); border-radius: 0.5rem; font-size: 0.8125rem; color: var(--fg-soft); cursor: pointer; }
+.date-strip .nav:hover { color: var(--primary); }
+.date-strip .date { font-size: 0.875rem; font-weight: 700; color: var(--fg); }
+.date-strip .today { padding: 0.4rem 0.6rem; background: var(--primary); color: var(--primary-fg); border: none; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; margin-left: auto; }
+.date-strip .legend { display: flex; gap: 0.75rem; margin-left: 0.5rem; font-size: 0.6875rem; color: var(--muted); }
+.date-strip .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.25rem; vertical-align: middle; }
+.legend .sw.work { background: var(--work-edge); }
+.legend .sw.overlap { background: var(--overlap); }
+.legend .sw.partial { background: var(--overlap-2); }
+
+/* GRID — the heart of this design */
+.grid-wrap { border: 1px solid var(--border-soft); border-radius: 0.875rem; overflow: hidden; background: white; }
+.grid { display: grid; grid-template-columns: 80px repeat(24, 1fr); }
+.grid > div { padding: 0.5rem 0.25rem; font-size: 0.75rem; text-align: center; border-bottom: 1px solid var(--border-soft); }
+.grid .corner { background: var(--bg-soft); font-weight: 700; text-align: left; padding-left: 0.75rem; color: var(--muted); }
+.grid .hour { background: var(--bg-soft); color: var(--muted); font-weight: 600; font-family: ui-monospace, monospace; }
+.grid .hour.now { background: var(--primary); color: var(--primary-fg); }
+.grid .hour.now::after { content: ""; }
+.grid .row-head { background: var(--bg-soft); text-align: left; padding: 0.5rem 0.75rem; font-weight: 700; color: var(--fg); position: sticky; left: 0; }
+.grid .row-head .tz { display: block; font-size: 0.6875rem; color: var(--muted); font-weight: 500; font-family: ui-monospace, monospace; }
+.grid .cell { position: relative; }
+.grid .cell.sleep { background: var(--sleep); }
+.grid .cell.work { background: var(--work); }
+.grid .cell.overlap-all { background: var(--overlap); }
+.grid .cell.overlap-2 { background: var(--overlap-2); }
+.grid .cell.overlap-1 { background: var(--overlap-3); }
+.grid .cell.now { box-shadow: inset 0 0 0 2px var(--primary); }
+.grid .cell.weekend { background: rgba(99,102,241,.04); }
+.grid .cell.holiday { background: rgba(239,68,68,.10); }
+.grid .cell.holiday::after { content: "🎌"; position: absolute; top: 1px; right: 2px; font-size: 0.5rem; }
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 60px repeat(8, 1fr); }
+  .grid .hour { display: none; }
+  .grid .cell:nth-child(odd) { display: none; }
+}
+
+/* Picked time card */
+.picked { margin-top: 1.5rem; padding: 1.25rem; background: color-mix(in srgb, var(--primary-soft) 50%, white); border: 1px solid var(--primary); border-radius: 0.875rem; }
+.picked-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.picked-head .label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); }
+.picked-head .time { font-size: 1.5rem; font-weight: 800; font-family: ui-monospace, monospace; color: var(--fg); }
+.picked-times { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+.picked-times .pt { padding: 0.4rem 0.75rem; background: white; border: 1px solid var(--border-soft); border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; }
+.picked-times .pt .city { color: var(--muted); font-weight: 500; font-size: 0.75rem; margin-left: 0.4rem; }
+.picked-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.875rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; border: 1px solid var(--border); background: white; color: var(--fg); cursor: pointer; }
+.btn:hover { background: var(--bg-soft); }
+.btn-primary { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
+.btn-primary:hover { background: #4a3c95; }
+
+/* Suggestions list */
+.suggestions { margin-top: 1.5rem; }
+.suggestions h3 { font-size: 1rem; font-weight: 700; margin: 0 0 0.75rem; color: var(--fg); }
+.suggestion { display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 0.875rem; border: 1px solid var(--border-soft); border-radius: 0.625rem; margin-bottom: 0.5rem; background: white; }
+.suggestion .time { font-family: ui-monospace, monospace; font-size: 0.875rem; font-weight: 700; color: var(--fg); }
+.suggestion .meta { font-size: 0.75rem; color: var(--muted); }
+.suggestion .quality { padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 700; }
+.suggestion .q-best { background: rgba(16,185,129,.15); color: #047857; }
+.suggestion .q-ok { background: rgba(245,158,11,.15); color: #b45309; }
+.suggestion .q-poor { background: rgba(239,68,68,.10); color: #b91c1c; }
+</style>
+</head>
+<body>
+<div class="container">
+<a href="00-menu-comparison.html" class="back">← Menu research</a>
+<header class="eyebrow">Design B · Meeting Planner</header>
+<h1>When works for everyone?</h1>
+<p class="lede">Pick the cities. We highlight the green slots — when everyone's awake, at work, and not at dinner. Click any green cell to schedule.</p>
+
+<nav class="tabs">
+<button class="tab">Personal</button>
+<button class="tab is-active">Meeting</button>
+<button class="tab">Converter</button>
+<button class="tab">Map</button>
+</nav>
+
+<!-- City picker -->
+<div class="cities-bar">
+<button class="city-chip home">⌂ Wesley Chapel <span class="now">22:32</span></button>
+<button class="city-chip">New York <span class="now">22:32</span><span class="x">×</span></button>
+<button class="city-chip">London <span class="now">03:32</span><span class="x">×</span></button>
+<button class="city-chip">Berlin <span class="now">04:32</span><span class="x">×</span></button>
+<button class="city-chip">Dubai <span class="now">06:32</span><span class="x">×</span></button>
+<button class="city-chip">Singapore <span class="now">10:32</span><span class="x">×</span></button>
+<button class="city-chip add">+ Add city</button>
+</div>
+
+<!-- Date strip -->
+<div class="date-strip">
+<button class="nav">‹ Sun</button>
+<div class="date">Mon, July 20, 2026</div>
+<button class="nav">Tue ›</button>
+<button class="today">Today</button>
+<div class="legend">
+<span><span class="sw work"></span>Work hours</span>
+<span><span class="sw overlap"></span>All overlap</span>
+<span><span class="sw partial"></span>2-3 overlap</span>
+</div>
+</div>
+
+<!-- 24-HOUR GRID -->
+<div class="grid-wrap">
+<div class="grid">
+<div class="corner"></div>
+<div class="hour">0</div><div class="hour">1</div><div class="hour">2</div><div class="hour">3</div><div class="hour">4</div><div class="hour">5</div><div class="hour">6</div><div class="hour">7</div><div class="hour">8</div><div class="hour">9</div><div class="hour now">10</div><div class="hour">11</div><div class="hour">12</div><div class="hour">13</div><div class="hour">14</div><div class="hour">15</div><div class="hour">16</div><div class="hour">17</div><div class="hour">18</div><div class="hour">19</div><div class="hour">20</div><div class="hour">21</div><div class="hour">22</div><div class="hour">23</div>
+
+<div class="row-head">Wesley Chapel <span class="tz">EDT · -4</span></div>
+<div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work now"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div>
+
+<div class="row-head">New York <span class="tz">EDT · -4</span></div>
+<div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div>
+
+<div class="row-head">London <span class="tz">BST · +1</span></div>
+<div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div>
+
+<div class="row-head">Berlin <span class="tz">CEST · +2</span></div>
+<div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div>
+
+<div class="row-head">Dubai <span class="tz">GST · +4</span></div>
+<div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div>
+
+<div class="row-head">Singapore <span class="tz">SGT · +8</span></div>
+<div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div><div class="cell sleep"></div>
+</div>
+</div>
+
+<!-- Picked time -->
+<div class="picked">
+<div class="picked-head">
+<span class="label">Picked time (Wesley Chapel)</span>
+<span class="time">10:00 AM EDT</span>
+</div>
+<div class="picked-times">
+<span class="pt">10:00 <span class="city">Wesley Chapel</span></span>
+<span class="pt">10:00 <span class="city">New York</span></span>
+<span class="pt">15:00 <span class="city">London</span></span>
+<span class="pt">16:00 <span class="city">Berlin</span></span>
+<span class="pt">18:00 <span class="city">Dubai</span></span>
+<span class="pt">22:00 <span class="city">Singapore</span></span>
+</div>
+<div class="picked-actions">
+<button class="btn btn-primary">📅 iCal / Google Cal</button>
+<button class="btn">Copy times</button>
+<button class="btn">Share link</button>
+<button class="btn">Email invite</button>
+</div>
+</div>
+
+<!-- Suggestions -->
+<div class="suggestions">
+<h3>Best times for everyone (working hours only)</h3>
+<div class="suggestion">
+<div>
+<div class="time">9:00 AM EDT</div>
+<div class="meta">→ 14:00 London, 17:00 Dubai, 21:00 Singapore</div>
+</div>
+<span class="quality q-best">Best · 5 cities at work</span>
+</div>
+<div class="suggestion">
+<div>
+<div class="time">10:00 AM EDT</div>
+<div class="meta">→ 15:00 London, 18:00 Dubai, 22:00 Singapore (end of day)</div>
+</div>
+<span class="quality q-best">Best · 4 cities at work</span>
+</div>
+<div class="suggestion">
+<div>
+<div class="time">8:00 AM EDT</div>
+<div class="meta">→ 13:00 London, 16:00 Dubai, 20:00 Singapore</div>
+</div>
+<span class="quality q-ok">OK · 3 cities at work</span>
+</div>
+<div class="suggestion">
+<div>
+<div class="time">7:00 AM EDT</div>
+<div class="meta">→ 12:00 London, 15:00 Dubai, 19:00 Singapore</div>
+</div>
+<span class="quality q-poor">Poor · before London work</span>
+</div>
+</div>
+</div>
+</body>
+</html>
