@@ -12,30 +12,42 @@
   <link rel="stylesheet" href="/src/site-shell.css" />
 </head>
 <body class="shell-page">
-  <header class="site-header">
+<header class="site-header">
   <div class="container header-row">
     <a href="/" class="logo" aria-label="dateandtime.live home">
       <span class="logo-mark">T</span>
       <span class="logo-text">dateandtime.live</span>
     </a>
     <nav class="nav-main" aria-label="Main">
+      <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
       <a href="/holidays/" class="nav-link">Holidays</a>
       <a href="/onthisday/" class="nav-link">On this day</a>
-      <a href="/about/" class="nav-link">About</a>
-      <a href="/editorial-policy/" class="nav-link">Editorial</a>
+      <a href="#" class="nav-link">Meeting finder</a>
+      <a href="#" class="nav-link">World clock</a>
+      <a href="#" class="nav-link">Blog</a>
     </nav>
     <div class="header-actions">
       <div class="theme-toggle" role="group" aria-label="Theme">
-        <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+        <button id="theme-light" aria-pressed="true" aria-label="Light mode" title="Light mode">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
         </button>
-        <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+        <button id="theme-dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
       </div>
     </div>
   </div>
 </header>
+  
+
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/editorial-policy/" aria-current="page">Editorial policy</a></li>
+      </ol>
+    </div>
+  </nav>
 
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <div class="container">
