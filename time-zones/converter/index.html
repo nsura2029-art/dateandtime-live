@@ -159,7 +159,67 @@
     <p class="wt-subtitle">Find the exact time difference between any two cities or time zones. Handles DST, supports any date in the past or future.</p>
   </header>
 
-  <div id="wt-app"></div>
+  <div id="wt-app">
+    <!-- URL STATE (shows what was parsed from the URL) -->
+    <div class="wt-url-state is-hidden" id="wt-url-state"></div>
+
+    <!-- COLOR LEGEND -->
+    <div class="wt-legend" id="wt-legend">
+      <span class="wt-legend-item"><span class="wt-legend-swatch work"></span> Work hours (8am-5pm)</span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch sleep"></span> Sleep (11pm-6am)</span>
+      <span class="wt-legend-divider"></span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch weekend"></span> Weekend</span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch next-day"></span> Next day</span>
+      <span class="wt-legend-divider"></span>
+      <span class="wt-legend-item" style="color:var(--wt-muted);font-size:0.6875rem;">Click any hour for details</span>
+    </div>
+
+    <!-- TOP TOOLBAR -->
+    <div class="wt-toolbar-top">
+      <div class="wt-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <input id="wt-search-input" type="text" placeholder="+ Place or timezone — type a city" autocomplete="off" />
+        <div class="wt-suggestions" id="wt-suggestions"></div>
+      </div>
+      <div class="wt-toolbar-actions">
+        <button class="icon-btn" data-action="settings">⚙️ Settings</button>
+        <a href="#" class="link" data-action="link-view">🔗 COPY LINK</a>
+      </div>
+    </div>
+
+    <!-- SELECTION BAR -->
+    <div class="wt-selection-bar" id="wt-selection-bar">
+      <span class="measure"><span class="line"></span> <span class="duration">1 hour</span></span>
+      <div class="actions">
+        <button class="action" data-selection-action="ical">📅 Outlook / iCal</button>
+        <button class="action" data-selection-action="google">📅 Google Cal</button>
+        <button class="action" data-selection-action="clipboard">📋 Clipboard</button>
+        <button class="action" data-selection-action="gmail">✉️ Gmail</button>
+        <button class="wt-png-btn" data-selection-action="png">📷 Save as PNG</button>
+        <button class="wt-png-btn" data-selection-action="share">📤 Share</button>
+        <span class="event">📌 Event: <input type="text" class="wt-event-name" value="Meeting" placeholder="Event name" /></span>
+        <button class="action" data-selection-action="clear">✕ Clear</button>
+        <a href="#" class="link" data-selection-action="link">🔗 LINK TO THIS SELECTION</a>
+      </div>
+      <div class="wt-picked-times" id="wt-picked-times"></div>
+    </div>
+
+    <!-- CITY CHIPS -->
+    <div class="wt-city-chips" id="wt-city-chips"></div>
+
+    <!-- MAIN: per-city timelines -->
+    <div class="wt-main" id="wt-main">
+      <div class="wt-empty">
+        <p>Loading cities…</p>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS -->
+    <div class="wt-suggestions-section" id="wt-suggestions-section" style="display:none">
+      <h3>Best times for everyone (all cities at work)</h3>
+      <div id="wt-suggestions-list"></div>
+    </div>
+  </div>
 </main>
 
 <aside class="wt-related">
