@@ -395,5 +395,28 @@ dateandtime-live/
 ├── src/index.js            ← Worker (proxies + __location injection)
 ├── cloudflare/datetime-api/  ← Hono API (33,945 cities + 408 tz + 880 holidays)
 ├── scripts/deploy.sh       ← dev default, prod requires "yes"
+├── docs/                    ← documentation tree (see docs/README.md for the full map)
+│   ├── README.md            ← start here — nav index of the whole docs/ folder
+│   ├── CHANGELOG.md         ← top-level digest (what shipped, newest first)
+│   ├── strategy/            ← PRDs (template in strategy/README.md)
+│   ├── api/                 ← API docs (CHANGELOG.md for changes, endpoints/ for deep dives)
+│   ├── previews/            ← HTML mockups + design prototypes
+│   ├── architecture/        ← system design, DB schema, decisions
+│   └── research/            ← design/UX research, exploration docs
 └── AGENTS.md               ← this file
 ```
+
+## Docs folder — what lives where (2026-07-19, user-locked)
+
+> **Always update the docs folder** when you ship a PRD, an HTML preview, or an API change. The user locks this rule.
+
+| Type of change | Where to put it | How |
+|---|---|---|
+| **PRD** (Product Requirements Doc) | `docs/strategy/<NAME>-PRD.md` | Use the [template](./docs/strategy/README.md#prd-template). Add a row to the index. |
+| **HTML preview** (mockup, design prototype) | `docs/previews/<name>-<version>.html` | Self-contained. Add a row to [previews/README.md](./docs/previews/README.md). |
+| **API change** (add/change/remove endpoint) | `docs/api/CHANGELOG.md` (entry) + `docs/api/endpoints/<name>.md` (deep dive if complex) | Use the [template](./docs/api/CHANGELOG.md#template--copy-this-for-a-new-entry-then-delete-this-comment) at the top of CHANGELOG.md. Update the Postman collection. |
+| **Architecture** (DB schema, system design) | `docs/architecture/<topic>.md` | Markdown. Cross-link from PRDs. |
+| **Research** (UX exploration, design) | `docs/research/<topic>.md` | Markdown. |
+| **Cross-cutting release notes** | `docs/CHANGELOG.md` (top-level) | One section per major release. Newest at top. |
+
+> **See [`docs/README.md`](./docs/README.md) for the full nav index.**

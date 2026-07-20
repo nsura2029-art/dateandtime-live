@@ -1,5 +1,50 @@
 # API Changelog
 
+> **Newest at the top.** When you add/change/remove an endpoint, append a new section below using the template at the bottom of this file.
+
+---
+
+<!-- TEMPLATE — copy this for a new entry, then delete this comment
+## YYYY-MM-DD — <short title>
+
+**Commit:** `<hash>` — `<commit message>`
+**Author:** name / agent
+**Affects:** `v1` / `v2` / `both`
+
+### Context
+Why this change? What was missing or broken? (1–3 sentences)
+
+### Added
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/v1/...` | One-line description |
+
+### Changed
+| Method | Path | What changed | Migration |
+|---|---|---|---|
+| `PUT` | `/api/v1/...` | Renamed `foo` → `bar` | Old `foo` returns 301 to new URL until YYYY-MM-DD |
+
+### Removed
+| Method | Path | Replacement |
+|---|---|---|
+| `DELETE` | `/api/v1/...` | Use `GET /api/v1/...` instead |
+
+### Breaking changes
+- List any breaking changes here, with the migration path
+
+### Verified
+- [ ] Tested against `dev.api.dateandtime.live`
+- [ ] Postman collection updated (`timeanddatepro-api.postman_collection.json`)
+- [ ] Deployed to dev
+- [ ] Deployed to prod
+- [ ] Deep-dive doc created at `endpoints/<name>.md` (if complex)
+
+### Notes
+- Gotchas, follow-ups, future work
+-->
+
+---
+
 ## 2026-07-19 — Phases 2/4/6/7 endpoints wired up
 
 **Commit:** `e48a0fe` — `feat(api): wire up deferred endpoints for Phases 2/4/6/7`
