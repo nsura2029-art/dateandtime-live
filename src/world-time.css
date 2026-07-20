@@ -196,7 +196,7 @@
 }
 
 /* ===== MAIN: cities + per-city timelines ===== */
-.wt-main { background: var(--wt-bg-card); border: 1px solid var(--wt-border); border-radius: 0.375rem; overflow: hidden; }
+.wt-main { background: var(--wt-bg-card); border: 1px solid var(--wt-border); border-radius: 0.375rem; overflow: hidden; position: relative; }
 .wt-cities-head { display: grid; grid-template-columns: 220px 1fr; border-bottom: 1px solid var(--wt-border-soft); background: var(--wt-bg-card); font-size: 0.75rem; font-weight: 700; color: var(--wt-muted); text-transform: uppercase; }
 .wt-cities-head .left { padding: 0.6rem 0.85rem; border-right: 1px solid var(--wt-border-soft); }
 .wt-cities-head .right { padding: 0.5rem 0.6rem; display: flex; align-items: center; gap: 0.5rem; }
