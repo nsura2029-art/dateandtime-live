@@ -112,6 +112,11 @@
            (hour >= wh.hours.close && hour < wh.hours.close + 1);
   }
 
+  // Sleep: 11pm-6am (default sleep hours, applies every day including weekends)
+  function isSleepHour(hour) {
+    return hour >= 23 || hour < 6;
+  }
+
   function offsetHours(offsetMinutes) {
     if (offsetMinutes == null) return "";
     const h = offsetMinutes / 60;
@@ -484,6 +489,7 @@
       const isNextDay = focusedDateStrInAnchor && localDateStrInCity && localDateStrInCity > focusedDateStrInAnchor;
       const isWork = isWorkHour(city, localHour, localDayLong);
       const isEarly = isEarlyHour(city, localHour, localDayLong);
+      const isSleep = isSleepHour(localHour);
       const isNow = isFocusedTodayInAnchor && (c === currentAnchorHour);
       const isPast = isFocusedTodayInAnchor && (c < currentAnchorHour);
       const isInRange = selectedStartCol >= 0 && c >= selectedStartCol && c <= selectedEndCol;
@@ -493,6 +499,7 @@
       if (isPast) classes.push("past");
       if (isWork) classes.push("work");
       if (isEarly) classes.push("early");
+      if (isSleep) classes.push("sleep");
       if (isWeekend) classes.push("weekend");
       if (isNextDay) classes.push("next-day");
       if (isNow) classes.push("now");
@@ -676,6 +683,125 @@
       if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest("[data-tile]")) {
         $$("[data-tile].is-hovered").forEach(t => t.classList.remove("is-hovered"));
       }
+    });
+  }
+
+  // Rich tooltip on tile click: shows time in all cities at that column
+  function setupTileTooltip() {
+    const tooltip = document.getElementById("wt-tooltip");
+    const tooltipBody = document.getElementById("wt-tooltip-body");
+    const tooltipTitle = document.getElementById("wt-tooltip-title");
+    const tooltipClose = document.getElementById("wt-tooltip-close");
+    if (!tooltip || !tooltipBody) return;
+
+    function close() {
+      tooltip.classList.remove("is-open");
+    }
+    if (tooltipClose) tooltipClose.addEventListener("click", close);
+    // Close on click outside
+    document.addEventListener("click", (e) => {
+      if (!tooltip.classList.contains("is-open")) return;
+      if (e.target.closest("#wt-tooltip")) return;
+      if (e.target.closest("[data-tile]")) return;
+      close();
+    });
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+
+    // Open on tile click
+    document.addEventListener("click", (e) => {
+      const tile = e.target.closest("[data-tile]");
+      if (!tile) return;
+      // Only show tooltip for non-past tiles
+      if (tile.classList.contains("past")) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      const col = parseInt(tile.dataset.col, 10);
+      const moment = getAnchorColMoment(col);
+      const anchorTz = cities[0]?.timezone;
+      const focusedDateInAnchor = (() => {
+        try {
+          const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: anchorTz, year: "numeric", month: "2-digit", day: "2-digit" });
+          return fmt.format(focusedDate);
+        } catch (e) { return ""; }
+      })();
+
+      // Build rows: one per city
+      const rows = cities.map((city) => {
+        const localHour = localHourInCity(city.timezone, moment);
+        const localTime = localTimeInCity(city.timezone, moment);
+        const localDayShort = (() => {
+          try {
+            const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "short" });
+            return fmt.format(moment);
+          } catch (e) { return "Mon"; }
+        })();
+        const localDayLong = (() => {
+          try {
+            const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "long" });
+            return fmt.format(moment);
+          } catch (e) { return "Monday"; }
+        })();
+        const localDateStr = (() => {
+          try {
+            const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: city.timezone, year: "numeric", month: "2-digit", day: "2-digit" });
+            return fmt.format(moment);
+          } catch (e) { return ""; }
+        })();
+        const isWork = isWorkHour(city, localHour, localDayLong);
+        const isEarly = isEarlyHour(city, localHour, localDayLong);
+        const isSleep = isSleepHour(localHour);
+        const isWeekend = (localDayShort === "Sat" || localDayShort === "Sun");
+        const isNextDay = focusedDateInAnchor && localDateStr && localDateStr > focusedDateInAnchor;
+        const isHome = !!city.home;
+
+        let status = "off";
+        let statusLabel = "Off";
+        if (isWork) { status = "work"; statusLabel = "Work"; }
+        else if (isEarly) { status = "early"; statusLabel = "Early/Late"; }
+        else if (isSleep) { status = "sleep"; statusLabel = "Sleep"; }
+        if (isWeekend) { status = "weekend"; statusLabel = "Weekend"; }
+
+        return { city, localTime, localDayShort, isNextDay, status, statusLabel, isHome };
+      });
+
+      // Title: the anchor city's time + day
+      const anchorRow = rows[0];
+      tooltipTitle.textContent = `${anchorRow.localTime} \u00b7 ${anchorRow.localDayShort}${anchorRow.isNextDay ? ' +1d' : ''}`;
+
+      // Body
+      tooltipBody.innerHTML = rows.map(r => {
+        const home = r.isHome ? '<span class="home" title="Your home city">\u2302</span> ' : '';
+        const nextDay = r.isNextDay ? ' <span class="plus">+1d</span>' : '';
+        return `<div class="wt-tooltip-row">
+          <span class="wt-tooltip-name">${home}${escapeHtml(r.city.name)}</span>
+          <span class="wt-tooltip-time">${r.localTime}</span>
+          <span class="wt-tooltip-day">${r.localDayShort}${nextDay}</span>
+          <span class="wt-tooltip-status ${r.status}">${r.statusLabel}</span>
+        </div>`;
+      }).join("");
+
+      // Position above the tile, centered horizontally
+      const tileRect = tile.getBoundingClientRect();
+      tooltip.style.display = "block";
+      // Make sure it's measured before positioning
+      requestAnimationFrame(() => {
+        const tooltipRect = tooltip.getBoundingClientRect();
+        let left = tileRect.left + tileRect.width / 2;
+        let top = tileRect.top - tooltipRect.height - 8;
+        // Keep on screen horizontally
+        const margin = 8;
+        if (left - tooltipRect.width / 2 < margin) left = tooltipRect.width / 2 + margin;
+        if (left + tooltipRect.width / 2 > window.innerWidth - margin) left = window.innerWidth - tooltipRect.width / 2 - margin;
+        // If tooltip would go above viewport, position below the tile
+        if (top < margin) top = tileRect.bottom + 8;
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
+        tooltip.classList.add("is-open");
+      });
     });
   }
 
@@ -1197,6 +1323,7 @@ END:VCALENDAR`;
     setupSearch();
     setupDragSelect();
     setupHoverColumn();
+    setupTileTooltip();
     setupChipRemove();
     setupDatePager();
     setupSelectionActions();

@@ -109,6 +109,18 @@
     <!-- URL STATE (shows what was parsed from the URL) -->
     <div class="wt-url-state is-hidden" id="wt-url-state"></div>
 
+    <!-- COLOR LEGEND -->
+    <div class="wt-legend" id="wt-legend">
+      <span class="wt-legend-item"><span class="wt-legend-swatch work"></span> Work hours</span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch early"></span> Early / late</span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch sleep"></span> Sleep (11pm-6am)</span>
+      <span class="wt-legend-divider"></span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch weekend"></span> Weekend</span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch next-day"></span> Next day</span>
+      <span class="wt-legend-divider"></span>
+      <span class="wt-legend-item" style="color:var(--wt-muted);font-size:0.6875rem;">Click any hour for details</span>
+    </div>
+
     <!-- TOP TOOLBAR -->
     <div class="wt-toolbar-top">
       <div class="wt-search">
@@ -205,5 +217,13 @@
       `).join('');
     })();
   </script>
+  <!-- Rich tooltip on tile click: shows time in all cities at that column -->
+  <div class="wt-tooltip" id="wt-tooltip" role="dialog" aria-label="Time details">
+    <div class="wt-tooltip-header">
+      <span id="wt-tooltip-title">Hour details</span>
+      <button class="wt-tooltip-close" id="wt-tooltip-close" aria-label="Close">×</button>
+    </div>
+    <div id="wt-tooltip-body"></div>
+  </div>
 </body>
 </html>
