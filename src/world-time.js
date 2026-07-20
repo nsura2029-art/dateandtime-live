@@ -490,6 +490,20 @@
       const isWork = isWorkHour(city, localHour, localDayLong);
       const isEarly = isEarlyHour(city, localHour, localDayLong);
       const isSleep = isSleepHour(localHour);
+      // Work edge (start/end) vs middle: start + end are darker, middle is lighter
+      let isWorkEdge = false, isWorkMiddle = false, isEarlyEdge = false;
+      if (isWork || isEarly) {
+        const wh = workHoursCache[city.countryCode];
+        if (wh) {
+          if (isWork) {
+            isWorkEdge = (localHour === wh.hours.open) || (localHour === wh.hours.close - 1);
+            isWorkMiddle = isWork && !isWorkEdge;
+          }
+          if (isEarly) {
+            isEarlyEdge = (localHour === wh.hours.open - 1) || (localHour === wh.hours.close);
+          }
+        }
+      }
       const isNow = isFocusedTodayInAnchor && (c === currentAnchorHour);
       const isPast = isFocusedTodayInAnchor && (c < currentAnchorHour);
       const isInRange = selectedStartCol >= 0 && c >= selectedStartCol && c <= selectedEndCol;
@@ -498,7 +512,10 @@
       const classes = ["wt-tile"];
       if (isPast) classes.push("past");
       if (isWork) classes.push("work");
+      if (isWorkEdge) classes.push("work-edge");
+      else if (isWorkMiddle) classes.push("work-middle");
       if (isEarly) classes.push("early");
+      if (isEarlyEdge) classes.push("early-edge");
       if (isSleep) classes.push("sleep");
       if (isWeekend) classes.push("weekend");
       if (isNextDay) classes.push("next-day");
@@ -774,9 +791,18 @@
 
         let status = "off";
         let statusLabel = "Off";
-        if (isWork) { status = "work"; statusLabel = "Work"; }
-        else if (isEarly) { status = "early"; statusLabel = "Early/Late"; }
-        else if (isSleep) { status = "sleep"; statusLabel = "Sleep"; }
+        if (isWork) {
+          // Distinguish start / end / middle
+          const wh = workHoursCache[city.countryCode];
+          if (wh && localHour === wh.hours.open) { status = "work"; statusLabel = "Work start"; }
+          else if (wh && localHour === wh.hours.close - 1) { status = "work"; statusLabel = "Work end"; }
+          else { status = "work"; statusLabel = "Work"; }
+        } else if (isEarly) {
+          const wh = workHoursCache[city.countryCode];
+          if (wh && localHour === wh.hours.open - 1) { status = "early"; statusLabel = "Before work"; }
+          else if (wh && localHour === wh.hours.close) { status = "early"; statusLabel = "After work"; }
+          else { status = "early"; statusLabel = "Early/Late"; }
+        } else if (isSleep) { status = "sleep"; statusLabel = "Sleep"; }
         if (isWeekend) { status = "weekend"; statusLabel = "Weekend"; }
 
         return { city, localTime, localDayShort, isNextDay, status, statusLabel, isHome };
@@ -798,24 +824,9 @@
         </div>`;
       }).join("");
 
-      // Position above the tile, centered horizontally
-      const tileRect = tile.getBoundingClientRect();
+      // Tooltip is fixed top-left (CSS handles positioning), just show it
       tooltip.style.display = "block";
-      // Make sure it's measured before positioning
-      requestAnimationFrame(() => {
-        const tooltipRect = tooltip.getBoundingClientRect();
-        let left = tileRect.left + tileRect.width / 2;
-        let top = tileRect.top - tooltipRect.height - 8;
-        // Keep on screen horizontally
-        const margin = 8;
-        if (left - tooltipRect.width / 2 < margin) left = tooltipRect.width / 2 + margin;
-        if (left + tooltipRect.width / 2 > window.innerWidth - margin) left = window.innerWidth - tooltipRect.width / 2 - margin;
-        // If tooltip would go above viewport, position below the tile
-        if (top < margin) top = tileRect.bottom + 8;
-        tooltip.style.left = left + "px";
-        tooltip.style.top = top + "px";
-        tooltip.classList.add("is-open");
-      });
+      tooltip.classList.add("is-open");
     });
   }
 

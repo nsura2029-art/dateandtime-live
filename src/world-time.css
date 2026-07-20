@@ -408,3 +408,56 @@
 [data-theme="dark"] .wt-tooltip-status.early { background: rgba(212,168,58,0.5); color: #fef3c7; }
 [data-theme="dark"] .wt-tooltip-status.sleep { background: rgba(99,102,241,0.4); color: #e0e7ff; }
 [data-theme="dark"] .wt-tooltip-status.weekend { background: #9f1239; color: #fecdd3; }
+
+/* ===== Work hour edges (start + end = darker, middle = lighter) ===== */
+.wt-tile.work-edge { background: rgba(101,147,212,0.75); color: #1e3a8a; }
+.wt-tile.work-edge .p { color: #1e40af; }
+.wt-tile.work-middle { background: rgba(101,147,212,0.3); color: #1e3a8a; }
+.wt-tile.work-middle .p { color: #2563eb; }
+.wt-tile.early-edge { background: rgba(212,168,58,0.75); color: #78350f; }
+.wt-tile.early-edge .p { color: #92400e; }
+[data-theme="dark"] .wt-tile.work-edge { background: rgba(101,147,212,0.65); color: #dbeafe; }
+[data-theme="dark"] .wt-tile.work-edge .p { color: #93c5fd; }
+[data-theme="dark"] .wt-tile.work-middle { background: rgba(101,147,212,0.25); color: #bfdbfe; }
+[data-theme="dark"] .wt-tile.work-middle .p { color: #93c5fd; }
+[data-theme="dark"] .wt-tile.early-edge { background: rgba(212,168,58,0.65); color: #fef3c7; }
+[data-theme="dark"] .wt-tile.early-edge .p { color: #fde68a; }
+
+/* ===== Tooltip: fixed top-left of viewport ===== */
+.wt-tooltip {
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  z-index: 1000;
+  min-width: 280px;
+  max-width: 340px;
+  background: var(--wt-bg-card);
+  border: 1px solid var(--wt-border);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  padding: 0.75rem;
+  font-size: 0.8125rem;
+  pointer-events: auto;
+  display: none;
+}
+.wt-tooltip.is-open { display: block; }
+.wt-tooltip::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 32px;
+  border: 7px solid transparent;
+  border-top-color: var(--wt-bg-card);
+  filter: drop-shadow(0 1px 0 var(--wt-border));
+}
+@media (max-width: 760px) {
+  .wt-tooltip {
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    min-width: 0;
+    max-width: none;
+  }
+  .wt-tooltip::before { display: none; }
+}
