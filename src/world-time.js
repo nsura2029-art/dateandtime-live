@@ -1481,6 +1481,7 @@ END:VCALENDAR`;
     saveToStorage();
     render();
     renderDateTabs();
+    if (window.__wtDebug) console.log("DEBUG init: renderDateTabs called, focusedDate=", focusedDate, "tabs element:", document.getElementById("wt-date-tabs")?.children.length);
 
     // 5. Wire up interactions
     setupSearch();
