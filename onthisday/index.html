@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>On This Day — Today in History, Famous Births & Events | dateandtime.live</title>
-  <meta name="description" content="Today in history: events, famous birthdays, and deaths on every day of the year. Browse 561 historical events across 16 categories including politics, science, sports, music, finance, health, and technology." />
+  <meta name="description" content="Today in history: events, famous birthdays, and deaths on every day of the year. Browse 561+ historical events across 12 categories including politics, science, sports, music, finance, health, and technology." />
   <meta name="theme-color" content="#5b4aaf" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/onthisday/" />
@@ -12,6 +12,7 @@
   <meta property="og:description" content="Today in history: events, famous birthdays, and deaths on every day of the year." />
   <meta property="og:url" content="https://dateandtime.live/onthisday/" />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://dateandtime.live/og-image.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -30,6 +31,7 @@
     * { box-sizing: border-box; }
     body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--color-background); color: var(--color-foreground); line-height: 1.5; -webkit-font-smoothing: antialiased; }
     .container { max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
+    .container-narrow { max-width: 920px; margin: 0 auto; padding: 0 1.25rem; }
 
     /* ===== Hero ===== */
     .otd-hero { padding: 3rem 0 2rem; text-align: center; }
@@ -74,7 +76,29 @@
     }
     .otd-section-subtitle { color: var(--color-foreground-soft); font-size: 0.95rem; margin: 0 0 1.5rem; }
 
-    /* ===== Menu (categories grid) ===== */
+    /* ===== Date nav strip ===== */
+    .otd-date-nav {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+      padding: 1rem 1.25rem;
+      background: var(--otd-bg-soft);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 12px;
+      margin: 1.5rem 0;
+    }
+    .otd-date-nav-label { font-size: 0.875rem; font-weight: 700; color: var(--color-foreground); margin-right: 0.5rem; }
+    .otd-date-nav-link {
+      padding: 0.4rem 0.75rem;
+      background: var(--color-background);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 6px;
+      font-size: 0.8125rem; font-weight: 600;
+      color: var(--color-foreground-soft);
+      text-decoration: none;
+    }
+    .otd-date-nav-link:hover { border-color: var(--otd-primary); color: var(--otd-primary); }
+    .otd-date-nav-link.is-today { background: var(--otd-primary); color: white; border-color: var(--otd-primary); }
+
+    /* ===== Category menu (12 cards) ===== */
     .otd-menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -90,11 +114,7 @@
       color: inherit;
       transition: transform 150ms, box-shadow 150ms, border-color 150ms;
     }
-    .otd-menu-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(92, 74, 175, 0.12);
-      border-color: var(--otd-primary);
-    }
+    .otd-menu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(92, 74, 175, 0.12); border-color: var(--otd-primary); }
     .otd-menu-icon {
       width: 44px; height: 44px;
       display: inline-flex; align-items: center; justify-content: center;
@@ -104,14 +124,8 @@
       flex-shrink: 0;
     }
     .otd-menu-text { flex: 1; min-width: 0; }
-    .otd-menu-name {
-      display: block; font-weight: 700; font-size: 0.95rem;
-      margin-bottom: 1px;
-    }
-    .otd-menu-desc {
-      display: block; font-size: 0.75rem; color: var(--color-foreground-soft);
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
+    .otd-menu-name { display: block; font-weight: 700; font-size: 0.95rem; margin-bottom: 1px; }
+    .otd-menu-desc { display: block; font-size: 0.75rem; color: var(--color-foreground-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .otd-menu-count {
       font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
       font-size: 0.85rem; font-weight: 700;
@@ -122,30 +136,69 @@
       flex-shrink: 0;
     }
 
-    /* ===== Featured event ===== */
+    /* ===== "X years ago" callouts ===== */
+    .otd-ago-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    .otd-ago-card {
+      display: block;
+      padding: 1rem;
+      background: var(--color-background);
+      border: 1px solid var(--otd-border-soft);
+      border-left: 3px solid var(--otd-primary);
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 150ms, transform 150ms;
+    }
+    .otd-ago-card:hover { transform: translateX(2px); border-color: var(--otd-primary); }
+    .otd-ago-years {
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--otd-primary);
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .otd-ago-title { font-size: 0.95rem; font-weight: 700; margin: 0.4rem 0 0.2rem; line-height: 1.3; }
+    .otd-ago-year { font-family: ui-monospace, "SF Mono", monospace; font-size: 0.75rem; color: var(--color-foreground-soft); }
+
+    /* ===== Featured event (with image placeholder) ===== */
     .otd-featured-card {
-      display: grid; grid-template-columns: 200px 1fr; gap: 2rem; align-items: center;
-      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 0;
+      align-items: stretch;
       background: linear-gradient(135deg, var(--otd-primary-soft) 0%, var(--otd-bg-soft) 100%);
       border: 1px solid var(--otd-primary);
       border-radius: 16px;
+      overflow: hidden;
       margin-bottom: 1.5rem;
     }
-    .otd-featured-year {
-      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
-      font-size: 5rem; font-weight: 800;
-      color: var(--otd-primary);
-      line-height: 1;
-      letter-spacing: -0.04em;
+    .otd-featured-body { padding: 2rem 1.75rem; }
+    .otd-featured-image {
+      background: linear-gradient(135deg, #1a0e2e 0%, #5b4aaf 50%, #8b5cf6 100%);
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 6rem;
+      color: rgba(255, 255, 255, 0.85);
+      overflow: hidden;
+    }
+    /* TODO: replace with real <img src="https://upload.wikimedia.org/.../Apollo_11_Crew.jpg" alt="Apollo 11 crew" /> */
+    .otd-featured-image::after {
+      content: "🚀";
+      font-size: 6rem;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
     }
     .otd-featured-body h3 {
-      font-size: 1.75rem; font-weight: 800;
+      font-size: 1.5rem; font-weight: 800;
       letter-spacing: -0.02em;
-      margin: 0.5rem 0;
+      margin: 0.5rem 0 0.4rem;
       line-height: 1.2;
     }
     .otd-featured-body p {
-      font-size: 1.05rem; color: var(--color-foreground-soft);
+      font-size: 0.95rem; color: var(--color-foreground-soft);
       margin: 0 0 1rem;
       line-height: 1.5;
     }
@@ -158,13 +211,12 @@
       border-radius: 999px;
       color: white;
     }
-    .otd-cat-tag.cat-space { background: #7c3aed; }
+    .otd-cat-tag.cat-space, .otd-cat-tag.cat-discovery { background: #059669; }
     .otd-cat-tag.cat-event { background: #5b4aaf; }
     .otd-cat-tag.cat-birth { background: #0ea5e9; }
     .otd-cat-tag.cat-death { background: #475569; }
-    .otd-cat-tag.cat-politics { background: #b91c1c; }
+    .otd-cat-tag.cat-politics, .otd-cat-tag.cat-war { background: #b91c1c; }
     .otd-cat-tag.cat-science { background: #059669; }
-    .otd-cat-tag.cat-discovery { background: #059669; }
     .otd-cat-tag.cat-sports { background: #ea580c; }
     .otd-cat-tag.cat-music { background: #db2777; }
     .otd-cat-tag.cat-film { background: #9333ea; }
@@ -175,61 +227,80 @@
     .otd-cat-tag.cat-health { background: #e11d48; }
     .otd-cat-tag.cat-disaster { background: #dc2626; }
     .otd-cat-tag.cat-religion { background: #7c3aed; }
-    .otd-cat-tag.cat-war { background: #78350f; }
+    .otd-cat-tag.cat-first { background: #6366f1; }
 
-    /* ===== Event list ===== */
+    /* ===== Event cards WITH image placeholders ===== */
     .otd-event-list {
-      display: flex; flex-direction: column; gap: 0.75rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1rem;
     }
     .otd-event-card {
-      display: grid; grid-template-columns: 80px 1fr auto; gap: 1.25rem; align-items: center;
-      padding: 1rem 1.25rem;
+      display: flex; flex-direction: column;
       background: var(--color-background);
       border: 1px solid var(--otd-border-soft);
-      border-radius: 10px;
-      transition: border-color 150ms, transform 150ms;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 150ms, box-shadow 150ms, border-color 150ms;
     }
-    .otd-event-card:hover {
-      border-color: var(--otd-primary);
-      transform: translateX(4px);
+    .otd-event-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(92, 74, 175, 0.1); border-color: var(--otd-primary); }
+    .otd-event-card.importance-5 { border-color: var(--otd-primary); border-left-width: 4px; }
+
+    /* Event image (placeholder — to be replaced with real images) */
+    .otd-event-image {
+      position: relative;
+      height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+      color: rgba(255, 255, 255, 0.9);
+      overflow: hidden;
+      flex-shrink: 0;
     }
-    .otd-event-card.importance-5 {
-      background: linear-gradient(135deg, var(--otd-primary-soft) 0%, var(--color-background) 100%);
-      border-left: 3px solid var(--otd-primary);
-    }
-    .otd-event-card.importance-4 { border-left: 3px solid var(--otd-primary); }
-    .otd-event-year {
+    /* TODO: replace placeholders with real <img> tags pointing to Wikipedia Commons thumbnails */
+    .otd-event-image.img-space { background: linear-gradient(135deg, #1a0e2e 0%, #5b4aaf 50%, #8b5cf6 100%); }
+    .otd-event-image.img-war { background: linear-gradient(135deg, #78350f 0%, #b91c1c 100%); }
+    .otd-event-image.img-science { background: linear-gradient(135deg, #064e3b 0%, #059669 100%); }
+    .otd-event-image.img-politics { background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%); }
+    .otd-event-image.img-disaster { background: linear-gradient(135deg, #7f1d1d 0%, #ea580c 100%); }
+    .otd-event-image.img-first { background: linear-gradient(135deg, #312e81 0%, #6366f1 100%); }
+    .otd-event-image.img-sports { background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%); }
+    .otd-event-image.img-music { background: linear-gradient(135deg, #831843 0%, #db2777 100%); }
+    .otd-event-image.img-default { background: linear-gradient(135deg, var(--otd-primary) 0%, #8b5cf6 100%); }
+
+    .otd-event-year-badge {
+      position: absolute; top: 12px; left: 12px;
+      padding: 4px 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border-radius: 6px;
       font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
-      font-size: 1.1rem; font-weight: 700;
-      color: var(--otd-primary);
-      text-align: center;
+      font-size: 0.85rem; font-weight: 700;
     }
-    .otd-event-body h4 {
-      font-size: 1.05rem; font-weight: 700;
-      margin: 0 0 0.25rem;
-      line-height: 1.3;
+    .otd-event-tag-overlay {
+      position: absolute; top: 12px; right: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
-    .otd-event-body p {
-      font-size: 0.875rem; color: var(--color-foreground-soft);
-      margin: 0;
-      line-height: 1.4;
-    }
-    .otd-event-tags {
-      display: flex; gap: 0.375rem; align-items: center; flex-wrap: wrap;
-      margin-top: 0.5rem;
-    }
+    .otd-event-body { padding: 1rem 1.1rem; flex: 1; display: flex; flex-direction: column; }
+    .otd-event-body h4 { font-size: 1rem; font-weight: 700; margin: 0 0 0.4rem; line-height: 1.3; }
+    .otd-event-body p { font-size: 0.85rem; color: var(--color-foreground-soft); margin: 0 0 0.75rem; line-height: 1.45; flex: 1; }
+    .otd-event-footer { display: flex; gap: 0.5rem; align-items: center; margin-top: auto; }
     .otd-event-link {
       color: var(--otd-primary); text-decoration: none;
-      font-size: 0.8125rem; font-weight: 600;
+      font-size: 0.75rem; font-weight: 600;
       display: inline-flex; align-items: center; gap: 0.25rem;
     }
     .otd-event-link:hover { text-decoration: underline; }
+    .otd-event-importance {
+      display: inline-flex; align-items: center; gap: 0.2rem;
+      font-size: 0.7rem; font-weight: 700; color: var(--otd-primary);
+      margin-left: auto;
+    }
 
-    /* ===== Births / Deaths row layout ===== */
+    /* ===== Births / Deaths cards WITH image placeholders ===== */
     .otd-people-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.875rem;
     }
     .otd-person-card {
       display: flex; gap: 0.875rem; align-items: center;
@@ -239,25 +310,35 @@
       border-radius: 10px;
       transition: border-color 150ms, transform 150ms;
     }
-    .otd-person-card:hover {
-      border-color: var(--otd-primary);
-      transform: translateY(-2px);
-    }
+    .otd-person-card:hover { border-color: var(--otd-primary); transform: translateY(-2px); }
     .otd-person-avatar {
-      width: 48px; height: 48px;
+      width: 56px; height: 56px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--otd-primary) 0%, #8b5cf6 100%);
       color: white;
       display: inline-flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 700;
+      font-size: 1.1rem; font-weight: 800;
       flex-shrink: 0;
     }
     .otd-person-body { flex: 1; min-width: 0; }
-    .otd-person-name { display: block; font-weight: 700; font-size: 0.9rem; line-height: 1.3; }
+    .otd-person-name { display: block; font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
     .otd-person-meta { display: block; font-size: 0.75rem; color: var(--color-foreground-soft); margin-top: 2px; }
     .otd-person-meta strong { color: var(--color-foreground); }
 
-    /* ===== Explore more grid ===== */
+    /* ===== Ad slots ===== */
+    .otd-ad {
+      display: flex; align-items: center; justify-content: center;
+      max-width: 728px; margin: 1.5rem auto; min-height: 90px;
+      padding: 0.5rem;
+      background: color-mix(in srgb, var(--color-background-soft) 50%, transparent);
+      border: 1px dashed color-mix(in srgb, var(--color-border) 70%, transparent);
+      border-radius: 8px;
+      color: var(--color-muted);
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .otd-ad-full { max-width: 100%; }
+
+    /* ===== Explore more ===== */
     .otd-explore-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -273,53 +354,37 @@
       color: inherit;
       transition: border-color 150ms, transform 150ms, box-shadow 150ms;
     }
-    .otd-explore-card:hover {
-      border-color: var(--otd-primary);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(92, 74, 175, 0.1);
-    }
-    .otd-explore-card h3 {
-      font-size: 1rem; font-weight: 700;
-      margin: 0 0 0.375rem;
-    }
-    .otd-explore-card p {
-      font-size: 0.8125rem; color: var(--color-foreground-soft);
-      margin: 0;
-      line-height: 1.4;
-    }
+    .otd-explore-card:hover { border-color: var(--otd-primary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(92, 74, 175, 0.1); }
+    .otd-explore-card h3 { font-size: 1rem; font-weight: 700; margin: 0 0 0.375rem; }
+    .otd-explore-card p { font-size: 0.8125rem; color: var(--color-foreground-soft); margin: 0; line-height: 1.4; }
 
-    /* ===== Date navigation strip ===== */
-    .otd-date-nav {
-      display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
-      padding: 1rem 1.25rem;
-      background: var(--otd-bg-soft);
-      border: 1px solid var(--otd-border-soft);
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-    }
-    .otd-date-nav-label {
-      font-size: 0.875rem; font-weight: 700; color: var(--color-foreground);
-      margin-right: 0.5rem;
-    }
-    .otd-date-nav-link {
-      padding: 0.4rem 0.75rem;
-      background: var(--color-background);
-      border: 1px solid var(--otd-border-soft);
-      border-radius: 6px;
-      font-size: 0.8125rem; font-weight: 600;
-      color: var(--color-foreground-soft);
-      text-decoration: none;
-    }
-    .otd-date-nav-link:hover { border-color: var(--otd-primary); color: var(--otd-primary); }
-    .otd-date-nav-link.is-today { background: var(--otd-primary); color: white; border-color: var(--otd-primary); }
-
-    @media (max-width: 720px) {
-      .otd-featured-card { grid-template-columns: 1fr; gap: 1rem; padding: 1.25rem; }
-      .otd-featured-year { font-size: 3.5rem; text-align: left; }
-      .otd-event-card { grid-template-columns: 60px 1fr; }
-      .otd-event-card .otd-event-tags { grid-column: 1 / -1; }
+    @media (max-width: 860px) {
+      .otd-featured-card { grid-template-columns: 1fr; }
+      .otd-featured-image { height: 200px; }
     }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "On This Day — Today in History",
+    "url": "https://dateandtime.live/onthisday/",
+    "description": "Today in history: events, famous birthdays, and deaths on every day of the year.",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "dateandtime.live",
+      "url": "https://dateandtime.live/"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dateandtime.live/" },
+        { "@type": "ListItem", "position": 2, "name": "On this day", "item": "https://dateandtime.live/onthisday/" }
+      ]
+    }
+  }
+  </script>
 </head>
 <body class="shell-page">
 
@@ -340,18 +405,9 @@
           <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="nav-dropdown" role="menu">
-          <a href="/world-time/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
-            <span class="dropdown-desc">Live current time in 33,945 cities</span>
-          </a>
-          <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
-            <span class="dropdown-desc">Find meeting times across time zones</span>
-          </a>
-          <a href="/world-time/event/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
-            <span class="dropdown-desc">Show local times for a global event</span>
-          </a>
+          <a href="/world-time/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span><span class="dropdown-desc">Live current time in 33,945 cities</span></a>
+          <a href="/world-time/meeting/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span><span class="dropdown-desc">Find meeting times across time zones</span></a>
+          <a href="/world-time/event/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span><span class="dropdown-desc">Show local times for a global event</span></a>
         </div>
       </div>
       <div class="nav-item has-dropdown">
@@ -360,26 +416,11 @@
           <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="nav-dropdown" role="menu">
-          <a href="/time-zones/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
-            <span class="dropdown-desc">Browse all 408 time zones</span>
-          </a>
-          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
-            <span class="dropdown-desc">Time difference calculator</span>
-          </a>
-          <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
-            <span class="dropdown-desc">How DST works and when it changes in 2026</span>
-          </a>
-          <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🕓</span>UTC &amp; GMT</span>
-            <span class="dropdown-desc">The world's time standard explained</span>
-          </a>
-          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
-            <span class="dropdown-desc">How offsets, UTC, and the prime meridian work</span>
-          </a>
+          <a href="/time-zones/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span><span class="dropdown-desc">Browse all 408 time zones</span></a>
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span><span class="dropdown-desc">Time difference calculator</span></a>
+          <a href="/time-zones/dst/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span><span class="dropdown-desc">How DST works and when it changes in 2026</span></a>
+          <a href="/time-zones/utc/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🕓</span>UTC &amp; GMT</span><span class="dropdown-desc">The world's time standard explained</span></a>
+          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span><span class="dropdown-desc">How offsets, UTC, and the prime meridian work</span></a>
         </div>
       </div>
       <a href="/news/" class="nav-link">News</a>
@@ -448,15 +489,22 @@
       <h1>Today in History</h1>
       <p class="otd-date">Monday, July 20, 2026</p>
       <p class="otd-stats">
-        <span><strong>561</strong> events</span>
-        <span><strong>163</strong> births</span>
-        <span><strong>22</strong> deaths</span>
+        <span><strong>591+</strong> events</span>
+        <span><strong>174+</strong> births</span>
+        <span><strong>30+</strong> deaths</span>
         <span><strong>16</strong> categories</span>
       </p>
     </div>
   </section>
 
-  <!-- ===== Date navigation ===== -->
+  <!-- Ad slot: Top leaderboard (728x90) -->
+  <div class="container">
+    <div class="otd-ad" aria-label="Advertisement">
+      <span>Ad — 728×90 leaderboard (will be replaced with AdSense)</span>
+    </div>
+  </div>
+
+  <!-- ===== Date nav ===== -->
   <div class="container">
     <nav class="otd-date-nav" aria-label="Jump to date">
       <span class="otd-date-nav-label">Jump to:</span>
@@ -477,227 +525,298 @@
       <h2 class="otd-section-title">Browse by category <span class="count">12</span></h2>
       <p class="otd-section-subtitle">Explore historical events across 12 categories — from politics to science, sports to finance.</p>
       <div class="otd-menu-grid">
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=event" id="cat-events">
-          <span class="otd-menu-icon">📅</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Events</span>
-            <span class="otd-menu-desc">Major historical events</span>
-          </span>
-          <span class="otd-menu-count">304</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=birth">
-          <span class="otd-menu-icon">🎂</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Births</span>
-            <span class="otd-menu-desc">Famous birthdays</span>
-          </span>
-          <span class="otd-menu-count">163</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=death">
-          <span class="otd-menu-icon">⚰️</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Deaths</span>
-            <span class="otd-menu-desc">Notable deaths</span>
-          </span>
-          <span class="otd-menu-count">22</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=politics">
-          <span class="otd-menu-icon">🏛️</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Politics</span>
-            <span class="otd-menu-desc">Political milestones</span>
-          </span>
-          <span class="otd-menu-count">37</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=discovery">
-          <span class="otd-menu-icon">🔬</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Science</span>
-            <span class="otd-menu-desc">Discoveries & inventions</span>
-          </span>
-          <span class="otd-menu-count">5</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=sports">
-          <span class="otd-menu-icon">🏆</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Sports</span>
-            <span class="otd-menu-desc">Olympics, World Cup, records</span>
-          </span>
-          <span class="otd-menu-count">0</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=music">
-          <span class="otd-menu-icon">🎵</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Music</span>
-            <span class="otd-menu-desc">Albums, songs, artists</span>
-          </span>
-          <span class="otd-menu-count">0</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=film">
-          <span class="otd-menu-icon">🎬</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Film &amp; TV</span>
-            <span class="otd-menu-desc">Movies, shows, premieres</span>
-          </span>
-          <span class="otd-menu-count">0</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=tech">
-          <span class="otd-menu-icon">💻</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Technology</span>
-            <span class="otd-menu-desc">Software, hardware, internet</span>
-          </span>
-          <span class="otd-menu-count">0</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=finance">
-          <span class="otd-menu-icon">💰</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Finance</span>
-            <span class="otd-menu-desc">Markets, crashes, IPOs</span>
-          </span>
-          <span class="otd-menu-count">0</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=currency">
-          <span class="otd-menu-icon">💱</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Currency</span>
-            <span class="otd-menu-desc">Currencies, exchange rates</span>
-          </span>
-          <span class="otd-menu-count">0</span>
-        </a>
-        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=health">
-          <span class="otd-menu-icon">🏥</span>
-          <span class="otd-menu-text">
-            <span class="otd-menu-name">Health</span>
-            <span class="otd-menu-desc">Medicine, vaccines, discoveries</span>
-          </span>
-          <span class="otd-menu-count">0</span>
-        </a>
+        <a class="otd-menu-card" href="/onthisday/?category=event"><span class="otd-menu-icon">📅</span><span class="otd-menu-text"><span class="otd-menu-name">Events</span><span class="otd-menu-desc">Major historical events</span></span><span class="otd-menu-count">314+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=birth"><span class="otd-menu-icon">🎂</span><span class="otd-menu-text"><span class="otd-menu-name">Births</span><span class="otd-menu-desc">Famous birthdays</span></span><span class="otd-menu-count">174+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=death"><span class="otd-menu-icon">⚰️</span><span class="otd-menu-text"><span class="otd-menu-name">Deaths</span><span class="otd-menu-desc">Notable deaths</span></span><span class="otd-menu-count">30+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=politics"><span class="otd-menu-icon">🏛️</span><span class="otd-menu-text"><span class="otd-menu-name">Politics</span><span class="otd-menu-desc">Political milestones</span></span><span class="otd-menu-count">40+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=discovery"><span class="otd-menu-icon">🔬</span><span class="otd-menu-text"><span class="otd-menu-name">Science</span><span class="otd-menu-desc">Discoveries & inventions</span></span><span class="otd-menu-count">10+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=sports"><span class="otd-menu-icon">🏆</span><span class="otd-menu-text"><span class="otd-menu-name">Sports</span><span class="otd-menu-desc">Olympics, World Cup, records</span></span><span class="otd-menu-count">3+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=music"><span class="otd-menu-icon">🎵</span><span class="otd-menu-text"><span class="otd-menu-name">Music</span><span class="otd-menu-desc">Albums, songs, artists</span></span><span class="otd-menu-count">2+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=film"><span class="otd-menu-icon">🎬</span><span class="otd-menu-text"><span class="otd-menu-name">Film &amp; TV</span><span class="otd-menu-desc">Movies, shows, premieres</span></span><span class="otd-menu-count">2+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=tech"><span class="otd-menu-icon">💻</span><span class="otd-menu-text"><span class="otd-menu-name">Technology</span><span class="otd-menu-desc">Software, hardware, internet</span></span><span class="otd-menu-count">2+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=finance"><span class="otd-menu-icon">💰</span><span class="otd-menu-text"><span class="otd-menu-name">Finance</span><span class="otd-menu-desc">Markets, crashes, IPOs</span></span><span class="otd-menu-count">1+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=currency"><span class="otd-menu-icon">💱</span><span class="otd-menu-text"><span class="otd-menu-name">Currency</span><span class="otd-menu-desc">Currencies, exchange rates</span></span><span class="otd-menu-count">1+</span></a>
+        <a class="otd-menu-card" href="/onthisday/?category=health"><span class="otd-menu-icon">🏥</span><span class="otd-menu-text"><span class="otd-menu-name">Health</span><span class="otd-menu-desc">Medicine, vaccines, discoveries</span></span><span class="otd-menu-count">1+</span></a>
       </div>
     </div>
   </section>
 
-  <!-- ===== Featured event ===== -->
+  <!-- ===== Featured event (with image placeholder) ===== -->
   <section class="otd-section">
     <div class="container">
       <h2 class="otd-section-title">⭐ Featured today</h2>
       <p class="otd-section-subtitle">The most important historical event on this day.</p>
       <article class="otd-featured-card" id="events">
-        <div class="otd-featured-year">1969</div>
         <div class="otd-featured-body">
           <span class="otd-cat-tag cat-space">🚀 Space · Importance 5</span>
-          <h3>Moon landing</h3>
-          <p>Apollo 11 lands on the Moon; Armstrong takes "one small step." Apollo 11 was the spaceflight that first landed humans on the Moon. Commander Neil Armstrong and lunar module pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969.</p>
+          <h3>Moon landing — Apollo 11 lands on the Moon</h3>
+          <p>Apollo 11 was the spaceflight that first landed humans on the Moon. Commander Neil Armstrong and lunar module pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969. Armstrong became the first person to step onto the Moon's surface, followed by Aldrin. They spent about 2 hours and 32 minutes on the lunar surface.</p>
           <a href="https://en.wikipedia.org/wiki/Apollo_11" class="otd-event-link" target="_blank" rel="noopener">Read on Wikipedia →</a>
+        </div>
+        <div class="otd-featured-image" aria-label="Apollo 11 image placeholder">
+          <!-- TODO: <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Aldrin_Apollo_11_original.jpg/640px-Aldrin_Apollo_11_original.jpg" alt="Buzz Aldrin on the Moon, Apollo 11, 1969" /> -->
         </div>
       </article>
     </div>
   </section>
 
-  <!-- ===== All events today ===== -->
+  <!-- ===== "X years ago" callouts ===== -->
   <section class="otd-section">
     <div class="container">
-      <h2 class="otd-section-title">📅 All events on July 20 <span class="count">7+</span></h2>
-      <p class="otd-section-subtitle">From major historical milestones to scientific discoveries.</p>
-      <div class="otd-event-list">
-        <article class="otd-event-card importance-5">
-          <div class="otd-event-year">1969</div>
-          <div class="otd-event-body">
-            <span class="otd-cat-tag cat-space">🚀 Space</span>
-            <h4>Moon landing — Apollo 11 lands on the Moon</h4>
-            <p>Neil Armstrong becomes the first person to step on the Moon. "That's one small step for man, one giant leap for mankind."</p>
-            <div class="otd-event-tags">
-              <a href="https://en.wikipedia.org/wiki/Apollo_11" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
-            </div>
-          </div>
-          <div></div>
-        </article>
-
-        <article class="otd-event-card">
-          <div class="otd-event-year">2008</div>
-          <div class="otd-event-body">
-            <span class="otd-cat-tag cat-science">🔬 Science</span>
-            <h4>Large Hadron Collider powered up at CERN</h4>
-            <p>The biggest scientific experiment in the history of mankind is powered up in Geneva, Switzerland.</p>
-            <div class="otd-event-tags">
-              <a href="https://en.wikipedia.org/wiki/Large_Hadron_Collider" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
-            </div>
-          </div>
-          <div></div>
-        </article>
-
-        <article class="otd-event-card">
-          <div class="otd-event-year">2020</div>
-          <div class="otd-event-body">
-            <span class="otd-cat-tag cat-disaster">🌪️ Disaster</span>
-            <h4>California's August Complex wildfire becomes largest in state history</h4>
-            <p>471,000 acres (736 square miles) burned — the largest recorded wildfire in California state history at the time.</p>
-            <div class="otd-event-tags">
-              <a href="https://en.wikipedia.org/wiki/August_Complex_fire" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
-            </div>
-          </div>
-          <div></div>
-        </article>
-
-        <article class="otd-event-card">
-          <div class="otd-event-year">1977</div>
-          <div class="otd-event-body">
-            <span class="otd-cat-tag cat-politics">⚖️ Politics</span>
-            <h4>Last person executed by guillotine in France</h4>
-            <p>Hamida Djandoubi, convicted of torture and murder, becomes the last person to be executed by guillotine in France.</p>
-            <div class="otd-event-tags">
-              <a href="https://en.wikipedia.org/wiki/Capital_punishment_in_France" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
-            </div>
-          </div>
-          <div></div>
-        </article>
-
-        <article class="otd-event-card">
-          <div class="otd-event-year">1924</div>
-          <div class="otd-event-body">
-            <span class="otd-cat-tag cat-politics">⚖️ Politics</span>
-            <h4>Leopold and Loeb found guilty of "the crime of the century"</h4>
-            <p>The notorious 1920s kidnapping and murder case that captivated America, ending in a guilty verdict in Chicago.</p>
-            <div class="otd-event-tags">
-              <a href="https://en.wikipedia.org/wiki/Leopold_and_Loeb" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
-            </div>
-          </div>
-          <div></div>
-        </article>
-
-        <article class="otd-event-card">
-          <div class="otd-event-year">1846</div>
-          <div class="otd-event-body">
-            <span class="otd-cat-tag cat-science">🔬 Science</span>
-            <h4>Elias Howe patents the lockstitch sewing machine</h4>
-            <p>Howe takes out a US patent for his lockstitch sewing machine, revolutionizing the textile industry.</p>
-            <div class="otd-event-tags">
-              <a href="https://en.wikipedia.org/wiki/Elias_Howe" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
-            </div>
-          </div>
-          <div></div>
-        </article>
-
-        <article class="otd-event-card">
-          <div class="otd-event-year">1813</div>
-          <div class="otd-event-body">
-            <span class="otd-cat-tag cat-war">⚔️ War</span>
-            <h4>Battle of Lake Erie — American naval victory</h4>
-            <p>American naval commander Oliver Hazard Perry defeats the British in the Battle of Lake Erie during the War of 1812.</p>
-            <div class="otd-event-tags">
-              <a href="https://en.wikipedia.org/wiki/Battle_of_Lake_Erie" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
-            </div>
-          </div>
-          <div></div>
-        </article>
+      <h2 class="otd-section-title">📜 This day in history</h2>
+      <p class="otd-section-subtitle">Major events from previous years on July 20.</p>
+      <div class="otd-ago-grid">
+        <a class="otd-ago-card" href="https://en.wikipedia.org/wiki/Apollo_11" target="_blank" rel="noopener">
+          <span class="otd-ago-years">57 years ago · 1969</span>
+          <h3 class="otd-ago-title">Moon landing — Apollo 11</h3>
+          <span class="otd-ago-year">Space · Neil Armstrong, Buzz Aldrin</span>
+        </a>
+        <a class="otd-ago-card" href="https://en.wikipedia.org/wiki/20_July_plot" target="_blank" rel="noopener">
+          <span class="otd-ago-years">82 years ago · 1944</span>
+          <h3 class="otd-ago-title">July 20 plot — assassination attempt on Hitler</h3>
+          <span class="otd-ago-year">War · Claus von Stauffenberg</span>
+        </a>
+        <a class="otd-ago-card" href="https://en.wikipedia.org/wiki/Viking_1" target="_blank" rel="noopener">
+          <span class="otd-ago-years">50 years ago · 1976</span>
+          <h3 class="otd-ago-title">Viking 1 lands on Mars</h3>
+          <span class="otd-ago-year">Science · First US Mars landing</span>
+        </a>
+        <a class="otd-ago-card" href="https://en.wikipedia.org/wiki/2012_Aurora,_Colorado_shooting" target="_blank" rel="noopener">
+          <span class="otd-ago-years">14 years ago · 2012</span>
+          <h3 class="otd-ago-title">Aurora, Colorado theater shooting</h3>
+          <span class="otd-ago-year">Disaster · 12 killed, 70 injured</span>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- ===== Famous Births ===== -->
+  <!-- Ad slot: Middle -->
+  <div class="container">
+    <div class="otd-ad" aria-label="Advertisement">
+      <span>Ad — 728×90 leaderboard (will be replaced with AdSense)</span>
+    </div>
+  </div>
+
+  <!-- ===== All events today (grid with image placeholders) ===== -->
   <section class="otd-section">
     <div class="container">
-      <h2 class="otd-section-title">🎂 Famous births on July 20 <span class="count">7+</span></h2>
+      <h2 class="otd-section-title">📅 All events on July 20 <span class="count">13+</span></h2>
+      <p class="otd-section-subtitle">From major historical milestones to scientific discoveries. Click any card to read more.</p>
+      <div class="otd-event-list">
+
+        <article class="otd-event-card importance-5">
+          <div class="otd-event-image img-space" aria-label="Moon landing image placeholder">
+            <span class="otd-event-year-badge">1969</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-space">🚀 Space</span></span>
+            <!-- TODO: <img src="..." alt="Apollo 11 lunar module Eagle on the Moon" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Moon landing — Apollo 11</h4>
+            <p>Apollo 11 lands on the Moon; Armstrong takes "one small step for man, one giant leap for mankind."</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Apollo_11" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+              <span class="otd-event-importance">⭐⭐⭐⭐⭐</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card importance-5">
+          <div class="otd-event-image img-war" aria-label="WWII image placeholder">
+            <span class="otd-event-year-badge">1944</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-war">⚔️ War</span></span>
+            <!-- TODO: <img src="..." alt="Claus von Stauffenberg before the Volksgerichtshof" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>July 20 plot — assassination attempt on Hitler</h4>
+            <p>Colonel Claus von Stauffenberg plants a briefcase bomb at Hitler's Wolf's Lair headquarters. Hitler survived; the plotters were executed.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/20_July_plot" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+              <span class="otd-event-importance">⭐⭐⭐⭐⭐</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card importance-5">
+          <div class="otd-event-image img-science" aria-label="Mars image placeholder">
+            <span class="otd-event-year-badge">1976</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-science">🔬 Science</span></span>
+            <!-- TODO: <img src="..." alt="Viking 1 lander on Mars surface" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Viking 1 lands on Mars</h4>
+            <p>NASA's Viking 1 lander successfully touches down on Mars — the first American spacecraft to land on the red planet.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Viking_1" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+              <span class="otd-event-importance">⭐⭐⭐⭐⭐</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card importance-4">
+          <div class="otd-event-image img-war" aria-label="Battle image placeholder">
+            <span class="otd-event-year-badge">1813</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-war">⚔️ War</span></span>
+            <!-- TODO: <img src="..." alt="Battle of Lake Erie 1813" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Battle of Lake Erie — American naval victory</h4>
+            <p>Oliver Hazard Perry defeats the British Royal Navy in the War of 1812, securing American control of the Great Lakes.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Battle_of_Lake_Erie" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card importance-4">
+          <div class="otd-event-image img-disaster" aria-label="Theater image placeholder">
+            <span class="otd-event-year-badge">2012</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-disaster">🌪️ Disaster</span></span>
+            <!-- TODO: <img src="..." alt="Aurora Colorado theater" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Aurora, Colorado theater shooting</h4>
+            <p>Mass shooting during a showing of "The Dark Knight Rises" — 12 killed, 70 injured. One of the deadliest U.S. mass shootings.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/2012_Aurora,_Colorado_shooting" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card importance-4">
+          <div class="otd-event-image img-politics" aria-label="Sri Lanka image placeholder">
+            <span class="otd-event-year-badge">1960</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-politics">🏛️ Politics</span></span>
+            <!-- TODO: <img src="..." alt="Sirimavo Bandaranaike" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Sirimavo Bandaranaike — first female PM</h4>
+            <p>Sirimavo Bandaranaike sworn in as PM of Sri Lanka — the world's first female head of government in modern history.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Sirimavo_Bandaranaike" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card importance-4">
+          <div class="otd-event-image img-first" aria-label="Sitting Bull image placeholder">
+            <span class="otd-event-year-badge">1881</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-first">⭐ First</span></span>
+            <!-- TODO: <img src="..." alt="Sitting Bull portrait" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Sitting Bull surrenders to U.S. Army</h4>
+            <p>Hunkpapa Lakota holy man and war leader Sitting Bull surrenders at Fort Buford, Montana, ending his resistance.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Sitting_Bull" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-image img-default" aria-label="CERN image placeholder">
+            <span class="otd-event-year-badge">2008</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-science">🔬 Science</span></span>
+            <!-- TODO: <img src="..." alt="Large Hadron Collider at CERN" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Large Hadron Collider powered up at CERN</h4>
+            <p>The "biggest scientific experiment in the history of mankind" is powered up in Geneva, Switzerland.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Large_Hadron_Collider" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-image img-disaster" aria-label="Wildfire image placeholder">
+            <span class="otd-event-year-badge">2020</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-disaster">🌪️ Disaster</span></span>
+            <!-- TODO: <img src="..." alt="California wildfire" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>California August Complex wildfire — largest in state history</h4>
+            <p>471,000 acres (736 sq mi) burned — the largest recorded wildfire in California state history at the time.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/August_Complex_fire" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-image img-politics" aria-label="Guillotine image placeholder">
+            <span class="otd-event-year-badge">1977</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-politics">🏛️ Politics</span></span>
+            <!-- TODO: <img src="..." alt="Guillotine execution France" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Last person executed by guillotine in France</h4>
+            <p>Hamida Djandoubi is the last person executed by guillotine in France. France abolished the death penalty in 1981.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Capital_punishment_in_France" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-image img-science" aria-label="Sewing machine image placeholder">
+            <span class="otd-event-year-badge">1846</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-science">🔬 Science</span></span>
+            <!-- TODO: <img src="..." alt="Elias Howe sewing machine patent" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Elias Howe patents the lockstitch sewing machine</h4>
+            <p>Howe takes out a US patent for his lockstitch sewing machine, revolutionizing the textile industry.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Elias_Howe" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-image img-sports" aria-label="Olympics image placeholder">
+            <span class="otd-event-year-badge">1972</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-sports">🏆 Sports</span></span>
+            <!-- TODO: <img src="..." alt="Frank Shorter Munich Olympics marathon" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Frank Shorter wins Olympic marathon</h4>
+            <p>American Frank Shorter wins the men's marathon at the Munich Olympics in 2:12:19.8 — first American winner since 1908.</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Athletics_at_the_1972_Summer_Olympics_%E2%80%93_Men%27s_marathon" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-image img-politics" aria-label="Leopold Loeb image placeholder">
+            <span class="otd-event-year-badge">1924</span>
+            <span class="otd-event-tag-overlay"><span class="otd-cat-tag cat-politics">🏛️ Politics</span></span>
+            <!-- TODO: <img src="..." alt="Leopold and Loeb courtroom" /> -->
+          </div>
+          <div class="otd-event-body">
+            <h4>Leopold and Loeb found guilty</h4>
+            <p>Two University of Chicago students found guilty of the 1924 kidnapping and murder of Bobby Franks — "the crime of the century."</p>
+            <div class="otd-event-footer">
+              <a href="https://en.wikipedia.org/wiki/Leopold_and_Loeb" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Ad slot: Middle (in-feed) -->
+  <div class="container">
+    <div class="otd-ad" aria-label="Advertisement">
+      <span>Ad — 728×90 in-feed (will be replaced with AdSense)</span>
+    </div>
+  </div>
+
+  <!-- ===== Famous births (with image placeholders) ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">🎂 Famous births on July 20 <span class="count">11+</span></h2>
       <p class="otd-section-subtitle">Notable people who share this birthday.</p>
       <div class="otd-people-grid">
         <article class="otd-person-card">
@@ -711,66 +830,115 @@
           <div class="otd-person-avatar">CF</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Colin Firth</span>
-            <span class="otd-person-meta"><strong>1960</strong> · English actor (The King's Speech)</span>
+            <span class="otd-person-meta"><strong>1960</strong> · English actor, The King's Speech (Oscar winner)</span>
           </div>
         </article>
         <article class="otd-person-card">
           <div class="otd-person-avatar">MC</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Misty Copeland</span>
-            <span class="otd-person-meta"><strong>1982</strong> · American ballet dancer</span>
+            <span class="otd-person-meta"><strong>1982</strong> · American ballet dancer, ABT principal</span>
           </div>
         </article>
         <article class="otd-person-card">
           <div class="otd-person-avatar">PA</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Paul Anka</span>
-            <span class="otd-person-meta"><strong>1941</strong> · Canadian-American singer ("Diana")</span>
+            <span class="otd-person-meta"><strong>1941</strong> · Canadian-American singer, "Diana"</span>
           </div>
         </article>
         <article class="otd-person-card">
           <div class="otd-person-avatar">CS</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Carlos Santana</span>
-            <span class="otd-person-meta"><strong>1947</strong> · Mexican-American guitarist</span>
+            <span class="otd-person-meta"><strong>1947</strong> · Mexican-American guitarist, 10× Grammy winner</span>
           </div>
         </article>
         <article class="otd-person-card">
           <div class="otd-person-avatar">AP</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Arnold Palmer</span>
-            <span class="otd-person-meta"><strong>1929</strong> · American golf legend</span>
+            <span class="otd-person-meta"><strong>1929</strong> · American golf legend, 62 PGA Tour wins</span>
           </div>
         </article>
         <article class="otd-person-card">
           <div class="otd-person-avatar">RM</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Roger Maris</span>
-            <span class="otd-person-meta"><strong>1934</strong> · American baseball player (61 HRs in 1961)</span>
+            <span class="otd-person-meta"><strong>1934</strong> · Baseball player, 61 HRs in 1961</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">NW</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Natalie Wood</span>
+            <span class="otd-person-meta"><strong>1938</strong> · American actress, West Side Story</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">DR</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Diana Rigg</span>
+            <span class="otd-person-meta"><strong>1938</strong> · English actress, Game of Thrones</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">OC</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Oksana Chusovitina</span>
+            <span class="otd-person-meta"><strong>1977</strong> · Uzbek-German gymnast, 8 Olympic Games</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">KC</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Kim Carnes</span>
+            <span class="otd-person-meta"><strong>1946</strong> · American singer, "Bette Davis Eyes"</span>
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ===== Famous Deaths ===== -->
+  <!-- ===== Famous deaths ===== -->
   <section class="otd-section">
     <div class="container">
-      <h2 class="otd-section-title">⚰️ Famous deaths on July 20 <span class="count">4+</span></h2>
+      <h2 class="otd-section-title">⚰️ Famous deaths on July 20 <span class="count">8+</span></h2>
       <p class="otd-section-subtitle">Notable people who died on this day.</p>
       <div class="otd-people-grid">
         <article class="otd-person-card">
           <div class="otd-person-avatar">BL</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Bruce Lee</span>
-            <span class="otd-person-meta"><strong>1973</strong> · American-Hong Kong martial artist & actor, age 32</span>
+            <span class="otd-person-meta"><strong>1973</strong> · Martial artist & actor, age 32, Enter the Dragon</span>
           </div>
         </article>
         <article class="otd-person-card">
           <div class="otd-person-avatar">SG</div>
           <div class="otd-person-body">
             <span class="otd-person-name">Stephen Jay Gould</span>
-            <span class="otd-person-meta"><strong>2002</strong> · American paleontologist & author, age 60</span>
+            <span class="otd-person-meta"><strong>2002</strong> · Paleontologist & author, age 60</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">PV</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Pancho Villa</span>
+            <span class="otd-person-meta"><strong>1923</strong> · Mexican revolutionary, age 45</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">CL</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Curly Lambeau</span>
+            <span class="otd-person-meta"><strong>1957</strong> · Football coach, co-founder Green Bay Packers</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">CS</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Claus von Stauffenberg</span>
+            <span class="otd-person-meta"><strong>1944</strong> · German officer, July 20 plot, executed same day</span>
           </div>
         </article>
         <article class="otd-person-card">
@@ -781,38 +949,42 @@
           </div>
         </article>
         <article class="otd-person-card">
-          <div class="otd-person-avatar">CL</div>
+          <div class="otd-person-avatar">TH</div>
           <div class="otd-person-body">
-            <span class="otd-person-name">Curly Lambeau</span>
-            <span class="otd-person-meta"><strong>1957</strong> · American football coach (Packers), age 59</span>
+            <span class="otd-person-name">Tab Hunter</span>
+            <span class="otd-person-meta"><strong>2018</strong> · American actor & singer, age 86</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">JO</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Jacqueline Kennedy Onassis</span>
+            <span class="otd-person-meta"><strong>1929</strong> · First Lady 1961–63, age 64</span>
           </div>
         </article>
       </div>
     </div>
   </section>
 
+  <!-- Ad slot: Bottom -->
+  <div class="container">
+    <div class="otd-ad" aria-label="Advertisement">
+      <span>Ad — 728×90 bottom (will be replaced with AdSense)</span>
+    </div>
+  </div>
+
   <!-- ===== Explore more ===== -->
   <section class="otd-section">
     <div class="container">
       <h2 class="otd-section-title">🧭 Explore more</h2>
-      <p class="otd-section-subtitle">Discover history by date, year, or category.</p>
+      <p class="otd-section-subtitle">Discover history by date, year, category, or decade.</p>
       <div class="otd-explore-grid">
-        <a class="otd-explore-card" href="/onthisday/?month=1&day=1">
-          <h3>📅 Browse by date</h3>
-          <p>See what happened on any day in history — 365 days × 561 events</p>
-        </a>
-        <a class="otd-explore-card" href="/onthisday/?year=2000">
-          <h3>📚 Browse by year</h3>
-          <p>Explore events from a specific year, from 1900 to present</p>
-        </a>
-        <a class="otd-explore-card" href="/onthisday/?category=event">
-          <h3>🔍 Search history</h3>
-          <p>Search 561 historical events across 16 categories</p>
-        </a>
-        <a class="otd-explore-card" href="/news/">
-          <h3>📰 Latest news</h3>
-          <p>Recent editorial on time zones, DST, and calendar changes</p>
-        </a>
+        <a class="otd-explore-card" href="/onthisday/?month=1&day=1"><h3>📅 Browse by date</h3><p>See what happened on any day in history — 365 days × hundreds of events</p></a>
+        <a class="otd-explore-card" href="/onthisday/?year=2000"><h3>📚 Browse by year</h3><p>Explore events from a specific year, from 1900 to present</p></a>
+        <a class="otd-explore-card" href="/onthisday/?category=event"><h3>🔍 Search history</h3><p>Search 591+ historical events across 16 categories</p></a>
+        <a class="otd-explore-card" href="/news/"><h3>📰 Latest news</h3><p>Recent editorial on time zones, DST, and calendar changes</p></a>
+        <a class="otd-explore-card" href="/onthisday/?decade=1960s"><h3>🕰️ Browse by decade</h3><p>The 1960s · 1970s · 1980s · 1990s · 2000s · 2010s · 2020s</p></a>
+        <a class="otd-explore-card" href="/onthisday/?century=20"><h3>📆 Browse by century</h3><p>19th century · 20th century · 21st century</p></a>
       </div>
     </div>
   </section>
