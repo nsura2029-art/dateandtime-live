@@ -123,10 +123,16 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f0820; --bg-soft: #16092e; --fg: #ede9fe; --fg-soft: #d6cef5;
+    --bg: #0f0820; --bg-soft: #1f1240; --fg: #ede9fe; --fg-soft: #d6cef5;
     --muted: #a599c5; --primary: #a78bfa; --primary-fg: #0f0a1f;
-    --primary-soft: rgba(167,139,250,.18);
-    --border: rgba(167,139,250,.18); --border-soft: rgba(167,139,250,.10);
+    --primary-soft: rgba(167,139,250,.22);
+    --border: rgba(167,139,250,.22); --border-soft: rgba(167,139,250,.10);
+    --work: rgba(16,185,129,.30);
+    --work-edge: rgba(16,185,129,.75);
+    --sleep: rgba(99,102,241,.18);
+    --overlap: rgba(16,185,129,.45);
+    --overlap-2: rgba(245,158,11,.40);
+    --overlap-3: rgba(249,115,22,.40);
   }
   body::before {
     background:
@@ -136,14 +142,38 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
       radial-gradient(circle at 22% 78%, rgba(59,130,246,.15), transparent 28%),
       linear-gradient(160deg, #0f0820 0%, #1f0a3e 50%, #0a0418 100%);
   }
-  .box, .tile, .grid-wrap, .picked, .share-card, .cities-bar, .map-wrap, .compare-card, .tab.is-active .num { background: var(--bg-soft); }
-  .chip, .city-chip, .hero { background: var(--bg-soft); border-color: var(--border); }
-  .box, .grid-wrap, .tile, .hero, .picked, .share-card, .cities-bar { background: var(--bg-soft); }
-  .compare-card, .suggestion, .event-cities .city { background: var(--bg-soft); }
-  .btn { background: var(--bg-soft); border-color: var(--border); }
-  .city-chip { background: var(--bg-soft); }
-  .grid .corner, .grid .hour, .grid .row-head, .timeline-bar .seg, .date-strip .nav { background: var(--bg-soft); }
-  .tile.home { background: color-mix(in srgb, var(--peach-bg) 40%, var(--bg-soft)); }
+  /* Brighter cells in dark mode for visibility */
+  .box, .grid-wrap, .picked, .share-card, .cities-bar { background: var(--bg-soft); }
+  .grid-wrap { border-color: rgba(167,139,250,.30); }
+  .grid .corner, .grid .hour, .grid .row-head { background: rgba(167,139,250,.10); color: var(--fg-soft); }
+  .grid .hour.now { background: var(--primary); color: var(--primary-fg); }
+  .grid .row-head { color: var(--fg); }
+  .grid .cell.work { background: var(--work); border-right: 1px solid var(--work-edge); }
+  .grid .cell.sleep { background: var(--sleep); }
+  .grid .cell.weekend { background: rgba(99,102,241,.08); }
+  .picked { background: color-mix(in srgb, var(--primary-soft) 50%, var(--bg-soft)); border-color: var(--primary); }
+  .picked-head .time { color: var(--fg); }
+  .picked-head .label { color: var(--primary); }
+  /* FIX: picked time chips - explicit color */
+  .picked-times .pt { background: var(--bg); border-color: var(--border); color: var(--fg); }
+  .picked-times .pt .city { color: var(--muted); }
+  /* FIX: iCal button — give it white text on the primary, even in dark */
+  .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+  .btn-primary:hover { background: #8b5cf6; }
+  .btn { background: var(--bg); border-color: var(--border); color: var(--fg); }
+  .btn:hover { background: rgba(167,139,250,.18); }
+  .city-chip { background: var(--bg); border-color: var(--border); color: var(--fg); }
+  .city-chip.home { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+  .date-strip .nav { background: var(--bg); border-color: var(--border); color: var(--fg-soft); }
+  .date-strip .date { color: var(--fg); }
+  .date-strip .today { background: var(--primary); color: var(--primary-fg); }
+  .legend { color: var(--muted); }
+  .suggestion { background: var(--bg-soft); border-color: var(--border); }
+  .suggestion .time { color: var(--fg); }
+  .suggestion .meta { color: var(--muted); }
+  .quality.q-best { background: rgba(16,185,129,.22); color: #6ee7b7; }
+  .quality.q-ok { background: rgba(245,158,11,.22); color: #fbbf24; }
+  .quality.q-poor { background: rgba(239,68,68,.22); color: #fca5a5; }
 }
 
 </style>
