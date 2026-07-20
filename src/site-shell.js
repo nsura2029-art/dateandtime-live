@@ -1,12 +1,18 @@
-/* dateandtime.live — Shared site shell (theme toggle + breadcrumbs active state)
+/* dateandtime.live — Shared site shell
  *
- * Theme toggle persists choice in localStorage as 'tdl-theme'.
- * Highlights the current page in the main nav (by URL pathname).
+ * Responsibilities (runs on every page that loads this script):
+ *  1. Theme toggle (light/dark), persisted as 'tdl-theme' in localStorage
+ *  2. Highlight active link in the main nav (by URL pathname)
+ *  3. Mobile nav (hamburger) — open/close, escape, backdrop, link click
+ *
+ * Backward-compat: old 'tdp-theme' key is migrated to 'tdl-theme'.
  */
 (function () {
   "use strict";
 
-  // -------- Theme toggle --------
+  // ====================================================================
+  // THEME TOGGLE
+  // ====================================================================
   function setTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     try { localStorage.setItem("tdl-theme", theme); } catch (e) {}
@@ -23,7 +29,6 @@
       // Prefer new key, fall back to old key for backwards-compat
       saved = localStorage.getItem("tdl-theme") || localStorage.getItem("tdp-theme");
       if (saved) {
-        // Migrate the old key to the new one
         try { localStorage.setItem("tdl-theme", saved); localStorage.removeItem("tdp-theme"); } catch (e) {}
       }
     } catch (e) {}
@@ -40,15 +45,16 @@
     });
   }
 
-  // -------- Active nav link --------
+  // ====================================================================
+  // ACTIVE NAV LINK (desktop + mobile)
+  // ====================================================================
   function highlightActiveNav() {
     const path = window.location.pathname.replace(/\/$/, "") || "/";
-    document.querySelectorAll(".nav-main .nav-link").forEach((link) => {
+    document.querySelectorAll(".nav-main .nav-link, [data-mobile-nav] .mobile-nav-link").forEach((link) => {
       const href = link.getAttribute("href") || "";
       let linkPath;
       try { linkPath = new URL(href, window.location.origin).pathname.replace(/\/$/, "") || "/"; }
       catch (e) { return; }
-      // Active if paths match
       if (linkPath === path) {
         link.classList.add("is-active");
         link.setAttribute("aria-current", "page");
@@ -59,9 +65,88 @@
     });
   }
 
+  // ====================================================================
+  // MOBILE NAV (hamburger)
+  // ====================================================================
+  function openMobileNav(toggle, nav, backdrop) {
+    nav.hidden = false;
+    backdrop.hidden = false;
+    requestAnimationFrame(() => {
+      nav.classList.add("is-open");
+      backdrop.classList.add("is-open");
+      document.body.classList.add("has-mobile-nav-open");
+    });
+    toggle.setAttribute("aria-expanded", "true");
+    toggle.setAttribute("aria-label", "Close menu");
+    setTimeout(() => {
+      const firstLink = nav.querySelector(".mobile-nav-link");
+      if (firstLink) firstLink.focus();
+    }, 100);
+  }
+
+  function closeMobileNav(toggle, nav, backdrop) {
+    nav.classList.remove("is-open");
+    backdrop.classList.remove("is-open");
+    document.body.classList.remove("has-mobile-nav-open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open menu");
+    setTimeout(() => {
+      nav.hidden = true;
+      backdrop.hidden = true;
+    }, 300);
+    toggle.focus();
+  }
+
+  function initMobileNav() {
+    const toggle = document.querySelector("[data-nav-toggle]");
+    const nav = document.querySelector("[data-mobile-nav]");
+    const backdrop = document.querySelector("[data-nav-backdrop]");
+    const closeBtn = document.querySelector("[data-nav-close]");
+    if (!toggle || !nav || !backdrop) return;
+
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      if (expanded) closeMobileNav(toggle, nav, backdrop);
+      else openMobileNav(toggle, nav, backdrop);
+    });
+
+    if (closeBtn) closeBtn.addEventListener("click", () => closeMobileNav(toggle, nav, backdrop));
+    if (backdrop) backdrop.addEventListener("click", () => closeMobileNav(toggle, nav, backdrop));
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        closeMobileNav(toggle, nav, backdrop);
+      }
+    });
+
+    // Close when a nav link is clicked
+    document.querySelectorAll("[data-mobile-nav] .mobile-nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        const href = link.getAttribute("href") || "";
+        if (href && href !== "#") {
+          setTimeout(() => closeMobileNav(toggle, nav, backdrop), 50);
+        }
+      });
+    });
+
+    // Close on resize to desktop
+    let lastWidth = window.innerWidth;
+    window.addEventListener("resize", () => {
+      if (Math.abs(window.innerWidth - lastWidth) > 50) {
+        if (window.innerWidth >= 1024) closeMobileNav(toggle, nav, backdrop);
+        lastWidth = window.innerWidth;
+      }
+    });
+  }
+
+  // ====================================================================
+  // BOOT
+  // ====================================================================
   function init() {
     initTheme();
     highlightActiveNav();
+    initMobileNav();
   }
 
   if (document.readyState === "loading") {
@@ -70,124 +155,3 @@
     init();
   }
 })();
-
-// Note: the init() call above runs both initTheme() and highlightActiveNav().
-// The mobile menu init (initMobileNav) is added via _fullInit in the appended block below.
-
-
-// -------- Mobile nav (hamburger) --------
-function openMobileNav() {
-  const nav = document.querySelector("[data-mobile-nav]");
-  const backdrop = document.querySelector("[data-nav-backdrop]");
-  const toggle = document.querySelector("[data-nav-toggle]");
-  if (!nav || !backdrop || !toggle) return;
-  nav.hidden = false;
-  backdrop.hidden = false;
-  // next frame: add the class so the transition fires
-  requestAnimationFrame(() => {
-    nav.classList.add("is-open");
-    backdrop.classList.add("is-open");
-    document.body.classList.add("has-mobile-nav-open");
-  });
-  toggle.setAttribute("aria-expanded", "true");
-  toggle.setAttribute("aria-label", "Close menu");
-  // focus the first link for accessibility
-  setTimeout(() => {
-    const firstLink = nav.querySelector(".mobile-nav-link");
-    if (firstLink) firstLink.focus();
-  }, 100);
-}
-
-function closeMobileNav() {
-  const nav = document.querySelector("[data-mobile-nav]");
-  const backdrop = document.querySelector("[data-nav-backdrop]");
-  const toggle = document.querySelector("[data-nav-toggle]");
-  if (!nav || !backdrop || !toggle) return;
-  nav.classList.remove("is-open");
-  backdrop.classList.remove("is-open");
-  document.body.classList.remove("has-mobile-nav-open");
-  toggle.setAttribute("aria-expanded", "false");
-  toggle.setAttribute("aria-label", "Open menu");
-  // wait for the transition to finish, then hide
-  setTimeout(() => {
-    nav.hidden = true;
-    backdrop.hidden = true;
-  }, 300);
-  toggle.focus();
-}
-
-function initMobileNav() {
-  const toggle = document.querySelector("[data-nav-toggle]");
-  const closeBtn = document.querySelector("[data-nav-close]");
-  const backdrop = document.querySelector("[data-nav-backdrop]");
-  if (!toggle) return;
-
-  toggle.addEventListener("click", () => {
-    const expanded = toggle.getAttribute("aria-expanded") === "true";
-    if (expanded) closeMobileNav();
-    else openMobileNav();
-  });
-
-  if (closeBtn) closeBtn.addEventListener("click", closeMobileNav);
-  if (backdrop) backdrop.addEventListener("click", closeMobileNav);
-
-  // Close on Escape
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
-      closeMobileNav();
-    }
-  });
-
-  // Close when a nav link is clicked
-  document.querySelectorAll("[data-mobile-nav] .mobile-nav-link").forEach((link) => {
-    link.addEventListener("click", () => {
-      // Only close for actual navigation, not "#" placeholders
-      const href = link.getAttribute("href") || "";
-      if (href && href !== "#") {
-        setTimeout(closeMobileNav, 50);
-      }
-    });
-  });
-
-  // Highlight the active mobile nav link (same logic as desktop nav)
-  const path = window.location.pathname.replace(/\/$/, "") || "/";
-  document.querySelectorAll("[data-mobile-nav] .mobile-nav-link").forEach((link) => {
-    const href = link.getAttribute("href") || "";
-    let linkPath;
-    try { linkPath = new URL(href, window.location.origin).pathname.replace(/\/$/, "") || "/"; }
-    catch (e) { return; }
-    if (linkPath === path) {
-      link.classList.add("is-active");
-      link.setAttribute("aria-current", "page");
-    } else if (linkPath !== "/" && path.startsWith(linkPath)) {
-      link.classList.add("is-active");
-      link.setAttribute("aria-current", "page");
-    }
-  });
-
-  // Close on resize to desktop
-  let lastWidth = window.innerWidth;
-  window.addEventListener("resize", () => {
-    if (Math.abs(window.innerWidth - lastWidth) > 50) {
-      if (window.innerWidth >= 1024) closeMobileNav();
-      lastWidth = window.innerWidth;
-    }
-  });
-}
-
-// Call initMobileNav alongside the existing init flow.
-// (We can't reassign `init` because it's a function declaration in strict mode.)
-// Instead, we wrap the init call below.
-const _origInit = init;
-function _fullInit() {
-  _origInit();
-  initMobileNav();
-}
-
-// Replace the init() call below with _fullInit()
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", _fullInit);
-} else {
-  _fullInit();
-}
-
