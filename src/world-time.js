@@ -34,8 +34,9 @@
   // ========== STATE ==========
   let cities = []; // {id, name, countryCode, countryName, stateCode, timezone, home, currentTime, offsetMinutes, workStart, workEnd, workDays, currentHour}
   let workHoursCache = {}; // {cca2: {workDays: [...], hours: {open, close}}}
-  let selectedRange = null; // {cityId, startHour, endHour}
+  let selectedRange = null; // {anchorCityId, startHour, endHour} — anchor city is the first one selected
   let focusedDate = new Date(); // currently-shown date in the timeline
+  let cityOffsetCache = {}; // {iana: offsetHours} — cache for performance
 
   // ========== HELPERS ==========
   function $(s, root) { return (root || document).querySelector(s); }
@@ -115,6 +116,56 @@
     if (offsetMinutes == null) return "";
     const h = offsetMinutes / 60;
     return h >= 0 ? "+" + h : String(h);
+  }
+
+  // Get the UTC offset (in hours, positive for east) for a timezone at a given date
+  function getTzOffsetHours(tz, date) {
+    if (cityOffsetCache[tz] !== undefined) return cityOffsetCache[tz];
+    try {
+      // Use Intl.DateTimeFormat to get the long offset (e.g. "GMT-04:00")
+      const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "longOffset" });
+      const parts = fmt.formatToParts(date);
+      const off = parts.find(p => p.type === "timeZoneName")?.value || "GMT+00:00";
+      // Parse "GMT-04:00" or "GMT+05:30"
+      const m = off.match(/GMT([+-])(\d{1,2}):(\d{2})/);
+      if (!m) { cityOffsetCache[tz] = 0; return 0; }
+      const sign = m[1] === "+" ? 1 : -1;
+      const h = parseInt(m[2], 10);
+      const mi = parseInt(m[3], 10);
+      const result = sign * (h + mi / 60);
+      cityOffsetCache[tz] = result;
+      return result;
+    } catch (e) { return 0; }
+  }
+
+  // Format a number of hours as a local time string
+  function formatLocalTime(hours) {
+    // hours can be a fractional number (e.g. 13.5 = 1:30pm)
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    const display = m === 0 ? h : h + ":" + String(m).padStart(2, "0");
+    const { h: dh, p } = fmtHour(((h + 24) % 24));
+    const min = m === 0 ? "" : ":" + String(m).padStart(2, "0");
+    return dh + min + p;
+  }
+
+  // Get the local hour range for a city given an anchor city's selected range
+  // Returns: { startLocal, endLocal, crossesMidnight, dayOffset }
+  function getLocalRangeForCity(city, anchor, startHour, endHour) {
+    const anchorOffset = getTzOffsetHours(anchor.timezone, focusedDate);
+    const cityOffset = getTzOffsetHours(city.timezone, focusedDate);
+    const delta = cityOffset - anchorOffset;
+    let startLocal = startHour + delta;
+    let endLocal = endHour + delta;
+    let dayOffset = 0;
+    let crossesMidnight = false;
+    // Normalize to [0, 24)
+    if (startLocal < 0) { startLocal += 24; dayOffset = -1; crossesMidnight = true; }
+    if (endLocal <= 0) { endLocal += 24; dayOffset = -1; crossesMidnight = true; }
+    if (startLocal >= 24) { startLocal -= 24; dayOffset = 1; crossesMidnight = true; }
+    if (endLocal > 24) { endLocal -= 24; dayOffset = 1; crossesMidnight = true; }
+    if (endLocal < startLocal && !crossesMidnight) crossesMidnight = true;
+    return { startLocal, endLocal, dayOffset, crossesMidnight };
   }
 
   // ========== API CALLS ==========
@@ -211,7 +262,10 @@
     const idx = cities.findIndex(c => c.id === id);
     if (idx < 0) return;
     cities.splice(idx, 1);
-    if (selectedRange && selectedRange.cityId === id) selectedRange = null;
+    if (selectedRange && selectedRange.anchorCityId === id) {
+      // Pick a new anchor (or clear if no cities left)
+      selectedRange = cities.length > 0 ? { anchorCityId: cities[0].id, startHour: selectedRange.startHour, endHour: selectedRange.endHour } : null;
+    }
     saveToStorage();
     render();
   }
@@ -286,17 +340,42 @@
     const date = localDateInCity(tz, now);
     const isHome = !!city.home;
 
+    // Compute selected tiles (offset-based, WTB-style)
+    let selectedStartCol = -1, selectedEndCol = -1;
+    if (selectedRange) {
+      const anchor = cities.find(c => c.id === selectedRange.anchorCityId);
+      if (anchor) {
+        const { startLocal, endLocal, dayOffset } = getLocalRangeForCity(city, anchor, selectedRange.startHour, selectedRange.endHour);
+        if (startLocal < endLocal) {
+          // Simple range
+          selectedStartCol = Math.floor(startLocal);
+          selectedEndCol = Math.floor(endLocal);
+          if (Math.floor(endLocal) === Math.floor(startLocal) && endLocal > startLocal) selectedEndCol = Math.floor(endLocal);
+          // Adjust for partial hours
+          if (endLocal !== Math.floor(endLocal)) selectedEndCol = Math.floor(endLocal);
+        } else {
+          // Crosses midnight: two ranges
+          selectedStartCol = Math.floor(startLocal);
+          selectedEndCol = 23; // end of day
+          // Second range handled separately via a marker
+        }
+      }
+    }
+
     let tiles = "";
     for (let h = 0; h < 24; h++) {
       const isWork = isWorkHour(city, h, dayName);
       const isEarly = isEarlyHour(city, h, dayName);
       const isNow = (h === hour);
-      const isSelected = selectedRange && selectedRange.cityId === city.id && h >= selectedRange.startHour && h <= selectedRange.endHour;
+      const isInRange = selectedStartCol >= 0 && h >= selectedStartCol && h <= selectedEndCol;
+      const isStart = isInRange && h === selectedStartCol;
+      const isEnd = isInRange && h === selectedEndCol;
       const classes = ["wt-tile"];
       if (isWork) classes.push("work");
       if (isEarly) classes.push("early");
       if (isNow) classes.push("now");
-      if (isSelected) classes.push(isSelected === (h === selectedRange.startHour || h === selectedRange.endHour) ? "is-selected" : "in-range");
+      if (isStart || isEnd) classes.push("is-selected");
+      else if (isInRange) classes.push("in-range");
       const fmt = fmtHour(h);
       tiles += `<div class="${classes.join(" ")}" data-tile data-city="${city.id}" data-hour="${h}"><span class="h">${fmt.h}</span><span class="p">${fmt.p}</span></div>`;
     }
@@ -381,7 +460,8 @@
       const cityId = parseInt(tile.dataset.city, 10);
       const startHour = parseInt(tile.dataset.hour, 10);
       dragState = { cityId, startHour };
-      selectedRange = { cityId, startHour, endHour: startHour };
+      // Anchor city = the city the user starts dragging on
+      selectedRange = { anchorCityId: cityId, startHour, endHour: startHour };
       render();
     });
     main.addEventListener("mouseover", (e) => {
@@ -393,7 +473,7 @@
       const hour = parseInt(tile.dataset.hour, 10);
       const lo = Math.min(dragState.startHour, hour);
       const hi = Math.max(dragState.startHour, hour);
-      selectedRange = { cityId: dragState.cityId, startHour: lo, endHour: hi };
+      selectedRange = { anchorCityId: dragState.cityId, startHour: lo, endHour: hi };
       render();
       showSelectionBar();
     });
@@ -408,10 +488,33 @@
   function showSelectionBar() {
     const bar = $("#wt-selection-bar");
     if (!bar) return;
-    if (!selectedRange) { bar.classList.remove("is-visible"); return; }
+    if (!selectedRange) {
+      bar.classList.remove("is-visible");
+      $("#wt-picked-times").innerHTML = "";
+      return;
+    }
     bar.classList.add("is-visible");
     const hours = selectedRange.endHour - selectedRange.startHour + 1;
     $(".wt-selection-bar .duration", bar).textContent = hours === 1 ? "1 hour" : hours + " hours";
+    // Per-city picked times
+    const anchor = cities.find(c => c.id === selectedRange.anchorCityId);
+    if (!anchor) return;
+    const wrap = $("#wt-picked-times");
+    if (!wrap) return;
+    const evName = ($(".wt-event-name")?.value || "Meeting").trim();
+    wrap.innerHTML = cities.map(city => {
+      const { startLocal, endLocal, dayOffset, crossesMidnight } = getLocalRangeForCity(city, anchor, selectedRange.startHour, selectedRange.endHour);
+      const startStr = formatLocalTime(startLocal);
+      let endStr = formatLocalTime(endLocal);
+      if (endLocal === 0) endStr = "12am";
+      const nextDay = dayOffset > 0 || (crossesMidnight && endLocal < startLocal);
+      const dayLabel = nextDay ? " +1d" : (dayOffset < 0 ? " -1d" : "");
+      return `<div class="wt-picked-time ${city.home ? 'home' : ''}">
+        <span class="time">${startStr}${endLocal !== startLocal ? '–' + endStr : ''}</span>
+        <span class="city">${escapeHtml(city.name)}</span>
+        ${dayLabel ? '<span class="next-day">' + dayLabel + '</span>' : ''}
+      </div>`;
+    }).join("");
   }
 
   // Hover column highlight
@@ -515,13 +618,28 @@
   // Selection bar actions
   function setupSelectionActions() {
     document.addEventListener("click", (e) => {
+      // "Copy link" button in toolbar (always visible)
+      const linkView = e.target.closest("[data-action='link-view']");
+      if (linkView) {
+        e.preventDefault();
+        const params = new URLSearchParams();
+        if (cities.length) params.set("cities", cities.map(c => c.id).join(","));
+        if (selectedRange) params.set("time", String(selectedRange.startHour).padStart(2, "0") + ":00");
+        const url = window.location.origin + window.location.pathname + "?" + params;
+        navigator.clipboard.writeText(url).then(() => {
+          const old = linkView.textContent;
+          linkView.textContent = "✓ Link copied!";
+          setTimeout(() => { linkView.textContent = old; }, 1500);
+        });
+        return;
+      }
       const action = e.target.closest("[data-selection-action]");
       if (!action) return;
       const kind = action.dataset.selectionAction;
       if (kind === "clear") { selectedRange = null; render(); return; }
       // iCal / Google Cal / Clipboard / Gmail — generate from current selection
       if (!selectedRange) return;
-      const city = cities.find(c => c.id === selectedRange.cityId);
+      const city = cities.find(c => c.id === (selectedRange.anchorCityId || selectedRange.cityId));
       if (!city) return;
       const startTime = `${String(selectedRange.startHour).padStart(2, "0")}:00`;
       const endTime = `${String((selectedRange.endHour + 1) % 24).padStart(2, "0")}:00`;
@@ -555,8 +673,167 @@
           action.textContent = "✓ Link copied";
           setTimeout(() => { action.textContent = old; }, 1500);
         });
+      } else if (kind === "png") {
+        saveGridAsPng(action);
+      } else if (kind === "share") {
+        shareWithImage(action);
       }
     });
+  }
+
+  // Save grid as PNG using html2canvas
+  async function saveGridAsPng(button) {
+    if (typeof html2canvas === "undefined") {
+      alert("PNG library loading… try again in a moment.");
+      return;
+    }
+    const oldText = button.textContent;
+    button.textContent = "⏳ Generating…";
+    button.disabled = true;
+    try {
+      // Capture the URL bar, main grid, selection bar
+      const main = $("#wt-main");
+      const urlState = $("#wt-url-state");
+      const selBar = $("#wt-selection-bar");
+      const chips = $("#wt-city-chips");
+      // Build a wrapper for the screenshot
+      const wrapper = document.createElement("div");
+      wrapper.style.cssText = "position:fixed;top:0;left:0;background:white;padding:16px;z-index:99999;font-family:system-ui;";
+      const titleEl = document.createElement("div");
+      titleEl.style.cssText = "font-size:18px;font-weight:800;margin-bottom:4px;color:#1f1a3a;";
+      titleEl.textContent = $("h1")?.textContent || "World time";
+      const subEl = document.createElement("div");
+      subEl.style.cssText = "font-size:12px;color:#777;margin-bottom:8px;";
+      subEl.textContent = "dateandtime.live/world-time/";
+      const urlEl = document.createElement("div");
+      urlEl.style.cssText = "font-size:11px;color:#5b4aaf;margin-bottom:12px;font-family:monospace;";
+      urlEl.textContent = window.location.href;
+      const mainClone = main.cloneNode(true);
+      mainClone.style.borderRadius = "8px";
+      mainClone.style.overflow = "hidden";
+      const selBarClone = selBar.cloneNode(true);
+      selBarClone.style.display = "flex";
+      const chipsClone = chips.cloneNode(true);
+      const headerEl = document.createElement("div");
+      headerEl.style.cssText = "margin-bottom: 12px;";
+      headerEl.appendChild(titleEl);
+      headerEl.appendChild(subEl);
+      headerEl.appendChild(urlEl);
+      wrapper.appendChild(headerEl);
+      if (chips && chips.children.length > 0) { chipsClone.style.marginBottom = "8px"; wrapper.appendChild(chipsClone); }
+      if (selBar && selBar.classList.contains("is-visible")) wrapper.appendChild(selBarClone);
+      wrapper.appendChild(mainClone);
+      document.body.appendChild(wrapper);
+      const canvas = await html2canvas(wrapper, { backgroundColor: "#ffffff", scale: 2, logging: false });
+      document.body.removeChild(wrapper);
+      canvas.toBlob(blob => {
+        const dayLabel = $("#wt-day-label")?.textContent || "schedule";
+        const filename = `worldtime-${dayLabel.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.png`;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        button.textContent = "✓ Saved!";
+        setTimeout(() => { button.textContent = oldText; button.disabled = false; }, 1500);
+      });
+    } catch (e) {
+      console.error("PNG export failed", e);
+      button.textContent = "✗ Failed";
+      setTimeout(() => { button.textContent = oldText; button.disabled = false; }, 2000);
+    }
+  }
+
+  // Web Share API (mobile) or download + copy URL (desktop)
+  async function shareWithImage(button) {
+    if (typeof html2canvas === "undefined") {
+      alert("Library loading… try again in a moment.");
+      return;
+    }
+    const oldText = button.textContent;
+    button.textContent = "⏳ Generating…";
+    button.disabled = true;
+    try {
+      const canvas = await generateShareCanvas();
+      const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
+      const params = new URLSearchParams();
+      if (cities.length) params.set("cities", cities.map(c => c.id).join(","));
+      if (selectedRange) params.set("time", String(selectedRange.startHour).padStart(2, "0") + ":00");
+      const shareUrl = window.location.origin + window.location.pathname + "?" + params;
+      const shareData = {
+        title: "World Time schedule",
+        text: cities.map(c => c.name).join(", ") + " meeting schedule",
+        url: shareUrl
+      };
+      const file = new File([blob], "worldtime-schedule.png", { type: "image/png" });
+      // Try Web Share API with file (mobile)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ ...shareData, files: [file] });
+          button.textContent = "✓ Shared!";
+        } catch (e) {
+          if (e.name !== "AbortError") throw e;
+        }
+      } else {
+        // Desktop fallback: download + copy URL
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "worldtime-schedule.png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        await navigator.clipboard.writeText(shareUrl);
+        button.textContent = "✓ Saved + link copied!";
+      }
+      setTimeout(() => { button.textContent = oldText; button.disabled = false; }, 2000);
+    } catch (e) {
+      console.error("Share failed", e);
+      button.textContent = "✗ Failed";
+      setTimeout(() => { button.textContent = oldText; button.disabled = false; }, 2000);
+    }
+  }
+
+  // Reuse the same canvas-building logic
+  async function generateShareCanvas() {
+    const main = $("#wt-main");
+    const selBar = $("#wt-selection-bar");
+    const chips = $("#wt-city-chips");
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = "position:fixed;top:0;left:0;background:white;padding:16px;z-index:99999;font-family:system-ui;";
+    const titleEl = document.createElement("div");
+    titleEl.style.cssText = "font-size:18px;font-weight:800;margin-bottom:4px;color:#1f1a3a;";
+    titleEl.textContent = $("h1")?.textContent || "World time";
+    const subEl = document.createElement("div");
+    subEl.style.cssText = "font-size:12px;color:#777;margin-bottom:8px;";
+    subEl.textContent = "dateandtime.live/world-time/";
+    const headerEl = document.createElement("div");
+    headerEl.style.cssText = "margin-bottom: 12px;";
+    headerEl.appendChild(titleEl);
+    headerEl.appendChild(subEl);
+    wrapper.appendChild(headerEl);
+    if (chips && chips.children.length > 0) {
+      const chipsClone = chips.cloneNode(true);
+      chipsClone.style.marginBottom = "8px";
+      wrapper.appendChild(chipsClone);
+    }
+    if (selBar && selBar.classList.contains("is-visible")) {
+      const selBarClone = selBar.cloneNode(true);
+      selBarClone.style.display = "flex";
+      wrapper.appendChild(selBarClone);
+    }
+    const mainClone = main.cloneNode(true);
+    mainClone.style.borderRadius = "8px";
+    mainClone.style.overflow = "hidden";
+    wrapper.appendChild(mainClone);
+    document.body.appendChild(wrapper);
+    const canvas = await html2canvas(wrapper, { backgroundColor: "#ffffff", scale: 2, logging: false });
+    document.body.removeChild(wrapper);
+    return canvas;
   }
 
   function generateICS(name, day, start, end, tz, allCities) {
@@ -691,7 +968,7 @@ END:VCALENDAR`;
     if (urlTime) {
       const [h] = urlTime.split(":").map(Number);
       if (!isNaN(h) && cities.length > 0) {
-        selectedRange = { cityId: cities[0].id, startHour: h, endHour: h };
+        selectedRange = { anchorCityId: cities[0].id, startHour: h, endHour: h };
         showSelectionBar();
       }
     }

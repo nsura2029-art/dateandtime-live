@@ -31,6 +31,8 @@
   </script>
   <script src="/src/site-shell.js" defer></script>
   <script src="/src/world-time.js" defer></script>
+  <!-- html2canvas for PNG export (lightweight, ~10KB) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js" defer></script>
 </head>
 <body class="shell-page">
 <header class="site-header">
@@ -119,7 +121,7 @@
       </div>
       <div class="wt-toolbar-actions">
         <button class="icon-btn" data-action="settings">⚙️ Settings</button>
-        <a href="#" class="link" data-selection-action="link">🔗 LINK TO THIS VIEW</a>
+        <a href="#" class="link" data-action="link-view">🔗 COPY LINK</a>
       </div>
     </div>
 
@@ -131,10 +133,14 @@
         <button class="action" data-selection-action="google">📅 Google Cal</button>
         <button class="action" data-selection-action="clipboard">📋 Clipboard</button>
         <button class="action" data-selection-action="gmail">✉️ Gmail</button>
+        <button class="wt-png-btn" data-selection-action="png">📷 Save as PNG</button>
+        <button class="wt-png-btn" data-selection-action="share">📤 Share</button>
         <span class="event">📌 Event: <input type="text" class="wt-event-name" value="Meeting" placeholder="Event name" /></span>
         <button class="action" data-selection-action="clear">✕ Clear</button>
         <a href="#" class="link" data-selection-action="link">🔗 LINK TO THIS SELECTION</a>
       </div>
+      <!-- Per-city picked times (filled by JS) -->
+      <div class="wt-picked-times" id="wt-picked-times"></div>
     </div>
 
     <!-- CITY CHIPS (compact, removable) -->
