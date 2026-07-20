@@ -97,19 +97,14 @@
   }
 
   function isWorkHour(city, hour, dayName) {
-    const wh = workHoursCache[city.countryCode];
-    if (!wh) return false;
-    if (!wh.workDays || !wh.workDays.includes(dayName)) return false;
-    return hour >= wh.hours.open && hour < wh.hours.close;
+    // Default 8am-5pm Mon-Fri (same for all cities, hardcoded)
+    if (!DEFAULT_WORK_DAYS.includes(dayName)) return false;
+    return hour >= DEFAULT_WORK_OPEN && hour < DEFAULT_WORK_CLOSE;
   }
 
   function isEarlyHour(city, hour, dayName) {
-    const wh = workHoursCache[city.countryCode];
-    if (!wh) return false;
-    if (!wh.workDays || !wh.workDays.includes(dayName)) return false;
-    // Early: 1 hour before work start, or 1 hour after work end
-    return (hour >= wh.hours.open - 1 && hour < wh.hours.open) ||
-           (hour >= wh.hours.close && hour < wh.hours.close + 1);
+    // No early/late hours — work starts/ends exactly at 8/5
+    return false;
   }
 
   // Sleep: 11pm-6am (default sleep hours, applies every day including weekends)
@@ -491,18 +486,10 @@
       const isEarly = isEarlyHour(city, localHour, localDayLong);
       const isSleep = isSleepHour(localHour);
       // Work edge (start/end) vs middle: start + end are darker, middle is lighter
-      let isWorkEdge = false, isWorkMiddle = false, isEarlyEdge = false;
-      if (isWork || isEarly) {
-        const wh = workHoursCache[city.countryCode];
-        if (wh) {
-          if (isWork) {
-            isWorkEdge = (localHour === wh.hours.open) || (localHour === wh.hours.close - 1);
-            isWorkMiddle = isWork && !isWorkEdge;
-          }
-          if (isEarly) {
-            isEarlyEdge = (localHour === wh.hours.open - 1) || (localHour === wh.hours.close);
-          }
-        }
+      let isWorkEdge = false, isWorkMiddle = false;
+      if (isWork) {
+        isWorkEdge = (localHour === DEFAULT_WORK_OPEN) || (localHour === DEFAULT_WORK_CLOSE - 1);
+        isWorkMiddle = isWork && !isWorkEdge;
       }
       const isNow = isFocusedTodayInAnchor && (c === currentAnchorHour);
       const isPast = isFocusedTodayInAnchor && (c < currentAnchorHour);
@@ -514,8 +501,6 @@
       if (isWork) classes.push("work");
       if (isWorkEdge) classes.push("work-edge");
       else if (isWorkMiddle) classes.push("work-middle");
-      if (isEarly) classes.push("early");
-      if (isEarlyEdge) classes.push("early-edge");
       if (isSleep) classes.push("sleep");
       if (isWeekend) classes.push("weekend");
       if (isNextDay) classes.push("next-day");
@@ -792,16 +777,9 @@
         let status = "off";
         let statusLabel = "Off";
         if (isWork) {
-          // Distinguish start / end / middle
-          const wh = workHoursCache[city.countryCode];
-          if (wh && localHour === wh.hours.open) { status = "work"; statusLabel = "Work start"; }
-          else if (wh && localHour === wh.hours.close - 1) { status = "work"; statusLabel = "Work end"; }
+          if (localHour === DEFAULT_WORK_OPEN) { status = "work"; statusLabel = "Work start"; }
+          else if (localHour === DEFAULT_WORK_CLOSE - 1) { status = "work"; statusLabel = "Work end"; }
           else { status = "work"; statusLabel = "Work"; }
-        } else if (isEarly) {
-          const wh = workHoursCache[city.countryCode];
-          if (wh && localHour === wh.hours.open - 1) { status = "early"; statusLabel = "Before work"; }
-          else if (wh && localHour === wh.hours.close) { status = "early"; statusLabel = "After work"; }
-          else { status = "early"; statusLabel = "Early/Late"; }
         } else if (isSleep) { status = "sleep"; statusLabel = "Sleep"; }
         if (isWeekend) { status = "weekend"; statusLabel = "Weekend"; }
 
@@ -824,13 +802,79 @@
         </div>`;
       }).join("");
 
-      // Tooltip is fixed top-left (CSS handles positioning), just show it
+      // Position the tooltip as an overlay at the home city row, at the selected column
       tooltip.style.display = "block";
-      tooltip.classList.add("is-open");
+      tooltip.style.visibility = "hidden";
+      requestAnimationFrame(() => {
+        positionTooltipAtHomeCol(col);
+        tooltip.style.visibility = "";
+        tooltip.classList.add("is-open");
+      });
     });
   }
 
-  // Chip remove + row remove
+  // Position the tooltip centered on the home city tile at the given column
+  // and just below the home city row (or above if no space below)
+  function positionTooltipAtHomeCol(col) {
+    const tooltip = document.getElementById("wt-tooltip");
+    if (!tooltip) return;
+    const homeRow = document.querySelector(".wt-city-row");
+    if (!homeRow) return;
+    const homeTiles = homeRow.querySelectorAll(".wt-tile");
+    const homeTile = homeTiles[col];
+    if (!homeTile) return;
+    const tileRect = homeTile.getBoundingClientRect();
+    const homeRect = homeRow.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    // Center horizontally on the home tile
+    let left = tileRect.left + tileRect.width / 2 - tooltipRect.width / 2;
+    // Default: below the home city row
+    let top = homeRect.bottom + 10;
+    let arrowSide = "down";
+
+    const margin = 12;
+    // Clamp horizontally to viewport
+    if (left < margin) left = margin;
+    if (left + tooltipRect.width > window.innerWidth - margin) {
+      left = window.innerWidth - tooltipRect.width - margin;
+    }
+    // If not enough space below, position above
+    if (top + tooltipRect.height > window.innerHeight - margin) {
+      top = homeRect.top - tooltipRect.height - 10;
+      arrowSide = "up";
+    }
+    // If still not enough space, position at top of viewport
+    if (top < margin) top = margin;
+
+    tooltip.style.left = left + "px";
+    tooltip.style.top = top + "px";
+
+    // Position the arrow at the home tile's center (relative to the tooltip)
+    const arrowX = tileRect.left + tileRect.width / 2 - left;
+    tooltip.style.setProperty("--wt-tooltip-arrow-left", arrowX + "px");
+    tooltip.dataset.arrow = arrowSide;
+  }
+
+  // Reposition the tooltip on scroll/resize so it follows the selected column
+  function setupTooltipReposition() {
+    let lastCol = null;
+    function onChange() {
+      if (lastCol === null) return;
+      positionTooltipAtHomeCol(lastCol);
+    }
+    // Watch for scroll/resize
+    window.addEventListener("scroll", onChange, { passive: true });
+    window.addEventListener("resize", onChange);
+    // Watch for tile clicks to remember the last selected col
+    document.addEventListener("mousedown", (e) => {
+      const tile = e.target.closest("[data-tile]");
+      if (tile && !tile.classList.contains("past")) {
+        const c = parseInt(tile.dataset.col, 10);
+        if (!isNaN(c)) lastCol = c;
+      }
+    });
+  }
   function setupChipRemove() {
     document.addEventListener("click", (e) => {
       const x = e.target.closest(".wt-city-chip .x");
@@ -1349,6 +1393,7 @@ END:VCALENDAR`;
     setupDragSelect();
     setupHoverColumn();
     setupTileTooltip();
+    setupTooltipReposition();
     setupChipRemove();
     setupDatePager();
     setupSelectionActions();

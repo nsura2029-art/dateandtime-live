@@ -423,18 +423,16 @@
 [data-theme="dark"] .wt-tile.early-edge { background: rgba(212,168,58,0.65); color: #fef3c7; }
 [data-theme="dark"] .wt-tile.early-edge .p { color: #fde68a; }
 
-/* ===== Tooltip: fixed top-left of viewport ===== */
+/* ===== Tooltip: overlay at home city row, at selected column ===== */
 .wt-tooltip {
   position: fixed;
-  top: 80px;
-  left: 20px;
   z-index: 1000;
   min-width: 280px;
   max-width: 340px;
   background: var(--wt-bg-card);
   border: 1px solid var(--wt-border);
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.22);
   padding: 0.75rem;
   font-size: 0.8125rem;
   pointer-events: auto;
@@ -444,18 +442,26 @@
 .wt-tooltip::before {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 32px;
+  left: var(--wt-tooltip-arrow-left, 50%);
+  transform: translateX(-50%);
   border: 7px solid transparent;
+}
+.wt-tooltip[data-arrow="down"]::before {
+  top: 100%;
   border-top-color: var(--wt-bg-card);
   filter: drop-shadow(0 1px 0 var(--wt-border));
 }
+.wt-tooltip[data-arrow="up"]::before {
+  bottom: 100%;
+  border-bottom-color: var(--wt-bg-card);
+  filter: drop-shadow(0 -1px 0 var(--wt-border));
+}
 @media (max-width: 760px) {
   .wt-tooltip {
-    top: auto;
+    top: auto !important;
+    left: 12px !important;
+    right: 12px !important;
     bottom: 12px;
-    left: 12px;
-    right: 12px;
     min-width: 0;
     max-width: none;
   }
