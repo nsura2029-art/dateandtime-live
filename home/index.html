@@ -401,7 +401,7 @@
         <a href="/" class="nav-link nav-link-active" aria-current="page">Home</a>
         <a href="/globe/" class="nav-link">3D Globe</a>
         <a href="#" class="nav-link">Meeting finder</a>
-        <a href="#" class="nav-link">World clock</a>
+        <a href="#" class="nav-link">World time</a>
         <a href="#" class="nav-link">Blog</a>
       </nav>
       <div class="header-actions">
@@ -932,7 +932,7 @@
         probe("/api/v1/onthisday"),
         probe("/api/v2/search?q=test"),
         probe("/api/v1/holidays/today?country=US"),
-        probe("/api/dst/upcoming?tz=America/New_York"),
+        probe("/api/v1/dst/upcoming?tz=America/New_York"),
         probe("/api/v1/countries/US/working-hours"),
         probe("/api/v1/feedback/top")
       ]);
