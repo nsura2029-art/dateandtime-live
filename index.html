@@ -523,11 +523,6 @@
           <p class="hero-line">dateandtime.live gives you everything you need instantly.</p>
           <p class="hero-line">Auto-detect your location or search any city worldwide to see accurate local time and trusted time zone information.</p>
         </div>
-
-        <div class="ad-slot hero-ad" role="complementary" aria-label="Advertisement">
-          <span class="ad-label">Advertisement</span>
-          <span class="ad-size">728 × 90</span>
-        </div>
       </div>
     </section>
 
@@ -606,11 +601,6 @@
 
         <p class="rail-label is-hidden">Favorite cities</p>
         <div class="rail" id="rail"></div>
-
-        <div class="ad-slot leaderboard" role="complementary" aria-label="Advertisement">
-          <span class="ad-label">Advertisement</span>
-          <span class="ad-size">728 × 90</span>
-        </div>
       </div>
     </section>
 
@@ -628,18 +618,6 @@
         </div>
 
         <p class="onthisday-section-more"><a href="/onthisday/" class="onthisday-section-link">Browse all on-this-day events →</a></p>
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- SECTION 6: FOOTER NOTE — closing with "Current time in [city]" -->
-    <!-- ============================================== -->
-    <section class="section section--footer-note">
-      <div class="container">
-        <p class="current-city">
-          <span class="current-city-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-          Current time in <strong id="current-city-name">your city</strong>, <span class="current-city-extra" id="current-city-region">—</span>
-        </p>
       </div>
     </section>
 
@@ -1674,13 +1652,15 @@
       }
       if (heroC) heroC.textContent = home?.name || "your city";
       document.getElementById("greeting-city").textContent = home?.name || "your city";
-      document.getElementById("current-city-name").textContent = home?.name || "your city";
+      const cityName = document.getElementById("current-city-name");
+      if (cityName) cityName.textContent = home?.name || "your city";
       const regionParts = [];
       if (home?.regionFull) regionParts.push(home.regionFull);
       else if (home?.state_code) regionParts.push(home.state_code);
       if (home?.countryName) regionParts.push(home.countryName);
       else if (home?.country) regionParts.push(home.country);
-      document.getElementById("current-city-region").textContent = regionParts.join(", ");
+      const cityRegion = document.getElementById("current-city-region");
+      if (cityRegion) cityRegion.textContent = regionParts.join(", ");
       document.querySelectorAll(".city-time[data-tz]").forEach(el => { el.textContent = timeIn(el.dataset.tz, now); });
       if (home) document.getElementById("off-hours-pill").textContent = getOffHoursForTz(tz, now);
       updateCityDayDiffs(now);
