@@ -698,8 +698,20 @@
       tooltip.classList.remove("is-open");
     }
     if (tooltipClose) tooltipClose.addEventListener("click", close);
-    // Close on click outside
+    // Close on click outside (but not on the same mousedown that opened it)
+    let suppressNextClose = false;
+    document.addEventListener("mousedown", (e) => {
+      if (!tooltip.classList.contains("is-open")) return;
+      if (e.target.closest("#wt-tooltip")) return;
+      if (e.target.closest("[data-tile]")) {
+        // Clicking another tile will open a new tooltip — suppress this close
+        suppressNextClose = true;
+        return;
+      }
+      close();
+    });
     document.addEventListener("click", (e) => {
+      if (suppressNextClose) { suppressNextClose = false; return; }
       if (!tooltip.classList.contains("is-open")) return;
       if (e.target.closest("#wt-tooltip")) return;
       if (e.target.closest("[data-tile]")) return;
@@ -710,16 +722,18 @@
       if (e.key === "Escape") close();
     });
 
-    // Open on tile click
-    document.addEventListener("click", (e) => {
+    // Open on tile mousedown (fires before render() replaces the tile in setupDragSelect)
+    document.addEventListener("mousedown", (e) => {
       const tile = e.target.closest("[data-tile]");
       if (!tile) return;
       // Only show tooltip for non-past tiles
       if (tile.classList.contains("past")) return;
 
-      e.preventDefault();
-      e.stopPropagation();
+      // Only show on left-click (button 0)
+      if (e.button !== 0) return;
+
       const col = parseInt(tile.dataset.col, 10);
+      if (isNaN(col)) return;
       const moment = getAnchorColMoment(col);
       const anchorTz = cities[0]?.timezone;
       const focusedDateInAnchor = (() => {
