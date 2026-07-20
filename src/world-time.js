@@ -859,6 +859,8 @@
     const arrowX = tileRect.left + tileRect.width / 2 - left;
     tooltip.style.setProperty("--wt-tooltip-arrow-left", arrowX + "px");
     tooltip.dataset.arrow = arrowSide;
+
+    if (window.__wtDebug) console.log("DEBUG positionTooltipAtHomeCol", { col, tileCenter: tileRect.left + tileRect.width / 2, tooltipWidth: tooltipRect.width, left, top, arrowX, viewportWidth: window.innerWidth });
   }
 
   // Reposition the tooltip on scroll/resize so it follows the selected column
