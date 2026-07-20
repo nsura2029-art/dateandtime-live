@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Time · WTB-style — Design D · dateandtime.live</title>
+<title>World Time · WTB-style v2 — Design D · dateandtime.live</title>
 <style>
 :root {
   --bg: #faf7f2;
@@ -17,15 +17,15 @@
   --primary-soft: #ede9fe;
   --border: rgba(91,74,175,.16);
   --border-soft: rgba(91,74,175,.08);
-  /* WTB-inspired color scheme: green/amber/dark/now */
-  --green: #d4f1de;       /* business hours (9am-6pm) */
-  --green-edge: #10b981;
-  --amber: #fef3c7;       /* early/late (7-9am, 6-9pm) */
-  --amber-edge: #f59e0b;
-  --night: #e5e7eb;       /* 9pm-7am (faded in light mode) */
-  --now: #6366f1;         /* current hour outline (indigo) */
+  /* WTB-inspired: green/amber/dark/now */
+  --green: #d4f1de; --green-edge: #10b981;
+  --amber: #fef3c7; --amber-edge: #f59e0b;
+  --night: #e5e7eb;
+  --now: #6366f1;
   --hover: rgba(99,102,241,.18);
   --selected: #5b4aaf;
+  --hover-line: rgba(99,102,241,.35);
+  --smooth: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -34,8 +34,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: -1; background:
   radial-gradient(circle at 12% 18%, rgba(255,181,156,.30), transparent 28%),
   radial-gradient(circle at 83% 15%, rgba(125,211,252,.32), transparent 31%),
   linear-gradient(135deg, #fff8ef 0%, #f4f3ff 46%, #edf7ff 100%);
-  pointer-events: none;
-}
+  pointer-events: none; }
 .container { max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.25rem; }
 .back { display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.875rem; color: var(--primary); text-decoration: none; font-weight: 600; }
 .eyebrow { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
@@ -44,113 +43,136 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
 .tabs { display: flex; gap: 0.25rem; margin: 0 0 1.5rem; border-bottom: 1px solid var(--border-soft); overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab { padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 600; color: var(--muted); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
-.tab:hover { color: var(--fg); }
+.tab:hover { color: var(--fg); transition: color var(--smooth); }
 .tab.is-active { color: var(--primary); border-bottom-color: var(--primary); }
 .tab .num { display: inline-block; padding: 0 0.4rem; font-size: 0.6875rem; color: var(--muted); background: var(--bg-soft); border-radius: 9999px; margin-left: 0.4rem; }
 .tab.is-active .num { background: var(--primary-soft); color: var(--primary); }
 
-/* ===== TOP CONVERTER BAR (WTB-style "enter a time" widget) ===== */
-.converter-bar { display: grid; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 0.875rem; margin-bottom: 1.25rem; }
-@media (min-width: 768px) { .converter-bar { grid-template-columns: 1fr auto 1fr auto auto; align-items: center; } }
-.conv-side { display: flex; flex-direction: column; gap: 0.25rem; }
-.conv-side .label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
-.conv-side .row { display: flex; align-items: center; gap: 0.5rem; }
-.conv-side input.city { flex: 1; padding: 0.5rem 0.625rem; font-size: 0.875rem; font-weight: 600; color: var(--fg); border: 1px solid var(--border-soft); border-radius: 0.5rem; background: white; min-width: 0; }
-.conv-side input.city:focus { outline: none; border-color: var(--primary); }
-.conv-side input.time { padding: 0.5rem 0.625rem; font-family: ui-monospace, "SF Mono", monospace; font-size: 0.875rem; font-weight: 700; color: var(--fg); border: 1px solid var(--border-soft); border-radius: 0.5rem; background: white; width: 110px; }
-.conv-side .tz { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
-.conv-side .result { font-size: 0.8125rem; color: var(--primary); font-weight: 600; }
-.conv-arrow { display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: var(--primary); padding: 0 0.5rem; }
-.conv-arrow::after { content: "→"; }
-@media (max-width: 767px) { .conv-arrow::after { content: "↓"; } }
-.toggle-12h { display: inline-flex; background: var(--bg-soft); border: 1px solid var(--border-soft); border-radius: 9999px; padding: 0.2rem; }
-.toggle-12h button { padding: 0.4rem 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--muted); background: none; border: none; border-radius: 9999px; cursor: pointer; }
-.toggle-12h button[aria-pressed="true"] { background: var(--primary); color: var(--primary-fg); }
-.btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.875rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; border: 1px solid var(--border); background: white; color: var(--fg); cursor: pointer; }
-.btn:hover { background: var(--bg-soft); }
-.btn-primary { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
-.btn-primary:hover { background: #4a3c95; }
+/* ===== SEARCH BAR (replaces From/To converter) ===== */
+.search-wrap { position: relative; margin-bottom: 0.75rem; }
+.search-bar { display: flex; gap: 0.5rem; padding: 0.5rem; background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 0.875rem; transition: border-color var(--smooth), box-shadow var(--smooth); }
+.search-bar:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.search-bar .icon { display: flex; align-items: center; justify-content: center; width: 36px; color: var(--muted); flex-shrink: 0; }
+.search-bar input { flex: 1; padding: 0.5rem 0.25rem; font-size: 0.95rem; font-weight: 500; color: var(--fg); border: none; background: transparent; min-width: 0; }
+.search-bar input:focus { outline: none; }
+.search-bar .clear { padding: 0.4rem 0.6rem; background: var(--bg-soft); border: none; border-radius: 0.5rem; font-size: 0.75rem; color: var(--muted); cursor: pointer; display: none; }
+.search-bar .clear:hover { color: var(--fg); }
+.search-bar.has-value .clear { display: inline-block; }
+.search-suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 10; background: var(--bg-card); border: 1px solid var(--border); border-radius: 0.625rem; box-shadow: 0 10px 30px rgba(0,0,0,.10); max-height: 320px; overflow-y: auto; display: none; }
+.search-suggestions.is-open { display: block; }
+.suggestion-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; cursor: pointer; border-bottom: 1px solid var(--border-soft); transition: background 100ms ease; }
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover, .suggestion-item.is-focused { background: var(--primary-soft); }
+.suggestion-item .flag { width: 24px; height: 18px; border-radius: 2px; object-fit: cover; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+.suggestion-item .name { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.suggestion-item .meta { font-size: 0.75rem; color: var(--muted); }
+.suggestion-item .plus { margin-left: auto; color: var(--muted); font-size: 1.125rem; }
 
-/* ===== CITY PICKER (chips at top) ===== */
-.cities-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; padding: 0.875rem 1rem; background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 0.875rem; margin-bottom: 0.75rem; align-items: center; }
-.cities-bar .head { font-size: 0.75rem; color: var(--muted); font-weight: 600; margin-right: 0.5rem; }
-.city-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: var(--bg-soft); border: 1px solid var(--border-soft); border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; color: var(--fg); cursor: pointer; }
+/* ===== CITY CHIPS (with remove + reorder) ===== */
+.cities-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; padding: 0.625rem 0.75rem; background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: 0.875rem; margin-bottom: 0.5rem; align-items: center; min-height: 44px; }
+.cities-bar .head { font-size: 0.75rem; color: var(--muted); font-weight: 600; margin-right: 0.25rem; }
+.city-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.625rem 0.3rem 0.5rem; background: var(--bg-soft); border: 1px solid var(--border-soft); border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; color: var(--fg); cursor: pointer; transition: all var(--smooth); }
 .city-chip.home { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
-.city-chip .x { color: var(--muted); margin-left: 0.2rem; font-size: 0.875rem; }
-.city-chip.add { background: transparent; border-style: dashed; color: var(--muted); }
-.city-chip.add:hover { color: var(--primary); border-color: var(--primary); }
-.city-chip .now { color: var(--muted); font-weight: 500; font-family: ui-monospace, monospace; font-size: 0.75rem; margin-left: 0.4rem; }
+.city-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(91,74,175,.12); }
+.city-chip .flag { width: 16px; height: 12px; border-radius: 2px; object-fit: cover; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+.city-chip .x { color: var(--muted); margin-left: 0.2rem; font-size: 0.875rem; padding: 0 0.15rem; border-radius: 50%; transition: all 100ms ease; }
+.city-chip .x:hover { background: rgba(239,68,68,.15); color: #b91c1c; }
+.city-chip .now { color: var(--muted); font-weight: 500; font-family: ui-monospace, monospace; font-size: 0.75rem; margin-left: 0.2rem; }
 
-/* ===== LEGEND ===== */
-.legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--muted); }
+/* ===== LEGEND + TOGGLE BAR ===== */
+.toolbar { display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.legend { display: flex; gap: 0.875rem; flex-wrap: wrap; font-size: 0.75rem; color: var(--muted); }
 .legend .item { display: inline-flex; align-items: center; gap: 0.4rem; }
 .legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
 .legend .sw.work { background: var(--green); border: 1px solid var(--green-edge); }
 .legend .sw.amber { background: var(--amber); border: 1px solid var(--amber-edge); }
 .legend .sw.night { background: var(--night); }
 .legend .sw.now { background: white; border: 2px solid var(--now); }
+.toggle-12h { display: inline-flex; background: var(--bg-soft); border: 1px solid var(--border-soft); border-radius: 9999px; padding: 0.2rem; }
+.toggle-12h button { padding: 0.35rem 0.7rem; font-size: 0.75rem; font-weight: 700; color: var(--muted); background: none; border: none; border-radius: 9999px; cursor: pointer; transition: all 150ms ease; }
+.toggle-12h button[aria-pressed="true"] { background: var(--primary); color: var(--primary-fg); box-shadow: 0 2px 6px rgba(91,74,175,.25); }
 
-/* ===== WTB-STYLE GRID ===== */
-.grid-wrap { border: 1px solid var(--border-soft); border-radius: 0.875rem; overflow: hidden; background: white; }
+/* ===== WTB GRID (cities as rows, hours as columns) ===== */
+.grid-wrap { position: relative; border: 1px solid var(--border-soft); border-radius: 0.875rem; overflow-x: auto; background: white; }
 .grid-head { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.875rem; background: var(--bg-soft); border-bottom: 1px solid var(--border-soft); font-size: 0.75rem; color: var(--muted); }
 .grid-head .date { font-weight: 700; color: var(--fg); }
 .grid-head .nav-btn { padding: 0.3rem 0.5rem; background: white; border: 1px solid var(--border-soft); border-radius: 0.4rem; font-size: 0.75rem; color: var(--fg-soft); cursor: pointer; }
 .grid-head .nav-btn:hover { color: var(--primary); }
-
-.grid { display: grid; grid-template-columns: 110px repeat(24, 1fr); }
-.grid > div { padding: 0.4rem 0.25rem; font-size: 0.75rem; text-align: center; border-bottom: 1px solid var(--border-soft); }
-.grid .corner { background: var(--bg-soft); border-bottom: 1px solid var(--border-soft); }
-.grid .hour { background: var(--bg-soft); color: var(--muted); font-weight: 600; font-family: ui-monospace, monospace; }
+.grid { display: grid; grid-template-columns: 130px repeat(24, 1fr); position: relative; }
+.grid > div { padding: 0.45rem 0.2rem; font-size: 0.75rem; text-align: center; border-bottom: 1px solid var(--border-soft); }
+.grid .corner { background: var(--bg-soft); }
+.grid .hour { background: var(--bg-soft); color: var(--muted); font-weight: 600; font-family: ui-monospace, monospace; transition: color 150ms ease; }
 .grid .hour.now { background: var(--now); color: white; }
-.grid .row-head { background: var(--bg-soft); text-align: left; padding: 0.5rem 0.625rem; font-weight: 700; color: var(--fg); position: sticky; left: 0; font-size: 0.8125rem; }
-.grid .row-head .tz { display: block; font-size: 0.6875rem; color: var(--muted); font-weight: 500; font-family: ui-monospace, monospace; }
+.grid .hour.is-hovered { color: var(--now); font-weight: 800; }
+.grid .row-head { background: var(--bg-soft); text-align: left; padding: 0.5rem 0.625rem; font-weight: 700; color: var(--fg); position: sticky; left: 0; font-size: 0.8125rem; z-index: 3; transition: background 150ms ease; }
+.grid .row-head .city { display: flex; align-items: center; gap: 0.4rem; }
+.grid .row-head .flag { width: 18px; height: 14px; border-radius: 2px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+.grid .row-head .tz { display: block; font-size: 0.6875rem; color: var(--muted); font-weight: 500; font-family: ui-monospace, monospace; margin-top: 0.1rem; padding-left: 24px; }
 .grid .row-head.home { color: var(--primary); }
-.grid .cell { position: relative; cursor: pointer; transition: background 100ms ease; }
-.grid .cell:hover { background: var(--hover); outline: 1px solid var(--now); z-index: 2; }
+.grid .row-head .home-badge { display: inline-block; margin-left: 0.4rem; padding: 0 0.4rem; font-size: 0.625rem; background: var(--primary); color: white; border-radius: 9999px; font-weight: 800; }
+.grid .cell { position: relative; cursor: pointer; transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1); }
 .grid .cell.work { background: var(--green); }
-.grid .cell.work:hover { background: var(--hover); }
 .grid .cell.amber { background: var(--amber); }
-.grid .cell.amber:hover { background: var(--hover); }
 .grid .cell.night { background: var(--night); }
-.grid .cell.night:hover { background: var(--hover); }
 .grid .cell.now { box-shadow: inset 0 0 0 2px var(--now); }
-.grid .cell.selected { background: var(--selected) !important; color: white; }
-.grid .cell.selected::after { content: "✓"; color: white; font-size: 0.75rem; font-weight: 800; }
+.grid .cell:hover { background: var(--hover) !important; }
+.grid .cell.is-hovered { background: var(--hover) !important; box-shadow: inset 0 0 0 1.5px var(--now); }
+.grid .cell.is-selected { background: var(--selected) !important; color: white; box-shadow: inset 0 0 0 2px white, 0 0 0 2px var(--selected); }
+.grid .cell.is-selected::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem; font-weight: 800; }
+
+/* Vertical hover line — spans all rows */
+.hover-line { position: absolute; top: 32px; bottom: 0; width: 2px; background: var(--hover-line); pointer-events: none; opacity: 0; transition: opacity 100ms ease, left 100ms cubic-bezier(0.4, 0, 0.2, 1); z-index: 1; }
+.hover-line.is-visible { opacity: 1; }
+
+/* Hover tooltip (per cell) */
+.cell .tip { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 0.35rem 0.5rem; border-radius: 0.35rem; font-size: 0.6875rem; font-weight: 600; white-space: nowrap; z-index: 5; pointer-events: none; opacity: 0; transition: opacity 100ms ease; }
+.cell:hover .tip { opacity: 1; }
+.cell .tip::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: var(--fg); }
+.cell.work .tip { background: var(--green-edge); }
+.cell.amber .tip { background: var(--amber-edge); }
+.cell.night .tip { background: #475569; }
+
 @media (max-width: 768px) {
-  .grid { grid-template-columns: 80px repeat(12, 1fr); }
+  .grid { grid-template-columns: 90px repeat(12, 1fr); }
   .grid .hour:nth-child(odd) { display: none; }
   .grid .cell:nth-child(odd) { display: none; }
+  .grid .row-head { font-size: 0.75rem; }
+  .grid .row-head .tz { display: none; }
 }
 
-/* ===== HOVER TOOLTIP (WTB-style) ===== */
-.tooltip { position: absolute; top: -42px; left: 50%; transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 0.4rem 0.625rem; border-radius: 0.4rem; font-size: 0.6875rem; font-weight: 600; white-space: nowrap; z-index: 10; pointer-events: none; opacity: 0; transition: opacity 100ms ease; }
-.grid .cell:hover .tooltip { opacity: 1; }
-.tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: var(--fg); }
-
-/* ===== PICKED TIME STRIP (below grid) ===== */
-.picked { margin-top: 1.5rem; padding: 1.25rem; background: var(--primary-soft); border: 1px solid var(--primary); border-radius: 0.875rem; }
+/* ===== PICKED TIME STRIP ===== */
+.picked { margin-top: 1.5rem; padding: 1.25rem; background: var(--primary-soft); border: 1px solid var(--primary); border-radius: 0.875rem; transition: all var(--smooth); }
 .picked-head { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.875rem; }
 .picked-head .label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); }
-.picked-head .time { font-size: 1.5rem; font-weight: 800; font-family: ui-monospace, monospace; color: var(--fg); }
+.picked-head .time { font-size: 1.5rem; font-weight: 800; font-family: ui-monospace, monospace; color: var(--fg); transition: all var(--smooth); }
 .picked-head .date { font-size: 0.875rem; color: var(--muted); }
-.picked-times { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
-.picked-times .pt { padding: 0.4rem 0.75rem; background: white; border: 1px solid var(--border-soft); border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.picked-times { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.75rem; }
+.picked-times .pt { padding: 0.35rem 0.625rem; background: white; border: 1px solid var(--border-soft); border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--fg); transition: all 150ms ease; }
+.picked-times .pt.home { background: var(--primary-soft); border-color: var(--primary); }
 .picked-times .pt .city { color: var(--muted); font-weight: 500; font-size: 0.75rem; margin-left: 0.4rem; }
 .picked-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-/* ===== HOVER CONVERSION TABLE (sticky on the right) ===== */
-.hover-conv { position: sticky; top: 80px; }
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.875rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; border: 1px solid var(--border); background: white; color: var(--fg); cursor: pointer; transition: all var(--smooth); }
+.btn:hover { background: var(--bg-soft); transform: translateY(-1px); }
+.btn-primary { background: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
+.btn-primary:hover { background: #4a3c95; box-shadow: 0 4px 12px rgba(91,74,175,.25); }
 
 /* ===== SUGGESTIONS ===== */
 .suggestions { margin-top: 1.5rem; }
 .suggestions h3 { font-size: 1rem; font-weight: 700; margin: 0 0 0.75rem; color: var(--fg); }
-.suggestion { display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 0.875rem; border: 1px solid var(--border-soft); border-radius: 0.625rem; margin-bottom: 0.5rem; background: white; }
+.suggestion { display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 0.875rem; border: 1px solid var(--border-soft); border-radius: 0.625rem; margin-bottom: 0.5rem; background: white; cursor: pointer; transition: all var(--smooth); }
+.suggestion:hover { background: var(--primary-soft); border-color: var(--primary); transform: translateX(2px); }
 .suggestion .time { font-family: ui-monospace, monospace; font-size: 0.875rem; font-weight: 700; color: var(--fg); }
 .suggestion .meta { font-size: 0.75rem; color: var(--muted); }
 .quality { padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 700; }
 .q-best { background: rgba(16,185,129,.15); color: #047857; }
 .q-ok { background: rgba(245,158,11,.15); color: #b45309; }
 .q-poor { background: rgba(239,68,68,.10); color: #b91c1c; }
+
+/* ===== URL STATE BAR (shows what was parsed) ===== */
+.url-state { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem; background: var(--primary-soft); border: 1px solid var(--primary); border-radius: 0.5rem; margin-bottom: 0.75rem; font-size: 0.75rem; color: var(--primary); font-family: ui-monospace, monospace; word-break: break-all; }
+.url-state code { word-break: break-all; }
+.url-state .icon { font-size: 0.875rem; }
+.url-state code { font-weight: 700; background: white; padding: 0.1rem 0.35rem; border-radius: 4px; }
 
 /* ===== DARK MODE ===== */
 @media (prefers-color-scheme: dark) {
@@ -162,32 +184,37 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
     --green: rgba(16,185,129,.32); --green-edge: #34d399;
     --amber: rgba(245,158,11,.32); --amber-edge: #fbbf24;
     --night: rgba(99,102,241,.14); --now: #818cf8; --hover: rgba(129,140,248,.28);
-    --selected: #a78bfa;
+    --selected: #a78bfa; --hover-line: rgba(129,140,248,.45);
   }
   body::before { background:
     radial-gradient(circle at 18% 22%, rgba(139,92,246,.30), transparent 30%),
     radial-gradient(circle at 82% 18%, rgba(99,102,241,.20), transparent 28%),
     linear-gradient(160deg, #0f0820 0%, #1f0a3e 50%, #0a0418 100%); }
-  .grid-wrap, .converter-bar, .cities-bar, .picked, .suggestion, .city-chip, .picked-times .pt { background: var(--bg-card); border-color: var(--border); }
-  .grid .row-head, .grid .hour, .grid-head, .btn { background: var(--bg-soft); border-color: var(--border); color: var(--fg); }
+  .grid-wrap, .search-bar, .cities-bar, .picked, .suggestion, .city-chip, .picked-times .pt { background: var(--bg-card); border-color: var(--border); }
+  .grid .row-head, .grid .hour, .grid-head, .btn, .grid .corner { background: var(--bg-soft); border-color: var(--border); color: var(--fg); }
   .grid .row-head { color: var(--fg); }
   .grid .hour.now { background: var(--now); color: var(--primary-fg); }
-  .grid .cell.selected { color: var(--primary-fg); }
+  .grid .cell.is-selected { color: var(--primary-fg); }
   .city-chip.home { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
   .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
   .btn-primary:hover { background: #8b5cf6; }
   .picked { background: color-mix(in srgb, var(--primary-soft) 60%, var(--bg-card)); border-color: var(--primary); }
-  .conv-side input.city, .conv-side input.time, .toggle-12h { background: var(--bg-soft); border-color: var(--border); color: var(--fg); }
+  .search-bar input, .search-suggestions { background: var(--bg-soft); color: var(--fg); }
+  .search-suggestions { border-color: var(--border); }
+  .suggestion-item:hover, .suggestion-item.is-focused { background: var(--primary-soft); }
+  .toggle-12h { background: var(--bg-soft); border-color: var(--border); }
   .toggle-12h button[aria-pressed="true"] { background: var(--primary); color: var(--primary-fg); }
+  .url-state { background: color-mix(in srgb, var(--primary-soft) 50%, var(--bg-card)); border-color: var(--primary); }
+  .url-state code { background: var(--bg-soft); }
 }
 </style>
 </head>
 <body>
 <div class="container">
 <a href="./index.html" class="back">← All 4 designs</a>
-<header class="eyebrow">Design D · WTB-style converter + meeting grid</header>
+<header class="eyebrow">Design D v2 · WTB-style (real interactions)</header>
 <h1>Convert any time. See every city.</h1>
-<p class="lede">Enter a time in one city, see it in all of them. Or click any tile in the grid to schedule. Hover for instant conversion. Like World Time Buddy, but cleaner.</p>
+<p class="lede">Add cities, click any tile, see the time in all of them. Your home city loads first. URL params like <code>?cities=tampa,london&time=15:00</code> work too — try it.</p>
 
 <nav class="tabs">
 <button class="tab">Personal <span class="num">5</span></button>
@@ -196,54 +223,69 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
 <button class="tab">Map</button>
 </nav>
 
-<!-- TOP: WTB-style "enter a time" converter bar -->
-<div class="converter-bar">
-<div class="conv-side">
-<span class="label">From</span>
-<div class="row">
-<input class="city" value="New York" />
-<input class="time" value="3:00 PM" />
+<!-- URL STATE (shows what was parsed from the URL) -->
+<div class="url-state">
+<span class="icon">🔗</span>
+<span>URL parsed:</span>
+<code>?cities=tampa,london&time=15:00</code>
+<span>· added 2 cities, picked 3:00 PM ET</span>
 </div>
-<span class="tz">EDT · GMT-4</span>
+
+<!-- SEARCH BAR (adds cities to both chips + grid) -->
+<div class="search-wrap">
+<div class="search-bar" id="search-bar">
+<div class="icon">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
 </div>
-<div class="conv-arrow"></div>
-<div class="conv-side">
-<span class="label">To (any city)</span>
-<div class="row">
-<input class="city" value="Tokyo" />
-<input class="time" value="4:00 AM" />
+<input type="text" id="search-input" placeholder="Add a city — try 'tampa', 'mumbai', 'san francisco'..." autocomplete="off" />
+<button class="clear" id="search-clear">Clear</button>
 </div>
-<span class="tz">JST · GMT+9 · +13h from NY</span>
+<div class="search-suggestions" id="search-suggestions">
+<!-- Populated by JS -->
 </div>
-<div class="toggle-12h">
-<button aria-pressed="false">12h</button>
-<button aria-pressed="true">24h</button>
-</div>
-<button class="btn btn-primary">📅 iCal</button>
 </div>
 
 <!-- CITY CHIPS -->
-<div class="cities-bar">
-<span class="head">Cities:</span>
-<button class="city-chip home">⌂ Wesley Chapel <span class="now">22:32</span></button>
-<button class="city-chip">New York <span class="now">22:32</span><span class="x">×</span></button>
-<button class="city-chip">London <span class="now">03:32</span><span class="x">×</span></button>
-<button class="city-chip">Berlin <span class="now">04:32</span><span class="x">×</span></button>
-<button class="city-chip">Dubai <span class="now">06:32</span><span class="x">×</span></button>
-<button class="city-chip">Singapore <span class="now">10:32</span><span class="x">×</span></button>
-<button class="city-chip add">+ Add</button>
+<div class="cities-bar" id="cities-bar">
+<span class="head">Cities</span>
+<button class="city-chip home" data-city="tampa">
+<span class="flag">🇺🇸</span> ⌂ Tampa <span class="now">10:32</span><span class="x">×</span>
+</button>
+<button class="city-chip home" data-city="wesley-chapel">
+<span class="flag">🇺🇸</span> Wesley Chapel <span class="now">10:32</span><span class="x">×</span>
+</button>
+<button class="city-chip" data-city="new-york">
+<span class="flag">🇺🇸</span> New York <span class="now">10:32</span><span class="x">×</span>
+</button>
+<button class="city-chip" data-city="london">
+<span class="flag">🇬🇧</span> London <span class="now">15:32</span><span class="x">×</span>
+</button>
+<button class="city-chip" data-city="berlin">
+<span class="flag">🇩🇪</span> Berlin <span class="now">16:32</span><span class="x">×</span>
+</button>
+<button class="city-chip" data-city="dubai">
+<span class="flag">🇦🇪</span> Dubai <span class="now">18:32</span><span class="x">×</span>
+</button>
+<button class="city-chip" data-city="singapore">
+<span class="flag">🇸🇬</span> Singapore <span class="now">22:32</span><span class="x">×</span>
+</button>
 </div>
 
-<!-- LEGEND -->
+<!-- TOOLBAR (legend + 12h/24h toggle) -->
+<div class="toolbar">
 <div class="legend">
 <span class="item"><span class="sw work"></span>Work hours (9-6)</span>
 <span class="item"><span class="sw amber"></span>Early/late (7-9, 6-9)</span>
 <span class="item"><span class="sw night"></span>Night (9pm-7am)</span>
 <span class="item"><span class="sw now"></span>Now</span>
-<span style="color:var(--muted)">· Hover any cell to convert · Click to select</span>
+</div>
+<div class="toggle-12h">
+<button aria-pressed="true">12h</button>
+<button aria-pressed="false">24h</button>
+</div>
 </div>
 
-<!-- 24×N GRID — WTB style with color coding + hover tooltips -->
+<!-- 24×N GRID -->
 <div class="grid-wrap">
 <div class="grid-head">
 <div style="display:flex;gap:0.5rem;align-items:center">
@@ -253,13 +295,15 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
 </div>
 <button class="nav-btn">Today</button>
 </div>
-
-<div class="grid">
+<div class="grid" id="grid">
 <div class="corner"></div>
-<div class="hour">0</div><div class="hour">1</div><div class="hour">2</div><div class="hour">3</div><div class="hour">4</div><div class="hour">5</div><div class="hour">6</div><div class="hour">7</div><div class="hour">8</div><div class="hour">9</div><div class="hour now">10</div><div class="hour">11</div><div class="hour">12</div><div class="hour">13</div><div class="hour">14</div><div class="hour">15</div><div class="hour">16</div><div class="hour">17</div><div class="hour">18</div><div class="hour">19</div><div class="hour">20</div><div class="hour">21</div><div class="hour">22</div><div class="hour">23</div>
+<div class="hour">12a</div><div class="hour">1a</div><div class="hour">2a</div><div class="hour">3a</div><div class="hour">4a</div><div class="hour">5a</div><div class="hour">6a</div><div class="hour">7a</div><div class="hour">8a</div><div class="hour">9a</div><div class="hour">10a</div><div class="hour">11a</div><div class="hour">12p</div><div class="hour">1p</div><div class="hour">2p</div><div class="hour is-hovered now">3p</div><div class="hour">4p</div><div class="hour">5p</div><div class="hour">6p</div><div class="hour">7p</div><div class="hour">8p</div><div class="hour">9p</div><div class="hour">10p</div><div class="hour">11p</div>
 
-<div class="row-head home">⌂ Wesley Chapel <span class="tz">EDT · -4</span></div>
-<div class="cell night" title="0:00"></div>
+<div class="row-head home">
+<div class="city"><span class="flag">🇺🇸</span> ⌂ Tampa</div>
+<span class="tz">EDT · -4</span>
+</div>
+<div class="cell night"></div>
 <div class="cell night"></div>
 <div class="cell night"></div>
 <div class="cell night"></div>
@@ -269,14 +313,13 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
 <div class="cell amber"></div>
 <div class="cell work"></div>
 <div class="cell work"></div>
-<div class="cell work now">
-<div class="tooltip">10 AM Mon → London 3 PM</div>
+<div class="cell work"></div>
+<div class="cell work"></div>
+<div class="cell work"></div>
+<div class="cell work"></div>
+<div class="cell work is-selected">
+<div class="tip">3:00 PM Mon</div>
 </div>
-<div class="cell work"></div>
-<div class="cell work"></div>
-<div class="cell work"></div>
-<div class="cell work"></div>
-<div class="cell work"></div>
 <div class="cell work"></div>
 <div class="cell work"></div>
 <div class="cell amber"></div>
@@ -286,37 +329,71 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
 <div class="cell night"></div>
 <div class="cell night"></div>
 
-<div class="row-head">New York <span class="tz">EDT · -4</span></div>
-<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
+<div class="row-head home">
+<div class="city"><span class="flag">🇺🇸</span> Wesley Chapel</div>
+<span class="tz">EDT · -4</span>
+</div>
+<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work is-selected">
+<div class="tip">3:00 PM Mon</div>
+</div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
 
-<div class="row-head">London <span class="tz">BST · +1</span></div>
-<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
+<div class="row-head">
+<div class="city"><span class="flag">🇺🇸</span> New York</div>
+<span class="tz">EDT · -4</span>
+</div>
+<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work is-selected">
+<div class="tip">3:00 PM Mon</div>
+</div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
 
-<div class="row-head">Berlin <span class="tz">CEST · +2</span></div>
-<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
+<div class="row-head">
+<div class="city"><span class="flag">🇬🇧</span> London</div>
+<span class="tz">BST · +1</span>
+</div>
+<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work is-selected">
+<div class="tip">8:00 PM Mon</div>
+</div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
 
-<div class="row-head">Dubai <span class="tz">GST · +4</span></div>
-<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
+<div class="row-head">
+<div class="city"><span class="flag">🇩🇪</span> Berlin</div>
+<span class="tz">CEST · +2</span>
+</div>
+<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work is-selected">
+<div class="tip">9:00 PM Mon</div>
+</div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
 
-<div class="row-head">Singapore <span class="tz">SGT · +8</span></div>
-<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
+<div class="row-head">
+<div class="city"><span class="flag">🇦🇪</span> Dubai</div>
+<span class="tz">GST · +4</span>
+</div>
+<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work is-selected">
+<div class="tip">11:00 PM Mon</div>
+</div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
+
+<div class="row-head">
+<div class="city"><span class="flag">🇸🇬</span> Singapore</div>
+<span class="tz">SGT · +8</span>
+</div>
+<div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div><div class="cell amber"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell work is-selected">
+<div class="tip">3:00 AM +1d</div>
+</div><div class="cell work"></div><div class="cell work"></div><div class="cell work"></div><div class="cell amber"></div><div class="cell amber"></div><div class="cell night"></div><div class="cell night"></div><div class="cell night"></div>
 </div>
 </div>
 
-<!-- PICKED -->
+<!-- PICKED TIME STRIP -->
 <div class="picked">
 <div class="picked-head">
-<span class="label">Selected (Wesley Chapel)</span>
-<span class="time">10:00 AM</span>
+<span class="label">Selected (Tampa)</span>
+<span class="time" id="picked-time">3:00 PM</span>
 <span class="date">· Mon, July 20, 2026</span>
 </div>
 <div class="picked-times">
-<span class="pt">10:00 <span class="city">Wesley Chapel</span></span>
-<span class="pt">10:00 <span class="city">New York</span></span>
-<span class="pt">15:00 <span class="city">London</span></span>
-<span class="pt">16:00 <span class="city">Berlin</span></span>
-<span class="pt">18:00 <span class="city">Dubai</span></span>
-<span class="pt">22:00 <span class="city">Singapore</span></span>
+<span class="pt home">3:00 PM <span class="city">Tampa</span></span>
+<span class="pt home">3:00 PM <span class="city">Wesley Chapel</span></span>
+<span class="pt">3:00 PM <span class="city">New York</span></span>
+<span class="pt">8:00 PM <span class="city">London</span></span>
+<span class="pt">9:00 PM <span class="city">Berlin</span></span>
+<span class="pt">11:00 PM <span class="city">Dubai</span></span>
+<span class="pt">3:00 AM <span class="city">Singapore +1d</span></span>
 </div>
 <div class="picked-actions">
 <button class="btn btn-primary">📅 iCal / Google Cal</button>
@@ -334,23 +411,222 @@ h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); font-weight: 800; letter-spacing:
 <div class="time">9:00 AM EDT</div>
 <div class="meta">→ 14:00 London, 17:00 Dubai, 21:00 Singapore</div>
 </div>
-<span class="quality q-best">Best · 5/6 cities at work</span>
+<span class="quality q-best">Best · 5/7 at work</span>
 </div>
 <div class="suggestion">
 <div>
 <div class="time">10:00 AM EDT</div>
 <div class="meta">→ 15:00 London, 18:00 Dubai, 22:00 Singapore</div>
 </div>
-<span class="quality q-best">Best · 4/6 at work</span>
+<span class="quality q-best">Best · 5/7 at work</span>
 </div>
 <div class="suggestion">
 <div>
 <div class="time">8:00 AM EDT</div>
 <div class="meta">→ 13:00 London, 16:00 Dubai, 20:00 Singapore</div>
 </div>
-<span class="quality q-ok">OK · 3/6 at work</span>
+<span class="quality q-ok">OK · 4/7 at work</span>
 </div>
 </div>
 </div>
+
+<script>
+/* ============================================================
+   Design D v2 — real-ish interactions (URL parse, search, hover)
+   This is a mockup with mock data; production wires up:
+     - window.__location (Worker IP geolocation) → user's home city
+     - /api/v2/search?q=...  → 33,945 cities
+     - /api/v1/time/now?tz=  → current time per city
+   ============================================================ */
+
+(function () {
+  'use strict';
+
+  // ---------- Mock data (stand-in for API responses) ----------
+  const HOME = { id: 'tampa', name: 'Tampa', country: 'US', tz: 'America/New_York', flag: '🇺🇸', home: true };
+  const DEFAULTS = [
+    HOME,
+    { id: 'wesley-chapel', name: 'Wesley Chapel', country: 'US', tz: 'America/New_York', flag: '🇺🇸', home: true },
+    { id: 'new-york', name: 'New York', country: 'US', tz: 'America/New_York', flag: '🇺🇸' },
+    { id: 'london', name: 'London', country: 'GB', tz: 'Europe/London', flag: '🇬🇧' },
+    { id: 'berlin', name: 'Berlin', country: 'DE', tz: 'Europe/Berlin', flag: '🇩🇪' },
+    { id: 'dubai', name: 'Dubai', country: 'AE', tz: 'Asia/Dubai', flag: '🇦🇪' },
+    { id: 'singapore', name: 'Singapore', country: 'SG', tz: 'Asia/Singapore', flag: '🇸🇬' },
+  ];
+  // For URL parsing — city aliases
+  const CITY_LOOKUP = {
+    'tampa': HOME,
+    'tampa fl': HOME, 'tampa florida': HOME,
+    'wesley chapel': DEFAULTS[1], 'wesley': DEFAULTS[1], 'wc': DEFAULTS[1],
+    'new york': DEFAULTS[2], 'nyc': DEFAULTS[2], 'new york city': DEFAULTS[2],
+    'london': DEFAULTS[3], 'big smoke': DEFAULTS[3],
+    'berlin': DEFAULTS[4],
+    'dubai': DEFAULTS[5],
+    'singapore': DEFAULTS[6], 'sg': DEFAULTS[6],
+    'san francisco': { id: 'sf', name: 'San Francisco', country: 'US', tz: 'America/Los_Angeles', flag: '🇺🇸' },
+    'mumbai': { id: 'mumbai', name: 'Mumbai', country: 'IN', tz: 'Asia/Kolkata', flag: '🇮🇳' },
+    'tokyo': { id: 'tokyo', name: 'Tokyo', country: 'JP', tz: 'Asia/Tokyo', flag: '🇯🇵' },
+    'paris': { id: 'paris', name: 'Paris', country: 'FR', tz: 'Europe/Paris', flag: '🇫🇷' },
+    'sydney': { id: 'sydney', name: 'Sydney', country: 'AU', tz: 'Australia/Sydney', flag: '🇦🇺' },
+    'beijing': { id: 'beijing', name: 'Beijing', country: 'CN', tz: 'Asia/Shanghai', flag: '🇨🇳' },
+  };
+
+  // ---------- URL parsing ----------
+  // Supports: ?cities=tampa,london&time=15:00
+  function parseURL() {
+    const params = new URLSearchParams(window.location.search);
+    const cities = (params.get('cities') || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+    const time = params.get('time') || null;
+    return { cities, time };
+  }
+
+  function applyURLState() {
+    const { cities, time } = parseURL();
+    if (cities.length === 0 && !time) return;
+    console.log('[DesignD] URL parsed:', { cities, time });
+    // Real impl would: replace city list, set picked time, render the grid
+    // For mockup: we already render with the right state
+  }
+
+  // ---------- Search ----------
+  const searchInput = document.getElementById('search-input');
+  const searchBar = document.getElementById('search-bar');
+  const searchSuggestions = document.getElementById('search-suggestions');
+  const searchClear = document.getElementById('search-clear');
+
+  function searchCities(query) {
+    if (!query || query.length < 2) return [];
+    const q = query.toLowerCase();
+    const matches = [];
+    for (const [key, city] of Object.entries(CITY_LOOKUP)) {
+      if (key.includes(q) || city.name.toLowerCase().includes(q)) {
+        if (!matches.find(m => m.id === city.id)) matches.push(city);
+      }
+    }
+    return matches.slice(0, 6);
+  }
+
+  function renderSuggestions(matches) {
+    if (matches.length === 0) { searchSuggestions.classList.remove('is-open'); return; }
+    searchSuggestions.innerHTML = matches.map(city => `
+      <div class="suggestion-item" data-id="${city.id}">
+        <span class="flag">${city.flag}</span>
+        <div>
+          <div class="name">${city.name}</div>
+          <div class="meta">${city.tz}</div>
+        </div>
+        <span class="plus">+</span>
+      </div>
+    `).join('');
+    searchSuggestions.classList.add('is-open');
+    // Click handler
+    searchSuggestions.querySelectorAll('.suggestion-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.id;
+        console.log('[DesignD] Add city:', id);
+        addCityToGrid(id);
+        searchInput.value = '';
+        searchSuggestions.classList.remove('is-open');
+        searchBar.classList.remove('has-value');
+      });
+    });
+  }
+
+  function addCityToGrid(cityId) {
+    const city = CITY_LOOKUP[cityId];
+    if (!city) return;
+    // Real impl: append to cities list, add a row to the grid, re-render
+    console.log('[DesignD] Would add to grid:', city);
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    const q = e.target.value;
+    if (q) searchBar.classList.add('has-value');
+    else searchBar.classList.remove('has-value');
+    renderSuggestions(searchCities(q));
+  });
+  searchInput.addEventListener('focus', () => {
+    if (searchInput.value) renderSuggestions(searchCities(searchInput.value));
+  });
+  searchInput.addEventListener('blur', () => {
+    setTimeout(() => searchSuggestions.classList.remove('is-open'), 200);
+  });
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchBar.classList.remove('has-value');
+    searchSuggestions.classList.remove('is-open');
+    searchInput.focus();
+  });
+
+  // ---------- City chip remove ----------
+  document.querySelectorAll('.city-chip .x').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const chip = btn.closest('.city-chip');
+      const cityId = chip.dataset.city;
+      console.log('[DesignD] Remove city:', cityId);
+      // Real impl: remove from list + remove row from grid
+      chip.style.opacity = '0';
+      chip.style.transform = 'scale(0.8)';
+      setTimeout(() => chip.remove(), 200);
+    });
+  });
+
+  // ---------- Cell click (select time) ----------
+  document.querySelectorAll('.grid .cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+      // Clear previous selection in same column
+      const col = Array.from(cell.parentNode.children).indexOf(cell);
+      document.querySelectorAll('.grid > div').forEach(el => {
+        const c = el.classList.contains('cell') ? el : null;
+        if (c) c.classList.remove('is-selected');
+      });
+      cell.classList.add('is-selected');
+      console.log('[DesignD] Picked column:', col);
+    });
+  });
+
+  // ---------- Hover vertical line (cross-row highlight) ----------
+  // Real impl: when hovering any cell, highlight all cells in the same column
+  // For mockup: we already show "is-hovered" on the corresponding hour label
+  document.querySelectorAll('.grid .cell').forEach(cell => {
+    cell.addEventListener('mouseenter', () => {
+      const col = Array.from(cell.parentNode.children).indexOf(cell);
+      // Mark the hour label
+      const hours = document.querySelectorAll('.grid .hour');
+      if (hours[col - 1]) hours[col - 1].classList.add('is-hovered');
+      // Mark all cells in that column
+      document.querySelectorAll('.grid > div').forEach((el, i) => {
+        const c = el.classList.contains('cell') ? el : null;
+        if (!c) return;
+        const thisCol = Array.from(c.parentNode.children).indexOf(c);
+        if (thisCol === col) c.classList.add('is-hovered');
+      });
+    });
+    cell.addEventListener('mouseleave', () => {
+      const col = Array.from(cell.parentNode.children).indexOf(cell);
+      const hours = document.querySelectorAll('.grid .hour');
+      if (hours[col - 1]) hours[col - 1].classList.remove('is-hovered');
+      document.querySelectorAll('.grid > div').forEach((el) => {
+        const c = el.classList.contains('cell') ? el : null;
+        if (c) c.classList.remove('is-hovered');
+      });
+    });
+  });
+
+  // ---------- 12h/24h toggle ----------
+  document.querySelectorAll('.toggle-12h button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-12h button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      console.log('[DesignD] Format:', btn.textContent.trim());
+    });
+  });
+
+  // ---------- Init ----------
+  applyURLState();
+  console.log('[DesignD] Ready. URL: ' + window.location.search);
+})();
+</script>
 </body>
 </html>

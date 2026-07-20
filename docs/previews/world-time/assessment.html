@@ -98,18 +98,21 @@ td { color: var(--fg-soft); }
 
 <div class="score-card">
 <h3>Design D — WTB-style Converter + Meeting <span class="grade good">A+ top pick ⭐</span></h3>
-<p style="color:var(--fg-soft);margin:0">"Convert any time. See every city." Top converter bar + 24×N grid below. WTB interaction model with our design system.</p>
+<p style="color:var(--fg-soft);margin:0">"Convert any time. See every city." No more top bar — the grid IS the converter. Your home city loads first. URL params like <code>?cities=tampa,london&time=15:00</code> pre-populate. Add cities via search.</p>
 <ul>
-  <li><strong>Top "enter a time" converter bar:</strong> From/To inputs + 12h/24h toggle + iCal. Always visible.</li>
-  <li><strong>24×N grid (WTB-style):</strong> 6 cities as rows, time as columns. Color-coded: green (9-6 work), amber (early/late), dark/night.</li>
-  <li><strong>Hover to convert:</strong> Any cell shows tooltip with equivalent time in other cities. The "converter" is the grid itself.</li>
-  <li><strong>Click to schedule:</strong> Click any cell to set the picked time. Picked-time strip below shows time in all cities + iCal/email/share.</li>
-  <li><strong>Light mode:</strong> Crisp greens/ambers, work hours instantly readable, hover state clear.</li>
-  <li><strong>Dark mode:</strong> Teal-green work, amber-orange early/late, indigo night — all pop against the dark bg. Now indicator (indigo) is clear.</li>
-  <li><strong>Mobile:</strong> Converter bar stacks vertically (From above To), 12h/24h toggle, iCal button. Grid shows 12 hours with 1hr row heads. Cities wrap as chips.</li>
-  <li><strong>Best of both worlds:</strong> Combines the WTB UX everyone knows with the cleaner NotebookLM pastels + our design system.</li>
+  <li><strong>Search bar above cities:</strong> Type any city → instant suggestions from our 33,945-city DB. Click to add to grid + chips.</li>
+  <li><strong>Default = user location:</strong> On first visit, <code>window.__location</code> from CF IP geo is used as the home city (with ⌂ icon).</li>
+  <li><strong>URL params:</strong> <code>?cities=tampa,london&time=15:00</code> pre-populates cities + picked time. URL state bar shows what was parsed.</li>
+  <li><strong>24×N grid (WTB-style):</strong> Cities as rows, time as columns. Green (9-6 work) / amber (early/late) / dark (night). Indigo "now" outline.</li>
+  <li><strong>Hover to convert (vertical line):</strong> Hover any cell → all cells in that column highlight + hour label turns indigo. Shows the same moment across all cities.</li>
+  <li><strong>Click to schedule:</strong> Click any cell → purple checkmark, picked-time strip below shows time in all cities + iCal/email/share.</li>
+  <li><strong>12h/24h toggle:</strong> Top right pill, applies to all times everywhere.</li>
+  <li><strong>City chips with remove:</strong> × button fades out the chip + removes from grid. Drag to reorder (v2).</li>
+  <li><strong>Light + dark both look great:</strong> Greens pop in light, teals pop in dark. Now indicator is always indigo.</li>
+  <li><strong>Mobile:</strong> Stacks cleanly. URL state wraps. Search suggestions stack. Grid scrolls horizontally.</li>
+  <li><strong>All 7 interactions wired:</strong> URL parse ✓, search ✓, suggestion click ✓, cell click ✓, hover (vertical line) ✓, chip remove ✓, 12h/24h ✓</li>
 </ul>
-<div class="fix"><strong>Why this is the top pick:</strong> Single page does both the 1:1 conversion (top bar) AND the multi-city comparison (grid). 180K + 30K = 210K/mo addressable. One page, one URL, one design. Ship-ready.</div>
+<div class="fix"><strong>Why this is the top pick:</strong> One page = both the 1:1 converter (via search + URL params) AND the multi-city comparison (via the grid). User's home city pre-loaded. URL-deep-linkable for SEO. Hover-convert for instant discovery. Ship-ready.</div>
 </div>
 <div class="score-card">
 <h3>Design A — Personal World Clock <span class="grade good">A+ ready</span></h3>
