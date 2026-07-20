@@ -62,11 +62,18 @@
     window.__hasConsent = value;
     hideBanner();
     hideCustomize();
-    // Reload so any gated scripts can load
-    // (only if the user actually enabled something new)
-    if (consent.analytics || consent.advertising) {
-      // Don't reload — the page can request any newly-enabled scripts lazily
-      // But for the moment we keep it simple: just save.
+    // Google Consent Mode v2: tell Google the new consent state.
+    // Mapping (3 buckets → 4 Google signals):
+    //   - essential: always granted (no Google signal)
+    //   - analytics: analytics_storage
+    //   - advertising: ad_storage + ad_user_data + ad_personalization
+    if (typeof window.gtag === "function") {
+      window.gtag("consent", "update", {
+        ad_storage: value.advertising ? "granted" : "denied",
+        analytics_storage: value.analytics ? "granted" : "denied",
+        ad_user_data: value.advertising ? "granted" : "denied",
+        ad_personalization: value.advertising ? "granted" : "denied"
+      });
     }
   }
 
@@ -93,6 +100,14 @@
     window.__hasConsent = current;
     hideBanner();
     hideCustomize();
+    // Google Consent Mode v2: deny all advertising signals
+    if (typeof window.gtag === "function") {
+      window.gtag("consent", "update", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied"
+      });
+    }
     // Show a small confirmation
     alert("We've recorded your preference. Non-essential advertising cookies are disabled.");
   }

@@ -86,6 +86,26 @@ function consentRegion(country) {
   return "OTHER";
 }
 
+// ===== Google Consent Mode v2 =====
+// https://developers.google.com/tag-platform/security/guides/consent
+// For EEA/UK: deny all by default. For other regions: grant by default.
+// This MUST be set before any Google tag loads (AdSense, GA4, etc.).
+function buildGtagConsentScript(region) {
+  const isGDPR = region === "GDPR";
+  const defaults = isGDPR
+    ? { ad_storage: "denied", analytics_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", wait_for_update: 500 }
+    : { ad_storage: "granted", analytics_storage: "granted", ad_user_data: "granted", ad_personalization: "granted", wait_for_update: 500 };
+  // dataLayer + gtag() stub + consent default + ads_data_redaction
+  // (ads_data_redaction ensures IP addresses are removed from Google hits
+  //  when ad_user_data is denied, for cookieless pings)
+  return `<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', ${JSON.stringify(defaults)});
+  gtag('set', 'ads_data_redaction', true);
+</script>`;
+}
+
 // ===== Initial time helper (SSR) =====
 function getInitialTime(timezone) {
   try {
@@ -225,10 +245,16 @@ function injectSSR(html, location, initialTime, consent, region) {
   //    BEFORE the first <script> tag.
   const ssrGlobals = `<script>window.__location=${JSON.stringify(location)};window.__initialTime=${JSON.stringify(initialTime)};window.__consentRegion=${JSON.stringify(region)};window.__hasConsent=${JSON.stringify(consent || { essential: true, v: COOKIE_VERSION })};<\/script>`;
 
+  // 1a. Inject Google Consent Mode v2 default (BEFORE any Google tag).
+  //     For EEA/UK: deny by default. For other regions: grant.
+  //     When we add AdSense/GA4 later, they'll read this consent state
+  //     and either fire (granted) or send cookieless pings (denied).
+  const gtagConsent = buildGtagConsentScript(region);
+
   if (out.includes("<script>")) {
-    out = out.replace(/<script>/, ssrGlobals + "<script>");
+    out = out.replace(/<script>/, ssrGlobals + gtagConsent + "<script>");
   } else {
-    out = out.replace(/<\/head>/, ssrGlobals + "</head>");
+    out = out.replace(/<\/head>/, ssrGlobals + gtagConsent + "</head>");
   }
 
   // 2. Replace the H1 placeholder with the actual city

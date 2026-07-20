@@ -459,3 +459,92 @@ Use a sitemap index file `sitemap.xml` that points to all the sub-sitemaps.
 | Author byline: real name or "dateandtime.live team"? | TBD | When we add a blog |
 | Per-city pages: which 5 city templates? | TBD | When we build `/time/in/{city}/` |
 | Editorial process: who reviews accuracy? | TBD | This week |
+
+---
+
+## 15. Google Consent Mode v2 (shipped 2026-07-19)
+
+**Why:** Mandatory for any site using Google Ads / GA4 / Marketing Platform to reach EEA + UK users. Google actively disabled personalization, remarketing, and conversion tracking for non-compliant accounts starting **July 21, 2025**. Next enforcement wave: **June 15, 2026** (Google Signals stops being a fallback).
+
+**Source:** [developers.google.com/tag-platform/security/guides/consent](https://developers.google.com/tag-platform/security/guides/consent)
+
+### 15.1 What it does
+
+Google Consent Mode v2 sends 4 consent signals to Google before any Google tag loads:
+
+| Parameter | Values | What it means |
+|---|---|---|
+| `ad_storage` | granted / denied | Cookies for ads |
+| `analytics_storage` | granted / denied | Cookies for analytics |
+| `ad_user_data` (v2 new) | granted / denied | Send user data to Google for advertising |
+| `ad_personalization` (v2 new) | granted / denied | Personalized ads (remarketing) |
+
+When `denied`, Google still sends **cookieless pings** for measurement (no cookies, no PII) — so you still get modeled conversions.
+
+### 15.2 Implementation on dateandtime.live
+
+**Region-aware defaults (set in Worker before any HTML):**
+
+```html
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: "denied",            // EEA/UK: all denied
+    analytics_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    wait_for_update: 500
+  });
+  gtag('set', 'ads_data_redaction', true);
+</script>
+```
+
+- For users in GDPR countries (EU 27, UK, BR, CA): all 4 signals set to `denied`
+- For users in other countries: all 4 signals set to `granted`
+- `wait_for_update: 500` = wait 500ms for the banner before firing tags (so tags can read the user's choice)
+- `ads_data_redaction: true` = strip IP from Google hits when ad_user_data is denied (extra privacy)
+
+**Consent update (fired when user makes a choice in the banner):**
+
+```js
+window.gtag("consent", "update", {
+  ad_storage: advertising ? "granted" : "denied",
+  analytics_storage: analytics ? "granted" : "denied",
+  ad_user_data: advertising ? "granted" : "denied",
+  ad_personalization: advertising ? "granted" : "denied"
+});
+```
+
+This is called from `src/cookie-consent.js` in `saveConsent()` (3 places: "Essential only", "Accept all", "Customize + Save") and in `doNotSell()` (CCPA link in footer).
+
+**3-bucket → 4-signal mapping:**
+
+| Our bucket | Google signal(s) |
+|---|---|
+| Essential (always on) | (no Google signal needed) |
+| Analytics (opt-in) | `analytics_storage` |
+| Advertising (opt-in) | `ad_storage` + `ad_user_data` + `ad_personalization` |
+
+### 15.3 Why we did this before adding Google tags
+
+We're not using Google Ads or GA4 yet, but:
+- ✅ Implementing now = zero risk, future-proof
+- ✅ When we add AdSense, the consent state is already there
+- ✅ When we add GA4, same — no retroactive work
+- ✅ SEO strategy doc has the full implementation reference
+
+### 15.4 Verification checklist (when we add AdSense/GA4)
+
+- [ ] Open Chrome Tag Assistant, visit the site
+- [ ] Accept all consent → expect consent state `g111` in hits to GA4
+- [ ] Reject all consent → expect cookieless pings with state `g100`
+- [ ] In GA4: Admin > Data Streams > confirm "ads measurement consent signals active" is green
+- [ ] In Google Ads: Diagnostics > individual conversions > confirm Consent Mode status is OK
+
+### 15.5 References
+
+- Google Consent Mode docs: https://developers.google.com/tag-platform/security/guides/consent
+- GTM support: https://support.google.com/tagmanager/answer/13695607
+- Implementation guide: https://joindatacops.com/resources/google-consent-mode-v2-a-complete-implementation-guide/
+
