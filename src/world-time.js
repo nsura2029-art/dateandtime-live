@@ -296,7 +296,7 @@
     if (!wrap) return;
     wrap.innerHTML = cities.map(c => `
       <button class="wt-city-chip ${c.home ? "home" : ""}" data-id="${c.id}" data-action="remove">
-        ${c.home ? "⌂ " : ""}${escapeHtml(c.name)}<span class="now" data-time="${c.id}">--:--</span><span class="x" data-id="${c.id}">×</span>
+        ${c.home ? "⌂ " : ""}${escapeHtml(c.name)}<span class="now" data-time="${c.id}"><span class="live-dot"></span><span class="now-text" data-live-tz="${escapeHtml(c.timezone)}">--:--:--</span></span><span class="x" data-id="${c.id}">×</span>
       </button>
     `).join("");
   }
@@ -428,6 +428,29 @@
       const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: !is24h });
       return fmt.format(date);
     } catch (e) { return ""; }
+  }
+
+  // Live time with 2-digit centiseconds (hundredths of a second)
+  // Returns { hms, period } so the millisecond suffix can be styled separately
+  // and the whole thing updates ~20fps without re-rendering parent elements.
+  function fmtLiveTime(date, tz, is24h) {
+    try {
+      const fmt = new Intl.DateTimeFormat("en-US", {
+        timeZone: tz,
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: !is24h
+      });
+      const parts = fmt.formatToParts(date);
+      const h = parts.find(p => p.type === "hour")?.value || "00";
+      const m = parts.find(p => p.type === "minute")?.value || "00";
+      const s = parts.find(p => p.type === "second")?.value || "00";
+      const p = parts.find(p => p.type === "dayPeriod")?.value || "";
+      // 2-digit centiseconds (hundredths of a second)
+      const cs = String(Math.floor((date.getMilliseconds()) / 10)).padStart(2, "0");
+      return { hms: `${h}:${m}:${s}`, cs, period: p, use24h };
+    } catch (e) { return { hms: "--:--:--", cs: "00", period: "", use24h: !!is24h }; }
   }
 
   function renderCityRow(city, now) {
@@ -575,7 +598,7 @@
             <span class="offset">${offset}</span>
           </div>
           <div class="country">${escapeHtml((city.stateCode ? city.stateCode + ", " : "") + city.countryName)}</div>
-          <div class="time">${time}</div>
+          <div class="time" data-live-tz="${escapeHtml(city.timezone)}">${time}</div>
           <div class="date-row"><span class="day">${dateLabel}</span></div>
         </div>
         <div class="right">${tiles}</div>
@@ -624,15 +647,6 @@
           return fmt.format(now) === fmt.format(focusedDate);
         } catch (e) { return true; }
       })();
-      cities.forEach(city => {
-        const chipTime = document.querySelector(`.wt-city-chip[data-id="${city.id}"] .now`);
-        if (chipTime) chipTime.textContent = fmtLocalTime(now, city.timezone, use24h);
-        const row = document.querySelector(`.wt-city-row[data-city="${city.id}"]`);
-        if (row) {
-          const timeEl = row.querySelector(".time");
-          if (timeEl) timeEl.textContent = fmtLocalTime(now, city.timezone, use24h);
-        }
-      });
       // Update "now-col" highlight: ALL rows at the same anchor column
       if (isFocusedTodayInAnchor) {
         $$(".wt-tile.now-col").forEach(t => t.classList.remove("now-col"));
@@ -648,6 +662,46 @@
     }
     tick();
     window.__wtTickInterval = setInterval(tick, 1000);
+
+    // Start the rAF-based live time updater (20fps, shows centiseconds)
+    startLiveTimeLoop();
+  }
+
+  // ===== Live time loop (rAF, ~20fps) =====
+  // Updates the .now-text in chips and .time in city rows with the current
+  // local time including 2-digit centiseconds (e.g. "4:00:23.45 PM").
+  // Cheap: only touches the small text nodes, not the whole row.
+  let liveTimeRafId = null;
+  function startLiveTimeLoop() {
+    stopLiveTimeLoop();
+    function frame() {
+      const now = new Date();
+      // Update chip live times
+      document.querySelectorAll("[data-live-tz]").forEach(el => {
+        const tz = el.dataset.liveTz;
+        if (!tz) return;
+        const t = fmtLiveTime(now, tz, use24h);
+        // Element is the .now-text in chips, or .time in rows
+        if (el.classList.contains("now-text")) {
+          // Chip: compact "H:MM:SS.CS AM" format
+          el.textContent = t.use24h
+            ? `${t.hms}.${t.cs}`
+            : `${t.hms}.${t.cs} ${t.period}`;
+        } else {
+          // City row .time: show with the green dot via ::before, and the live time as text
+          // Use a span wrapper so we can style the centiseconds smaller
+          el.innerHTML = `${t.use24h ? t.hms : t.hms + ' ' + t.period}<span class="cs">.${t.cs}</span>`;
+        }
+      });
+      liveTimeRafId = requestAnimationFrame(frame);
+    }
+    liveTimeRafId = requestAnimationFrame(frame);
+  }
+  function stopLiveTimeLoop() {
+    if (liveTimeRafId) {
+      cancelAnimationFrame(liveTimeRafId);
+      liveTimeRafId = null;
+    }
   }
 
   // ========== INTERACTIONS ==========
