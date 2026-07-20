@@ -11,13 +11,50 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/privacy/" />
   <link rel="stylesheet" href="/src/legal-pages.css" />
+  <link rel="stylesheet" href="/src/site-shell.css" />
 </head>
-<body class="legal-page">
-  <header class="legal-header">
-    <a href="/" class="legal-home">← dateandtime.live</a>
-    <h1>Privacy Policy</h1>
-    <p class="legal-updated">Last updated: 19 July 2026</p>
-  </header>
+<body class="shell-page">
+  <header class="site-header">
+  <div class="container header-row">
+    <a href="/" class="logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <nav class="nav-main" aria-label="Main">
+      <a href="/holidays/" class="nav-link">Holidays</a>
+      <a href="/onthisday/" class="nav-link">On this day</a>
+      <a href="/about/" class="nav-link">About</a>
+      <a href="/editorial-policy/" class="nav-link">Editorial</a>
+    </nav>
+    <div class="header-actions">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/privacy/" aria-current="page">Privacy</a></li>
+      </ol>
+    </div>
+  </nav>
+
+
+  <div class="page-title-block">
+    <div class="container">
+      <h1 class="page-title">Privacy Policy</h1>
+      <p class="page-meta">Last updated: 19 July 2026</p>
+    </div>
+  </div>
 
   <div class="legal-layout">
     <nav class="legal-nav" aria-label="Table of contents">
@@ -171,8 +208,28 @@
     </main>
   </div>
 
-  <footer class="legal-footer">
-    <p><a href="/">← Back to dateandtime.live</a></p>
-  </footer>
-</body>
+  <footer class="site-footer" role="contentinfo">
+  <div class="site-footer-inner">
+    <nav class="site-footer-nav" aria-label="Site links">
+      <a href="/">Home</a>
+      <a href="/holidays/">Holidays</a>
+      <a href="/onthisday/">On this day</a>
+      <a href="/about/">About</a>
+      <a href="/editorial-policy/">Editorial policy</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+      <a href="mailto:hello@dateandtime.live">Contact</a>
+      <a href="/sitemap.xml">Sitemap</a>
+    </nav>
+    <p class="site-footer-meta">
+      © 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays ·
+      Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+    </p>
+    <p class="site-footer-meta">
+      <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+    </p>
+  </div>
+</footer>
+    <script src="/src/site-shell.js" defer></script>
+
 </html>
