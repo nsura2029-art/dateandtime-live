@@ -222,6 +222,27 @@ The repo has **two long-lived branches** (`main` + `develop`) and **one short-li
 
 A single feature preview URL. While a feature branch is checked out and deployed, the dev URL serves *that feature*'s content. Once the feature is merged into `develop` and the dev URL is re-deployed from `develop`, the dev URL serves develop's content again. Then `develop` → `main` when the next prod release ships.
 
+### Quick workflow (4 steps — the user-locked canonical flow, 2026-07-19)
+
+> **Always deploy to dev first. Always merge to develop before merging to main. Always deploy to prod via the script.**
+
+```
+1. Deploy feature branch → dev Worker
+       npx wrangler deploy --env dev
+2. Verify on dev (open the dev URL, check the change works)
+3. Merge feature → develop
+       git checkout develop && git merge --ff-only feature/<name>
+       git push origin develop
+4. Merge develop → main + deploy to prod
+       git checkout main && git merge --ff-only develop
+       git push origin main
+       ./scripts/deploy.sh prod          # ← script is the only safe way
+```
+
+That's it. Four steps, every change, no exceptions.
+
+The detailed 7-step workflow below shows the worktree + per-feature branch mechanics. Use it for the actual mechanics, but the **decision flow** is always the 4 steps above.
+
 ### Lifecycle of a feature
 
 1. **Branch from `develop`** (never from `main`):
