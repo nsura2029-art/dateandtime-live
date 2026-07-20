@@ -722,19 +722,31 @@
       selectedRange = { anchorCityId: cityId, startCol: col, endCol: col };
       render();
     });
-    main.addEventListener("mouseover", (e) => {
+    // Use mousemove on document (not mouseover on main) so we don't lose
+    // events when render() recreates the DOM mid-drag. We find the tile
+    // under the mouse with document.elementFromPoint.
+    document.addEventListener("mousemove", (e) => {
       if (!dragState) return;
-      const tile = e.target.closest("[data-tile]");
+      // Temporarily hide the tooltip so elementFromPoint finds the tile
+      const tt = document.getElementById("wt-tooltip");
+      const prevPE = tt ? tt.style.pointerEvents : "";
+      if (tt) tt.style.pointerEvents = "none";
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (tt) tt.style.pointerEvents = prevPE;
+      if (!el) return;
+      const tile = el.closest("[data-tile]");
       if (!tile) return;
       const cityId = parseInt(tile.dataset.city, 10);
       if (cityId !== dragState.cityId) return; // only extend within the same row
       const col = parseInt(tile.dataset.col, 10);
-      // Extend the selection from startCol to col+1 (exclusive end)
-      const newEnd = Math.max(dragState.startCol, col) + 1;
+      // Extend the selection from startCol to col (inclusive)
+      const newEnd = Math.max(dragState.startCol, col);
       const newStart = Math.min(dragState.startCol, col);
       if (selectedRange.endCol !== newEnd || selectedRange.startCol !== newStart) {
         selectedRange = { anchorCityId: dragState.cityId, startCol: newStart, endCol: newEnd };
-        render();
+        // Update classes directly (no render) to keep drag smooth
+        updateSelectionClasses();
+        showSelectionBar();
       }
     });
     document.addEventListener("mouseup", () => {
@@ -742,6 +754,30 @@
         dragState = null;
         showSelectionBar();
       }
+    });
+  }
+
+  // Update .is-selected / .in-range classes on existing tiles without re-rendering
+  // (keeps the drag smooth and avoids losing the mouseover target mid-drag)
+  function updateSelectionClasses() {
+    if (!selectedRange) {
+      $$(".wt-tile.is-selected, .wt-tile.in-range").forEach(t => t.classList.remove("is-selected", "in-range"));
+      return;
+    }
+    const s = selectedRange.startCol;
+    const e = selectedRange.endCol;
+    $$(".wt-tile").forEach(tile => {
+      const c = parseInt(tile.dataset.col, 10);
+      const wasSelected = tile.classList.contains("is-selected");
+      const wasInRange = tile.classList.contains("in-range");
+      const isInRange = c >= s && c <= e;
+      const isStart = c === s;
+      const isEnd = c === e;
+      const isSelected = isInRange && (isStart || isEnd);
+      if (isSelected && !wasSelected) tile.classList.add("is-selected");
+      else if (!isSelected && wasSelected) tile.classList.remove("is-selected");
+      if (isInRange && !isSelected && !wasInRange) tile.classList.add("in-range");
+      else if ((!isInRange || isSelected) && wasInRange) tile.classList.remove("in-range");
     });
   }
 
