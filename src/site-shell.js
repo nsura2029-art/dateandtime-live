@@ -71,6 +71,10 @@
   }
 })();
 
+// Note: the init() call above runs both initTheme() and highlightActiveNav().
+// The mobile menu init (initMobileNav) is added via _fullInit in the appended block below.
+
+
 // -------- Mobile nav (hamburger) --------
 function openMobileNav() {
   const nav = document.querySelector("[data-mobile-nav]");
@@ -171,9 +175,19 @@ function initMobileNav() {
   });
 }
 
-// Update init() to call initMobileNav
+// Call initMobileNav alongside the existing init flow.
+// (We can't reassign `init` because it's a function declaration in strict mode.)
+// Instead, we wrap the init call below.
 const _origInit = init;
-init = function() {
+function _fullInit() {
   _origInit();
   initMobileNav();
-};
+}
+
+// Replace the init() call below with _fullInit()
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _fullInit);
+} else {
+  _fullInit();
+}
+
