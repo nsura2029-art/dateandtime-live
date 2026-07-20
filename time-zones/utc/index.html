@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UTC &amp; GMT – The World's Time Standard Explained | dateandtime.live</title>
+  <meta name="description" content="What is UTC? Learn the difference between UTC and GMT, how atomic clocks maintain the world's time standard, and why UTC replaced GMT in 1960. Complete guide with examples and conversion." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/time-zones/utc/" />
+  <meta property="og:title" content="UTC &amp; GMT – The World's Time Standard Explained" />
+  <meta property="og:description" content="What is UTC? Learn the difference between UTC and GMT, how atomic clocks maintain the world's time standard." />
+  <meta property="og:url" content="https://dateandtime.live/time-zones/utc/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-07-20" />
+  <meta property="article:modified_time" content="2026-07-20" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/site-shell.css" />
+  <link rel="stylesheet" href="/src/tz-hub.css" />
+  <link rel="stylesheet" href="/src/edu-page.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "UTC & GMT – The World's Time Standard Explained",
+    "description": "What is UTC? Learn the difference between UTC and GMT, how atomic clocks maintain the world's time standard.",
+    "author": { "@type": "Organization", "name": "dateandtime.live" },
+    "publisher": { "@type": "Organization", "name": "dateandtime.live" },
+    "datePublished": "2026-07-20",
+    "dateModified": "2026-07-20",
+    "mainEntityOfPage": "https://dateandtime.live/time-zones/utc/"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dateandtime.live/" },
+      { "@type": "ListItem", "position": 2, "name": "Time Zones", "item": "https://dateandtime.live/time-zones/" },
+      { "@type": "ListItem", "position": 3, "name": "UTC & GMT", "item": "https://dateandtime.live/time-zones/utc/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What is UTC?", "acceptedAnswer": { "@type": "Answer", "text": "UTC (Coordinated Universal Time) is the world's primary time standard. It is maintained by a network of over 400 atomic clocks coordinated by the International Bureau of Weights and Measures (BIPM) in France. UTC replaced GMT (Greenwich Mean Time) as the official reference in 1960." } },
+      { "@type": "Question", "name": "What is the difference between UTC and GMT?", "acceptedAnswer": { "@type": "Answer", "text": "GMT (Greenwich Mean Time) is a time zone based on the Earth's rotation, defined by solar time at the Royal Observatory in Greenwich, London. UTC (Coordinated Universal Time) is a time standard based on atomic clocks. For most practical purposes, GMT and UTC are the same, but UTC is more stable and is the official reference for all modern computing, aviation, and scientific work." } },
+      { "@type": "Question", "name": "Who maintains UTC?", "acceptedAnswer": { "@type": "Answer", "text": "UTC is maintained by the International Bureau of Weights and Measures (BIPM) in Sèvres, France. The BIPM combines data from over 400 atomic clocks at national laboratories worldwide to produce a stable, accurate international time scale." } },
+      { "@type": "Question", "name": "Is UTC affected by Daylight Saving Time (DST)?", "acceptedAnswer": { "@type": "Answer", "text": "No. UTC has no DST — it never changes. All other time zones are defined by their offset from UTC, e.g. New York is UTC-5 in winter (EST) and UTC-4 in summer (EDT). When a country springs forward for DST, its offset from UTC changes by 1 hour, but UTC itself stays the same." } },
+      { "@type": "Question", "name": "How accurate is UTC?", "acceptedAnswer": { "@type": "Answer", "text": "UTC is accurate to within 1 second of mean solar time, but the underlying atomic clock readings are accurate to within nanoseconds per day. The official UTC timescale is computed monthly by the BIPM using a weighted average of about 400 atomic clocks worldwide." } }
+    ]
+  }
+  </script>
+  <script src="/src/site-shell.js" defer></script>
+</head>
+<body class="shell-page">
+<header class="site-header">
+  <div class="container header-row">
+    <a href="/" class="logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <nav class="nav-main" aria-label="Main">
+      <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="nav-link">Holidays</a>
+      <a href="/onthisday/" class="nav-link">On this day</a>
+      <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🕐</span>World time
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/world-time/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span><span class="dropdown-desc">Live current time in 33,945 cities</span></a>
+          <a href="/world-time/meeting/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span><span class="dropdown-desc">Find meeting times across time zones</span></a>
+          <a href="/world-time/event/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span><span class="dropdown-desc">Show local times for a global event</span></a>
+        </div>
+      </div>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/time-zones/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span><span class="dropdown-desc">Browse all 408 time zones</span></a>
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span><span class="dropdown-desc">Time difference calculator</span></a>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-section-label">Learn</div>
+          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span><span class="dropdown-desc">UTC, offsets, and the prime meridian</span></a>
+          <a href="/time-zones/dst/" class="dropdown-item" role="menuitem"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span><span class="dropdown-desc">Spring forward, fall back</span></a>
+          <a href="/time-zones/utc/" class="dropdown-item is-active" role="menuitem" aria-current="page"><span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span><span class="dropdown-desc">The world's time standard</span></a>
+        </div>
+      </div>
+      <a href="#" class="nav-link">Blog</a>
+    </nav>
+    <div class="header-actions">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+        <span class="nav-toggle-icon" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <div class="container">
+    <a href="/">Home</a>
+    <span class="bc-sep" aria-hidden="true">/</span>
+    <a href="/time-zones/">Time Zones</a>
+    <span class="bc-sep" aria-hidden="true">/</span>
+    <span aria-current="page">UTC &amp; GMT</span>
+  </div>
+</nav>
+
+<main class="tz-hub edu-page">
+  <article class="container">
+    <header class="edu-header">
+      <p class="edu-eyebrow">Time Zones Guide</p>
+      <h1>UTC &amp; GMT: The World's Time Standard</h1>
+      <p class="edu-subtitle">What is UTC? What's the difference between UTC and GMT? How do atomic clocks keep the world's time? Everything you need to know.</p>
+      <p class="edu-meta">Updated July 20, 2026 · 7 min read</p>
+    </header>
+
+    <div class="edu-content">
+      <h2>What is UTC?</h2>
+      <p><strong>UTC (Coordinated Universal Time)</strong> is the world's primary time standard. It is the reference point from which all other time zones are calculated. Every time zone in the world is defined by its offset east (+) or west (−) of UTC.</p>
+      <p>For example:</p>
+      <ul>
+        <li>New York is <code>UTC-5</code> in winter (Eastern Standard Time) and <code>UTC-4</code> in summer (Eastern Daylight Time)</li>
+        <li>Tokyo is <code>UTC+9</code> year-round (Japan Standard Time)</li>
+        <li>India is <code>UTC+5:30</code> year-round (India Standard Time, no DST)</li>
+        <li>Sydney is <code>UTC+10</code> in winter and <code>UTC+11</code> in summer (AEDT)</li>
+      </ul>
+      <p>UTC is the same everywhere on Earth — it doesn't change with seasons, doesn't observe DST, and isn't tied to any specific location.</p>
+
+      <h2>UTC vs GMT: what's the difference?</h2>
+      <p>The terms UTC and GMT are often used interchangeably, but they're technically different:</p>
+      <ul>
+        <li><strong>GMT (Greenwich Mean Time)</strong> is a <em>time zone</em>. It was originally defined as mean solar time at the Royal Observatory in Greenwich, London. It varies slightly with the Earth's rotation (which is affected by tides, geological activity, and other factors).</li>
+        <li><strong>UTC (Coordinated Universal Time)</strong> is a <em>time standard</em>. It's based on a weighted average of over 400 atomic clocks worldwide and is far more stable than solar time.</li>
+      </ul>
+      <p>For everyday purposes, <strong>UTC and GMT are the same to within a second</strong>. The difference is mostly of interest to scientists and engineers who need extreme precision. However, when you see "GMT" in casual contexts (like a UK newspaper saying "GMT 14:30"), it really means UTC — the UK uses GMT as its standard time, but the underlying time reference is now UTC.</p>
+
+      <h2>How UTC is maintained</h2>
+      <p>UTC is maintained by the <a href="https://www.bipm.org/" rel="noopener">International Bureau of Weights and Measures (BIPM)</a> in Sèvres, France. The BIPM is the international authority for measurement standards, established by the <strong>Metre Convention</strong> in 1875.</p>
+      <p>The BIPM coordinates data from over <strong>400 atomic clocks</strong> at national metrology institutes in 50+ countries, including:</p>
+      <ul>
+        <li><strong>NIST</strong> (National Institute of Standards and Technology) — United States</li>
+        <li><strong>NPL</strong> (National Physical Laboratory) — United Kingdom</li>
+        <li><strong>PTB</strong> (Physikalisch-Technische Bundesanstalt) — Germany</li>
+        <li><strong>NIST</strong> (National Institute of Information and Communications Technology) — Japan</li>
+        <li><strong>NMIA</strong> (National Measurement Institute) — Australia</li>
+      </ul>
+      <p>These clocks are based on <strong>cesium-133 atoms</strong>, which vibrate at exactly <strong>9,192,631,770 times per second</strong>. This is the official definition of the second, established in 1967. The BIPM uses this "atomic second" to compute a stable, accurate international time scale, which becomes UTC.</p>
+
+      <h2>Why UTC replaced GMT</h2>
+      <p>GMT was the world's time standard from 1884 until <strong>1960</strong>, when it was replaced by UTC for several reasons:</p>
+      <ol>
+        <li><strong>GMT was variable.</strong> Solar time at Greenwich drifts slightly as the Earth's rotation changes (the day gets longer by ~2 milliseconds per century due to tidal friction).</li>
+        <li><strong>Atomic clocks were more accurate.</strong> By 1960, cesium atomic clocks were 100,000x more stable than astronomical observations.</li>
+        <li><strong>Scientific needs demanded precision.</strong> Space exploration, radio astronomy, and particle physics all needed time measurements far more precise than solar-based GMT.</li>
+      </ol>
+      <p>UTC was officially adopted on January 1, 1960 by international agreement, with atomic clocks maintained by the US Naval Observatory and the UK National Physical Laboratory.</p>
+
+      <h2>Leap seconds</h2>
+      <p>Because atomic time (UTC) drifts from solar time (UT1) as the Earth's rotation slows, the BIPM occasionally adds a <strong>leap second</strong> to keep them aligned. Leap seconds are added at the end of June 30 or December 31, and the BIPM announces them about 6 months in advance.</p>
+      <p>Since 1972, <strong>27 leap seconds</strong> have been added — most recently on December 31, 2016. The Earth's rotation is currently slowing, so leap seconds are always <em>positive</em> (we add a second, never subtract).</p>
+      <p>Leap seconds have caused several high-profile IT outages, including:</p>
+      <ul>
+        <li>2012: LinkedIn, Reddit, and FourSquare experienced downtime</li>
+        <li>2015: A leap second inserted in mid-2015 caused outages at Twitter, Instagram, Pinterest, Netflix, and Airbnb</li>
+        <li>2016: Cloudflare, Amazon, and others reported issues</li>
+      </ul>
+      <p>Many tech companies (Google, Amazon, Facebook) have implemented "leap smearing" — distributing the extra second across 24 hours — to avoid sudden jumps. There is ongoing international debate about whether to abolish leap seconds entirely by 2035.</p>
+
+      <h2>UTC in everyday life</h2>
+      <p>You might not realize it, but UTC is everywhere in modern technology:</p>
+      <ul>
+        <li><strong>Aviation:</strong> All flight plans, air traffic control, and airline operations use UTC to avoid confusion between time zones. Pilots call it "Zulu time."</li>
+        <li><strong>Computing:</strong> Servers store all timestamps in UTC internally. The Unix epoch (January 1, 1970, 00:00:00 UTC) is the reference point for all Unix timestamps.</li>
+        <li><strong>GPS and satellite:</strong> GPS satellites carry atomic clocks synchronized to UTC. Your phone's GPS lock uses UTC for all position calculations.</li>
+        <li><strong>Internet standards:</strong> HTTP, SSL/TLS, email (SMTP), and most network protocols use UTC timestamps in their headers.</li>
+        <li><strong>Databases:</strong> Most modern databases (PostgreSQL, MySQL, etc.) recommend storing all timestamps in UTC and converting to local time only for display.</li>
+        <li><strong>Programming:</strong> Every modern programming language has built-in support for UTC timestamps (JavaScript's <code>Date.now()</code>, Python's <code>datetime.utcnow()</code>, etc.).</li>
+      </ul>
+
+      <h2>How to read UTC times</h2>
+      <p>UTC times are often written with a "Z" suffix (for "Zulu", the NATO phonetic alphabet letter that means UTC) or with an explicit "+00:00" offset. For example:</p>
+      <ul>
+        <li><code>14:30:00Z</code> = 2:30 PM UTC = 10:30 AM EDT (New York) = 11:30 PM JST (Tokyo)</li>
+        <li><code>2026-07-20T15:00:00+00:00</code> = ISO 8601 format for July 20, 2026 at 3:00 PM UTC</li>
+        <li><code>14:30 UTC</code> = 14:30 in coordinated universal time</li>
+      </ul>
+      <p>The Z suffix is widely used in aviation, military, and computing to avoid confusion with local time zones.</p>
+    </div>
+
+    <section class="tz-faq edu-faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="tz-faq-list">
+        <details>
+          <summary>What is UTC?</summary>
+          <p>UTC (Coordinated Universal Time) is the world's primary time standard, maintained by a network of over 400 atomic clocks coordinated by the International Bureau of Weights and Measures (BIPM). It replaced GMT in 1960.</p>
+        </details>
+        <details>
+          <summary>What is the difference between UTC and GMT?</summary>
+          <p>GMT is a time zone based on solar time at Greenwich. UTC is a time standard based on atomic clocks. For most practical purposes, they're the same to within a second, but UTC is more stable and is the official reference for modern computing, aviation, and science.</p>
+        </details>
+        <details>
+          <summary>Who maintains UTC?</summary>
+          <p>UTC is maintained by the International Bureau of Weights and Measures (BIPM) in Sèvres, France. The BIPM combines data from over 400 atomic clocks at national laboratories in 50+ countries.</p>
+        </details>
+        <details>
+          <summary>Is UTC affected by Daylight Saving Time?</summary>
+          <p>No. UTC never changes — it has no DST. All other time zones are defined by their offset from UTC. When a country springs forward for DST, its offset from UTC changes by 1 hour, but UTC itself stays the same.</p>
+        </details>
+        <details>
+          <summary>How accurate is UTC?</summary>
+          <p>UTC is accurate to within 1 second of mean solar time, but the underlying atomic clock readings are accurate to within nanoseconds per day. The official UTC timescale is computed monthly by the BIPM.</p>
+        </details>
+      </div>
+    </section>
+
+    <aside class="wt-related">
+      <h2>Related Time Zone Tools</h2>
+      <div class="wt-related-grid">
+        <a href="/time-zones/what-is/" class="wt-related-card"><span class="wt-related-icon" aria-hidden="true">💡</span><span class="wt-related-title">What is a Time Zone?</span><span class="wt-related-desc">UTC, offsets, and the prime meridian</span></a>
+        <a href="/time-zones/dst/" class="wt-related-card"><span class="wt-related-icon" aria-hidden="true">⏰</span><span class="wt-related-title">Daylight Saving Time</span><span class="wt-related-desc">How DST works and 2026 dates by country</span></a>
+        <a href="/time-zones/converter/" class="wt-related-card"><span class="wt-related-icon" aria-hidden="true">🔄</span><span class="wt-related-title">Time Zone Converter</span><span class="wt-related-desc">Time difference calculator</span></a>
+        <a href="/time-zones/" class="wt-related-card"><span class="wt-related-icon" aria-hidden="true">🌐</span><span class="wt-related-title">Time Zones</span><span class="wt-related-desc">Browse all 408 time zones</span></a>
+      </div>
+    </aside>
+  </article>
+</main>
+
+<footer class="page-footer">
+  <div class="container">
+    <p class="page-footer-meta">© 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones" rel="noopener">IANA</a> · <a href="https://www.geonames.org/" rel="noopener">GeoNames</a> · <a href="https://date.nager.at/" rel="noopener">Nager.Date</a> · <a href="https://www.wikipedia.org/" rel="noopener">Wikipedia</a></p>
+    <p class="page-footer-meta"><a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)</p>
+  </div>
+</footer>
+
+<aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+  <div class="mobile-nav-header">
+    <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav-list" aria-label="Mobile main">
+    <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+    <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+    <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+    <div class="mobile-nav-section">World time</div>
+    <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+    <div class="mobile-nav-section">Timezone</div>
+    <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
+    <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
+    <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
+    <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+    <a href="/time-zones/utc/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">UTC &amp; GMT</a>
+    <a href="#" class="mobile-nav-link">Blog</a>
+  </nav>
+</aside>
+<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+</body>
+</html>
