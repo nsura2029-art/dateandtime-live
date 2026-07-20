@@ -718,13 +718,24 @@
       const cityId = parseInt(tile.dataset.city, 10);
       const col = parseInt(tile.dataset.col, 10);
       dragState = { cityId, startCol: col };
-      // Selection is a 30-min slot (1 tile = 30 min)
+      // Start with a 1-hour selection (1 tile = 1 hour)
       selectedRange = { anchorCityId: cityId, startCol: col, endCol: col };
       render();
     });
     main.addEventListener("mouseover", (e) => {
-      // Just highlight the column across all rows (1 hour window)
-      // No drag-select for multi-hour ranges (per user request)
+      if (!dragState) return;
+      const tile = e.target.closest("[data-tile]");
+      if (!tile) return;
+      const cityId = parseInt(tile.dataset.city, 10);
+      if (cityId !== dragState.cityId) return; // only extend within the same row
+      const col = parseInt(tile.dataset.col, 10);
+      // Extend the selection from startCol to col+1 (exclusive end)
+      const newEnd = Math.max(dragState.startCol, col) + 1;
+      const newStart = Math.min(dragState.startCol, col);
+      if (selectedRange.endCol !== newEnd || selectedRange.startCol !== newStart) {
+        selectedRange = { anchorCityId: dragState.cityId, startCol: newStart, endCol: newEnd };
+        render();
+      }
     });
     document.addEventListener("mouseup", () => {
       if (dragState) {
