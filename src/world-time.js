@@ -368,14 +368,18 @@
       // Get YYYY-MM-DD in the anchor tz for the focusedDate
       const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: anchorTz, year: "numeric", month: "2-digit", day: "2-digit" });
       const [y, m, d] = fmt.format(focusedDate).split("-").map(Number);
-      // Compute the UTC offset of the anchor tz at noon of that day
+      // Compute the SIGNED UTC offset of the anchor tz at noon of that day
       // (noon is safe: DST changes typically happen at 2am, not noon)
+      // Tampa (UTC-4): noon UTC = 8am Tampa, so hourInAnchor=8, offset=-4
+      // Sydney (UTC+10): noon UTC = 10pm Sydney, so hourInAnchor=22, offset=+10
       const noonUTC = Date.UTC(y, m - 1, d, 12, 0, 0);
       const hourInAnchor = parseInt(new Intl.DateTimeFormat("en-US", { timeZone: anchorTz, hour: "numeric", hour12: false }).format(new Date(noonUTC)), 10);
-      let offset = 12 - hourInAnchor;
-      if (offset > 12) offset -= 24;
+      let offset = hourInAnchor - 12;
+      // Normalize to [-12, +14]
+      if (offset > 14) offset -= 24;
       if (offset < -12) offset += 24;
       // The moment for col:00 in anchor tz = Date.UTC(y, m, d, col - offset, 0, 0)
+      // Tampa col=7, offset=-4: Date.UTC(..., 7 - (-4), 0, 0) = 11:00 UTC = 7:00 Tampa ✓
       return new Date(Date.UTC(y, m - 1, d, col - offset, 0, 0));
     } catch (e) {
       return new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate(), col, 0, 0, 0);
