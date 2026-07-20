@@ -357,6 +357,16 @@ body.shell-page {
   font-size: 0.8125rem;
   color: var(--color-muted);
   background: color-mix(in srgb, var(--color-background-soft) 35%, transparent);
+  position: relative;
+}
+.breadcrumbs::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 30%, transparent));
 }
 
 .breadcrumbs ol {

@@ -870,6 +870,10 @@
   color: var(--wt-muted);
   opacity: 0.55;
   font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0.1rem;
+  font-weight: 400;
 }
 
 /* Related tools section */
