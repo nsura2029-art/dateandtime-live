@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time Zones – Browse All 408 World Time Zones | dateandtime.live</title>
+  <meta name="description" content="Complete guide to world time zones. Browse all 408 IANA time zones, learn about UTC, DST, and time zone offsets. Includes a free time zone converter and meeting planner." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/time-zones/" />
+  <meta property="og:title" content="Time Zones – Browse All 408 World Time Zones" />
+  <meta property="og:description" content="Complete guide to world time zones. Browse all 408 IANA time zones, learn about UTC, DST, and time zone offsets." />
+  <meta property="og:url" content="https://dateandtime.live/time-zones/" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/site-shell.css" />
+  <link rel="stylesheet" href="/src/tz-hub.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Time Zones",
+    "description": "Complete guide to world time zones. Browse all 408 IANA time zones.",
+    "url": "https://dateandtime.live/time-zones/"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dateandtime.live/" },
+      { "@type": "ListItem", "position": 2, "name": "Time Zones", "item": "https://dateandtime.live/time-zones/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "How many time zones are there in the world?", "acceptedAnswer": { "@type": "Answer", "text": "There are 40 named offset time zones (UTC-12 to UTC+14) and approximately 408 IANA time zones when you account for regional variations like America/New_York, Europe/London, Asia/Kolkata, etc. Each IANA zone tracks the full history of DST rules for that region." } },
+      { "@type": "Question", "name": "What is UTC?", "acceptedAnswer": { "@type": "Answer", "text": "UTC (Coordinated Universal Time) is the world's time standard. It replaced GMT (Greenwich Mean Time) in 1960 and is maintained by atomic clocks. All time zones are defined by their offset from UTC, e.g. New York is UTC-5 (EST) or UTC-4 (EDT)." } },
+      { "@type": "Question", "name": "Why are some time zones offset by 30 or 45 minutes?", "acceptedAnswer": { "@type": "Answer", "text": "Most time zones are offset by whole hours from UTC, but several countries use 30-minute or 45-minute offsets for historical or political reasons. India is UTC+5:30, Iran is UTC+3:30, and parts of Australia use UTC+9:30 or UTC+10:30. Nepal is the only country at UTC+5:45." } },
+      { "@type": "Question", "name": "What is the difference between GMT and UTC?", "acceptedAnswer": { "@type": "Answer", "text": "GMT (Greenwich Mean Time) is a time zone originally based on mean solar time at the Royal Observatory in Greenwich, London. UTC (Coordinated Universal Time) is a time standard based on atomic clocks. For most practical purposes, GMT and UTC are the same, but UTC is the official reference for all modern timekeeping." } },
+      { "@type": "Question", "name": "How does Daylight Saving Time (DST) work?", "acceptedAnswer": { "@type": "Answer", "text": "DST shifts clocks forward by 1 hour during warmer months so that evenings have more daylight. In 2026, the US 'spring forward' on March 8 and 'fall back' on November 1. The EU ended DST clock changes in 2026, but most of the world still observes them. Not all countries use DST — most of Africa and Asia do not." } }
+    ]
+  }
+  </script>
+  <script src="/src/site-shell.js" defer></script>
+</head>
+<body class="shell-page">
+<header class="site-header">
+  <div class="container header-row">
+    <a href="/" class="logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <nav class="nav-main" aria-label="Main">
+      <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="nav-link">Holidays</a>
+      <a href="/onthisday/" class="nav-link">On this day</a>
+      <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🕐</span>World time
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/world-time/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
+            <span class="dropdown-desc">Live current time in 33,945 cities</span>
+          </a>
+          <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
+            <span class="dropdown-desc">Find meeting times across time zones</span>
+          </a>
+          <a href="/world-time/event/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
+            <span class="dropdown-desc">Show local times for a global event</span>
+          </a>
+        </div>
+      </div>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/time-zones/" class="dropdown-item" role="menuitem" aria-current="page">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
+            <span class="dropdown-desc">Browse all 408 time zones</span>
+          </a>
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
+            <span class="dropdown-desc">Time difference calculator</span>
+          </a>
+          <a href="/time-zones/in/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🗺️</span>Time Zones in [Country]</span>
+            <span class="dropdown-desc">All countries and their zones</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-section-label">Learn</div>
+          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+            <span class="dropdown-desc">UTC, offsets, and the prime meridian</span>
+          </a>
+          <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
+            <span class="dropdown-desc">Spring forward, fall back</span>
+          </a>
+          <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span>
+            <span class="dropdown-desc">The world's time standard</span>
+          </a>
+        </div>
+      </div>
+      <a href="#" class="nav-link">Blog</a>
+    </nav>
+    <div class="header-actions">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+        <span class="nav-toggle-icon" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <div class="container">
+    <a href="/">Home</a>
+    <span class="bc-sep" aria-hidden="true">/</span>
+    <span aria-current="page">Time Zones</span>
+  </div>
+</nav>
+
+<main class="tz-hub">
+  <!-- Hero -->
+  <section class="tz-hero">
+    <div class="container">
+      <h1>Time Zones</h1>
+      <p class="tz-subtitle">The world runs on <strong>408 time zones</strong>. Understand how they work, convert between any two, and find the exact current time in 33,945 cities worldwide.</p>
+      <div class="tz-hero-cta">
+        <a href="/time-zones/converter/" class="tz-cta tz-cta-primary">🔄 Open Time Zone Converter</a>
+        <a href="#zones-by-region" class="tz-cta tz-cta-secondary">Browse by region ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick explainer -->
+  <section class="tz-explain">
+    <div class="container">
+      <div class="tz-explain-grid">
+        <div class="tz-explain-card">
+          <div class="tz-explain-icon" aria-hidden="true">🛰️</div>
+          <h2>What is a time zone?</h2>
+          <p>A time zone is a region where the same standard time is used. The world is divided into <strong>40 offset zones</strong> (from UTC−12 to UTC+14) that span 26 hours, plus hundreds of regional variants (like <code>America/New_York</code> or <code>Asia/Kolkata</code>) that track DST rules for each area.</p>
+          <a href="/time-zones/what-is/" class="tz-link">Read the full guide →</a>
+        </div>
+        <div class="tz-explain-card">
+          <div class="tz-explain-icon" aria-hidden="true">⏰</div>
+          <h2>Daylight Saving Time (DST)</h2>
+          <p>About 70 countries shift their clocks forward 1 hour in spring and back in autumn to extend evening daylight. The rules vary by country — the US and EU historically had different changeover dates, and the EU ended clock changes in 2026.</p>
+          <a href="/time-zones/dst/" class="tz-link">2026 DST dates →</a>
+        </div>
+        <div class="tz-explain-card">
+          <div class="tz-explain-icon" aria-hidden="true">🌍</div>
+          <h2>Coordinated Universal Time (UTC)</h2>
+          <p>UTC is the world's time standard, maintained by atomic clocks. Every time zone is defined by its offset from UTC — e.g. <code>UTC+5:30</code> for India, <code>UTC-5</code> for New York in winter. GMT is an older name for nearly the same thing.</p>
+          <a href="/time-zones/utc/" class="tz-link">UTC &amp; GMT explained →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Time zones by region -->
+  <section class="tz-regions" id="zones-by-region">
+    <div class="container">
+      <h2>Time Zones by Region</h2>
+      <p class="tz-section-sub">A time zone is defined by its offset from UTC. The table below shows the major offset zones and the cities that use them.</p>
+
+      <div class="tz-region-table">
+        <div class="tz-region-row tz-region-head">
+          <div>Offset</div>
+          <div>Common Name</div>
+          <div>Example Cities</div>
+        </div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−12</div><div>Baker Island Time</div><div>Baker Island, Howland Island</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−11</div><div>Samoa Standard Time</div><div>American Samoa, Midway</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−10</div><div>Hawaii-Aleutian Time</div><div>Honolulu, Anchorage (winter)</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−9</div><div>Alaska Time</div><div>Anchorage, Juneau</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−8</div><div>Pacific Time (PT)</div><div>Los Angeles, San Francisco, Vancouver, Seattle</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−7</div><div>Mountain Time (MT)</div><div>Denver, Phoenix (no DST), Calgary</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−6</div><div>Central Time (CT)</div><div>Chicago, Mexico City, Houston, Winnipeg</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−5</div><div>Eastern Time (ET)</div><div>New York, Toronto, Miami, Bogotá, Lima</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−4</div><div>Atlantic Time (AT)</div><div>Halifax, Caracas, Santiago, La Paz</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−3</div><div>Argentina Time</div><div>Buenos Aires, São Paulo, Montevideo</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−2</div><div>Mid-Atlantic</div><div>South Georgia &amp; South Sandwich Islands</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC−1</div><div>Cape Verde Time</div><div>Cape Verde, Azores (winter)</div></div>
+        <div class="tz-region-row"><div class="tz-offset tz-offset-zero">UTC±0</div><div>GMT / Western European Time (WET)</div><div>London, Dublin, Lisbon, Reykjavík</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+1</div><div>Central European Time (CET)</div><div>Paris, Berlin, Madrid, Rome, Amsterdam</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+2</div><div>Eastern European Time (EET)</div><div>Athens, Helsinki, Cairo, Johannesburg</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+3</div><div>Moscow Time / Arabia Standard</div><div>Moscow, Istanbul, Riyadh, Nairobi</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+3:30</div><div>Iran Standard Time</div><div>Tehran</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+4</div><div>Gulf Standard Time</div><div>Dubai, Abu Dhabi, Baku</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+4:30</div><div>Afghanistan Time</div><div>Kabul</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+5</div><div>Pakistan Standard Time</div><div>Karachi, Islamabad, Tashkent</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+5:30</div><div>India Standard Time</div><div>Mumbai, Delhi, Bangalore, Chennai, Kolkata</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+5:45</div><div>Nepal Time</div><div>Kathmandu</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+6</div><div>Bangladesh Standard Time</div><div>Dhaka, Almaty</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+6:30</div><div>Myanmar Time</div><div>Yangon, Naypyidaw</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+7</div><div>Indochina Time</div><div>Bangkok, Hanoi, Jakarta (west)</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+8</div><div>China Standard / Singapore Time</div><div>Beijing, Shanghai, Hong Kong, Singapore, Manila</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+9</div><div>Japan Standard Time (JST)</div><div>Tokyo, Seoul, Pyongyang</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+9:30</div><div>Australian Central Standard</div><div>Adelaide, Darwin</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+10</div><div>Australian Eastern Standard (AEST)</div><div>Sydney, Melbourne, Brisbane, Canberra</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+10:30</div><div>Lord Howe Standard Time</div><div>Lord Howe Island</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+11</div><div>Solomon Island Time</div><div>Noumea, Honiara</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+12</div><div>New Zealand Standard Time (NZST)</div><div>Auckland, Wellington, Suva</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+13</div><div>Tonga Time</div><div>Nukuʻalofa, Apia (advanced)</div></div>
+        <div class="tz-region-row"><div class="tz-offset">UTC+14</div><div>Line Islands Time</div><div>Kiritimati (Christmas Island)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools grid -->
+  <section class="tz-tools">
+    <div class="container">
+      <h2>Time Zone Tools</h2>
+      <div class="tz-tools-grid">
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities or time zones. Supports any date, handles DST, free and no sign-up.</p>
+        </a>
+        <a href="/time-zones/dst/" class="tz-tool-card">
+          <span class="tz-tool-icon">⏰</span>
+          <h3>Daylight Saving Time</h3>
+          <p>2026 DST dates by country, how clock changes work, and which countries still observe DST.</p>
+        </a>
+        <a href="/time-zones/utc/" class="tz-tool-card">
+          <span class="tz-tool-icon">🛰️</span>
+          <h3>UTC &amp; GMT</h3>
+          <p>The world's time standard explained — what UTC is, how it differs from GMT, and why it matters.</p>
+        </a>
+        <a href="/time-zones/what-is/" class="tz-tool-card">
+          <span class="tz-tool-icon">💡</span>
+          <h3>What is a Time Zone?</h3>
+          <p>Learn the fundamentals: the prime meridian, 15° per hour, the 40-offset system, and IANA zones.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="tz-faq">
+    <div class="container">
+      <h2>Frequently Asked Questions</h2>
+      <div class="tz-faq-list">
+        <details>
+          <summary>How many time zones are there in the world?</summary>
+          <p>There are 40 named offset time zones (from UTC−12 to UTC+14) and approximately <strong>408 IANA time zones</strong> when you account for regional variations. Each IANA zone (like <code>America/New_York</code> or <code>Asia/Kolkata</code>) tracks the full history of DST rules for that specific region.</p>
+        </details>
+        <details>
+          <summary>What is UTC?</summary>
+          <p>UTC (Coordinated Universal Time) is the world's primary time standard. It replaced GMT (Greenwich Mean Time) in 1960 and is maintained by a network of atomic clocks. All time zones are defined by their offset from UTC — e.g. <code>UTC-5</code> for New York in winter, <code>UTC+5:30</code> for India.</p>
+        </details>
+        <details>
+          <summary>Why are some time zones offset by 30 or 45 minutes?</summary>
+          <p>Most time zones are offset by whole hours from UTC, but several countries use 30-minute or 45-minute offsets for historical or political reasons. <strong>India</strong> is <code>UTC+5:30</code>, <strong>Iran</strong> is <code>UTC+3:30</code>, and <strong>Nepal</strong> is the only country at <code>UTC+5:45</code>. Parts of Australia also use <code>UTC+9:30</code> and <code>UTC+10:30</code>.</p>
+        </details>
+        <details>
+          <summary>What is the difference between GMT and UTC?</summary>
+          <p>GMT (Greenwich Mean Time) is a time zone originally based on mean solar time at the Royal Observatory in Greenwich, London. UTC (Coordinated Universal Time) is a time standard based on atomic clocks. For most practical purposes, GMT and UTC are the same, but UTC is the official reference for all modern timekeeping, aviation, computing, and scientific work.</p>
+        </details>
+        <details>
+          <summary>How does Daylight Saving Time (DST) work?</summary>
+          <p>DST shifts clocks forward by 1 hour during warmer months so that evenings have more daylight. In 2026, the US will "spring forward" on <strong>March 8</strong> and "fall back" on <strong>November 1</strong>. The EU ended DST clock changes in 2026 after a multi-year phase-out. Most of Africa and Asia do not observe DST at all.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="page-footer">
+  <div class="container">
+    <p class="page-footer-meta">© 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones" rel="noopener">IANA</a> · <a href="https://www.geonames.org/" rel="noopener">GeoNames</a> · <a href="https://date.nager.at/" rel="noopener">Nager.Date</a> · <a href="https://www.wikipedia.org/" rel="noopener">Wikipedia</a></p>
+    <p class="page-footer-meta"><a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)</p>
+  </div>
+</footer>
+
+<aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+  <div class="mobile-nav-header">
+    <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav-list" aria-label="Mobile main">
+    <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+    <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+    <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+    <div class="mobile-nav-section">World time</div>
+    <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+    <div class="mobile-nav-section">Timezone</div>
+    <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">Time Zones</a>
+    <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
+    <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+    <a href="/time-zones/utc/" class="mobile-nav-link mobile-nav-sub">UTC &amp; GMT</a>
+    <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
+    <a href="#" class="mobile-nav-link">Blog</a>
+  </nav>
+</aside>
+<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+</body>
+</html>
