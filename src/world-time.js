@@ -860,7 +860,7 @@
     tooltip.style.setProperty("--wt-tooltip-arrow-left", arrowX + "px");
     tooltip.dataset.arrow = arrowSide;
 
-    if (window.__wtDebug) console.log("DEBUG positionTooltipAtHomeCol", { col, tileCenter: tileRect.left + tileRect.width / 2, tooltipRectWidth: tooltipRect.width, tooltipComputedWidth: getComputedStyle(tooltip).width, left, top, arrowX, viewportWidth: window.innerWidth, afterSet: tooltip.style.left });
+    if (window.__wtDebug) console.log("DEBUG", JSON.stringify({ col, left, top, arrowX, ttStyleLeft: tooltip.style.left, ttComputedLeft: getComputedStyle(tooltip).left, transform: getComputedStyle(tooltip).transform, ttWidth: tooltipRect.width, tileCenter: tileRect.left + tileRect.width / 2 }));
   }
 
   // Reposition the tooltip on scroll/resize so it follows the selected column
