@@ -177,6 +177,46 @@
     .section--clock { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
     .section--search { padding: clamp(2rem, 5vw, 3rem) 0; }
     .section--favorites { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--explore { padding: clamp(2rem, 5vw, 3rem) 0; }
+    .explore-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+    }
+    .explore-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding: 1.25rem 1.4rem;
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      text-decoration: none;
+      color: var(--color-foreground);
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .explore-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-primary);
+      box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 12%, transparent);
+    }
+    .explore-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .explore-card h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-foreground);
+    }
+    .explore-card p {
+      margin: 0;
+      font-size: 0.8125rem;
+      color: var(--color-foreground-soft);
+      line-height: 1.5;
+    }
     .section--onthisday-section { padding: clamp(2rem, 5vw, 3rem) 0; }
     .section--footer-note { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(3rem, 6vw, 4rem); }
     .section-eyebrow { display: inline-block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--color-primary); margin-bottom: 0.5rem; }
@@ -703,6 +743,40 @@
 
         <p class="rail-label is-hidden">Favorite cities</p>
         <div class="rail" id="rail"></div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4b: EXPLORE MORE TOOLS -->
+    <!-- ============================================== -->
+    <section class="section section--explore">
+      <div class="container">
+        <p class="section-eyebrow">Explore more tools</p>
+        <h2 class="section-title">Time tools for every need</h2>
+        <p class="section-subtitle">From a quick world clock to planning meetings across continents — pick the tool that fits.</p>
+
+        <div class="explore-grid">
+          <a href="/world-time/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">🕐</span>
+            <h3>World Clock</h3>
+            <p>Live current time in 33,945 cities across 408 time zones. Real-time updates every second.</p>
+          </a>
+          <a href="/world-time/meeting/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">📅</span>
+            <h3>Meeting Planner</h3>
+            <p>Find meeting times that work for everyone. Drag-select a time slot, see local time in every city.</p>
+          </a>
+          <a href="/time-zones/converter/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">🔄</span>
+            <h3>Time Zone Converter</h3>
+            <p>Calculate the exact time difference between any two cities or time zones. Handles DST.</p>
+          </a>
+          <a href="/time-zones/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">🌐</span>
+            <h3>Time Zones</h3>
+            <p>Browse all 408 time zones. Learn about UTC, DST, and how time zones work worldwide.</p>
+          </a>
+        </div>
       </div>
     </section>
 
