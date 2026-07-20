@@ -288,6 +288,7 @@
     updateTimeEverySecond();
     initDatePicker();
     initTimeToggle();
+    renderDateTabs();
   }
 
   function renderChips() {
@@ -953,8 +954,7 @@
       const [y, m, d] = val.split("-").map(Number);
       const picked = new Date(y, m - 1, d, 12, 0, 0, 0);
       focusedDate = picked;
-      renderDateTabs();
-      render();
+      render(); // render() now calls renderDateTabs() at the end
     });
   }
 
@@ -1070,15 +1070,7 @@
         newDate.setHours(12, 0, 0, 0);
         newDate.setDate(newDate.getDate() + (idx - 2));
         focusedDate = newDate;
-        // Re-render date tabs (the selected tab moves to center)
-        renderDateTabs();
-        // Update the date picker value
-        const picker = document.getElementById("wt-date-picker");
-        if (picker) picker.value = isoDate(focusedDate);
-        // Update the day label
-        const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone || "UTC";
-        const dayNameFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][newDate.getDay()];
-        $(".wt-cities-head .day-label")?.replaceChildren(document.createTextNode(`${dayNameFull}, ${localDateInCity(userTz, newDate)}`));
+        // render() handles date tabs, picker value, and day label
         render();
         return;
       }
@@ -1088,15 +1080,7 @@
       const dir = pager.dataset.pager === "prev" ? -1 : 1;
       focusedDate.setDate(focusedDate.getDate() + dir);
       focusedDate.setHours(12, 0, 0, 0);
-      // Re-render (and update today class)
-      renderDateTabs();
-      // Update the date picker value
-      const dp = document.getElementById("wt-date-picker");
-      if (dp) dp.value = isoDate(focusedDate);
-      // Update the day label
-      const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone || "UTC";
-      const dayNameFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][focusedDate.getDay()];
-      $(".wt-cities-head .day-label")?.replaceChildren(document.createTextNode(`${dayNameFull}, ${localDateInCity(userTz, focusedDate)}`));
+      // render() handles date tabs, picker value, and day label
       render();
     });
   }
@@ -1507,11 +1491,8 @@ END:VCALENDAR`;
     setupDatePager();
     setupSelectionActions();
 
-    // 6. Re-render after work hours load
+    // 6. Re-render after work hours load (render() also calls renderDateTabs at the end)
     render();
-
-    // 7. Populate date tabs (must be after the final render so the container exists)
-    renderDateTabs();
   }
 
   // Boot
