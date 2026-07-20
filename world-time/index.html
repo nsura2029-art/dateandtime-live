@@ -127,11 +127,7 @@
         <input id="wt-search-input" type="text" placeholder="+ Place or timezone — type a city" autocomplete="off" />
         <div class="wt-suggestions" id="wt-suggestions"></div>
       </div>
-      <div class="wt-date-tabs" id="wt-date-tabs">
-        <!-- Populated by JS -->
-      </div>
       <div class="wt-toolbar-actions">
-        <button class="wt-time-toggle" id="wt-time-toggle" title="Toggle 12/24 hour format" aria-label="Toggle 12/24 hour format">12h</button>
         <button class="icon-btn" data-action="settings">⚙️ Settings</button>
         <a href="#" class="link" data-action="link-view">🔗 COPY LINK</a>
       </div>
@@ -192,31 +188,6 @@
     </div>
   </footer>
 
-  <script>
-    /* Tiny inline script to populate date tabs and initial event handlers.
-       The big logic is in /src/world-time.js */
-    (function () {
-      'use strict';
-      const tabs = document.getElementById('wt-date-tabs');
-      const now = new Date();
-      const days = [];
-      // Show 7 days starting from yesterday (-1) to +5 days
-      for (let i = -1; i <= 5; i++) {
-        const d = new Date(now);
-        d.setDate(d.getDate() + i);
-        const isToday = i === 0; // today is at offset 0 (i is the day offset, not the position)
-        const dow = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-        const num = d.getDate();
-        days.push({ d, dow, num, isToday });
-      }
-      tabs.innerHTML = days.map((day, i) => `
-        <div class="wt-date-tab ${day.isToday ? 'today' : ''}" data-idx="${i}">
-          <span class="dow">${day.dow}</span>
-          <span class="num">${day.num}</span>
-        </div>
-      `).join('');
-    })();
-  </script>
   <!-- Rich tooltip on tile click: shows time in all cities at that column -->
   <div class="wt-tooltip" id="wt-tooltip" role="dialog" aria-label="Time details">
     <div class="wt-tooltip-header">
