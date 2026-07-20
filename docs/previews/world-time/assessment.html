@@ -97,6 +97,21 @@ td { color: var(--fg-soft); }
 <h2>📐 Design scores (light × dark × mobile × tablet × desktop)</h2>
 
 <div class="score-card">
+<h3>Design D — WTB-style Converter + Meeting <span class="grade good">A+ top pick ⭐</span></h3>
+<p style="color:var(--fg-soft);margin:0">"Convert any time. See every city." Top converter bar + 24×N grid below. WTB interaction model with our design system.</p>
+<ul>
+  <li><strong>Top "enter a time" converter bar:</strong> From/To inputs + 12h/24h toggle + iCal. Always visible.</li>
+  <li><strong>24×N grid (WTB-style):</strong> 6 cities as rows, time as columns. Color-coded: green (9-6 work), amber (early/late), dark/night.</li>
+  <li><strong>Hover to convert:</strong> Any cell shows tooltip with equivalent time in other cities. The "converter" is the grid itself.</li>
+  <li><strong>Click to schedule:</strong> Click any cell to set the picked time. Picked-time strip below shows time in all cities + iCal/email/share.</li>
+  <li><strong>Light mode:</strong> Crisp greens/ambers, work hours instantly readable, hover state clear.</li>
+  <li><strong>Dark mode:</strong> Teal-green work, amber-orange early/late, indigo night — all pop against the dark bg. Now indicator (indigo) is clear.</li>
+  <li><strong>Mobile:</strong> Converter bar stacks vertically (From above To), 12h/24h toggle, iCal button. Grid shows 12 hours with 1hr row heads. Cities wrap as chips.</li>
+  <li><strong>Best of both worlds:</strong> Combines the WTB UX everyone knows with the cleaner NotebookLM pastels + our design system.</li>
+</ul>
+<div class="fix"><strong>Why this is the top pick:</strong> Single page does both the 1:1 conversion (top bar) AND the multi-city comparison (grid). 180K + 30K = 210K/mo addressable. One page, one URL, one design. Ship-ready.</div>
+</div>
+<div class="score-card">
 <h3>Design A — Personal World Clock <span class="grade good">A+ ready</span></h3>
 <p style="color:var(--fg-soft);margin:0">The "where are my people" view. Hero clock + grid of saved cities.</p>
 <ul>
@@ -258,9 +273,8 @@ td { color: var(--fg-soft); }
 <div class="rec">
 <h3>Ship these 4, in this order:</h3>
 <ol>
-  <li><strong>Personal World Clock</strong> (Design A) — saves to localStorage, shareable URL. 1 page, ~5 days of work. <em>Reuses our home page rail component.</em></li>
-  <li><strong>Time Zone Converter</strong> (from Design C, the converter part only) — 1:1 city conversion. 2-3 days. Trivial with Intl.DateTimeFormat. The 180K/mo keyword.</li>
-  <li><strong>Meeting Planner</strong> (Design B, with dark mode fixes) — 24×N grid + working hours overlap + iCal export. 1-2 weeks. Industry gap. 30K/mo.</li>
+  <li><strong>WTB-style Converter + Meeting</strong> (Design D) ⭐ — combined 1:1 conversion + multi-city grid. 2-3 weeks. <strong>180K + 30K = 210K/mo addressable.</strong></li>
+  <li><strong>Personal World Clock</strong> (Design A) — saves to localStorage, shareable URL. 1 page, ~5 days. <em>Reuses our home page rail component.</em></li>
   <li><strong>Event Time Announcer</strong> (from Design C, the share card) — shareable URL with time in N cities. 1 week. Cheap, viral.</li>
 </ol>
 <p style="margin-bottom:0"><strong>Save for v2:</strong> Time Zone Map (needs D3 + real map) and the day/night terminator visual (cool but niche).</p>
@@ -269,10 +283,9 @@ td { color: var(--fg-soft); }
 <h3>Menu structure I'd ship</h3>
 <div style="font-family:ui-monospace,monospace;font-size:0.875rem;color:var(--fg-soft);padding:1rem;background:var(--bg-soft);border-radius:0.5rem;border:1px solid var(--b-soft);">
 dateandtime.live/world-time/<br>
+&nbsp;&nbsp;└─ /meeting/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Design D ⭐ (WTB-style, both converter + grid)<br>
 &nbsp;&nbsp;└─ /personal/ &nbsp;&nbsp;&nbsp;&nbsp;→ Design A (no fixes)<br>
-&nbsp;&nbsp;└─ /meeting/ &nbsp;&nbsp;&nbsp;&nbsp;→ Design B (3 dark mode fixes)<br>
-&nbsp;&nbsp;└─ /convert/ &nbsp;&nbsp;&nbsp;&nbsp;→ Design C's converter (no fixes)<br>
-&nbsp;&nbsp;└─ /event/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Design C's share card (no fixes)
+&nbsp;&nbsp;└─ /event/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Design C's share card
 </div>
 
 <h3>What I'd skip for now</h3>
@@ -296,6 +309,16 @@ dateandtime.live/world-time/<br>
 <div class="shot"><img src="assessment-design-a-tablet-dark.png" alt="A tablet dark" loading="lazy"/><div class="label">Tablet · dark</div></div>
 <div class="shot"><img src="assessment-design-a-desktop-light.png" alt="A desktop light" loading="lazy"/><div class="label">Desktop · light</div></div>
 <div class="shot"><img src="assessment-design-a-desktop-dark.png" alt="A desktop dark" loading="lazy"/><div class="label">Desktop · dark</div></div>
+</div>
+
+<h3>Design D — WTB-style (top pick) ⭐</h3>
+<div class="screenshots">
+<div class="shot"><img src="assessment-design-d-mobile-light.png" alt="D mobile light" loading="lazy"/><div class="label">Mobile · light</div></div>
+<div class="shot"><img src="assessment-design-d-mobile-dark.png" alt="D mobile dark" loading="lazy"/><div class="label">Mobile · dark</div></div>
+<div class="shot"><img src="assessment-design-d-tablet-light.png" alt="D tablet light" loading="lazy"/><div class="label">Tablet · light</div></div>
+<div class="shot"><img src="assessment-design-d-tablet-dark.png" alt="D tablet dark" loading="lazy"/><div class="label">Tablet · dark</div></div>
+<div class="shot"><img src="assessment-design-d-desktop-light.png" alt="D desktop light" loading="lazy"/><div class="label">Desktop · light</div></div>
+<div class="shot"><img src="assessment-design-d-desktop-dark.png" alt="D desktop dark" loading="lazy"/><div class="label">Desktop · dark</div></div>
 </div>
 
 <h3>Design B — Meeting Planner</h3>
