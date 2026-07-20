@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>#meteor-shower — News & Editorial | dateandtime.live</title>
+  <meta name="description" content="Articles tagged meteor-shower from dateandtime.live." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/topics/meteor-shower/" />
+  <meta property="og:title" content="{title}" />
+  <meta property="og:description" content="{description}" />
+  <meta property="og:url" content="{canonical}" />
+  <meta property="og:type" content="og:type" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/site-shell.css" />
+  
+  <style>
+.news-page { max-width: 760px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+.news-eyebrow { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; color: white; }
+.news-title { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.022em; line-height: 1.2; margin: 0.75rem 0 0.5rem; color: var(--color-foreground, #1f1a3a); }
+.news-meta { color: var(--color-muted, #77718f); font-size: 0.875rem; margin: 0 0 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.news-excerpt { font-size: 1.1rem; color: var(--color-foreground-soft, #4a4569); font-weight: 500; line-height: 1.5; margin: 0 0 1.5rem; padding: 1rem 1.25rem; border-left: 3px solid var(--color-primary, #5b4aaf); background: var(--color-background-soft, #faf8ff); border-radius: 0 8px 8px 0; }
+.news-body { font-size: 1rem; line-height: 1.7; color: var(--color-foreground, #1f1a3a); }
+.news-body h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 0.75rem; }
+.news-body h3 { font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+.news-body p { margin: 0 0 1rem; }
+.news-body ul, .news-body ol { margin: 0 0 1rem 1.5rem; }
+.news-body li { margin: 0 0 0.4rem; }
+.news-body table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+.news-body th, .news-body td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid var(--color-border, rgba(92,74,175,0.16)); }
+.news-body th { background: var(--color-background-soft, #faf8ff); font-weight: 700; }
+.news-body code { background: var(--color-background-soft, #faf8ff); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; }
+.news-body a { color: var(--color-primary, #5b4aaf); text-decoration: none; font-weight: 500; }
+.news-body a:hover { text-decoration: underline; }
+.news-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 2rem 0 1rem; }
+.news-tag { display: inline-block; padding: 4px 12px; background: var(--color-background-soft, #faf8ff); color: var(--color-primary, #5b4aaf); border-radius: 999px; font-size: 0.75rem; font-weight: 600; text-decoration: none; }
+.news-tag:hover { background: var(--color-primary, #5b4aaf); color: white; }
+.news-related { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--color-border-soft, rgba(92,74,175,0.08)); }
+.news-related h3 { font-size: 1rem; font-weight: 700; margin: 0 0 1rem; }
+.news-related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.news-related-card { display: block; padding: 1rem; border: 1px solid var(--color-border-soft, rgba(92,74,175,0.08)); border-radius: 8px; text-decoration: none; color: inherit; transition: transform 150ms, box-shadow 150ms; }
+.news-related-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(92,74,175,0.12); }
+.news-related-card .news-related-cat { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary, #5b4aaf); }
+.news-related-card .news-related-title { font-size: 0.95rem; font-weight: 600; margin: 0.4rem 0; line-height: 1.3; }
+.news-related-card .news-related-date { font-size: 0.75rem; color: var(--color-muted, #77718f); }
+
+.news-index-hero { padding: 2.5rem 0 1.5rem; text-align: center; }
+.news-index-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin: 0 0 0.5rem; letter-spacing: -0.025em; }
+.news-index-hero p { font-size: 1.05rem; color: var(--color-foreground-soft, #4a4569); max-width: 640px; margin: 0 auto; }
+.news-tabs { display: flex; justify-content: center; gap: 0.5rem; margin: 1.5rem 0 2rem; flex-wrap: wrap; }
+.news-tab { padding: 0.5rem 1rem; border-radius: 999px; border: 1px solid var(--color-border, rgba(92,74,175,0.16)); color: var(--color-foreground, #1f1a3a); text-decoration: none; font-size: 0.875rem; font-weight: 600; }
+.news-tab.is-active, .news-tab:hover { background: var(--color-primary, #5b4aaf); color: white; border-color: var(--color-primary, #5b4aaf); }
+.news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin: 1.5rem 0; }
+.news-card { display: flex; flex-direction: column; padding: 1.25rem; border: 1px solid var(--color-border-soft, rgba(92,74,175,0.08)); border-radius: 12px; background: var(--color-background, white); transition: transform 150ms, box-shadow 150ms; }
+.news-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(92,74,175,0.12); }
+.news-card .news-related-cat { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: white; align-self: flex-start; }
+.news-card .news-related-title { font-size: 1.05rem; font-weight: 700; margin: 0.6rem 0 0.4rem; line-height: 1.3; }
+.news-card .news-related-title a { color: inherit; text-decoration: none; }
+.news-card .news-related-title a:hover { color: var(--color-primary, #5b4aaf); }
+.news-card .news-excerpt-mini { color: var(--color-foreground-soft, #4a4569); font-size: 0.9rem; line-height: 1.5; margin: 0 0 0.75rem; }
+.news-card .news-related-date { font-size: 0.75rem; color: var(--color-muted, #77718f); }
+.news-feed-link { text-align: center; margin: 2rem 0 0; font-size: 0.875rem; color: var(--color-muted, #77718f); }
+.news-feed-link a { color: var(--color-primary, #5b4aaf); }
+[data-theme="dark"] .news-card { background: var(--color-background, #0f0820); }
+[data-theme="dark"] .news-body th { background: var(--color-background-soft, #16092e); }
+</style>
+</head>
+<body class="shell-page">
+<header class="site-header">
+  <div class="container header-row">
+    <a href="/" class="logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+    </a>
+    <nav class="nav-main" aria-label="Main">
+      <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="nav-link">Holidays</a>
+      <a href="/onthisday/" class="nav-link">On this day</a>
+      <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🕐</span>World time
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/world-time/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
+            <span class="dropdown-desc">Live current time in 33,945 cities</span>
+          </a>
+          <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
+            <span class="dropdown-desc">Find meeting times across time zones</span>
+          </a>
+          <a href="/world-time/event/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
+            <span class="dropdown-desc">Show local times for a global event</span>
+          </a>
+        </div>
+      </div>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/time-zones/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
+            <span class="dropdown-desc">Browse all 408 time zones</span>
+          </a>
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
+            <span class="dropdown-desc">Time difference calculator</span>
+          </a>
+          <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
+            <span class="dropdown-desc">How DST works and when it changes in 2026</span>
+          </a>
+          <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🕓</span>UTC &amp; GMT</span>
+            <span class="dropdown-desc">The world's time standard explained</span>
+          </a>
+          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+            <span class="dropdown-desc">How offsets, UTC, and the prime meridian work</span>
+          </a>
+        </div>
+      </div>
+      <a href="/news/" class="nav-link" aria-current="page">News</a>
+    </nav>
+    <div class="header-actions">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+        <span class="nav-toggle-icon" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+<aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+  <div class="mobile-nav-header">
+    <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+    </a>
+    <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav-list" aria-label="Mobile main">
+    <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+    <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+    <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+    <div class="mobile-nav-section">World time</div>
+    <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+    <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
+    <div class="mobile-nav-section">Timezone</div>
+    <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
+    <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
+    <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+    <a href="/time-zones/utc/" class="mobile-nav-link mobile-nav-sub">UTC &amp; GMT</a>
+    <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
+    <a href="/news/" class="mobile-nav-link is-active" aria-current="page">News</a>
+  </nav>
+</aside>
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/news/">News</a></li><li><a href="/news/">News</a></li><li><span aria-current="page">#meteor-shower</span></li>
+    </ol>
+  </div>
+</nav>
+
+<main class="container">
+
+<section class="news-index-hero">
+  <p class="eyebrow" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--color-primary,#5b4aaf) 10%,transparent);color:var(--color-primary,#5b4aaf);">🏷 Topic</p>
+  <h1>#meteor-shower</h1>
+  <p>1 article tagged "meteor-shower".</p>
+  <nav class="news-tabs" aria-label="Categories">
+    <a href="/news/" class="news-tab">← All News</a>
+  </nav>
+</section>
+<div class="news-grid">
+    <article class="news-card">
+      <span class="news-related-cat" style="background: #7c3aed">🌌 Astronomy</span>
+      <h2 class="news-related-title"><a href="/news/2026/07/perseid-meteor-shower-2026/">Perseid Meteor Shower 2026: When and How to Watch</a></h2>
+      <p class="news-excerpt-mini">The 2026 Perseid meteor shower peaks on the night of August 12-13. With up to 100 meteors per hour expected, it's one of the best sky shows of the year.</p>
+      <div class="news-related-date">July 20, 2026</div>
+    </article>
+  </div>
+</main>
+
+<script src="/src/site-shell.js"></script>
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <nav class="page-footer-nav" aria-label="Footer">
+      <a href="/">Home</a>
+      <a href="/holidays/">Holidays</a>
+      <a href="/onthisday/">On this day</a>
+      <a href="/about/">About</a>
+      <a href="/editorial-policy/">Editorial policy</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+      <a href="/contact/">Contact</a>
+      <a href="/sitemap.xml">Sitemap</a>
+    </nav>
+    <p class="page-footer-meta">© 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays</p>
+  </div>
+</footer>
+
+</body>
+</html>
