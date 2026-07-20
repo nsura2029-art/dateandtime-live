@@ -274,6 +274,13 @@ ${headerHtml('/time-zones/in/' + cca2.toLowerCase() + '/')}
       </div>
     </header>
 
+    <!-- Ad slot: leaderboard between country overview and city grid (high visibility) -->
+    <div class="container">
+      <div class="ad-slot ad-slot-leaderboard" aria-label="Advertisement">
+        <span class="ad-placeholder">Ad &mdash; 728&times;90 leaderboard (will be replaced with AdSense)</span>
+      </div>
+    </div>
+
     <div class="edu-content">
       <h2>Current time in major cities</h2>
       <p>Live local time, updated every second. The list is sorted by population.</p>

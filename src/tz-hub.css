@@ -49,23 +49,49 @@
 
 /* Hero */
 .tz-hero {
-  padding: 3rem 0 2rem;
+  padding: 2.5rem 0 2rem;
   background: linear-gradient(180deg, var(--tz-primary-soft) 0%, var(--tz-bg) 100%);
   border-bottom: 1px solid var(--tz-border-soft);
+  position: relative;
+  overflow: hidden;
+}
+.tz-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--tz-primary) 12%, transparent) 0%, transparent 40%),
+                    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--tz-secondary) 10%, transparent) 0%, transparent 50%);
+  pointer-events: none;
+  opacity: 0.7;
+}
+.tz-hero > .container { position: relative; z-index: 1; }
+.tz-hero .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tz-primary);
+  margin: 0 0 0.6rem;
+  padding: 4px 10px;
+  background: color-mix(in srgb, var(--tz-primary) 10%, transparent);
+  border-radius: 999px;
 }
 .tz-hero h1 {
-  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   color: var(--tz-fg);
   margin: 0 0 0.75rem;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 .tz-subtitle {
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   color: var(--tz-fg-soft);
-  max-width: 720px;
-  margin: 0 0 1.5rem;
+  max-width: 680px;
+  margin: 0 0 1.25rem;
   line-height: 1.55;
 }
 .tz-subtitle strong { color: var(--tz-fg); font-weight: 700; }
