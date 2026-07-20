@@ -683,10 +683,27 @@
       if (tab) {
         e.preventDefault();
         const idx = parseInt(tab.dataset.idx, 10);
-        // Re-build the dates array (matches the HTML generation)
+        // Set the focused date to NOON of the target day in the user's tz
+        // (avoids timezone wrap: e.g. TUE 21 00:00 Tampa = TUE 21 10:30 Mumbai, no +1d)
+        const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone || "UTC";
         const now = new Date();
-        const newDate = new Date(now);
-        newDate.setDate(newDate.getDate() + (idx - 3));
+        // Get today's date in userTz as YYYY-MM-DD
+        const todayInUserTz = (() => {
+          try {
+            const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: userTz, year: "numeric", month: "2-digit", day: "2-digit" });
+            return fmt.format(now);
+          } catch (e) { return null; }
+        })();
+        let newDate;
+        if (todayInUserTz) {
+          const [y, m, d] = todayInUserTz.split("-").map(Number);
+          const target = new Date(y, m - 1, d + (idx - 3));
+          target.setHours(12, 0, 0, 0); // noon to avoid timezone edge cases
+          newDate = target;
+        } else {
+          newDate = new Date(now);
+          newDate.setDate(newDate.getDate() + (idx - 3));
+        }
         focusedDate = newDate;
         // Update the .today class
         $$(".wt-date-tab").forEach(t => t.classList.remove("today"));
@@ -695,7 +712,7 @@
         const dayName = tab.querySelector(".dow").textContent;
         const dayNum = tab.querySelector(".num").textContent;
         const dayNameFull = ({ MON: "Monday", TUE: "Tuesday", WED: "Wednesday", THU: "Thursday", FRI: "Friday", SAT: "Saturday", SUN: "Sunday" })[dayName];
-        $(".wt-cities-head .day-label")?.replaceChildren(document.createTextNode(`${dayNameFull}, ${localDateInCity(window.__location?.timezone || cities[0]?.timezone || "UTC", newDate)}`));
+        $(".wt-cities-head .day-label")?.replaceChildren(document.createTextNode(`${dayNameFull}, ${localDateInCity(userTz, newDate)}`));
         render();
         return;
       }
