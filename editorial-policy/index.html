@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Editorial Policy — dateandtime.live</title>
+  <meta name="description" content="How we source, verify, and update our time zone, holiday, and on-this-day data. Our accuracy commitments and update cadence." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/editorial-policy/" />
+  <link rel="stylesheet" href="/src/legal-pages.css" />
+</head>
+<body class="legal-page">
+  <header class="legal-header">
+    <a href="/" class="legal-home">← dateandtime.live</a>
+    <h1>Editorial Policy</h1>
+    <p class="legal-updated">Last updated: 19 July 2026</p>
+  </header>
+
+  <div class="legal-layout">
+    <nav class="legal-nav" aria-label="Table of contents">
+      <ul>
+        <li><a href="#commitment">1. Our accuracy commitment</a></li>
+        <li><a href="#sourcing">2. How we source data</a></li>
+        <li><a href="#verification">3. How we verify</a></li>
+        <li><a href="#cadence">4. Update cadence</a></li>
+        <li><a href="#errors">5. Error reporting</a></li>
+        <li><a href="#limitations">6. Known limitations</a></li>
+        <li><a href="#corrections">7. Corrections policy</a></li>
+        <li><a href="#contact">8. Contact</a></li>
+      </ul>
+    </nav>
+
+    <main class="legal-main">
+      <section id="commitment">
+        <h2>1. Our accuracy commitment</h2>
+        <p>We try to be as accurate as our sources allow. We use primary sources wherever possible (IANA, Nager.Date, Wikipedia, NOAA). We document our sources transparently. We fix errors quickly when reported.</p>
+        <p>That said, we are not an official time authority. For safety-critical timing (aviation, medical, legal, financial), please consult an official source (NIST, USNO, or your country's equivalent).</p>
+      </section>
+
+      <section id="sourcing">
+        <h2>2. How we source data</h2>
+        <table>
+          <thead>
+            <tr><th>Data type</th><th>Primary source</th><th>License</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Time zones</td><td>IANA tz database</td><td>Public domain</td></tr>
+            <tr><td>City / place data</td><td>GeoNames</td><td>CC BY 4.0</td></tr>
+            <tr><td>Country data</td><td>mledoze/countries</td><td>Public domain</td></tr>
+            <tr><td>Public holidays (secular)</td><td>Nager.Date</td><td>Free API, no auth</td></tr>
+            <tr><td>Religious holidays (Jewish)</td><td>HebCal</td><td>Free API</td></tr>
+            <tr><td>Religious holidays (Muslim)</td><td>Aladhan</td><td>Free API</td></tr>
+            <tr><td>Other religious holidays</td><td>Curated from Wikipedia</td><td>CC BY-SA</td></tr>
+            <tr><td>On-this-day events</td><td>Wikipedia REST API</td><td>CC BY-SA</td></tr>
+            <tr><td>Sunrise / sunset</td><td>NOAA Solar Calculator algorithm</td><td>Public domain</td></tr>
+            <tr><td>DST transitions</td><td>Computed from IANA (Python zoneinfo)</td><td>Public domain</td></tr>
+            <tr><td>Country flags</td><td>flagcdn.com</td><td>CC0 / public domain</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="verification">
+        <h2>3. How we verify</h2>
+        <p>Before publishing any new data, we cross-check against at least one additional source. For example:</p>
+        <ul>
+          <li>Holidays: we cross-check Nager.Date against government websites for that country</li>
+          <li>Time zones: we compare our DST transitions against the actual tz database changes</li>
+          <li>On-this-day events: we verify each event against the linked Wikipedia article</li>
+        </ul>
+        <p>We also run automated data quality checks against our database (e.g. cities with no time zone, countries with no capital, etc.). These run daily and surface any anomalies.</p>
+      </section>
+
+      <section id="cadence">
+        <h2>4. Update cadence</h2>
+        <ul>
+          <li><strong>Time zone data:</strong> Updated within 7 days of any IANA release (typically 2–4 times per year)</li>
+          <li><strong>Holiday data:</strong> Refreshed annually for the next 2 years</li>
+          <li><strong>On-this-day events:</strong> Static curated list of 540 events, reviewed quarterly</li>
+          <li><strong>City / country data:</strong> Re-imported from GeoNames ~annually</li>
+        </ul>
+      </section>
+
+      <section id="errors">
+        <h2>5. Error reporting</h2>
+        <p>Found a wrong time, missing holiday, or bad data? Please report it:</p>
+        <ul>
+          <li>Use the in-app feedback button (bottom-right of every page)</li>
+          <li>Email <a href="mailto:hello@dateandtime.live?subject=Data%20error">hello@dateandtime.live</a> with subject "Data error"</li>
+        </ul>
+        <p>We aim to acknowledge error reports within 3 business days and fix critical errors within 7 days.</p>
+      </section>
+
+      <section id="limitations">
+        <h2>6. Known limitations</h2>
+        <ul>
+          <li>Our climate data is a simplified lat/lon-based model, not actual historical weather data</li>
+          <li>Some countries have sub-national holidays (e.g. India has 28 state sets) that we don't yet cover</li>
+          <li>Multi-language holiday names are in the database but not yet displayed in the UI</li>
+          <li>Sunrise/sunset times are calculated, not measured — local terrain can cause deviations</li>
+        </ul>
+        <p>We're working on all of these. See the <a href="/">homepage</a> for our public roadmap.</p>
+      </section>
+
+      <section id="corrections">
+        <h2>7. Corrections policy</h2>
+        <p>When we make a correction, we update the data in our database immediately. For significant corrections (e.g. a country was missing a major holiday), we may add a note to our changelog.</p>
+        <p>We do not maintain a public "corrections log" today, but each data row in our database has a "last updated" timestamp.</p>
+      </section>
+
+      <section id="contact">
+        <h2>8. Contact</h2>
+        <p>Questions about our editorial process: <a href="mailto:hello@dateandtime.live?subject=Editorial">hello@dateandtime.live</a> (subject: Editorial)</p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="legal-footer">
+    <p><a href="/">← Back to dateandtime.live</a></p>
+  </footer>
+</body>
+</html>

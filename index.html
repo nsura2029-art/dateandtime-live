@@ -30,10 +30,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Current Time in Your City — Live, Accurate | dateandtime.live</title>
-  <meta name="description" content="Current time in your city. Real-time clock, IANA time zone, UTC offset, DST status, sunrise & sunset, holidays, and business hours — all in one place. Auto-detected from your location or searchable by city." />
+  <meta name="description" content="Live current time for any city in the world. Free world clock with IANA time zone, UTC offset, DST status, sunrise & sunset, public holidays, and business hours. Auto-detect your city or search 33,945 cities." />
   <meta name="theme-color" content="#5b4aaf" />
-  <meta property="og:title" content="Current Time in Your City — Live, Accurate" />
-  <meta property="og:description" content="Time, day, date. Everywhere." />
+  <meta property="og:title" content="Current Time in Your City — Live, Accurate | dateandtime.live" />
+  <meta property="og:description" content="Live current time for 33,945 cities worldwide. Free, private, no signup. IANA time zones, holidays, sunrise/sunset — all in one place." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://dateandtime.live/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Current Time in Your City — Live, Accurate" />
+  <meta name="twitter:description" content="Free world clock for 33,945 cities. Live, private, no signup." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/" />
@@ -399,6 +404,58 @@
     .current-city strong { color: var(--color-foreground); font-weight: 700; }
     .current-city-extra { color: var(--color-primary); font-weight: 700; }
 
+    /* ===== FAQ SECTION (added 2026-07-19) ===== */
+    .section--faq { padding: clamp(2rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2rem); }
+    .faq-heading { font-size: clamp(1.125rem, 2.4vw, 1.5rem); font-weight: 800; letter-spacing: -0.01em; margin: 0 0 1.25rem; text-align: center; }
+    .faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.25rem; }
+    .faq-item {
+      border-bottom: 1px solid var(--color-border-soft);
+    }
+    .faq-item summary {
+      padding: 0.875rem 0.25rem;
+      font-weight: 600;
+      font-size: clamp(0.9375rem, 1.5vw, 1rem);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--color-foreground);
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: "+"; color: var(--color-muted); font-weight: 400; font-size: 1.25rem; line-height: 1; }
+    .faq-item[open] summary::after { content: "−"; }
+    .faq-item p {
+      margin: 0 0.25rem 0.875rem;
+      color: var(--color-muted);
+      font-size: clamp(0.875rem, 1.3vw, 0.9375rem);
+      line-height: 1.6;
+    }
+
+    /* ===== SITE FOOTER (added 2026-07-19) ===== */
+    .site-footer {
+      margin-top: 3rem;
+      padding: 2.5rem 1.5rem 2rem;
+      border-top: 1px solid var(--color-border-soft);
+      background: color-mix(in srgb, var(--color-background-soft) 30%, transparent);
+      font-size: 0.8125rem;
+      color: var(--color-muted);
+    }
+    .site-footer-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+    .site-footer-nav {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .site-footer-nav a {
+      color: var(--color-muted); text-decoration: none; font-weight: 600;
+      padding: 0.25rem 0.5rem; border-radius: 4px;
+    }
+    .site-footer-nav a:hover { color: var(--color-foreground); background: color-mix(in srgb, var(--color-primary) 8%, transparent); }
+    .site-footer-meta { margin: 0.5rem 0; line-height: 1.5; }
+    .site-footer-meta a { color: var(--color-muted); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--color-muted) 40%, transparent); }
+    .site-footer-meta a:hover { color: var(--color-foreground); }
+
     @media (max-width: 1023px) and (min-width: 761px) {
       .header-row { gap: 0.5rem; }
       .nav-main { gap: 0; }
@@ -587,7 +644,71 @@
         </p>
       </div>
     </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 7: FAQ (added 2026-07-19) — backs the JSON-LD FAQPage schema -->
+    <!-- ============================================== -->
+    <section class="section section--faq">
+      <div class="container">
+        <h2 class="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>What time is it in my city?</summary>
+            <p>dateandtime.live auto-detects your city and shows the current time in the big clock. You can also search any of 33,945 cities worldwide. The clock updates every second and shows the IANA time zone, UTC offset, and DST status.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do I find the time difference between two cities?</summary>
+            <p>Add both cities to your favorites rail. Click one to show its time in the big clock; the other stays visible in the rail. The UTC offset of each card tells you the difference.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is this site free?</summary>
+            <p>Yes. dateandtime.live is free, with no signup. We don’t sell your data. Optional advertising keeps the site free (only shown if you opt in to advertising cookies).</p>
+          </details>
+          <details class="faq-item">
+            <summary>How accurate is the time?</summary>
+            <p>The time is computed in your browser using JavaScript's Intl.DateTimeFormat API (IANA Time Zone Database). We cross-check against our server time to within ~50ms. For safety-critical timing, consult an official source (NIST, USNO).</p>
+          </details>
+          <details class="faq-item">
+            <summary>Do you have data for my country?</summary>
+            <p>We cover 33,945 cities in 242 countries, 408 IANA time zones, and 1,600+ public holidays across 39 countries. If something is missing, use the feedback button and we'll add it.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do I report an error?</summary>
+            <p>Click the feedback button at the bottom-right of any page, or email hello@dateandtime.live. We aim to fix critical errors within 7 days.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I use this site commercially?</summary>
+            <p>Yes. You may use the site for personal or commercial purposes. The data is sourced from public-domain and open-license sources (IANA, GeoNames, Nager.Date, Wikipedia). See our Editorial Policy for details.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does the site work offline?</summary>
+            <p>After your first visit, much of the site works offline. We use Cloudflare's edge cache and have minimal JS dependencies.</p>
+          </details>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <!-- ===== Site footer (added 2026-07-19) ===== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
   <!-- Feedback prompt (floating, contextual CTA) -->
   <div class="feedback-prompt is-hidden" id="feedback-prompt">

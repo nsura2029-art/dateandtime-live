@@ -1,17 +1,21 @@
-// Worker entry — serves the static assets AND injects Cloudflare's
-// IP-geolocation data into HTML pages so the landing can auto-detect
-// the user's city, state, and country without a third-party API call.
+// Worker entry — serves the static assets, injects Cloudflare's
+// IP-geolocation data into HTML pages for SSR, and runs cookie consent
+// + JSON-LD injection server-side.
 //
-// Also exposes same-origin proxies for /v1/cities and /v1/famous so
-// the page can load city data without tripping CORS (the prod API at
-// api.dateandtime.live only sends Access-Control-Allow-Origin for
-// https://dateandtime.live, not for *.workers.dev dev domains).
+// On every HTML request we:
+//   1. Inject window.__location (IP geolocation) before the first <script>
+//   2. Inject window.__initialTime (server-rendered time in user's tz)
+//   3. Inject window.__consentRegion + window.__hasConsent (cookie state)
+//   4. Replace the H1 placeholder with the actual city
+//   5. Update <title> with city + region
+//   6. Inject the cookie consent banner HTML before </body>
+//   7. Inject JSON-LD <script> tags in <head> if HTML doesn't already have them
 //
-// On every HTML request we also call /v1/cities server-side to find
-// the city in our database that is closest to the user's lat/lon —
-// that gives us a higher-confidence "near X" city for the live-location
-// pill (e.g. "Wesley Chapel (near Tampa)" even when the user's
-// hometown is too small to be a famous city in the DB).
+// Also exposes same-origin proxies for /v1/* so the page can call
+// api.dateandtime.live via the same origin (CORS workaround for dev).
+//
+// Plus a /api/time/now endpoint so the page can compute real clock-drift
+// without depending on the prod API.
 
 // In-memory cache of the cities list so we don't re-fetch it on every
 // page load. The DB changes rarely, so a 5-min TTL is fine.
@@ -47,6 +51,216 @@ function findNearest(cities, lat, lon) {
     if (d < bestD) { bestD = d; best = c; }
   }
   return best ? { city: best, distanceKm: bestD } : null;
+}
+
+// ===== Cookie consent helpers =====
+const COOKIE_NAME = "cookie_consent";
+const COOKIE_VERSION = 1;
+
+const GDPR_COUNTRIES = new Set([
+  // EU 27
+  "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
+  "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE",
+  // UK
+  "GB","UK",
+  // Brazil (LGPD)
+  "BR",
+  // Canada (Quebec Law 25 + federal PIPEDA)
+  "CA"
+]);
+
+function parseConsentCookie(cookieHeader) {
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${COOKIE_NAME}=([^;]+)`));
+  if (!match) return null;
+  try {
+    const v = JSON.parse(decodeURIComponent(match[1]));
+    if (v && v.v === COOKIE_VERSION) return v;
+  } catch (e) {}
+  return null;
+}
+
+function consentRegion(country) {
+  if (!country) return "OTHER";
+  if (GDPR_COUNTRIES.has(country)) return "GDPR";
+  return "OTHER";
+}
+
+// ===== Initial time helper (SSR) =====
+function getInitialTime(timezone) {
+  try {
+    const tz = timezone || "UTC";
+    return {
+      iso: new Date().toISOString(),
+      unix_ms: Date.now(),
+      formatted: new Intl.DateTimeFormat("en-US", {
+        timeZone: tz,
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(new Date())
+    };
+  } catch (e) {
+    return { iso: new Date().toISOString(), unix_ms: Date.now(), formatted: new Date().toUTCString() };
+  }
+}
+
+// ===== HTML escaping =====
+function esc(s) {
+  if (s == null) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// ===== Cookie banner HTML =====
+function buildCookieBannerHTML(region) {
+  const isGDPR = region === "GDPR";
+  const intro = isGDPR
+    ? "Under GDPR/CCPA, we need your consent before non-essential cookies. We use essential cookies to keep the clock working. Analytics and ads are opt-in."
+    : "We use essential cookies to keep the clock working. Analytics and ads are opt-in.";
+  return `
+<div id="cookie-banner" class="cookie-banner is-hidden" role="dialog" aria-label="Cookie preferences" aria-live="polite">
+  <div class="cookie-banner-inner">
+    <div class="cookie-banner-content">
+      <p class="cookie-banner-eyebrow">🍪 Cookies</p>
+      <p class="cookie-banner-text">${intro} <a href="/privacy/">Privacy</a> · <a href="#" data-action="show-customize">Customize</a></p>
+    </div>
+    <div class="cookie-banner-actions">
+      <button class="cookie-btn cookie-btn-secondary" data-consent="essential" type="button">Essential only</button>
+      <button class="cookie-btn cookie-btn-primary" data-consent="all" type="button">Accept all</button>
+    </div>
+  </div>
+  <div id="cookie-customize" class="cookie-customize is-hidden">
+    <h3>Customize</h3>
+    <label class="cookie-cat">
+      <input type="checkbox" data-category="essential" checked disabled>
+      <span><strong>Essential</strong> — required for the site to work (theme, location, preferences). Always on.</span>
+    </label>
+    <label class="cookie-cat">
+      <input type="checkbox" data-category="analytics">
+      <span><strong>Analytics</strong> — help us understand which features are useful. Not enabled by default.</span>
+    </label>
+    <label class="cookie-cat">
+      <input type="checkbox" data-category="advertising">
+      <span><strong>Advertising</strong> — allows non-intrusive ads. Keeps the site free.</span>
+    </label>
+    <button class="cookie-btn cookie-btn-primary" data-consent="save" type="button">Save preferences</button>
+  </div>
+</div>
+<link rel="stylesheet" href="/src/cookie-consent.css">
+<script src="/src/cookie-consent.js" defer></script>
+`;
+}
+
+// ===== JSON-LD helpers (for pages that don't already have it) =====
+const JSON_LD_HOME = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "dateandtime.live",
+      "url": "https://dateandtime.live/",
+      "description": "Live, accurate time for any city in the world. IANA time zones, UTC offsets, DST status, sunrise & sunset, holidays, and business hours — all in one place.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": { "@type": "EntryPoint", "urlTemplate": "https://dateandtime.live/?q={search_term_string}" },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "dateandtime.live",
+      "url": "https://dateandtime.live/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any (web)",
+      "browserRequirements": "Requires JavaScript",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "description": "Free world clock + time zone + holiday browser for 33,945 cities worldwide."
+    }
+  ]
+};
+
+const FAQ_HOME = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What time is it in [city]?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Our site auto-detects your city and shows the current time, plus you can search any of 33,945 cities worldwide. The clock updates every second and shows the IANA time zone, UTC offset, and DST status." } },
+    { "@type": "Question", "name": "How do I find the time difference between two cities?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Add both cities to your favorites rail. Click one to show its time in the big clock; the other stays visible in the rail. The offset between them is shown in each card." } },
+    { "@type": "Question", "name": "Is this site free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. dateandtime.live is free to use, with no signup required. We don't sell your data. Optional advertising keeps the site free (only shown if you opt in to advertising cookies)." } },
+    { "@type": "Question", "name": "How accurate is the time shown?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The time is computed in your browser using the JavaScript Intl.DateTimeFormat API, which uses the IANA Time Zone Database. We cross-check against our server time to within ~50ms (network round-trip). For safety-critical timing, consult an official source." } },
+    { "@type": "Question", "name": "Does this site work offline?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, after the first visit. We use Cloudflare's edge cache and have minimal JS dependencies, so the page loads fast even on slow networks." } },
+    { "@type": "Question", "name": "Can I use this for commercial purposes?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. You may use the site for personal or commercial purposes. The data is sourced from public-domain and open-license sources (IANA, GeoNames, Nager.Date, Wikipedia). See our Editorial Policy for details." } },
+    { "@type": "Question", "name": "Do you have data for my country?",
+      "acceptedAnswer": { "@type": "Answer", "text": "We cover 33,945 cities in 242 countries and territories, 408 IANA time zones, and 1,600+ public holidays across 39 countries. If something is missing, use the feedback button and we'll add it." } },
+    { "@type": "Question", "name": "How do I report an error?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Click the feedback button at the bottom-right of any page, or email hello@dateandtime.live. We aim to fix critical errors within 7 days." } }
+  ]
+};
+
+function buildHomeJsonLd() {
+  return `<script type="application/ld+json">${JSON.stringify(JSON_LD_HOME)}</script>
+<script type="application/ld+json">${JSON.stringify(FAQ_HOME)}</script>`;
+}
+
+// ===== SSR injection =====
+function injectSSR(html, location, initialTime, consent, region) {
+  let out = html;
+
+  // 1. Inject window.__location + __initialTime + __consentRegion + __hasConsent
+  //    BEFORE the first <script> tag.
+  const ssrGlobals = `<script>window.__location=${JSON.stringify(location)};window.__initialTime=${JSON.stringify(initialTime)};window.__consentRegion=${JSON.stringify(region)};window.__hasConsent=${JSON.stringify(consent || { essential: true, v: COOKIE_VERSION })};<\/script>`;
+
+  if (out.includes("<script>")) {
+    out = out.replace(/<script>/, ssrGlobals + "<script>");
+  } else {
+    out = out.replace(/<\/head>/, ssrGlobals + "</head>");
+  }
+
+  // 2. Replace the H1 placeholder with the actual city
+  if (location.city) {
+    out = out.replace(
+      /<span class="greeting-city" id="greeting-city">[^<]*<\/span>/,
+      `<span class="greeting-city" id="greeting-city">${esc(location.city)}</span>`
+    );
+  }
+
+  // 3. Update <title> if we know the city
+  if (location.city) {
+    const newTitle = location.regionCode
+      ? `Current Time in ${esc(location.city)}, ${esc(location.regionCode)} | dateandtime.live`
+      : `Current Time in ${esc(location.city)} | dateandtime.live`;
+    out = out.replace(
+      /<title>[^<]*<\/title>/,
+      `<title>${newTitle}</title>`
+    );
+  }
+
+  // 4. Inject JSON-LD on the home page (only if not already present)
+  if (out.includes('id="greeting-city"') && !out.includes('"@type":"WebSite"')) {
+    out = out.replace(/<\/head>/, buildHomeJsonLd() + "</head>");
+  }
+
+  // 5. Inject cookie consent banner before </body>
+  if (!out.includes('id="cookie-banner"')) {
+    out = out.replace(/<\/body>/, buildCookieBannerHTML(region) + "</body>");
+  }
+
+  return out;
 }
 
 export default {
@@ -130,8 +344,6 @@ export default {
     // Local time source: /api/time/now returns the worker's current time so
     // the page can compute a real clock-drift + round-trip-accuracy without
     // depending on the (still-empty) /v1/time/now endpoint on the prod API.
-    // Both the page and the worker run on the same machine in Cloudflare's
-    // edge, so the drift is essentially the network round-trip.
     if (url.pathname === "/api/time/now") {
       const t = Date.now();
       return new Response(JSON.stringify({
@@ -189,12 +401,14 @@ export default {
       }
     } catch (e) { /* tolerate upstream errors */ }
 
-    // Inject the location as a global BEFORE the first <script>.
+    // Parse cookie consent
+    const consent = parseConsentCookie(request.headers.get("cookie"));
+    const region = consentRegion(location.country);
+    const initialTime = getInitialTime(location.timezone);
+
+    // Inject SSR globals + cookie banner + JSON-LD
     const html = await response.text();
-    const injected = html.replace(
-      /<script>/,
-      `<script>window.__location=${JSON.stringify(location)};<\/script><script>`
-    );
+    const injected = injectSSR(html, location, initialTime, consent, region);
 
     return new Response(injected, { headers: response.headers });
   }
