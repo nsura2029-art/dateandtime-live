@@ -935,12 +935,21 @@
 
       // Title: the anchor city's time + day + user-friendly subtitle
       const anchorRow = rows[0];
-      tooltipTitle.textContent = `${anchorRow.localTime} \u00b7 ${anchorRow.localDayShort}${anchorRow.isNextDay ? ' +1d' : ''}`;
-      // Subtitle: user-friendly explanation of what the selected time means
+      // Get the focused date in a user-friendly format (e.g. "Mon, Jul 20")
+      const focusedDateStr = (() => {
+        try {
+          const fmt = new Intl.DateTimeFormat("en-US", { timeZone: cities[0].timezone, weekday: "short", month: "short", day: "numeric" });
+          return fmt.format(focusedDate);
+        } catch (e) { return ""; }
+      })();
+      tooltipTitle.textContent = `${anchorRow.localTime} \u00b7 ${focusedDateStr}${anchorRow.isNextDay ? ' +1d' : ''}`;
+      // Subtitle: user-friendly explanation with date + meeting context
       const tooltipSubtitle = document.getElementById("wt-tooltip-subtitle");
       if (tooltipSubtitle) {
         const homeCity = cities[0];
-        tooltipSubtitle.textContent = `When it's ${anchorRow.localTime} ${homeCity.name} time, here's what the rest of your cities show`;
+        const numCities = cities.length;
+        const cityWord = numCities === 1 ? "city" : "cities";
+        tooltipSubtitle.innerHTML = `Connect with your friends &amp; co-workers at <strong>${anchorRow.localTime}</strong> your local time on <strong>${focusedDateStr}</strong>. See all ${numCities} ${cityWord} below.`;
       }
 
       // Body: one row per city, with dividers between rows
@@ -1118,15 +1127,14 @@
   }
 
   // Set the picker's min/max/value (called on init and after render)
+  // Min = today (no past dates), Max = +1 year.
   function initDatePicker() {
     const picker = document.getElementById("wt-date-picker");
     if (!picker) return;
     const today = new Date();
-    const yest = new Date(today);
-    yest.setDate(yest.getDate() - 1);
     const max = new Date(today);
     max.setFullYear(max.getFullYear() + 1);
-    picker.min = yest.toISOString().slice(0, 10);
+    picker.min = isoDate(today);
     picker.max = max.toISOString().slice(0, 10);
     picker.value = isoDate(focusedDate);
   }
@@ -1301,33 +1309,46 @@
       if (!selectedRange) return;
       const city = cities.find(c => c.id === (selectedRange.anchorCityId || selectedRange.cityId));
       if (!city) return;
-      const startTime = `${String(selectedRange.startCol).padStart(2,"0")}:00`;
-      const endTime = `${String((selectedRange.endHour + 1) % 24).padStart(2, "0")}:00`;
+      const startCol = selectedRange.startCol;
+      const endCol = selectedRange.endCol;
+      const startTime = `${String(startCol).padStart(2,"0")}:00`;
+      const endColHour = (endCol + 1) % 24;
+      const endTime = `${String(endColHour).padStart(2, "0")}:00`;
       const dayLabel = $("#wt-day-label")?.textContent || "";
       const eventName = $(".wt-event-name")?.value || "Meeting";
-      const text = `${eventName} on ${dayLabel} ${startTime}-${endTime} (${city.name})`;
+
+      // Build a friendly share message with ALL cities listed in their local times
+      const shareMessage = buildShareMessage(eventName, dayLabel, startTime, endTime, cities, city, startCol, endCol);
+
       if (kind === "ical") {
         const ics = generateICS(eventName, dayLabel, startTime, endTime, city.timezone, cities);
         downloadFile(eventName.replace(/\s+/g, "_") + ".ics", ics, "text/calendar");
       } else if (kind === "google") {
         const startUtc = tzToUtc(dayLabel, startTime, city.timezone);
         const endUtc = tzToUtc(dayLabel, endTime, city.timezone);
-        const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${startUtc}/${endUtc}&details=${encodeURIComponent(text)}`;
-        window.open(url, "_blank");
+        // Google Calendar: rich body with all cities in their local times + share link
+        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${startUtc}/${endUtc}&details=${encodeURIComponent(shareMessage.fullBody)}&location=${encodeURIComponent(city.name)}`;
+        window.open(googleUrl, "_blank");
       } else if (kind === "clipboard") {
-        navigator.clipboard.writeText(text).then(() => {
+        navigator.clipboard.writeText(shareMessage.fullBody).then(() => {
           const old = action.textContent;
-          action.textContent = "✓ Copied";
+          action.textContent = "✓ Copied!";
           setTimeout(() => { action.textContent = old; }, 1500);
+        }).catch(() => {
+          // Fallback: show a textarea so user can copy manually
+          const ta = document.createElement("textarea");
+          ta.value = shareMessage.fullBody;
+          ta.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;max-width:500px;height:300px;z-index:99999;padding:12px;border:2px solid #6366f1;border-radius:8px;font-family:monospace;";
+          document.body.appendChild(ta);
+          ta.select();
+          alert("Copy this meeting details:");
         });
       } else if (kind === "gmail") {
-        const url = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&su=${encodeURIComponent(eventName)}&body=${encodeURIComponent(text)}`;
-        window.open(url, "_blank");
+        // Gmail compose with subject + body listing all cities
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&su=${encodeURIComponent(eventName + ' - ' + dayLabel + ' ' + startTime + '-' + endTime)}&body=${encodeURIComponent(shareMessage.gmailBody)}`;
+        window.open(gmailUrl, "_blank");
       } else if (kind === "link") {
-        const params = new URLSearchParams();
-        params.set("cities", cities.map(c => c.id).join(","));
-        params.set("time", `${String(selectedRange.startCol).padStart(2,"0")}:00`);
-        const url = window.location.origin + window.location.pathname + "?" + params;
+        const url = buildShareUrl();
         navigator.clipboard.writeText(url).then(() => {
           const old = action.textContent;
           action.textContent = "✓ Link copied";
@@ -1341,7 +1362,7 @@
     });
   }
 
-  // Save grid as PNG using html2canvas
+  // Save grid as PNG using html2canvas (no wrapper - uses onclone to avoid flicker)
   async function saveGridAsPng(button) {
     if (typeof html2canvas === "undefined") {
       alert("PNG library loading… try again in a moment.");
@@ -1351,44 +1372,55 @@
     button.textContent = "⏳ Generating…";
     button.disabled = true;
     try {
-      // Capture the URL bar, main grid, selection bar
-      const main = $("#wt-main");
-      const urlState = $("#wt-url-state");
-      const selBar = $("#wt-selection-bar");
-      const chips = $("#wt-city-chips");
-      // Build a wrapper for the screenshot
+      // Build the wrapper OFFSCREEN so it doesn't cause layout shift
       const wrapper = document.createElement("div");
-      wrapper.style.cssText = "position:fixed;top:0;left:0;background:white;padding:16px;z-index:99999;font-family:system-ui;";
+      wrapper.style.cssText = "position:fixed;top:-99999px;left:-99999px;width:1200px;background:#fff;padding:20px;font-family:system-ui;";
+      // Build header
       const titleEl = document.createElement("div");
-      titleEl.style.cssText = "font-size:18px;font-weight:800;margin-bottom:4px;color:#1f1a3a;";
+      titleEl.style.cssText = "font-size:20px;font-weight:800;margin-bottom:4px;color:#0f172a;";
       titleEl.textContent = $("h1")?.textContent || "World time";
       const subEl = document.createElement("div");
-      subEl.style.cssText = "font-size:12px;color:#777;margin-bottom:8px;";
-      subEl.textContent = "dateandtime.live/world-time/";
+      subEl.style.cssText = "font-size:13px;color:#64748b;margin-bottom:4px;";
+      const dayLabel = $("#wt-day-label")?.textContent || "";
+      subEl.textContent = dayLabel;
       const urlEl = document.createElement("div");
-      urlEl.style.cssText = "font-size:11px;color:#5b4aaf;margin-bottom:12px;font-family:monospace;";
+      urlEl.style.cssText = "font-size:11px;color:#6366f1;margin-bottom:14px;font-family:monospace;";
       urlEl.textContent = window.location.href;
-      const mainClone = main.cloneNode(true);
-      mainClone.style.borderRadius = "8px";
-      mainClone.style.overflow = "hidden";
-      const selBarClone = selBar.cloneNode(true);
-      selBarClone.style.display = "flex";
-      const chipsClone = chips.cloneNode(true);
       const headerEl = document.createElement("div");
-      headerEl.style.cssText = "margin-bottom: 12px;";
       headerEl.appendChild(titleEl);
       headerEl.appendChild(subEl);
       headerEl.appendChild(urlEl);
       wrapper.appendChild(headerEl);
-      if (chips && chips.children.length > 0) { chipsClone.style.marginBottom = "8px"; wrapper.appendChild(chipsClone); }
-      if (selBar && selBar.classList.contains("is-visible")) wrapper.appendChild(selBarClone);
+      // Clone main grid (with live time frozen at "now" via the snapshot)
+      const main = $("#wt-main");
+      const mainClone = main.cloneNode(true);
+      mainClone.style.borderRadius = "8px";
+      mainClone.style.overflow = "hidden";
+      mainClone.style.border = "1px solid #e2e8f0";
       wrapper.appendChild(mainClone);
+      // Clone chips
+      const chips = $("#wt-city-chips");
+      if (chips && chips.children.length > 0) {
+        const chipsClone = chips.cloneNode(true);
+        chipsClone.style.marginBottom = "12px";
+        chipsClone.style.marginTop = "12px";
+        wrapper.insertBefore(chipsClone, mainClone);
+      }
+      // Clone selection bar if visible
+      const selBar = $("#wt-selection-bar");
+      if (selBar && selBar.classList.contains("is-visible")) {
+        const selBarClone = selBar.cloneNode(true);
+        selBarClone.style.display = "flex";
+        selBarClone.style.marginBottom = "12px";
+        wrapper.insertBefore(selBarClone, mainClone);
+      }
       document.body.appendChild(wrapper);
-      const canvas = await html2canvas(wrapper, { backgroundColor: "#ffffff", scale: 2, logging: false });
+      const canvas = await html2canvas(wrapper, { backgroundColor: "#ffffff", scale: 2, logging: false, useCORS: true });
       document.body.removeChild(wrapper);
+      // Download
       canvas.toBlob(blob => {
-        const dayLabel = $("#wt-day-label")?.textContent || "schedule";
-        const filename = `worldtime-${dayLabel.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.png`;
+        const dayLabelStr = $("#wt-day-label")?.textContent || "schedule";
+        const filename = `worldtime-${dayLabelStr.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.png`;
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -1458,19 +1490,20 @@
     }
   }
 
-  // Reuse the same canvas-building logic
+  // Reuse the same canvas-building logic (offscreen wrapper to avoid flicker)
   async function generateShareCanvas() {
     const main = $("#wt-main");
     const selBar = $("#wt-selection-bar");
     const chips = $("#wt-city-chips");
     const wrapper = document.createElement("div");
-    wrapper.style.cssText = "position:fixed;top:0;left:0;background:white;padding:16px;z-index:99999;font-family:system-ui;";
+    wrapper.style.cssText = "position:fixed;top:-99999px;left:-99999px;width:1200px;background:#fff;padding:20px;font-family:system-ui;";
     const titleEl = document.createElement("div");
-    titleEl.style.cssText = "font-size:18px;font-weight:800;margin-bottom:4px;color:#1f1a3a;";
+    titleEl.style.cssText = "font-size:20px;font-weight:800;margin-bottom:4px;color:#0f172a;";
     titleEl.textContent = $("h1")?.textContent || "World time";
     const subEl = document.createElement("div");
-    subEl.style.cssText = "font-size:12px;color:#777;margin-bottom:8px;";
-    subEl.textContent = "dateandtime.live/world-time/";
+    subEl.style.cssText = "font-size:13px;color:#64748b;margin-bottom:4px;";
+    const dayLabel = $("#wt-day-label")?.textContent || "";
+    subEl.textContent = dayLabel;
     const headerEl = document.createElement("div");
     headerEl.style.cssText = "margin-bottom: 12px;";
     headerEl.appendChild(titleEl);
@@ -1494,6 +1527,63 @@
     const canvas = await html2canvas(wrapper, { backgroundColor: "#ffffff", scale: 2, logging: false });
     document.body.removeChild(wrapper);
     return canvas;
+  }
+
+  // Build a friendly share message with ALL cities in their local times
+  // Returns { fullBody, gmailBody } where:
+  //   fullBody = full meeting details for clipboard / ical / google
+  //   gmailBody = shorter, more conversational for email
+  function buildShareMessage(eventName, dayLabel, startTime, endTime, allCities, anchorCity, startCol, endCol) {
+    // Build per-city time lines
+    const cityLines = allCities.map(c => {
+      const localStart = tzToLocal(dayLabel, startTime, c.timezone);
+      const localEnd = tzToLocal(dayLabel, endTime, c.timezone);
+      const homeTag = c.home ? " (home)" : "";
+      return `  • ${c.name}${homeTag}: ${localStart} – ${localEnd}`;
+    }).join("\n");
+
+    const numCities = allCities.length;
+    const cityWord = numCities === 1 ? "city" : "cities";
+    const shareUrl = buildShareUrl();
+
+    // Full body for clipboard / google / ical
+    const fullBody =
+`🕐 ${eventName} — ${dayLabel}, ${startTime} – ${endTime} ${anchorCity.timezone.split("/").pop().replace(/_/g, " ")}
+
+Connect with your team across time zones. Here's when the meeting happens for everyone:
+
+${cityLines}
+
+Open this meeting in dateandtime.live (live grid + share link):
+${shareUrl}
+
+—
+Generated by dateandtime.live — free meeting planner across time zones.`;
+
+    // Gmail body — shorter, more conversational
+    const gmailBody =
+`Hi team,
+
+Let's meet on ${dayLabel} from ${startTime} to ${endTime} ${anchorCity.timezone.split("/").pop().replace(/_/g, " ")} time (${anchorCity.name}).
+
+Here's what that means for each of us:
+
+${cityLines}
+
+View the live timeline and copy the share link:
+${shareUrl}
+
+— Sent from dateandtime.live`;
+
+    return { fullBody, gmailBody };
+  }
+
+  // Build a shareable URL with the current selection
+  function buildShareUrl() {
+    const params = new URLSearchParams();
+    if (cities.length) params.set("cities", cities.map(c => c.id).join(","));
+    if (selectedRange) params.set("time", `${String(selectedRange.startCol).padStart(2, "0")}:00`);
+    return window.location.origin + window.location.pathname + "?" + params;
   }
 
   function generateICS(name, day, start, end, tz, allCities) {
