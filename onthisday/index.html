@@ -3,47 +3,326 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>On This Day — Famous Events, Births, Deaths & More | dateandtime.live</title>
-  <meta name="description" content="Historical events, famous birthdays, iconic deaths, sports milestones, scientific discoveries, and cultural moments that happened on this day throughout history." />
+  <title>On This Day — Today in History, Famous Births & Events | dateandtime.live</title>
+  <meta name="description" content="Today in history: events, famous birthdays, and deaths on every day of the year. Browse 561 historical events across 16 categories including politics, science, sports, music, finance, health, and technology." />
   <meta name="theme-color" content="#5b4aaf" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/onthisday/" />
+  <meta property="og:title" content="On This Day — Today in History" />
+  <meta property="og:description" content="Today in history: events, famous birthdays, and deaths on every day of the year." />
+  <meta property="og:url" content="https://dateandtime.live/onthisday/" />
+  <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-* { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--color-background); color: var(--color-foreground); line-height: 1.5; -webkit-font-smoothing: antialiased; }
-    .container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
-    h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.5rem; }
-    .subtitle { font-size: 1rem; color: var(--color-foreground-soft); margin: 0 0 1.5rem; }
-    .date-nav { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin: 1.5rem 0; }
-    .date-nav button { padding: 0.5rem 1rem; background: var(--color-background-soft); border: 1px solid var(--color-border); border-radius: 0.5rem; cursor: pointer; font-family: inherit; font-size: 0.875rem; color: var(--color-foreground); }
-    .date-nav button:hover { background: var(--color-primary-soft); }
-    .date-nav .current-date { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; min-width: 12rem; text-align: center; }
-    .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; }
-    .filter-pill { padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--color-border); background: var(--color-background); color: var(--color-foreground); cursor: pointer; transition: all 120ms; }
-    .filter-pill:hover, .filter-pill.is-active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
-    .event-list { display: flex; flex-direction: column; gap: 1rem; }
-    .event-card { background: var(--color-background-soft); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1.25rem; }
-    .event-card[data-importance="5"] { border-left: 4px solid var(--color-primary); }
-    .event-card[data-importance="4"] { border-left: 4px solid #5b4aaf88; }
-    .event-head { display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap; margin-bottom: 0.5rem; }
-    .event-year { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 800; color: var(--color-primary); }
-    .event-category { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: var(--color-primary-soft); color: var(--color-primary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
-    .event-title { font-size: 1.125rem; font-weight: 700; margin: 0.25rem 0; }
-    .event-desc { color: var(--color-foreground-soft); font-size: 0.9rem; margin: 0; }
-    .event-link { display: inline-block; margin-top: 0.5rem; color: var(--color-primary); text-decoration: none; font-size: 0.8rem; font-weight: 600; }
-    .event-link:hover { text-decoration: underline; }
-    .loading { text-align: center; padding: 3rem; color: var(--color-muted); }
-    .empty { text-align: center; padding: 3rem; color: var(--color-muted); }
-    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-primary); text-decoration: none; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; }
-    .back-link:hover { text-decoration: underline; }
-    .date-input { padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-background); color: var(--color-foreground); font-family: 'JetBrains Mono', monospace; }
-  </style>
   <link rel="stylesheet" href="/src/site-shell.css" />
+  <style>
+    :root {
+      --otd-primary: #5b4aaf;
+      --otd-primary-soft: rgba(91, 74, 175, 0.12);
+      --otd-bg-soft: #faf8ff;
+      --otd-border: rgba(92, 74, 175, 0.16);
+      --otd-border-soft: rgba(92, 74, 175, 0.08);
+    }
+    [data-theme="dark"] {
+      --otd-bg-soft: #16092e;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--color-background); color: var(--color-foreground); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* ===== Hero ===== */
+    .otd-hero { padding: 3rem 0 2rem; text-align: center; }
+    .otd-hero .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px;
+      background: color-mix(in srgb, var(--otd-primary) 10%, transparent);
+      color: var(--otd-primary);
+      margin-bottom: 1rem;
+    }
+    .otd-hero h1 { font-size: clamp(2.25rem, 5vw, 3.25rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin: 0 0 0.5rem; }
+    .otd-hero .otd-date { font-size: 1.1rem; color: var(--color-foreground-soft); margin: 0 0 1rem; }
+    .otd-hero .otd-stats {
+      display: inline-flex; flex-wrap: wrap; gap: 1.25rem;
+      font-size: 0.875rem; color: var(--color-foreground-soft);
+      padding: 0.75rem 1.25rem;
+      background: var(--otd-bg-soft);
+      border-radius: 999px;
+      border: 1px solid var(--otd-border-soft);
+    }
+    .otd-hero .otd-stats strong {
+      color: var(--color-foreground);
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+      font-weight: 700;
+    }
+
+    /* ===== Section header ===== */
+    .otd-section { padding: 2.5rem 0; }
+    .otd-section + .otd-section { padding-top: 1rem; }
+    .otd-section-title {
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;
+      margin: 0 0 0.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .otd-section-title .count {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--otd-primary);
+      background: var(--otd-primary-soft);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .otd-section-subtitle { color: var(--color-foreground-soft); font-size: 0.95rem; margin: 0 0 1.5rem; }
+
+    /* ===== Menu (categories grid) ===== */
+    .otd-menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.875rem;
+    }
+    .otd-menu-card {
+      display: flex; align-items: center; gap: 0.875rem;
+      padding: 1rem 1.1rem;
+      background: var(--color-background);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 150ms, box-shadow 150ms, border-color 150ms;
+    }
+    .otd-menu-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(92, 74, 175, 0.12);
+      border-color: var(--otd-primary);
+    }
+    .otd-menu-icon {
+      width: 44px; height: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      background: var(--otd-primary-soft);
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .otd-menu-text { flex: 1; min-width: 0; }
+    .otd-menu-name {
+      display: block; font-weight: 700; font-size: 0.95rem;
+      margin-bottom: 1px;
+    }
+    .otd-menu-desc {
+      display: block; font-size: 0.75rem; color: var(--color-foreground-soft);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .otd-menu-count {
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+      font-size: 0.85rem; font-weight: 700;
+      color: var(--otd-primary);
+      background: var(--otd-primary-soft);
+      padding: 2px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    /* ===== Featured event ===== */
+    .otd-featured-card {
+      display: grid; grid-template-columns: 200px 1fr; gap: 2rem; align-items: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, var(--otd-primary-soft) 0%, var(--otd-bg-soft) 100%);
+      border: 1px solid var(--otd-primary);
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+    }
+    .otd-featured-year {
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+      font-size: 5rem; font-weight: 800;
+      color: var(--otd-primary);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .otd-featured-body h3 {
+      font-size: 1.75rem; font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0.5rem 0;
+      line-height: 1.2;
+    }
+    .otd-featured-body p {
+      font-size: 1.05rem; color: var(--color-foreground-soft);
+      margin: 0 0 1rem;
+      line-height: 1.5;
+    }
+
+    /* Category tag (used in events + featured) */
+    .otd-cat-tag {
+      display: inline-block;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      color: white;
+    }
+    .otd-cat-tag.cat-space { background: #7c3aed; }
+    .otd-cat-tag.cat-event { background: #5b4aaf; }
+    .otd-cat-tag.cat-birth { background: #0ea5e9; }
+    .otd-cat-tag.cat-death { background: #475569; }
+    .otd-cat-tag.cat-politics { background: #b91c1c; }
+    .otd-cat-tag.cat-science { background: #059669; }
+    .otd-cat-tag.cat-discovery { background: #059669; }
+    .otd-cat-tag.cat-sports { background: #ea580c; }
+    .otd-cat-tag.cat-music { background: #db2777; }
+    .otd-cat-tag.cat-film { background: #9333ea; }
+    .otd-cat-tag.cat-arts { background: #ca8a04; }
+    .otd-cat-tag.cat-tech { background: #2563eb; }
+    .otd-cat-tag.cat-finance { background: #16a34a; }
+    .otd-cat-tag.cat-currency { background: #0891b2; }
+    .otd-cat-tag.cat-health { background: #e11d48; }
+    .otd-cat-tag.cat-disaster { background: #dc2626; }
+    .otd-cat-tag.cat-religion { background: #7c3aed; }
+    .otd-cat-tag.cat-war { background: #78350f; }
+
+    /* ===== Event list ===== */
+    .otd-event-list {
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .otd-event-card {
+      display: grid; grid-template-columns: 80px 1fr auto; gap: 1.25rem; align-items: center;
+      padding: 1rem 1.25rem;
+      background: var(--color-background);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 10px;
+      transition: border-color 150ms, transform 150ms;
+    }
+    .otd-event-card:hover {
+      border-color: var(--otd-primary);
+      transform: translateX(4px);
+    }
+    .otd-event-card.importance-5 {
+      background: linear-gradient(135deg, var(--otd-primary-soft) 0%, var(--color-background) 100%);
+      border-left: 3px solid var(--otd-primary);
+    }
+    .otd-event-card.importance-4 { border-left: 3px solid var(--otd-primary); }
+    .otd-event-year {
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--otd-primary);
+      text-align: center;
+    }
+    .otd-event-body h4 {
+      font-size: 1.05rem; font-weight: 700;
+      margin: 0 0 0.25rem;
+      line-height: 1.3;
+    }
+    .otd-event-body p {
+      font-size: 0.875rem; color: var(--color-foreground-soft);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .otd-event-tags {
+      display: flex; gap: 0.375rem; align-items: center; flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .otd-event-link {
+      color: var(--otd-primary); text-decoration: none;
+      font-size: 0.8125rem; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 0.25rem;
+    }
+    .otd-event-link:hover { text-decoration: underline; }
+
+    /* ===== Births / Deaths row layout ===== */
+    .otd-people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+    .otd-person-card {
+      display: flex; gap: 0.875rem; align-items: center;
+      padding: 0.875rem 1rem;
+      background: var(--color-background);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 10px;
+      transition: border-color 150ms, transform 150ms;
+    }
+    .otd-person-card:hover {
+      border-color: var(--otd-primary);
+      transform: translateY(-2px);
+    }
+    .otd-person-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--otd-primary) 0%, #8b5cf6 100%);
+      color: white;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .otd-person-body { flex: 1; min-width: 0; }
+    .otd-person-name { display: block; font-weight: 700; font-size: 0.9rem; line-height: 1.3; }
+    .otd-person-meta { display: block; font-size: 0.75rem; color: var(--color-foreground-soft); margin-top: 2px; }
+    .otd-person-meta strong { color: var(--color-foreground); }
+
+    /* ===== Explore more grid ===== */
+    .otd-explore-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.875rem;
+      margin-top: 1.5rem;
+    }
+    .otd-explore-card {
+      display: block; padding: 1.25rem;
+      background: var(--color-background);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 10px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 150ms, transform 150ms, box-shadow 150ms;
+    }
+    .otd-explore-card:hover {
+      border-color: var(--otd-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(92, 74, 175, 0.1);
+    }
+    .otd-explore-card h3 {
+      font-size: 1rem; font-weight: 700;
+      margin: 0 0 0.375rem;
+    }
+    .otd-explore-card p {
+      font-size: 0.8125rem; color: var(--color-foreground-soft);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* ===== Date navigation strip ===== */
+    .otd-date-nav {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+      padding: 1rem 1.25rem;
+      background: var(--otd-bg-soft);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .otd-date-nav-label {
+      font-size: 0.875rem; font-weight: 700; color: var(--color-foreground);
+      margin-right: 0.5rem;
+    }
+    .otd-date-nav-link {
+      padding: 0.4rem 0.75rem;
+      background: var(--color-background);
+      border: 1px solid var(--otd-border-soft);
+      border-radius: 6px;
+      font-size: 0.8125rem; font-weight: 600;
+      color: var(--color-foreground-soft);
+      text-decoration: none;
+    }
+    .otd-date-nav-link:hover { border-color: var(--otd-primary); color: var(--otd-primary); }
+    .otd-date-nav-link.is-today { background: var(--otd-primary); color: white; border-color: var(--otd-primary); }
+
+    @media (max-width: 720px) {
+      .otd-featured-card { grid-template-columns: 1fr; gap: 1rem; padding: 1.25rem; }
+      .otd-featured-year { font-size: 3.5rem; text-align: left; }
+      .otd-event-card { grid-template-columns: 60px 1fr; }
+      .otd-event-card .otd-event-tags { grid-column: 1 / -1; }
+    }
+  </style>
 </head>
 <body class="shell-page">
+
 <header class="site-header">
   <div class="container header-row">
     <a href="/" class="logo" aria-label="dateandtime.live home">
@@ -53,7 +332,7 @@
     <nav class="nav-main" aria-label="Main">
       <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
       <a href="/holidays/" class="nav-link">Holidays</a>
-      <a href="/onthisday/" class="nav-link">On this day</a>
+      <a href="/onthisday/" class="nav-link" aria-current="page">On this day</a>
       <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
       <div class="nav-item has-dropdown">
         <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
@@ -85,27 +364,21 @@
             <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
             <span class="dropdown-desc">Browse all 408 time zones</span>
           </a>
-          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem" aria-current="page">
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
             <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
             <span class="dropdown-desc">Time difference calculator</span>
           </a>
-          <a href="/time-zones/in/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🗺️</span>Time Zones in [Country]</span>
-            <span class="dropdown-desc">All countries and their zones</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-section-label">Learn</div>
-          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
-            <span class="dropdown-desc">UTC, offsets, and the prime meridian</span>
-          </a>
           <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
             <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
-            <span class="dropdown-desc">Spring forward, fall back</span>
+            <span class="dropdown-desc">How DST works and when it changes in 2026</span>
           </a>
           <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span>
-            <span class="dropdown-desc">The world's time standard</span>
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🕓</span>UTC &amp; GMT</span>
+            <span class="dropdown-desc">The world's time standard explained</span>
+          </a>
+          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+            <span class="dropdown-desc">How offsets, UTC, and the prime meridian work</span>
           </a>
         </div>
       </div>
@@ -128,7 +401,7 @@
     </div>
   </div>
 </header>
-
+<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
 <aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
   <div class="mobile-nav-header">
     <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
@@ -142,11 +415,11 @@
   <nav class="mobile-nav-list" aria-label="Mobile main">
     <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
     <a href="/holidays/" class="mobile-nav-link">Holidays</a>
-    <a href="/onthisday/" class="mobile-nav-link">On this day</a>
-    <a href="/world-time/meeting/" class="mobile-nav-link is-active" aria-current="page">Meeting finder</a>
+    <a href="/onthisday/" class="mobile-nav-link is-active" aria-current="page">On this day</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
     <div class="mobile-nav-section">World time</div>
     <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
-    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">Meeting Planner</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
     <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
     <div class="mobile-nav-section">Timezone</div>
     <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
@@ -157,167 +430,397 @@
     <a href="/news/" class="mobile-nav-link">News</a>
   </nav>
 </aside>
-<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
 
-
-
-
-
-
-
-
-
-  <nav class="breadcrumbs" aria-label="Breadcrumb">
-    <div class="container">
-      <ol>
-        <li><a href="/">Home</a></li>
-        <li><a href="/onthisday/" aria-current="page">On this day</a></li>
-      </ol>
-    </div>
-  </nav>
-
-
-  <div class="page-title-block">
-    <div class="container">
-      <h1 class="page-title">On This Day</h1>
-      <p class="page-subtitle">Historical events, famous births, deaths, and cultural milestones that happened on this date throughout history.</p>
-    </div>
-  </div>
-
+<nav class="breadcrumbs" aria-label="Breadcrumb">
   <div class="container">
-        
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><span aria-current="page">On this day</span></li>
+    </ol>
+  </div>
+</nav>
 
-    <div class="date-nav">
-      <button id="prev-day">← Previous</button>
-      <input type="date" id="date-input" class="date-input" />
-      <button id="next-day">Next →</button>
-      <button id="today-btn">Today</button>
+<main>
+  <!-- ===== Hero ===== -->
+  <section class="otd-hero">
+    <div class="container">
+      <p class="eyebrow">📅 On This Day Hub</p>
+      <h1>Today in History</h1>
+      <p class="otd-date">Monday, July 20, 2026</p>
+      <p class="otd-stats">
+        <span><strong>561</strong> events</span>
+        <span><strong>163</strong> births</span>
+        <span><strong>22</strong> deaths</span>
+        <span><strong>16</strong> categories</span>
+      </p>
     </div>
+  </section>
 
-    <div class="filters" id="category-filters">
-      <button class="filter-pill is-active" data-cat="">All</button>
-    </div>
-
-    <div class="event-list" id="event-list">
-      <div class="loading">Loading…</div>
-    </div>
+  <!-- ===== Date navigation ===== -->
+  <div class="container">
+    <nav class="otd-date-nav" aria-label="Jump to date">
+      <span class="otd-date-nav-label">Jump to:</span>
+      <a href="/onthisday/?month=1&day=1" class="otd-date-nav-link">Jan 1</a>
+      <a href="/onthisday/?month=2&day=14" class="otd-date-nav-link">Feb 14</a>
+      <a href="/onthisday/?month=4&day=1" class="otd-date-nav-link">Apr 1</a>
+      <a href="/onthisday/?month=7&day=4" class="otd-date-nav-link">Jul 4</a>
+      <a href="/onthisday/?month=7&day=20" class="otd-date-nav-link is-today">Jul 20</a>
+      <a href="/onthisday/?month=9&day=11" class="otd-date-nav-link">Sep 11</a>
+      <a href="/onthisday/?month=10&day=31" class="otd-date-nav-link">Oct 31</a>
+      <a href="/onthisday/?month=12&day=25" class="otd-date-nav-link">Dec 25</a>
+    </nav>
   </div>
 
-  <script>
-    const API = (function () {
-      const h = location.hostname;
-      if (h === "dateandtime.live" || h.endsWith(".dateandtime.live")) return "https://api.dateandtime.live";
-      if (h.endsWith(".workers.dev")) return "https://dev.api.dateandtime.live";
-      return "";
-    })();
-    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  <!-- ===== Category menu (12 categories) ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">Browse by category <span class="count">12</span></h2>
+      <p class="otd-section-subtitle">Explore historical events across 12 categories — from politics to science, sports to finance.</p>
+      <div class="otd-menu-grid">
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=event" id="cat-events">
+          <span class="otd-menu-icon">📅</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Events</span>
+            <span class="otd-menu-desc">Major historical events</span>
+          </span>
+          <span class="otd-menu-count">304</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=birth">
+          <span class="otd-menu-icon">🎂</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Births</span>
+            <span class="otd-menu-desc">Famous birthdays</span>
+          </span>
+          <span class="otd-menu-count">163</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=death">
+          <span class="otd-menu-icon">⚰️</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Deaths</span>
+            <span class="otd-menu-desc">Notable deaths</span>
+          </span>
+          <span class="otd-menu-count">22</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=politics">
+          <span class="otd-menu-icon">🏛️</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Politics</span>
+            <span class="otd-menu-desc">Political milestones</span>
+          </span>
+          <span class="otd-menu-count">37</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=discovery">
+          <span class="otd-menu-icon">🔬</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Science</span>
+            <span class="otd-menu-desc">Discoveries & inventions</span>
+          </span>
+          <span class="otd-menu-count">5</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=sports">
+          <span class="otd-menu-icon">🏆</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Sports</span>
+            <span class="otd-menu-desc">Olympics, World Cup, records</span>
+          </span>
+          <span class="otd-menu-count">0</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=music">
+          <span class="otd-menu-icon">🎵</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Music</span>
+            <span class="otd-menu-desc">Albums, songs, artists</span>
+          </span>
+          <span class="otd-menu-count">0</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=film">
+          <span class="otd-menu-icon">🎬</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Film &amp; TV</span>
+            <span class="otd-menu-desc">Movies, shows, premieres</span>
+          </span>
+          <span class="otd-menu-count">0</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=tech">
+          <span class="otd-menu-icon">💻</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Technology</span>
+            <span class="otd-menu-desc">Software, hardware, internet</span>
+          </span>
+          <span class="otd-menu-count">0</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=finance">
+          <span class="otd-menu-icon">💰</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Finance</span>
+            <span class="otd-menu-desc">Markets, crashes, IPOs</span>
+          </span>
+          <span class="otd-menu-count">0</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=currency">
+          <span class="otd-menu-icon">💱</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Currency</span>
+            <span class="otd-menu-desc">Currencies, exchange rates</span>
+          </span>
+          <span class="otd-menu-count">0</span>
+        </a>
+        <a class="otd-menu-card" href="/onthisday/?month=7&day=20&category=health">
+          <span class="otd-menu-icon">🏥</span>
+          <span class="otd-menu-text">
+            <span class="otd-menu-name">Health</span>
+            <span class="otd-menu-desc">Medicine, vaccines, discoveries</span>
+          </span>
+          <span class="otd-menu-count">0</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
-    let currentDate = new Date();
-    let activeCategory = "";
-    let categories = [];
+  <!-- ===== Featured event ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">⭐ Featured today</h2>
+      <p class="otd-section-subtitle">The most important historical event on this day.</p>
+      <article class="otd-featured-card" id="events">
+        <div class="otd-featured-year">1969</div>
+        <div class="otd-featured-body">
+          <span class="otd-cat-tag cat-space">🚀 Space · Importance 5</span>
+          <h3>Moon landing</h3>
+          <p>Apollo 11 lands on the Moon; Armstrong takes "one small step." Apollo 11 was the spaceflight that first landed humans on the Moon. Commander Neil Armstrong and lunar module pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969.</p>
+          <a href="https://en.wikipedia.org/wiki/Apollo_11" class="otd-event-link" target="_blank" rel="noopener">Read on Wikipedia →</a>
+        </div>
+      </article>
+    </div>
+  </section>
 
-    function fmtDate(d) {
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    }
-
-    function fmtDatePretty(d) {
-      return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-    }
-
-    async function loadCategories() {
-      try {
-        const r = await fetch(`${API}/api/v1/onthisday/categories`);
-        const j = await r.json();
-        categories = j.data?.categories || [];
-        const wrap = document.getElementById("category-filters");
-        wrap.innerHTML = '<button class="filter-pill is-active" data-cat="">All</button>';
-        categories.forEach(c => {
-          const btn = document.createElement("button");
-          btn.className = "filter-pill";
-          btn.dataset.cat = c.category;
-          btn.textContent = `${c.category} (${c.n})`;
-          btn.onclick = () => {
-            document.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("is-active"));
-            btn.classList.add("is-active");
-            activeCategory = btn.dataset.cat;
-            loadEvents();
-          };
-          wrap.appendChild(btn);
-        });
-      } catch (e) {}
-    }
-
-    async function loadEvents() {
-      const list = document.getElementById("event-list");
-      list.innerHTML = '<div class="loading">Loading…</div>';
-      const ds = fmtDate(currentDate);
-      const month = currentDate.getMonth() + 1;
-      const day = currentDate.getDate();
-      try {
-        let url = `${API}/api/v1/onthisday?month=${month}&day=${day}&limit=100`;
-        if (activeCategory) url += `&category=${activeCategory}`;
-        const r = await fetch(url, { cache: "no-store" });
-        if (!r.ok) throw new Error("API error");
-        const j = await r.json();
-        const events = (j.data?.events || []).sort((a, b) => b.importance - a.importance || (b.year || 0) - (a.year || 0));
-        if (!events.length) {
-          list.innerHTML = '<div class="empty">No events recorded for this day yet.</div>';
-          return;
-        }
-        list.innerHTML = events.map(e => `
-          <div class="event-card" data-importance="${e.importance}">
-            <div class="event-head">
-              <span class="event-year">${e.year || '—'}</span>
-              <span class="event-category">${e.category}</span>
-              ${e.subcategory ? `<span class="event-category" style="background: #00000010; color: var(--color-foreground-soft);">${e.subcategory}</span>` : ''}
-              ${e.country_codes && e.country_codes.length ? `<span class="event-category" style="background: #00000010; color: var(--color-foreground-soft);">${e.country_codes.map(c => c.toUpperCase()).join(' · ')}</span>` : ''}
+  <!-- ===== All events today ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">📅 All events on July 20 <span class="count">7+</span></h2>
+      <p class="otd-section-subtitle">From major historical milestones to scientific discoveries.</p>
+      <div class="otd-event-list">
+        <article class="otd-event-card importance-5">
+          <div class="otd-event-year">1969</div>
+          <div class="otd-event-body">
+            <span class="otd-cat-tag cat-space">🚀 Space</span>
+            <h4>Moon landing — Apollo 11 lands on the Moon</h4>
+            <p>Neil Armstrong becomes the first person to step on the Moon. "That's one small step for man, one giant leap for mankind."</p>
+            <div class="otd-event-tags">
+              <a href="https://en.wikipedia.org/wiki/Apollo_11" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
             </div>
-            <h3 class="event-title">${escapeHtml(e.title)}</h3>
-            ${e.description ? `<p class="event-desc">${escapeHtml(e.description)}</p>` : ''}
-            ${e.wikipedia_url ? `<a class="event-link" href="${e.wikipedia_url}" target="_blank" rel="noopener">Read on Wikipedia →</a>` : ''}
           </div>
-        `).join("");
-      } catch (e) {
-        list.innerHTML = `<div class="empty">Failed to load: ${e.message}</div>`;
-      }
-    }
+          <div></div>
+        </article>
 
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-    }
+        <article class="otd-event-card">
+          <div class="otd-event-year">2008</div>
+          <div class="otd-event-body">
+            <span class="otd-cat-tag cat-science">🔬 Science</span>
+            <h4>Large Hadron Collider powered up at CERN</h4>
+            <p>The biggest scientific experiment in the history of mankind is powered up in Geneva, Switzerland.</p>
+            <div class="otd-event-tags">
+              <a href="https://en.wikipedia.org/wiki/Large_Hadron_Collider" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+          <div></div>
+        </article>
 
-    document.getElementById("date-input").addEventListener("change", (e) => {
-      if (e.target.value) {
-        currentDate = new Date(e.target.value + "T12:00:00");
-        loadEvents();
-      }
-    });
-    document.getElementById("prev-day").onclick = () => {
-      currentDate.setDate(currentDate.getDate() - 1);
-      document.getElementById("date-input").value = fmtDate(currentDate);
-      loadEvents();
-    };
-    document.getElementById("next-day").onclick = () => {
-      currentDate.setDate(currentDate.getDate() + 1);
-      document.getElementById("date-input").value = fmtDate(currentDate);
-      loadEvents();
-    };
-    document.getElementById("today-btn").onclick = () => {
-      currentDate = new Date();
-      document.getElementById("date-input").value = fmtDate(currentDate);
-      loadEvents();
-    };
+        <article class="otd-event-card">
+          <div class="otd-event-year">2020</div>
+          <div class="otd-event-body">
+            <span class="otd-cat-tag cat-disaster">🌪️ Disaster</span>
+            <h4>California's August Complex wildfire becomes largest in state history</h4>
+            <p>471,000 acres (736 square miles) burned — the largest recorded wildfire in California state history at the time.</p>
+            <div class="otd-event-tags">
+              <a href="https://en.wikipedia.org/wiki/August_Complex_fire" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+          <div></div>
+        </article>
 
-    (async function init() {
-      document.getElementById("date-input").value = fmtDate(currentDate);
-      await loadCategories();
-      loadEvents();
-    })();
-  </script>
+        <article class="otd-event-card">
+          <div class="otd-event-year">1977</div>
+          <div class="otd-event-body">
+            <span class="otd-cat-tag cat-politics">⚖️ Politics</span>
+            <h4>Last person executed by guillotine in France</h4>
+            <p>Hamida Djandoubi, convicted of torture and murder, becomes the last person to be executed by guillotine in France.</p>
+            <div class="otd-event-tags">
+              <a href="https://en.wikipedia.org/wiki/Capital_punishment_in_France" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+          <div></div>
+        </article>
 
-  <footer class="site-footer" role="contentinfo">
+        <article class="otd-event-card">
+          <div class="otd-event-year">1924</div>
+          <div class="otd-event-body">
+            <span class="otd-cat-tag cat-politics">⚖️ Politics</span>
+            <h4>Leopold and Loeb found guilty of "the crime of the century"</h4>
+            <p>The notorious 1920s kidnapping and murder case that captivated America, ending in a guilty verdict in Chicago.</p>
+            <div class="otd-event-tags">
+              <a href="https://en.wikipedia.org/wiki/Leopold_and_Loeb" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+          <div></div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-year">1846</div>
+          <div class="otd-event-body">
+            <span class="otd-cat-tag cat-science">🔬 Science</span>
+            <h4>Elias Howe patents the lockstitch sewing machine</h4>
+            <p>Howe takes out a US patent for his lockstitch sewing machine, revolutionizing the textile industry.</p>
+            <div class="otd-event-tags">
+              <a href="https://en.wikipedia.org/wiki/Elias_Howe" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+          <div></div>
+        </article>
+
+        <article class="otd-event-card">
+          <div class="otd-event-year">1813</div>
+          <div class="otd-event-body">
+            <span class="otd-cat-tag cat-war">⚔️ War</span>
+            <h4>Battle of Lake Erie — American naval victory</h4>
+            <p>American naval commander Oliver Hazard Perry defeats the British in the Battle of Lake Erie during the War of 1812.</p>
+            <div class="otd-event-tags">
+              <a href="https://en.wikipedia.org/wiki/Battle_of_Lake_Erie" class="otd-event-link" target="_blank" rel="noopener">Wikipedia →</a>
+            </div>
+          </div>
+          <div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Famous Births ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">🎂 Famous births on July 20 <span class="count">7+</span></h2>
+      <p class="otd-section-subtitle">Notable people who share this birthday.</p>
+      <div class="otd-people-grid">
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">JM</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Jack Ma</span>
+            <span class="otd-person-meta"><strong>1964</strong> · Chinese entrepreneur, founder of Alibaba</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">CF</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Colin Firth</span>
+            <span class="otd-person-meta"><strong>1960</strong> · English actor (The King's Speech)</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">MC</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Misty Copeland</span>
+            <span class="otd-person-meta"><strong>1982</strong> · American ballet dancer</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">PA</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Paul Anka</span>
+            <span class="otd-person-meta"><strong>1941</strong> · Canadian-American singer ("Diana")</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">CS</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Carlos Santana</span>
+            <span class="otd-person-meta"><strong>1947</strong> · Mexican-American guitarist</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">AP</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Arnold Palmer</span>
+            <span class="otd-person-meta"><strong>1929</strong> · American golf legend</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">RM</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Roger Maris</span>
+            <span class="otd-person-meta"><strong>1934</strong> · American baseball player (61 HRs in 1961)</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Famous Deaths ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">⚰️ Famous deaths on July 20 <span class="count">4+</span></h2>
+      <p class="otd-section-subtitle">Notable people who died on this day.</p>
+      <div class="otd-people-grid">
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">BL</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Bruce Lee</span>
+            <span class="otd-person-meta"><strong>1973</strong> · American-Hong Kong martial artist & actor, age 32</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">SG</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Stephen Jay Gould</span>
+            <span class="otd-person-meta"><strong>2002</strong> · American paleontologist & author, age 60</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">TO</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Terence O'Neill</span>
+            <span class="otd-person-meta"><strong>1990</strong> · 4th PM of Northern Ireland, age 76</span>
+          </div>
+        </article>
+        <article class="otd-person-card">
+          <div class="otd-person-avatar">CL</div>
+          <div class="otd-person-body">
+            <span class="otd-person-name">Curly Lambeau</span>
+            <span class="otd-person-meta"><strong>1957</strong> · American football coach (Packers), age 59</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Explore more ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">🧭 Explore more</h2>
+      <p class="otd-section-subtitle">Discover history by date, year, or category.</p>
+      <div class="otd-explore-grid">
+        <a class="otd-explore-card" href="/onthisday/?month=1&day=1">
+          <h3>📅 Browse by date</h3>
+          <p>See what happened on any day in history — 365 days × 561 events</p>
+        </a>
+        <a class="otd-explore-card" href="/onthisday/?year=2000">
+          <h3>📚 Browse by year</h3>
+          <p>Explore events from a specific year, from 1900 to present</p>
+        </a>
+        <a class="otd-explore-card" href="/onthisday/?category=event">
+          <h3>🔍 Search history</h3>
+          <p>Search 561 historical events across 16 categories</p>
+        </a>
+        <a class="otd-explore-card" href="/news/">
+          <h3>📰 Latest news</h3>
+          <p>Recent editorial on time zones, DST, and calendar changes</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
   <div class="site-footer-inner">
-    <nav class="site-footer-nav" aria-label="Site links">
+    <nav class="page-footer-nav" aria-label="Footer">
       <a href="/">Home</a>
       <a href="/holidays/">Holidays</a>
       <a href="/onthisday/">On this day</a>
@@ -325,18 +828,13 @@
       <a href="/editorial-policy/">Editorial policy</a>
       <a href="/privacy/">Privacy</a>
       <a href="/terms/">Terms</a>
-      <a href="mailto:hello@dateandtime.live">Contact</a>
+      <a href="/contact/">Contact</a>
       <a href="/sitemap.xml">Sitemap</a>
     </nav>
-    <p class="site-footer-meta">
-      © 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays ·
-      Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
-    </p>
-    <p class="site-footer-meta">
-      <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
-    </p>
+    <p class="page-footer-meta">© 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays</p>
   </div>
 </footer>
-    <script src="/src/site-shell.js" defer></script>
-
+
+<script src="/src/site-shell.js"></script>
+</body>
 </html>
