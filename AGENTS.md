@@ -268,8 +268,44 @@ A single feature preview URL. While a feature branch is checked out and deployed
 - **Never `--no-ff` or non-fast-forward merge.** Use `--ff-only` so the feature branch is effectively rebased into develop.
 - **One feature per branch.** Don't stack multiple features on a single `feature/x`.
 - **The dev Worker is shared.** Only one `feature/*` can be deployed to it at a time. If two features are in flight, deploy-then-merge-then-deploy-then-start-next.
-- **No direct prod deploys.** Always `develop` → `main` → `wrangler deploy` (no `--env`).
 - **API endpoints still deploy feature-by-feature** (per §8). The branch workflow handles *page* changes; the API endpoint workflow handles *data* changes. They're independent.
+- **CRITICAL: Always deploy to dev first. Never ship to prod without explicit user authorization.** See the "CRITICAL — Production deploy policy" section below for the full rule.
+
+### 🚨 CRITICAL — Production deploy policy (LOCKED 2026-07-19, updated 2026-07-19 after revert incident)
+
+> **ALWAYS deploy to dev first. NEVER ship to prod without the user's explicit "yes" / "ship it" / "go to prod" — even for what looks like a clean improvement.**
+
+**Why this rule exists:** On 2026-07-19, an agent removed eyebrow text + the onthisday section + the footer note from `index.html`, deployed straight to prod without confirmation, and the user pushed back because they did not want that change live. The text cleanup was real work, but the deploy was not authorized.
+
+**The hard rule going forward:**
+
+1. **Every change goes to dev first.** `npx wrangler deploy --env dev` only. No exceptions.
+2. **Never run `npx wrangler deploy` (no `--env`) without the user explicitly typing "ship it" / "yes" / "go to prod" first.** A casual "looks good" or "do the cleanup" is NOT deploy authorization — it's review of the work.
+3. **The dev Worker is the staging environment.** Use it. Show the user the dev URL after deploy. Wait for explicit prod authorization.
+4. **`./scripts/deploy.sh` already enforces this** — it defaults to dev, requires you to type `prod`, then asks "have you tested on dev?" before running. **Do not bypass the script.** Do not call `npx wrangler deploy` directly for prod.
+5. **The default `index.html` is production-stable** (user-locked 2026-07-19, see "Default landing" section below). Any change to the visual landing / hero / clock / rail / pills / section structure requires explicit prod authorization even if the change is "obvious" or "clean."
+
+**The workflow that avoids this:**
+
+```
+edit code in worktree (or on develop)
+   ↓
+commit + push
+   ↓
+deploy to dev (npx wrangler deploy --env dev)
+   ↓
+share the dev URL with the user
+   ↓
+WAIT for "ship it" / "yes" / "go to prod" / "deploy to prod"
+   ↓
+merge develop → main + push
+   ↓
+./scripts/deploy.sh prod   ← user types "yes" at the confirm prompt
+   ↓
+share the prod URL
+```
+
+**If you're not sure whether to deploy:** don't. Show the change in dev and ask.
 
 ### Deploy cheat sheet
 
@@ -280,9 +316,14 @@ npx wrangler deploy --env dev
 # From develop (main checkout) — deploys to the DEV URL
 git checkout develop && npx wrangler deploy --env dev
 
-# From main (main checkout) — deploys to the PROD URL
-git checkout main    && npx wrangler deploy
+# From main (main checkout) — deploys to the PROD URL (REQUIRES explicit user authorization)
+git checkout main    && ./scripts/deploy.sh prod    # ← use the script, not raw wrangler
 ```
+
+**The script vs raw `wrangler deploy`:**
+
+- `./scripts/deploy.sh` (recommended for prod) — interactive confirm, checks dev, moves the API out of the way
+- `npx wrangler deploy` (raw) — only for dev (`--env dev`). For prod, always go through the script.
 
 ---
 
