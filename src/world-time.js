@@ -282,7 +282,6 @@
 
   // ========== RENDER ==========
   function render() {
-    console.log("[wt] render() called, stack:", new Error().stack.split('\n').slice(2, 5).join(' | '));
     renderChips();
     renderMain();
     renderUrlState();
@@ -1093,9 +1092,8 @@
   // Tab i is at offset (i - 2) from focusedDate.
   // The tab with data-idx=2 is the selected date (highlighted).
   function renderDateTabs() {
-    console.log("[wt] renderDateTabs called");
     const tabs = $("#wt-date-tabs");
-    if (!tabs) { console.log("[wt] renderDateTabs: no tabs element"); return; }
+    if (!tabs) return;
     // Start from focusedDate - 2 days
     const start = new Date(focusedDate);
     start.setHours(0, 0, 0, 0);
@@ -1112,14 +1110,12 @@
       const isSelected = (i === 2); // middle tab is the selected
       days.push({ d, dow, num, isToday, isSelected });
     }
-    console.log("[wt] renderDateTabs: days=", days.length, "first=", days[0]);
     tabs.innerHTML = days.map((day, i) => `
       <div class="wt-date-tab ${day.isSelected ? 'today' : ''}${day.isToday ? ' today-actual' : ''}" data-idx="${i}">
         <span class="dow">${day.dow}</span>
         <span class="num">${day.num}</span>
       </div>
     `).join('');
-    console.log("[wt] renderDateTabs: populated", tabs.children.length, "tabs");
   }
 
   // Selection bar actions
@@ -1484,8 +1480,6 @@ END:VCALENDAR`;
 
     saveToStorage();
     render();
-    renderDateTabs();
-    if (window.__wtDebug) console.log("DEBUG init: renderDateTabs called, focusedDate=", focusedDate, "tabs element:", document.getElementById("wt-date-tabs")?.children.length);
 
     // 5. Wire up interactions
     setupSearch();
@@ -1501,6 +1495,9 @@ END:VCALENDAR`;
 
     // 6. Re-render after work hours load
     render();
+
+    // 7. Populate date tabs (must be after the final render so the container exists)
+    renderDateTabs();
   }
 
   // Boot
