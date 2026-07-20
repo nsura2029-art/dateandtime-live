@@ -1092,8 +1092,9 @@
   // Tab i is at offset (i - 2) from focusedDate.
   // The tab with data-idx=2 is the selected date (highlighted).
   function renderDateTabs() {
+    if (window.__wtDebug) console.log("DEBUG renderDateTabs called, focusedDate=", focusedDate);
     const tabs = $("#wt-date-tabs");
-    if (!tabs) return;
+    if (!tabs) { if (window.__wtDebug) console.log("DEBUG renderDateTabs: no tabs element"); return; }
     // Start from focusedDate - 2 days
     const start = new Date(focusedDate);
     start.setHours(0, 0, 0, 0);
