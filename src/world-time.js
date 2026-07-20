@@ -757,7 +757,7 @@
           newDate = target;
         } else {
           newDate = new Date(now);
-          newDate.setDate(newDate.getDate() + (idx - 3));
+          newDate.setDate(newDate.getDate() + (idx - 1));
         }
         focusedDate = newDate;
         // Update the .today class
@@ -791,7 +791,7 @@
     for (let i = -1; i <= 5; i++) {
       const d = new Date(now);
       d.setDate(d.getDate() + i);
-      const isToday = i === 1; // today is at position 1 in the new range
+      const isToday = i === 0; // today is at offset 0 (i is the day offset, not the position)
       const dow = d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
       const num = d.getDate();
       days.push({ d, dow, num, isToday });
