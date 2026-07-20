@@ -115,6 +115,18 @@
 .wt-date-tab.today .num { color: var(--wt-primary-fg); }
 .wt-date-tab.today .dow { color: var(--wt-primary-fg); opacity: 0.85; }
 .wt-date-tab.today-actual:not(.today) { box-shadow: inset 0 0 0 1.5px var(--wt-primary); }
+.wt-date-tab.is-past {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  text-decoration-color: var(--wt-muted);
+  text-decoration-thickness: 1px;
+}
+.wt-date-tab.is-past .num,
+.wt-date-tab.is-past .dow {
+  color: var(--wt-muted);
+}
 
 .wt-toolbar-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
 .wt-toolbar-actions .link { color: var(--wt-primary); font-size: 0.75rem; font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -710,6 +722,13 @@
   flex-shrink: 0;
 }
 .wt-pager-btn:hover, .pager-btn:hover { background: var(--wt-bg-soft); }
+.wt-pager-btn:disabled, .pager-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: var(--wt-bg-card);
+  color: var(--wt-muted);
+}
 .wt-date-picker {
   background: var(--wt-bg-card);
   border: 1px solid var(--wt-border);

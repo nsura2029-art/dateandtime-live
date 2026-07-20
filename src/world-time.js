@@ -1121,17 +1121,32 @@
       if (!val) return;
       const [y, m, d] = val.split("-").map(Number);
       const picked = new Date(y, m - 1, d, 12, 0, 0, 0);
-      focusedDate = picked;
+      // Clamp to today if user manually typed a past date
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (picked < today) {
+        focusedDate = new Date(today);
+        focusedDate.setHours(12, 0, 0, 0);
+      } else {
+        focusedDate = picked;
+      }
       render(); // render() now calls renderDateTabs() at the end
     });
   }
 
   // Set the picker's min/max/value (called on init and after render)
   // Min = today (no past dates), Max = +1 year.
+  // Also clamps focusedDate to today if it's in the past (e.g. from old localStorage).
   function initDatePicker() {
     const picker = document.getElementById("wt-date-picker");
     if (!picker) return;
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // If focusedDate is in the past, clamp it to today
+    if (focusedDate < today) {
+      focusedDate = new Date(today);
+      focusedDate.setHours(12, 0, 0, 0);
+    }
     const max = new Date(today);
     max.setFullYear(max.getFullYear() + 1);
     picker.min = isoDate(today);
@@ -1229,6 +1244,8 @@
       // Click on date tab (Jul 17, 18, 19, ...)
       const tab = e.target.closest("[data-idx]");
       if (tab && !e.target.closest("#wt-date-picker")) {
+        // Don't allow selecting past dates
+        if (tab.classList.contains("is-past") || tab.getAttribute("aria-disabled") === "true") return;
         e.preventDefault();
         const idx = parseInt(tab.dataset.idx, 10);
         // Tabs are -2 to +4 from focusedDate. idx 2 is the selected.
@@ -1244,6 +1261,8 @@
       // Click on ‹/› pager
       const pager = e.target.closest("[data-pager]");
       if (!pager) return;
+      // Don't allow going to past dates via the ‹ pager
+      if (pager.hasAttribute("disabled") || pager.getAttribute("aria-disabled") === "true") return;
       const dir = pager.dataset.pager === "prev" ? -1 : 1;
       focusedDate.setDate(focusedDate.getDate() + dir);
       focusedDate.setHours(12, 0, 0, 0);
@@ -1256,6 +1275,7 @@
   // Render the date tabs: 7 days centered on focusedDate (-2 to +4)
   // Tab i is at offset (i - 2) from focusedDate.
   // The tab with data-idx=2 is the selected date (highlighted).
+  // Past dates (before today) are visually disabled and not clickable.
   function renderDateTabs() {
     const tabs = $("#wt-date-tabs");
     if (!tabs) return;
@@ -1273,14 +1293,35 @@
       const num = d.getDate();
       const isToday = (d.getTime() === today.getTime());
       const isSelected = (i === 2); // middle tab is the selected
-      days.push({ d, dow, num, isToday, isSelected });
+      const isPast = (d.getTime() < today.getTime());
+      days.push({ d, dow, num, isToday, isSelected, isPast });
     }
-    tabs.innerHTML = days.map((day, i) => `
-      <div class="wt-date-tab ${day.isSelected ? 'today' : ''}${day.isToday ? ' today-actual' : ''}" data-idx="${i}">
+    tabs.innerHTML = days.map((day, i) => {
+      const classes = ['wt-date-tab'];
+      if (day.isSelected) classes.push('today');
+      if (day.isToday) classes.push('today-actual');
+      if (day.isPast) classes.push('is-past');
+      return `<div class="${classes.join(' ')}" data-idx="${i}" ${day.isPast ? 'aria-disabled="true"' : ''}>
         <span class="dow">${day.dow}</span>
         <span class="num">${day.num}</span>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
+
+    // Update the ‹ pager: disable when focusedDate is today
+    // (going back from today would be a past date, which is not allowed)
+    const prevPager = document.querySelector("[data-pager='prev']");
+    if (prevPager) {
+      const todayTs = today.getTime();
+      const focusedTs = new Date(focusedDate);
+      focusedTs.setHours(0, 0, 0, 0);
+      if (focusedTs.getTime() <= todayTs) {
+        prevPager.setAttribute("disabled", "true");
+        prevPager.setAttribute("aria-disabled", "true");
+      } else {
+        prevPager.removeAttribute("disabled");
+        prevPager.removeAttribute("aria-disabled");
+      }
+    }
   }
 
   // Selection bar actions
@@ -1659,6 +1700,15 @@ END:VCALENDAR`;
   async function init() {
     // Load 12/24 preference
     try { use24h = localStorage.getItem("tdlWtUse24h") === "1"; } catch (e) {}
+    // Clamp focusedDate to today (in case any localStorage/URL parameter put it in the past)
+    {
+      const _today = new Date();
+      _today.setHours(0, 0, 0, 0);
+      if (focusedDate < _today) {
+        focusedDate = new Date(_today);
+        focusedDate.setHours(12, 0, 0, 0);
+      }
+    }
     // 1. Load cities from URL params first, then localStorage, then default to home
     const params = new URLSearchParams(window.location.search);
     const urlCities = (params.get("cities") || "").split(",").map(s => parseInt(s, 10)).filter(Boolean);
