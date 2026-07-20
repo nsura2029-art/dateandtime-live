@@ -52,6 +52,12 @@
     const path = window.location.pathname.replace(/\/$/, "") || "/";
     document.querySelectorAll(".nav-main .nav-link, [data-mobile-nav] .mobile-nav-link").forEach((link) => {
       const href = link.getAttribute("href") || "";
+      // Skip placeholder links (href="#" or empty or "#fragment")
+      // These are 'coming soon' links that don't navigate anywhere.
+      // Without this, `new URL("#", origin).pathname` would be "/" and
+      // would match the current path, falsely marking the link as active.
+      if (!href || href === "#" || href.startsWith("#")) return;
+
       let linkPath;
       try { linkPath = new URL(href, window.location.origin).pathname.replace(/\/$/, "") || "/"; }
       catch (e) { return; }
