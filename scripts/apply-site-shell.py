@@ -32,6 +32,7 @@ SHELL = ROOT / ".shell-tmp"
 # Load shell snippets
 HEADER_HTML = (SHELL / "header.html").read_text().rstrip()
 FOOTER_HTML = (SHELL / "footer.html").read_text().rstrip()
+MOBILE_NAV_HTML = (SHELL / "mobile-nav.html").read_text().rstrip()
 
 # Breadcrumbs per page
 BREADCRUMBS = {
@@ -171,9 +172,11 @@ def process_legal_page(html, page_path):
     html = fix_body_class(html)
     html = add_shell_css(html)
     html = replace_legal_header(html, HEADER_HTML)
-    # Insert breadcrumbs after the (now replaced) </header>
+    # Insert mobile-nav panel right after </header>
+    html = inject_mobile_nav(html, MOBILE_NAV_HTML)
+    # Insert breadcrumbs after the mobile-nav
     html = re.sub(
-        r'(</header>\n)',
+        r'(<aside class="mobile-nav"[^>]*>.*?</aside>\n)',
         r'\1\n' + breadcrumb_html(BREADCRUMBS[page_path]),
         html,
         count=1,
@@ -195,9 +198,11 @@ def process_holidays_onthisday(html, page_path):
         )
     # Replace the back-link with the shared header
     html = replace_back_link(html, HEADER_HTML)
-    # Insert breadcrumbs after </header>
+    # Insert mobile-nav panel right after </header>
+    html = inject_mobile_nav(html, MOBILE_NAV_HTML)
+    # Insert breadcrumbs after the mobile-nav
     html = re.sub(
-        r'(</header>\n)',
+        r'(<aside class="mobile-nav"[^>]*>.*?</aside>\n)',
         r'\1\n' + breadcrumb_html(BREADCRUMBS[page_path]),
         html,
         count=1,
@@ -211,6 +216,16 @@ def process_holidays_onthisday(html, page_path):
 # =========================================================================
 # Run on all pages
 # =========================================================================
+
+def inject_mobile_nav(html, mobile_nav):
+    """Insert the mobile-nav panel right after </header>."""
+    return re.sub(
+        r'(</header>\n)',
+        r'\1\n' + mobile_nav,
+        html,
+        count=1,
+    )
+
 def main():
     for page_path in PAGES:
         full_path = ROOT / page_path
