@@ -325,10 +325,17 @@
       <div class="wt-cities-head">
         <div class="left">+ Place or timezone</div>
         <div class="right">
-          <span class="day-label" id="wt-day-label">${fullDayName}, ${localDateInCity(userTz, now)}</span>
-          <div class="pager">
-            <button data-pager="prev" aria-label="Previous day">‹</button>
-            <button data-pager="next" aria-label="Next day">›</button>
+          <div class="wt-head-row">
+            <button class="pager-btn" data-pager="prev" aria-label="Previous day">‹</button>
+            <div class="wt-date-tabs" id="wt-date-tabs">
+              <!-- Populated by JS -->
+            </div>
+            <button class="pager-btn" data-pager="next" aria-label="Next day">›</button>
+            <input type="date" id="wt-date-picker" class="wt-date-picker" aria-label="Pick a date" />
+            <button class="wt-time-toggle" id="wt-time-toggle" title="Toggle 12/24 hour format" aria-label="Toggle 12/24 hour format">12h</button>
+          </div>
+          <div class="wt-day-label-wrap">
+            <span class="day-label" id="wt-day-label">${fullDayName}, ${localDateInCity(userTz, now)}</span>
           </div>
         </div>
       </div>
@@ -926,6 +933,39 @@
     });
   }
 
+  // Date picker: native <input type="date">
+  // Min = yesterday, Max = +1 year. When changed, re-center date tabs and set focusedDate.
+  function setupDatePicker() {
+    const picker = document.getElementById("wt-date-picker");
+    if (!picker) return;
+    const today = new Date();
+    const yest = new Date(today);
+    yest.setDate(yest.getDate() - 1);
+    const max = new Date(today);
+    max.setFullYear(max.getFullYear() + 1);
+    picker.min = yest.toISOString().slice(0, 10);
+    picker.max = max.toISOString().slice(0, 10);
+    // Initialize to focusedDate (today by default)
+    picker.value = isoDate(focusedDate);
+    picker.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (!val) return;
+      const [y, m, d] = val.split("-").map(Number);
+      const picked = new Date(y, m - 1, d, 12, 0, 0, 0); // noon
+      focusedDate = picked;
+      renderDateTabs();
+      render();
+    });
+  }
+
+  // Helper: format a Date as YYYY-MM-DD (for date picker value)
+  function isoDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
   function setupChipRemove() {
     document.addEventListener("click", (e) => {
       const x = e.target.closest(".wt-city-chip .x");
@@ -1007,38 +1047,23 @@
     document.addEventListener("click", (e) => {
       // Click on date tab (Jul 17, 18, 19, ...)
       const tab = e.target.closest("[data-idx]");
-      if (tab) {
+      if (tab && !e.target.closest("#wt-date-picker")) {
         e.preventDefault();
         const idx = parseInt(tab.dataset.idx, 10);
-        // Set the focused date to NOON of the target day in the user's tz
-        // (avoids timezone wrap: e.g. TUE 21 00:00 Tampa = TUE 21 10:30 Mumbai, no +1d)
-        const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone || "UTC";
-        const now = new Date();
-        // Get today's date in userTz as YYYY-MM-DD
-        const todayInUserTz = (() => {
-          try {
-            const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: userTz, year: "numeric", month: "2-digit", day: "2-digit" });
-            return fmt.format(now);
-          } catch (e) { return null; }
-        })();
-        let newDate;
-        if (todayInUserTz) {
-          const [y, m, d] = todayInUserTz.split("-").map(Number);
-          const target = new Date(y, m - 1, d + (idx - 1));
-          target.setHours(12, 0, 0, 0); // noon to avoid timezone edge cases
-          newDate = target;
-        } else {
-          newDate = new Date(now);
-          newDate.setDate(newDate.getDate() + (idx - 1));
-        }
+        // Tabs are -2 to +4 from focusedDate. idx 2 is the selected.
+        // Compute the new focusedDate: focusedDate + (idx - 2) days
+        const newDate = new Date(focusedDate);
+        newDate.setHours(12, 0, 0, 0);
+        newDate.setDate(newDate.getDate() + (idx - 2));
         focusedDate = newDate;
-        // Update the .today class
-        $$(".wt-date-tab").forEach(t => t.classList.remove("today"));
-        tab.classList.add("today");
+        // Re-render date tabs (the selected tab moves to center)
+        renderDateTabs();
+        // Update the date picker value
+        const picker = document.getElementById("wt-date-picker");
+        if (picker) picker.value = isoDate(focusedDate);
         // Update the day label
-        const dayName = tab.querySelector(".dow").textContent;
-        const dayNum = tab.querySelector(".num").textContent;
-        const dayNameFull = ({ MON: "Monday", TUE: "Tuesday", WED: "Wednesday", THU: "Thursday", FRI: "Friday", SAT: "Saturday", SUN: "Sunday" })[dayName];
+        const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone || "UTC";
+        const dayNameFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][newDate.getDay()];
         $(".wt-cities-head .day-label")?.replaceChildren(document.createTextNode(`${dayNameFull}, ${localDateInCity(userTz, newDate)}`));
         render();
         return;
@@ -1048,30 +1073,45 @@
       if (!pager) return;
       const dir = pager.dataset.pager === "prev" ? -1 : 1;
       focusedDate.setDate(focusedDate.getDate() + dir);
+      focusedDate.setHours(12, 0, 0, 0);
       // Re-render (and update today class)
       renderDateTabs();
+      // Update the date picker value
+      const dp = document.getElementById("wt-date-picker");
+      if (dp) dp.value = isoDate(focusedDate);
+      // Update the day label
+      const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone || "UTC";
+      const dayNameFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][focusedDate.getDay()];
+      $(".wt-cities-head .day-label")?.replaceChildren(document.createTextNode(`${dayNameFull}, ${localDateInCity(userTz, focusedDate)}`));
       render();
     });
   }
 
   // Render the date tabs (re-render when pager changes)
+  // Render the date tabs: 7 days centered on focusedDate (-2 to +4)
+  // Tab i is at offset (i - 2) from focusedDate.
+  // The tab with data-idx=2 is the selected date (highlighted).
   function renderDateTabs() {
     const tabs = $("#wt-date-tabs");
     if (!tabs) return;
-    const now = new Date();
+    // Start from focusedDate - 2 days
+    const start = new Date(focusedDate);
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - 2);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const days = [];
-    for (let i = -1; i <= 5; i++) {
-      const d = new Date(now);
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
       d.setDate(d.getDate() + i);
-      const isToday = i === 0; // today is at offset 0 (i is the day offset, not the position)
       const dow = d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
       const num = d.getDate();
-      days.push({ d, dow, num, isToday });
+      const isToday = (d.getTime() === today.getTime());
+      const isSelected = (i === 2); // middle tab is the selected
+      days.push({ d, dow, num, isToday, isSelected });
     }
-    // Highlight the focusedDate
-    const focusedDiff = Math.round((focusedDate - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / (1000 * 60 * 60 * 24));
     tabs.innerHTML = days.map((day, i) => `
-      <div class="wt-date-tab ${i === focusedDiff ? 'today' : day.isToday ? '' : ''}${day.isToday ? ' today' : ''}" data-idx="${i}">
+      <div class="wt-date-tab ${day.isSelected ? 'today' : ''}${day.isToday ? ' today-actual' : ''}" data-idx="${i}">
         <span class="dow">${day.dow}</span>
         <span class="num">${day.num}</span>
       </div>
@@ -1440,6 +1480,7 @@ END:VCALENDAR`;
 
     saveToStorage();
     render();
+    renderDateTabs();
 
     // 5. Wire up interactions
     setupSearch();
@@ -1449,6 +1490,7 @@ END:VCALENDAR`;
     setupTooltipReposition();
     setupChipRemove();
     setupTimeToggle();
+    setupDatePicker();
     setupDatePager();
     setupSelectionActions();
 
