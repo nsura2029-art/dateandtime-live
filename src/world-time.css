@@ -30,7 +30,6 @@
   --wt-next-day-border: rgba(15, 23, 42, 0.10);
   --wt-next-day-tint: rgba(15, 23, 42, 0.025);
   --wt-off: #f1f5f9;
-  --wt-now: #ef4444;
   --wt-selected: #10b981;         /* emerald-500 */
   --wt-selected-soft: rgba(16, 185, 129, 0.18);
   --wt-selected-edge: #059669;
@@ -73,7 +72,6 @@
   --wt-next-day-border: rgba(255, 255, 255, 0.12);
   --wt-next-day-tint: rgba(255, 255, 255, 0.03);
   --wt-off: rgba(255, 255, 255, 0.04);
-  --wt-now: #f87171;
   --wt-selected: #34d399;         /* emerald-400 */
   --wt-selected-soft: rgba(52, 211, 153, 0.22);
   --wt-selected-edge: #10b981;
@@ -287,10 +285,7 @@
 .wt-png-btn { padding: 0.3rem 0.55rem; background: var(--wt-primary); color: var(--wt-primary-fg); border: none; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; font-family: inherit; }
 .wt-png-btn:hover { filter: brightness(1.1); }
 
-/* ===== "Now" vertical line spans all rows ===== */
-.wt-now-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--wt-now); pointer-events: none; z-index: 2; opacity: 0.7; box-shadow: 0 0 6px var(--wt-now); }
-.wt-now-line::before { content: "NOW"; position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: var(--wt-now); color: white; font-size: 0.625rem; font-weight: 800; padding: 0.1rem 0.35rem; border-radius: 4px; white-space: nowrap; }
-[data-theme="dark"] .wt-now-line { background: #f87171; box-shadow: 0 0 6px #f87171; }
+/* (NOW line removed — the live time is already shown in the city chips and rows) */
 
 /* ===== Per-city date label on each row ===== */
 .wt-city-row .left .date-row { display: flex; align-items: center; gap: 0.4rem; font-size: 0.6875rem; color: var(--wt-muted); }

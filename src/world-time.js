@@ -344,42 +344,8 @@
         </div>
       </div>
       ${cities.map(city => renderCityRow(city, now)).join("")}
-      <div class="wt-now-line" id="wt-now-line" style="display:none"></div>
     `;
-    // Position the now-line in the first city's row at the now hour
-    positionNowLine(now);
-  }
-
-  function positionNowLine(now, currentCol) {
-    const line = document.getElementById("wt-now-line");
-    if (!line || cities.length === 0) return;
-    if (currentCol === undefined) {
-      const anchorTz = cities[0]?.timezone;
-      if (!anchorTz) return;
-      try {
-        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: anchorTz, hour: "numeric", minute: "numeric", hour12: false });
-        const parts = fmt.formatToParts(now);
-        let h = 0, m = 0;
-        for (const p of parts) { if (p.type === "hour") h = parseInt(p.value, 10); if (p.type === "minute") m = parseInt(p.value, 10); }
-        currentCol = h * 2 + (m >= 30 ? 1 : 0);
-      } catch (e) { return; }
-    }
-    const firstRow = document.querySelector(".wt-city-row");
-    if (!firstRow) return;
-    const firstTiles = firstRow.querySelectorAll(".wt-tile");
-    const targetTile = firstTiles[currentCol];
-    if (!targetTile) { line.style.display = "none"; return; }
-    const grid = firstRow.querySelector(".right");
-    if (!grid) { line.style.display = "none"; return; }
-    const gridRect = grid.getBoundingClientRect();
-    const tileRect = targetTile.getBoundingClientRect();
-    const x = tileRect.left - gridRect.left + tileRect.width / 2;
-    line.style.display = "block";
-    line.style.left = (gridRect.left - firstRow.getBoundingClientRect().left + x) + "px";
-    const allRows = document.querySelectorAll(".wt-city-row");
-    let maxH = 0;
-    allRows.forEach(r => { if (r.scrollHeight > maxH) maxH = r.scrollHeight; });
-    line.style.height = maxH + "px";
+    // (NOW line removed — the live time is already shown in the city chips and rows)
   }
 
   // === SHARED WALL-CLOCK AXIS HELPERS ===
@@ -658,7 +624,6 @@
       } else {
         $$(".wt-tile.now-col, .wt-tile.past").forEach(t => t.classList.remove("now-col", "past"));
       }
-      positionNowLine(now, currentCol);
     }
     tick();
     window.__wtTickInterval = setInterval(tick, 1000);
