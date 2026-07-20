@@ -762,7 +762,7 @@
 }
 
 /* ===== Page chrome (hero, breadcrumb, related, footer) ===== */
-.wt-page { padding: 1.75rem 1rem 2rem; max-width: 1280px; margin: 0 auto; }
+.wt-page { padding: 1.75rem 1rem 2rem; max-width: 1240px; margin: 0 auto; }
 .wt-hero { margin: 0 0 1.5rem; padding: 0; }
 .wt-hero .eyebrow {
   display: inline-flex;
@@ -840,9 +840,10 @@
   align-items: center;
   gap: 0.15rem;
   flex-wrap: wrap;
-  max-width: 1280px;
+  /* Match the standard .container in site-shell.css so breadcrumb aligns with content */
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.25rem;
 }
 .breadcrumb a {
   color: var(--wt-primary);
@@ -878,7 +879,7 @@
   padding: 2.5rem 0;
   margin-top: 2rem;
 }
-.wt-related .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+.wt-related .container { max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
 .wt-related h2 {
   font-size: 1.25rem;
   font-weight: 800;
@@ -927,7 +928,7 @@
   padding: 1.5rem 0;
   margin-top: 0;
 }
-.page-footer .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+.page-footer .container { max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
 .page-footer-meta {
   font-size: 0.75rem;
   color: var(--wt-muted);
