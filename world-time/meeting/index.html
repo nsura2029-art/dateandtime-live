@@ -3,28 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The World Clock – Current Time Worldwide | dateandtime.live</title>
-  <meta name="description" content="Live world clock showing current time in major cities worldwide. Real-time updates, supports any IANA time zone, free and no sign-up." />
+  <title>Meeting Planner – Find Meeting Times Across Time Zones | dateandtime.live</title>
+  <meta name="description" content="Free meeting planner across time zones. Drag-select a time slot to see the local time in every city. Handles DST, supports any date. No sign-up." />
   <meta name="theme-color" content="#5b4aaf" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="canonical" href="https://dateandtime.live/world-time/" />
-  <meta property="og:title" content="The World Clock – Current Time Worldwide" />
-  <meta property="og:description" content="Live world clock showing current time in major cities worldwide." />
-  <meta property="og:url" content="https://dateandtime.live/world-time/" />
+  <link rel="canonical" href="https://dateandtime.live/world-time/meeting/" />
+  <meta property="og:title" content="Meeting Planner – Find Meeting Times Across Time Zones" />
+  <meta property="og:description" content="Drag-select a time slot to find meeting times across cities and time zones. Free, no sign-up." />
+  <meta property="og:url" content="https://dateandtime.live/world-time/meeting/" />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/world-time.css" />
   <link rel="stylesheet" href="/src/site-shell.css" />
-  <link rel="stylesheet" href="/src/tz-hub.css" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "The World Clock by dateandtime.live",
-    "description": "Live world clock showing current time in major cities worldwide.",
-    "url": "https://dateandtime.live/world-time/",
+    "name": "Meeting Planner by dateandtime.live",
+    "description": "Find meeting times across cities and time zones. Drag-select a time slot to see local times in every city. Handles DST, supports any date.",
+    "url": "https://dateandtime.live/world-time/meeting/",
     "applicationCategory": "UtilityApplication",
     "operatingSystem": "Any",
     "offers": { "@type": "Offer", "price": "0" }
@@ -36,7 +35,8 @@
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dateandtime.live/" },
-      { "@type": "ListItem", "position": 2, "name": "World Time", "item": "https://dateandtime.live/world-time/" }
+      { "@type": "ListItem", "position": 2, "name": "World Time", "item": "https://dateandtime.live/world-time/" },
+      { "@type": "ListItem", "position": 3, "name": "Meeting Planner", "item": "https://dateandtime.live/world-time/meeting/" }
     ]
   }
   </script>
@@ -45,15 +45,16 @@
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
-      { "@type": "Question", "name": "What is a world clock?", "acceptedAnswer": { "@type": "Answer", "text": "A world clock is a clock that displays the current time in multiple cities or time zones simultaneously. It helps you track what time it is around the globe, useful for international calls, travel planning, market hours, and staying in touch with people in other countries." } },
-      { "@type": "Question", "name": "How accurate is the world clock?", "acceptedAnswer": { "@type": "Answer", "text": "The world clock updates every second using your device's local time plus the IANA time zone database. Accuracy is typically within 1 second of official atomic time, depending on your device's clock synchronization." } },
-      { "@type": "Question", "name": "Can I add my own cities to the world clock?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the search bar to find any of 33,945 cities worldwide and add it to your personal world clock. Your selected cities are saved in your browser's local storage." } },
-      { "@type": "Question", "name": "Does the world clock show seconds?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Each city shows hours, minutes, and seconds (e.g. 12:34:56 PM), with a green pulsing dot indicating live data. The clock updates every second in real time." } }
+      { "@type": "Question", "name": "How do I find a meeting time that works for everyone?", "acceptedAnswer": { "@type": "Answer", "text": "Add all the cities of your participants to the grid above. Each city shows work hours highlighted in indigo, so you can visually scan for a window where everyone is in their work day. Then click and drag to select the exact hour range." } },
+      { "@type": "Question", "name": "Can I see the best meeting time suggestions?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. After adding cities, the tool surfaces 'Best times for everyone' — hours when all selected cities are within business hours. These are highlighted in green at the top of the grid." } },
+      { "@type": "Question", "name": "Can I share the meeting time with participants?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Once you select a time range, click the 'Save as PNG' button to download a visual, 'Share' to get a shareable link, or 'Outlook / iCal' / 'Google Cal' to add it to your calendar." } },
+      { "@type": "Question", "name": "Does the planner handle Daylight Saving Time (DST)?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. All meeting times automatically account for DST in every city. Pick any date in the past or future and the times will be correct for that date." } }
     ]
   }
   </script>
   <script src="/src/site-shell.js" defer></script>
-  <script src="/src/world-clock-hub.js" defer></script>
+  <script src="/src/world-time.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js" defer></script>
 </head>
 <body class="shell-page">
 <header class="site-header">
@@ -73,7 +74,7 @@
           <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="nav-dropdown" role="menu">
-          <a href="/world-time/" class="dropdown-item is-active" role="menuitem" aria-current="page">
+          <a href="/world-time/" class="dropdown-item" role="menuitem">
             <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
             <span class="dropdown-desc">Live current time in 33,945 cities</span>
           </a>
@@ -84,12 +85,6 @@
           <a href="/world-time/event/" class="dropdown-item" role="menuitem">
             <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
             <span class="dropdown-desc">Show local times for a global event</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-section-label">Learn</div>
-          <a href="/world-time/about/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">💡</span>What is a World Clock?</span>
-            <span class="dropdown-desc">How live world clocks work</span>
           </a>
         </div>
       </div>
@@ -103,7 +98,7 @@
             <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
             <span class="dropdown-desc">Browse all 408 time zones</span>
           </a>
-          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem" aria-current="page">
             <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
             <span class="dropdown-desc">Time difference calculator</span>
           </a>
@@ -152,93 +147,108 @@
   <div class="container">
     <a href="/">Home</a>
     <span class="bc-sep" aria-hidden="true">/</span>
-    <span aria-current="page">World Time</span>
+    <a href="/world-time/">World Time</a>
+    <span class="bc-sep" aria-hidden="true">/</span>
+    <span aria-current="page">Meeting Planner</span>
   </div>
 </nav>
 
-<main class="tz-hub">
-  <!-- Hero -->
-  <section class="tz-hero">
-    <div class="container">
-      <h1>The World Clock</h1>
-      <p class="tz-subtitle">Live current time in <strong>33,945 cities</strong> across <strong>408 time zones</strong>. Real-time updates every second, with a green live indicator.</p>
-      <div class="tz-hero-cta">
-        <a href="/world-time/meeting/" class="tz-cta tz-cta-primary">📅 Plan a Meeting</a>
-        <a href="#featured" class="tz-cta tz-cta-secondary">View major cities ↓</a>
-      </div>
-    </div>
-  </section>
+<main class="container wt-page">
+  <header class="wt-hero">
+    <h1>Meeting Planner – Find Meeting Times Across Time Zones</h1>
+    <p class="wt-subtitle">Drag-select a time slot to see the local time in every city. Highlights work hours, sleep hours, and weekends. Free, no sign-up.</p>
+  </header>
 
-  <!-- Live clock grid (featured cities) -->
-  <section class="wt-featured" id="featured">
-    <div class="container">
-      <div class="wt-featured-header">
-        <h2>Current Time in Major Cities</h2>
-        <p class="tz-section-sub">Live local time, updated every second. Click <strong>+ Add city</strong> below to track your own.</p>
-      </div>
-      <div class="wt-clock-grid" id="wt-clock-grid">
-        <!-- Populated by JS -->
-      </div>
-      <div class="wt-featured-add">
-        <a href="/world-time/meeting/" class="tz-cta tz-cta-secondary">+ Add your own city</a>
-      </div>
-    </div>
-  </section>
+  <div id="wt-app">
+    <!-- URL STATE (shows what was parsed from the URL) -->
+    <div class="wt-url-state is-hidden" id="wt-url-state"></div>
 
-  <!-- Tools grid -->
-  <section class="tz-tools">
-    <div class="container">
-      <h2>World Time Tools</h2>
-      <div class="tz-tools-grid">
-        <a href="/world-time/meeting/" class="tz-tool-card">
-          <span class="tz-tool-icon">📅</span>
-          <h3>Meeting Planner</h3>
-          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
-        </a>
-        <a href="/world-time/event/" class="tz-tool-card">
-          <span class="tz-tool-icon">📣</span>
-          <h3>Event Time Announcer</h3>
-          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
-        </a>
-        <a href="/time-zones/converter/" class="tz-tool-card">
-          <span class="tz-tool-icon">🔄</span>
-          <h3>Time Zone Converter</h3>
-          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
-        </a>
-        <a href="/time-zones/" class="tz-tool-card">
-          <span class="tz-tool-icon">🌐</span>
-          <h3>Time Zones</h3>
-          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
-        </a>
-      </div>
+    <!-- COLOR LEGEND -->
+    <div class="wt-legend" id="wt-legend">
+      <span class="wt-legend-item"><span class="wt-legend-swatch work"></span> Work hours (8am-5pm)</span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch sleep"></span> Sleep (11pm-6am)</span>
+      <span class="wt-legend-divider"></span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch weekend"></span> Weekend</span>
+      <span class="wt-legend-item"><span class="wt-legend-swatch next-day"></span> Next day</span>
+      <span class="wt-legend-divider"></span>
+      <span class="wt-legend-item" style="color:var(--wt-muted);font-size:0.6875rem;">Click any hour for details</span>
     </div>
-  </section>
 
-  <!-- FAQ -->
-  <section class="tz-faq">
-    <div class="container">
-      <h2>Frequently Asked Questions</h2>
-      <div class="tz-faq-list">
-        <details>
-          <summary>What is a world clock?</summary>
-          <p>A world clock is a clock that displays the current time in multiple cities or time zones simultaneously. It helps you track what time it is around the globe, useful for international calls, travel planning, market hours, and staying in touch with people in other countries.</p>
-        </details>
-        <details>
-          <summary>How accurate is the world clock?</summary>
-          <p>The world clock updates every second using your device's local time plus the IANA time zone database. Accuracy is typically within 1 second of official atomic time, depending on your device's clock synchronization.</p>
-        </details>
-        <details>
-          <summary>Can I add my own cities to the world clock?</summary>
-          <p>Yes. Open the <a href="/world-time/meeting/">Meeting Planner</a> and use the search bar to find any of 33,945 cities worldwide. Your selected cities are saved in your browser's local storage and persist across visits.</p>
-        </details>
-        <details>
-          <summary>Does the world clock show seconds?</summary>
-          <p>Yes. Each city shows hours, minutes, and seconds (e.g. <code>12:34:56 PM</code>), with a green pulsing dot indicating live data. The clock updates every second in real time.</p>
-        </details>
+    <!-- TOP TOOLBAR -->
+    <div class="wt-toolbar-top">
+      <div class="wt-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <input id="wt-search-input" type="text" placeholder="+ Place or timezone — type a city" autocomplete="off" />
+        <div class="wt-suggestions" id="wt-suggestions"></div>
+      </div>
+      <div class="wt-toolbar-actions">
+        <button class="icon-btn" data-action="settings">⚙️ Settings</button>
+        <a href="#" class="link" data-action="link-view">🔗 COPY LINK</a>
       </div>
     </div>
-  </section>
+
+    <!-- SELECTION BAR -->
+    <div class="wt-selection-bar" id="wt-selection-bar">
+      <span class="measure"><span class="line"></span> <span class="duration">1 hour</span></span>
+      <div class="actions">
+        <button class="action" data-selection-action="ical">📅 Outlook / iCal</button>
+        <button class="action" data-selection-action="google">📅 Google Cal</button>
+        <button class="action" data-selection-action="clipboard">📋 Clipboard</button>
+        <button class="action" data-selection-action="gmail">✉️ Gmail</button>
+        <button class="wt-png-btn" data-selection-action="png">📷 Save as PNG</button>
+        <button class="wt-png-btn" data-selection-action="share">📤 Share</button>
+        <span class="event">📌 Event: <input type="text" class="wt-event-name" value="Meeting" placeholder="Event name" /></span>
+        <button class="action" data-selection-action="clear">✕ Clear</button>
+        <a href="#" class="link" data-selection-action="link">🔗 LINK TO THIS SELECTION</a>
+      </div>
+      <div class="wt-picked-times" id="wt-picked-times"></div>
+    </div>
+
+    <!-- CITY CHIPS -->
+    <div class="wt-city-chips" id="wt-city-chips"></div>
+
+    <!-- MAIN: per-city timelines -->
+    <div class="wt-main" id="wt-main">
+      <div class="wt-empty">
+        <p>Loading cities…</p>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS -->
+    <div class="wt-suggestions-section" id="wt-suggestions-section" style="display:none">
+      <h3>Best times for everyone (all cities at work)</h3>
+      <div id="wt-suggestions-list"></div>
+    </div>
+  </div>
 </main>
+
+<aside class="wt-related">
+  <div class="container">
+    <h2>Related World Time Tools</h2>
+    <div class="wt-related-grid">
+      <a href="/world-time/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">🕐</span>
+        <span class="wt-related-title">The World Clock</span>
+        <span class="wt-related-desc">Live current time in 33,945 cities</span>
+      </a>
+      <a href="/world-time/event/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">📣</span>
+        <span class="wt-related-title">Event Time Announcer</span>
+        <span class="wt-related-desc">Show local times for a global event</span>
+      </a>
+      <a href="/time-zones/converter/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">🔄</span>
+        <span class="wt-related-title">Time Zone Converter</span>
+        <span class="wt-related-desc">Time difference calculator</span>
+      </a>
+      <a href="/time-zones/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">🌐</span>
+        <span class="wt-related-title">Time Zones</span>
+        <span class="wt-related-desc">Browse all 408 time zones</span>
+      </a>
+    </div>
+  </div>
+</aside>
 
 <footer class="page-footer">
   <div class="container">
@@ -247,6 +257,19 @@
   </div>
 </footer>
 
+<!-- Rich tooltip on tile click -->
+<div class="wt-tooltip" id="wt-tooltip" role="dialog" aria-label="Time details">
+  <div class="wt-tooltip-header">
+    <div class="wt-tooltip-header-top">
+      <span id="wt-tooltip-title">Hour details</span>
+      <button class="wt-tooltip-close" id="wt-tooltip-close" aria-label="Close">×</button>
+    </div>
+    <div class="wt-tooltip-subtitle" id="wt-tooltip-subtitle"></div>
+  </div>
+  <div id="wt-tooltip-body"></div>
+</div>
+
+<!-- Mobile nav -->
 <aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
   <div class="mobile-nav-header">
     <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
@@ -261,10 +284,10 @@
     <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
     <a href="/holidays/" class="mobile-nav-link">Holidays</a>
     <a href="/onthisday/" class="mobile-nav-link">On this day</a>
-    <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link is-active" aria-current="page">Meeting finder</a>
     <div class="mobile-nav-section">World time</div>
-    <a href="/world-time/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">The World Clock</a>
-    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+    <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">Meeting Planner</a>
     <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
     <div class="mobile-nav-section">Timezone</div>
     <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>

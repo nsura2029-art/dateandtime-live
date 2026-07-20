@@ -325,3 +325,114 @@
   color: var(--tz-primary);
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
 }
+
+/* ===== World Clock hub: featured live clock grid ===== */
+.wt-featured {
+  padding: 3rem 0;
+  border-bottom: 1px solid var(--tz-border-soft);
+}
+.wt-featured h2 {
+  font-size: 1.625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--tz-fg);
+  margin: 0 0 0.5rem;
+}
+.wt-featured-header { margin-bottom: 1.5rem; }
+.wt-clock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.85rem;
+}
+.wt-clock-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--tz-bg-card);
+  border: 1px solid var(--tz-border);
+  border-radius: var(--tz-radius-lg);
+  box-shadow: var(--tz-shadow-sm);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.wt-clock-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tz-primary);
+  box-shadow: var(--tz-shadow-md);
+}
+.wt-clock-flag {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.wt-clock-body {
+  flex: 1;
+  min-width: 0;
+}
+.wt-clock-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--tz-fg);
+  line-height: 1.2;
+}
+.wt-clock-country {
+  font-size: 0.75rem;
+  color: var(--tz-muted);
+  margin-bottom: 0.5rem;
+}
+.wt-clock-time-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+.wt-clock-time-row .live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  animation: wt-clock-pulse 1.6s ease-out infinite;
+  flex-shrink: 0;
+  align-self: center;
+}
+@keyframes wt-clock-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(16, 185, 129, 0.55); }
+  70%  { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(16, 185, 129, 0); }
+}
+.wt-clock-time {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--tz-fg);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.wt-clock-period {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tz-fg-soft);
+}
+.wt-clock-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.6875rem;
+  color: var(--tz-muted);
+  margin-top: 0.4rem;
+  gap: 0.5rem;
+}
+.wt-clock-offset {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-weight: 600;
+  color: var(--tz-primary);
+  background: var(--tz-primary-soft);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+.wt-featured-add {
+  margin-top: 1.25rem;
+  text-align: center;
+}
