@@ -151,12 +151,8 @@
     const h = Math.floor(hours);
     const m = Math.round((hours - h) * 60);
     const hr = ((h + 24) % 24);
-    if (use24h) {
-      const hh = String(hr).padStart(2, "0");
-      return m === 0 ? hh : hh + ":" + String(m).padStart(2, "0");
-    }
-    const fmt = fmtHalfHour(hr, m, false);
-    return fmt.h + fmt.p;
+    const fmt = fmtHalfHour(hr, m, use24h);
+    return fmt.h + (fmt.m ? " " + fmt.m : "") + fmt.p;
   }
 
   // Get the local hour range for a city given an anchor city's selected range
@@ -400,20 +396,19 @@
   }
 
   // Format a 30-min slot (hour 0-23, min 0 or 30) for display
+  // Returns { h, m, p } where m is the "30" suffix (rendered as small superscript)
   function fmtHalfHour(hour, min, is24h) {
+    const m = (min === 0) ? "" : String(min).padStart(2, "0");
     if (is24h) {
       const h = String(hour).padStart(2, "0");
-      if (min === 0) return { h, p: "" };
-      return { h: h + ":" + String(min).padStart(2, "0"), p: "" };
+      return { h, m, p: "" };
     }
-    // 12h
     let h12, p;
     if (hour === 0) { h12 = "12"; p = "am"; }
     else if (hour < 12) { h12 = String(hour); p = "am"; }
     else if (hour === 12) { h12 = "12"; p = "pm"; }
     else { h12 = String(hour - 12); p = "pm"; }
-    if (min === 0) return { h: h12, p };
-    return { h: h12 + ":" + String(min).padStart(2, "0"), p };
+    return { h: h12, m, p };
   }
 
   // Format a full local time string (e.g. "8:30 AM" or "08:30")
@@ -551,7 +546,7 @@
       if (showDayLabel) classes.push("day-change");
       const fmt = fmtHalfHour(localHour, localMin, use24h);
       const dayLabelHtml = showDayLabel ? `<span class="day-label">${localDateShort.toUpperCase()}</span>` : "";
-      tiles += `<div class="${classes.join(" ")}" data-tile data-city="${city.id}" data-col="${c}" data-hour="${localHour}" data-min="${localMin}">${dayLabelHtml}<span class="h">${fmt.h}</span><span class="p">${fmt.p}</span></div>`;
+      tiles += `<div class="${classes.join(" ")}" data-tile data-city="${city.id}" data-col="${c}" data-hour="${localHour}" data-min="${localMin}">${dayLabelHtml}<span class="h">${fmt.h}</span>${fmt.m ? `<span class="m">${fmt.m}</span>` : ""}<span class="p">${fmt.p}</span></div>`;
     }
 
     const time = fmtLocalTime(now, city.timezone, use24h);

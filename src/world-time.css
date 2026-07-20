@@ -392,3 +392,17 @@
 }
 .wt-time-toggle:hover { background: var(--wt-bg-soft); }
 .wt-time-toggle.is-24h { background: var(--wt-primary-soft); color: var(--wt-primary); border-color: var(--wt-primary); }
+
+/* ===== "30" superscript suffix (for cities with 30-min offset) ===== */
+.wt-tile .m {
+  display: inline-block;
+  font-size: 0.5em;
+  font-weight: 800;
+  vertical-align: super;
+  line-height: 1;
+  margin-left: -0.05em;
+  margin-top: -0.1em;
+  color: inherit;
+  opacity: 0.85;
+  letter-spacing: -0.02em;
+}
