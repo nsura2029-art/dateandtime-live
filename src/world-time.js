@@ -421,6 +421,15 @@
       } catch (e) { return true; }
     })();
 
+    // Focused date in anchor's tz as YYYY-MM-DD (for next-day comparison)
+    const focusedDateStrInAnchor = (() => {
+      if (!anchorTz) return "";
+      try {
+        const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: anchorTz, year: "numeric", month: "2-digit", day: "2-digit" });
+        return fmt.format(focusedDate);
+      } catch (e) { return ""; }
+    })();
+
     // Selected tiles: selection is in the anchor's tz (startHour/endHour are anchor-local columns)
     let selectedStartCol = -1, selectedEndCol = -1;
     if (selectedRange) {
@@ -452,11 +461,20 @@
           return fmt.format(moment);
         } catch (e) { return ""; }
       })();
+      // Local date in the city as YYYY-MM-DD (for next-day comparison)
+      const localDateStrInCity = (() => {
+        try {
+          const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: city.timezone, year: "numeric", month: "2-digit", day: "2-digit" });
+          return fmt.format(moment);
+        } catch (e) { return ""; }
+      })();
       // Weekend detection: Sat or Sun in the city's local day
       const isWeekend = (localDayShort === "Sat" || localDayShort === "Sun");
       // Show day label at the first tile of each new day in the city
       // (localHour === 0 means midnight in that city, which is the start of a new day)
       const showDayLabel = (localHour === 0);
+      // Next-day: city's local date is strictly AFTER the focused date in the anchor's tz
+      const isNextDay = focusedDateStrInAnchor && localDateStrInCity && localDateStrInCity > focusedDateStrInAnchor;
       const isWork = isWorkHour(city, localHour, localDayShort);
       const isEarly = isEarlyHour(city, localHour, localDayShort);
       const isNow = isFocusedTodayInAnchor && (c === currentAnchorHour);
@@ -469,6 +487,7 @@
       if (isWork) classes.push("work");
       if (isEarly) classes.push("early");
       if (isWeekend) classes.push("weekend");
+      if (isNextDay) classes.push("next-day");
       if (isNow) classes.push("now");
       if (isStart || isEnd) classes.push("is-selected");
       else if (isInRange) classes.push("in-range");

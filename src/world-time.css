@@ -12,11 +12,13 @@
   --wt-primary-soft: #ede9fe;
   --wt-border: #d4d4d4;
   --wt-border-soft: #e5e5e5;
-  /* WTB color scheme: blue/yellow/gray */
-  --wt-blue: #c5d8f5;
-  --wt-blue-edge: #6593d4;
-  --wt-yellow: #fcecb1;
-  --wt-yellow-edge: #d4a83a;
+  /* WTB color scheme: blue/yellow/gray (boosted opacity for visibility) */
+  --wt-blue: rgba(101,147,212,0.55);
+  --wt-blue-edge: #2563eb;
+  --wt-yellow: rgba(212,168,58,0.55);
+  --wt-yellow-edge: #b45309;
+  --wt-next-day-border: rgba(0,0,0,0.18);
+  --wt-next-day-tint: rgba(0,0,0,0.05);
   --wt-off: #e8e8e8;
   --wt-now: #ff5b5b;
   --wt-selected: #97ce93;
@@ -35,10 +37,12 @@
   --wt-primary-soft: rgba(167,139,250,.22);
   --wt-border: rgba(167,139,250,.22);
   --wt-border-soft: rgba(167,139,250,.10);
-  --wt-blue: rgba(101,147,212,.32);
+  --wt-blue: rgba(101,147,212,.55);
   --wt-blue-edge: #93b8e0;
-  --wt-yellow: rgba(212,168,58,.32);
+  --wt-yellow: rgba(212,168,58,.55);
   --wt-yellow-edge: #e0c06a;
+  --wt-next-day-border: rgba(255,255,255,.25);
+  --wt-next-day-tint: rgba(255,255,255,.04);
   --wt-off: rgba(255,255,255,.05);
   --wt-now: #f87171;
   --wt-selected: #4ade80;
@@ -248,3 +252,25 @@
 
 /* Add top padding to the row's grid so the day label has room */
 .wt-cities-head .right, .wt-city-row .right { padding-top: 0.5rem; }
+
+/* ===== Next-day tiles: subtle visual distinction ===== */
+.wt-tile.next-day {
+  box-shadow: inset 0 2px 0 var(--wt-next-day-border);
+  position: relative;
+}
+/* Slight background tint for non-work/non-early/non-weekend next-day tiles */
+.wt-tile.next-day:not(.work):not(.early):not(.weekend):not(.in-range):not(.is-selected) {
+  background: var(--wt-next-day-tint);
+}
+/* Small "next day" indicator dot in the top-right corner */
+.wt-tile.next-day::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--wt-next-day-border);
+  pointer-events: none;
+}
