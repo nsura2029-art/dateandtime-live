@@ -22,8 +22,61 @@
       <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
       <a href="/holidays/" class="nav-link">Holidays</a>
       <a href="/onthisday/" class="nav-link">On this day</a>
-      <a href="/world-time/" class="nav-link">Meeting finder</a>
-      <a href="/world-time/" class="nav-link">World time</a>
+      <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🕐</span>World time
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/world-time/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
+            <span class="dropdown-desc">Live current time in 33,945 cities</span>
+          </a>
+          <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
+            <span class="dropdown-desc">Find meeting times across time zones</span>
+          </a>
+          <a href="/world-time/event/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
+            <span class="dropdown-desc">Show local times for a global event</span>
+          </a>
+        </div>
+      </div>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/time-zones/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
+            <span class="dropdown-desc">Browse all 408 time zones</span>
+          </a>
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem" aria-current="page">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
+            <span class="dropdown-desc">Time difference calculator</span>
+          </a>
+          <a href="/time-zones/in/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🗺️</span>Time Zones in [Country]</span>
+            <span class="dropdown-desc">All countries and their zones</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-section-label">Learn</div>
+          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+            <span class="dropdown-desc">UTC, offsets, and the prime meridian</span>
+          </a>
+          <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
+            <span class="dropdown-desc">Spring forward, fall back</span>
+          </a>
+          <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span>
+            <span class="dropdown-desc">The world's time standard</span>
+          </a>
+        </div>
+      </div>
       <a href="#" class="nav-link">Blog</a>
     </nav>
     <div class="header-actions">
@@ -44,7 +97,6 @@
   </div>
 </header>
 
-<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
 <aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
   <div class="mobile-nav-header">
     <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
@@ -59,31 +111,27 @@
     <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
     <a href="/holidays/" class="mobile-nav-link">Holidays</a>
     <a href="/onthisday/" class="mobile-nav-link">On this day</a>
-    <a href="/world-time/" class="mobile-nav-link">Meeting finder</a>
-    <a href="/world-time/" class="mobile-nav-link">World time</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link is-active" aria-current="page">Meeting finder</a>
+    <div class="mobile-nav-section">World time</div>
+    <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">Meeting Planner</a>
+    <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
+    <div class="mobile-nav-section">Timezone</div>
+    <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
+    <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
+    <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+    <a href="/time-zones/utc/" class="mobile-nav-link mobile-nav-sub">UTC &amp; GMT</a>
+    <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
     <a href="#" class="mobile-nav-link">Blog</a>
   </nav>
 </aside>
 <div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
-<aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
-  <div class="mobile-nav-header">
-    <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
-      <span class="logo-mark">T</span>
-      <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
-    </a>
-    <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-  <nav class="mobile-nav-list" aria-label="Mobile main">
-    <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
-    <a href="/holidays/" class="mobile-nav-link">Holidays</a>
-    <a href="/onthisday/" class="mobile-nav-link">On this day</a>
-    <a href="/world-time/" class="mobile-nav-link">Meeting finder</a>
-    <a href="/world-time/" class="mobile-nav-link">World time</a>
-    <a href="#" class="mobile-nav-link">Blog</a>
-  </nav>
-</aside>
+
+
+
+
+
+
 
 <nav class="breadcrumbs" aria-label="Breadcrumb">
     <div class="container">
