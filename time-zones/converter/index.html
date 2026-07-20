@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time Zone Converter – Time Difference Calculator | dateandtime.live</title>
+  <meta name="description" content="Free time zone converter and time difference calculator. Find the exact time difference between any two cities or time zones. Handles DST, accepts any date in the past or future. No sign-up." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/time-zones/converter/" />
+  <meta property="og:title" content="Time Zone Converter – Time Difference Calculator" />
+  <meta property="og:description" content="Find the exact time difference between any two cities or time zones. Free, no sign-up." />
+  <meta property="og:url" content="https://dateandtime.live/time-zones/converter/" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/world-time.css" />
+  <link rel="stylesheet" href="/src/site-shell.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Time Zone Converter by dateandtime.live",
+    "description": "Time difference calculator between cities and time zones worldwide. Handles DST, supports any date.",
+    "url": "https://dateandtime.live/time-zones/converter/",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dateandtime.live/" },
+      { "@type": "ListItem", "position": 2, "name": "Time Zones", "item": "https://dateandtime.live/time-zones/" },
+      { "@type": "ListItem", "position": 3, "name": "Time Zone Converter", "item": "https://dateandtime.live/time-zones/converter/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "How do I calculate the time difference between two cities?", "acceptedAnswer": { "@type": "Answer", "text": "Add both cities to the grid above. The tool shows the local time in each city across the 24-hour day, so you can see the time difference at a glance. Click any hour to see the exact converted time in all your selected cities." } },
+      { "@type": "Question", "name": "Does the converter handle Daylight Saving Time (DST)?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. All time conversions automatically account for DST in both the source and destination time zones. Pick any date in the past or future and the conversion will be correct for that date." } },
+      { "@type": "Question", "name": "Can I convert a time in the past or future?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the date picker at the top of the grid to select any date from yesterday to one year in the future. The grid will recalculate all times for that date, including DST shifts." } },
+      { "@type": "Question", "name": "Is the time zone converter free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely free. No sign-up, no account, no limits. Works in your browser." } }
+    ]
+  }
+  </script>
+  <script src="/src/site-shell.js" defer></script>
+  <script src="/src/world-time.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js" defer></script>
+</head>
+<body class="shell-page">
+<header class="site-header">
+  <div class="container header-row">
+    <a href="/" class="logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <nav class="nav-main" aria-label="Main">
+      <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="nav-link">Holidays</a>
+      <a href="/onthisday/" class="nav-link">On this day</a>
+      <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🕐</span>World time
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/world-time/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
+            <span class="dropdown-desc">Live current time in 33,945 cities</span>
+          </a>
+          <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
+            <span class="dropdown-desc">Find meeting times across time zones</span>
+          </a>
+          <a href="/world-time/event/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
+            <span class="dropdown-desc">Show local times for a global event</span>
+          </a>
+        </div>
+      </div>
+      <div class="nav-item has-dropdown">
+        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown" role="menu">
+          <a href="/time-zones/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
+            <span class="dropdown-desc">Browse all 408 time zones</span>
+          </a>
+          <a href="/time-zones/converter/" class="dropdown-item" role="menuitem" aria-current="page">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
+            <span class="dropdown-desc">Time difference calculator</span>
+          </a>
+          <a href="/time-zones/in/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🗺️</span>Time Zones in [Country]</span>
+            <span class="dropdown-desc">All countries and their zones</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-section-label">Learn</div>
+          <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+            <span class="dropdown-desc">UTC, offsets, and the prime meridian</span>
+          </a>
+          <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
+            <span class="dropdown-desc">Spring forward, fall back</span>
+          </a>
+          <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
+            <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span>
+            <span class="dropdown-desc">The world's time standard</span>
+          </a>
+        </div>
+      </div>
+      <a href="#" class="nav-link">Blog</a>
+    </nav>
+    <div class="header-actions">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+        <span class="nav-toggle-icon" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <div class="container">
+    <a href="/">Home</a>
+    <span class="bc-sep" aria-hidden="true">/</span>
+    <a href="/time-zones/">Time Zones</a>
+    <span class="bc-sep" aria-hidden="true">/</span>
+    <span aria-current="page">Time Zone Converter – Time Difference Calculator</span>
+  </div>
+</nav>
+
+<main class="container wt-page">
+  <header class="wt-hero">
+    <h1>Time Zone Converter – Time Difference Calculator</h1>
+    <p class="wt-subtitle">Find the exact time difference between any two cities or time zones. Handles DST, supports any date in the past or future.</p>
+  </header>
+
+  <div id="wt-app"></div>
+</main>
+
+<aside class="wt-related">
+  <div class="container">
+    <h2>Related Time Zone Tools</h2>
+    <div class="wt-related-grid">
+      <a href="/time-zones/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">🌐</span>
+        <span class="wt-related-title">Time Zones</span>
+        <span class="wt-related-desc">Browse all 408 time zones used worldwide</span>
+      </a>
+      <a href="/time-zones/dst/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">⏰</span>
+        <span class="wt-related-title">Daylight Saving Time</span>
+        <span class="wt-related-desc">How DST works and when it changes in 2026</span>
+      </a>
+      <a href="/time-zones/utc/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">🛰️</span>
+        <span class="wt-related-title">UTC &amp; GMT</span>
+        <span class="dropdown-desc" style="display:none">—</span>
+        <span class="wt-related-desc">The world's time standard explained</span>
+      </a>
+      <a href="/time-zones/what-is/" class="wt-related-card">
+        <span class="wt-related-icon" aria-hidden="true">💡</span>
+        <span class="wt-related-title">What is a Time Zone?</span>
+        <span class="wt-related-desc">How offsets, UTC, and the prime meridian work</span>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<footer class="page-footer">
+  <div class="container">
+    <p class="page-footer-meta">© 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones" rel="noopener">IANA</a> · <a href="https://www.geonames.org/" rel="noopener">GeoNames</a> · <a href="https://date.nager.at/" rel="noopener">Nager.Date</a> · <a href="https://www.wikipedia.org/" rel="noopener">Wikipedia</a></p>
+    <p class="page-footer-meta"><a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)</p>
+  </div>
+</footer>
+
+<!-- Rich tooltip on tile click -->
+<div class="wt-tooltip" id="wt-tooltip" role="dialog" aria-label="Time details">
+  <div class="wt-tooltip-header">
+    <div class="wt-tooltip-header-top">
+      <span id="wt-tooltip-title">Hour details</span>
+      <button class="wt-tooltip-close" id="wt-tooltip-close" aria-label="Close">×</button>
+    </div>
+    <div class="wt-tooltip-subtitle" id="wt-tooltip-subtitle"></div>
+  </div>
+  <div id="wt-tooltip-body"></div>
+</div>
+
+<!-- Mobile nav -->
+<aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+  <div class="mobile-nav-header">
+    <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav-list" aria-label="Mobile main">
+    <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+    <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+    <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+    <div class="mobile-nav-section">World time</div>
+    <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+    <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+    <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
+    <div class="mobile-nav-section">Timezone</div>
+    <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
+    <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">Time Zone Converter</a>
+    <a href="/time-zones/in/" class="mobile-nav-link mobile-nav-sub">Time Zones in [Country]</a>
+    <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
+    <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+    <a href="#" class="mobile-nav-link">Blog</a>
+  </nav>
+</aside>
+<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+</body>
+</html>
