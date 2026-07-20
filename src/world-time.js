@@ -282,6 +282,7 @@
 
   // ========== RENDER ==========
   function render() {
+    console.log("[wt] render() called, stack:", new Error().stack.split('\n').slice(2, 5).join(' | '));
     renderChips();
     renderMain();
     renderUrlState();
