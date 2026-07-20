@@ -268,8 +268,9 @@ function injectSSR(html, location, initialTime, consent, region) {
     );
   }
 
-  // 3. Update <title> if we know the city
-  if (location.city) {
+  // 3. Update <title> if we know the city AND it's the home page
+  //    (don't overwrite titles on /world-time/, /holidays/, etc.)
+  if (location.city && out.includes('id="greeting-city"')) {
     const newTitle = location.regionCode
       ? `Current Time in ${esc(location.city)}, ${esc(location.regionCode)} | dateandtime.live`
       : `Current Time in ${esc(location.city)} | dateandtime.live`;
