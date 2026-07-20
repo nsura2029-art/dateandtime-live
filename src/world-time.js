@@ -286,6 +286,8 @@
     renderMain();
     renderUrlState();
     updateTimeEverySecond();
+    initDatePicker();
+    initTimeToggle();
   }
 
   function renderChips() {
@@ -918,24 +920,46 @@
   }
   // 12/24 hour toggle
   function setupTimeToggle() {
-    const btn = document.getElementById("wt-time-toggle");
-    if (!btn) return;
-    function update() {
-      btn.textContent = use24h ? "24h" : "12h";
-      btn.classList.toggle("is-24h", use24h);
-    }
-    update();
-    btn.addEventListener("click", () => {
+    // Use event delegation because render() recreates the button
+    document.addEventListener("click", (e) => {
+      if (!e.target || e.target.id !== "wt-time-toggle") return;
       use24h = !use24h;
       try { localStorage.setItem("tdlWtUse24h", use24h ? "1" : "0"); } catch (e) {}
-      update();
+      const btn = document.getElementById("wt-time-toggle");
+      if (btn) {
+        btn.textContent = use24h ? "24h" : "12h";
+        btn.classList.toggle("is-24h", use24h);
+      }
       render();
     });
+  }
+
+  // Update the toggle button text (called on init and after render)
+  function initTimeToggle() {
+    const btn = document.getElementById("wt-time-toggle");
+    if (!btn) return;
+    btn.textContent = use24h ? "24h" : "12h";
+    btn.classList.toggle("is-24h", use24h);
   }
 
   // Date picker: native <input type="date">
   // Min = yesterday, Max = +1 year. When changed, re-center date tabs and set focusedDate.
   function setupDatePicker() {
+    // Use event delegation because render() recreates the picker element
+    document.addEventListener("change", (e) => {
+      if (!e.target || e.target.id !== "wt-date-picker") return;
+      const val = e.target.value;
+      if (!val) return;
+      const [y, m, d] = val.split("-").map(Number);
+      const picked = new Date(y, m - 1, d, 12, 0, 0, 0);
+      focusedDate = picked;
+      renderDateTabs();
+      render();
+    });
+  }
+
+  // Set the picker's min/max/value (called on init and after render)
+  function initDatePicker() {
     const picker = document.getElementById("wt-date-picker");
     if (!picker) return;
     const today = new Date();
@@ -945,17 +969,7 @@
     max.setFullYear(max.getFullYear() + 1);
     picker.min = yest.toISOString().slice(0, 10);
     picker.max = max.toISOString().slice(0, 10);
-    // Initialize to focusedDate (today by default)
     picker.value = isoDate(focusedDate);
-    picker.addEventListener("change", (e) => {
-      const val = e.target.value;
-      if (!val) return;
-      const [y, m, d] = val.split("-").map(Number);
-      const picked = new Date(y, m - 1, d, 12, 0, 0, 0); // noon
-      focusedDate = picked;
-      renderDateTabs();
-      render();
-    });
   }
 
   // Helper: format a Date as YYYY-MM-DD (for date picker value)
