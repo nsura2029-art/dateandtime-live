@@ -39,9 +39,11 @@
 
   let cities = []; // {id, name, countryCode, countryName, stateCode, timezone, home, currentTime, offsetMinutes, workStart, workEnd, workDays, currentHour}
   let workHoursCache = {}; // {cca2: {workDays: [...], hours: {open, close}}}
-  let selectedRange = null; // {anchorCityId, startHour, endHour} — anchor city is the first one selected
+  let selectedRange = null; // {anchorCityId, startCol, endCol} — anchor city is the first one selected
   let focusedDate = new Date(); // currently-shown date in the timeline
   let cityOffsetCache = {}; // {iana: offsetHours} — cache for performance
+  let use24h = false; // false = 12h (default), true = 24h
+  const TOTAL_COLS = 48; // 24 hours × 2 (30-min slots)
 
   // ========== HELPERS ==========
   function $(s, root) { return (root || document).querySelector(s); }
@@ -148,10 +150,13 @@
     // hours can be a fractional number (e.g. 13.5 = 1:30pm)
     const h = Math.floor(hours);
     const m = Math.round((hours - h) * 60);
-    const display = m === 0 ? h : h + ":" + String(m).padStart(2, "0");
-    const { h: dh, p } = fmtHour(((h + 24) % 24));
-    const min = m === 0 ? "" : ":" + String(m).padStart(2, "0");
-    return dh + min + p;
+    const hr = ((h + 24) % 24);
+    if (use24h) {
+      const hh = String(hr).padStart(2, "0");
+      return m === 0 ? hh : hh + ":" + String(m).padStart(2, "0");
+    }
+    const fmt = fmtHalfHour(hr, m, false);
+    return fmt.h + fmt.p;
   }
 
   // Get the local hour range for a city given an anchor city's selected range
@@ -273,7 +278,7 @@
     cities.splice(idx, 1);
     if (selectedRange && selectedRange.anchorCityId === id) {
       // Pick a new anchor (or clear if no cities left)
-      selectedRange = cities.length > 0 ? { anchorCityId: cities[0].id, startHour: selectedRange.startHour, endHour: selectedRange.endHour } : null;
+      selectedRange = cities.length > 0 ? { anchorCityId: cities[0].id, startCol: selectedRange.startCol, endCol: selectedRange.endCol } : null;
     }
     saveToStorage();
     render();
@@ -338,16 +343,24 @@
     positionNowLine(now);
   }
 
-  function positionNowLine(now) {
+  function positionNowLine(now, currentCol) {
     const line = document.getElementById("wt-now-line");
     if (!line || cities.length === 0) return;
-    const anchorTz = cities[0]?.timezone;
-    if (!anchorTz) return;
-    const currentAnchorHour = localHourInCity(anchorTz, now);
+    if (currentCol === undefined) {
+      const anchorTz = cities[0]?.timezone;
+      if (!anchorTz) return;
+      try {
+        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: anchorTz, hour: "numeric", minute: "numeric", hour12: false });
+        const parts = fmt.formatToParts(now);
+        let h = 0, m = 0;
+        for (const p of parts) { if (p.type === "hour") h = parseInt(p.value, 10); if (p.type === "minute") m = parseInt(p.value, 10); }
+        currentCol = h * 2 + (m >= 30 ? 1 : 0);
+      } catch (e) { return; }
+    }
     const firstRow = document.querySelector(".wt-city-row");
     if (!firstRow) return;
     const firstTiles = firstRow.querySelectorAll(".wt-tile");
-    const targetTile = firstTiles[currentAnchorHour];
+    const targetTile = firstTiles[currentCol];
     if (!targetTile) { line.style.display = "none"; return; }
     const grid = firstRow.querySelector(".right");
     if (!grid) { line.style.display = "none"; return; }
@@ -356,7 +369,6 @@
     const x = tileRect.left - gridRect.left + tileRect.width / 2;
     line.style.display = "block";
     line.style.left = (gridRect.left - firstRow.getBoundingClientRect().left + x) + "px";
-    // Use the max scrollHeight of all rows (day-change tiles can make some rows taller)
     const allRows = document.querySelectorAll(".wt-city-row");
     let maxH = 0;
     allRows.forEach(r => { if (r.scrollHeight > maxH) maxH = r.scrollHeight; });
@@ -364,49 +376,86 @@
   }
 
   // === SHARED WALL-CLOCK AXIS HELPERS ===
-  // Compute the wall-clock moment for a given anchor column (0-23) on the focused date.
-  // The moment represents col:00:00 in the ANCHOR city's tz (not the browser's local tz).
-  // This is critical when the browser's tz differs from the anchor's tz (e.g. test in UTC,
-  // user in Tampa). Without this, the tile text would show wrong local times.
+  // Compute the wall-clock moment for a given anchor column (0-47, 30-min slots) on the focused date.
+  // The moment represents col*30 minutes past midnight in the ANCHOR city's tz.
   function getAnchorColMoment(col) {
     const anchorTz = cities[0]?.timezone;
     if (!anchorTz) {
-      return new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate(), col, 0, 0, 0);
+      const hour = Math.floor(col / 2);
+      const min = (col % 2) * 30;
+      return new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate(), hour, min, 0, 0);
     }
     try {
-      // Get YYYY-MM-DD in the anchor tz for the focusedDate
       const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: anchorTz, year: "numeric", month: "2-digit", day: "2-digit" });
       const [y, m, d] = fmt.format(focusedDate).split("-").map(Number);
       // Compute the SIGNED UTC offset of the anchor tz at noon of that day
-      // (noon is safe: DST changes typically happen at 2am, not noon)
-      // Tampa (UTC-4): noon UTC = 8am Tampa, so hourInAnchor=8, offset=-4
-      // Sydney (UTC+10): noon UTC = 10pm Sydney, so hourInAnchor=22, offset=+10
       const noonUTC = Date.UTC(y, m - 1, d, 12, 0, 0);
       const hourInAnchor = parseInt(new Intl.DateTimeFormat("en-US", { timeZone: anchorTz, hour: "numeric", hour12: false }).format(new Date(noonUTC)), 10);
       let offset = hourInAnchor - 12;
-      // Normalize to [-12, +14]
       if (offset > 14) offset -= 24;
       if (offset < -12) offset += 24;
-      // The moment for col:00 in anchor tz = Date.UTC(y, m, d, col - offset, 0, 0)
-      // Tampa col=7, offset=-4: Date.UTC(..., 7 - (-4), 0, 0) = 11:00 UTC = 7:00 Tampa ✓
-      return new Date(Date.UTC(y, m - 1, d, col - offset, 0, 0));
+      // col is a 30-min slot: col*30 minutes past midnight in anchor tz
+      // In UTC: col*30 - offset*60 minutes from midnight UTC
+      const totalMin = col * 30 - offset * 60;
+      const utcHour = Math.floor(totalMin / 60);
+      const utcMin = ((totalMin % 60) + 60) % 60;
+      return new Date(Date.UTC(y, m - 1, d, utcHour, utcMin, 0));
     } catch (e) {
-      return new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate(), col, 0, 0, 0);
+      const hour = Math.floor(col / 2);
+      const min = (col % 2) * 30;
+      return new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate(), hour, min, 0, 0);
     }
+  }
+
+  // Format a 30-min slot (hour 0-23, min 0 or 30) for display
+  function fmtHalfHour(hour, min, is24h) {
+    if (is24h) {
+      const h = String(hour).padStart(2, "0");
+      if (min === 0) return { h, p: "" };
+      return { h: h + ":" + String(min).padStart(2, "0"), p: "" };
+    }
+    // 12h
+    let h12, p;
+    if (hour === 0) { h12 = "12"; p = "am"; }
+    else if (hour < 12) { h12 = String(hour); p = "am"; }
+    else if (hour === 12) { h12 = "12"; p = "pm"; }
+    else { h12 = String(hour - 12); p = "pm"; }
+    if (min === 0) return { h: h12, p };
+    return { h: h12 + ":" + String(min).padStart(2, "0"), p };
+  }
+
+  // Format a full local time string (e.g. "8:30 AM" or "08:30")
+  function fmtLocalTime(date, tz, is24h) {
+    try {
+      const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: !is24h });
+      return fmt.format(date);
+    } catch (e) { return ""; }
   }
 
   function renderCityRow(city, now) {
     // === Shared wall-clock axis (WTB model) ===
-    // Columns are anchored to the FIRST/anchor city's local hours (0-23).
+    // Columns are anchored to the FIRST/anchor city's local 30-min slots (0-47).
     // Each row shows the LOCAL time in that city for that anchor column.
-    // So 6am in Tampa (column 6) shows "3:30 pm" in Hyderabad (same column).
     const anchorTz = cities[0]?.timezone;
-    const currentAnchorHour = anchorTz ? localHourInCity(anchorTz, now) : new Date().getHours();
+    // Current 30-min column in the anchor's tz (0-47)
+    const currentCol = (() => {
+      if (!anchorTz) return 0;
+      try {
+        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: anchorTz, hour: "numeric", minute: "numeric", hour12: false });
+        const parts = fmt.formatToParts(now);
+        let h = 0, m = 0;
+        for (const p of parts) {
+          if (p.type === "hour") h = parseInt(p.value, 10);
+          if (p.type === "minute") m = parseInt(p.value, 10);
+        }
+        return h * 2 + (m >= 30 ? 1 : 0);
+      } catch (e) { return 0; }
+    })();
     const isHome = !!city.home;
 
-    // Per-row date RANGE (in the city's tz) — shows start date to end date if it wraps days
+    // Per-row date RANGE (in the city's tz)
     const startMoment = getAnchorColMoment(0);
-    const endMoment = getAnchorColMoment(23);
+    const endMoment = getAnchorColMoment(TOTAL_COLS - 1);
     const fmtDayDate = (m) => {
       try {
         const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "short", day: "numeric", month: "short" });
@@ -417,7 +466,6 @@
     const endDayDate = fmtDayDate(endMoment);
     const dateLabel = startDayDate === endDayDate ? startDayDate : `${startDayDate} \u2192 ${endDayDate}`;
 
-    // Is the focused date today in the anchor's tz?
     const isFocusedTodayInAnchor = (() => {
       if (!anchorTz) return true;
       try {
@@ -426,7 +474,6 @@
       } catch (e) { return true; }
     })();
 
-    // Focused date in anchor's tz as YYYY-MM-DD (for next-day comparison)
     const focusedDateStrInAnchor = (() => {
       if (!anchorTz) return "";
       try {
@@ -435,32 +482,37 @@
       } catch (e) { return ""; }
     })();
 
-    // Selected tiles: selection is in the anchor's tz (startHour/endHour are anchor-local columns)
+    // Selected tiles: selection is in the anchor's 30-min columns
     let selectedStartCol = -1, selectedEndCol = -1;
     if (selectedRange) {
-      const startC = selectedRange.startHour;
-      const endC = selectedRange.endHour;
+      const startC = selectedRange.startCol;
+      const endC = selectedRange.endCol;
       if (startC <= endC) {
         selectedStartCol = startC;
         selectedEndCol = endC;
       } else {
         selectedStartCol = 0;
-        selectedEndCol = 23;
+        selectedEndCol = TOTAL_COLS - 1;
       }
     }
 
-    // Generate 24 tiles, one per anchor column
+    // Generate 48 tiles (30-min slots)
     let tiles = "";
-    for (let c = 0; c < 24; c++) {
+    for (let c = 0; c < TOTAL_COLS; c++) {
       const moment = getAnchorColMoment(c);
       const localHour = localHourInCity(city.timezone, moment);
+      const localMin = (() => {
+        try {
+          const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, minute: "numeric" });
+          return parseInt(fmt.format(moment), 10);
+        } catch (e) { return 0; }
+      })();
       const localDayShort = (() => {
         try {
           const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "short" });
           return fmt.format(moment);
         } catch (e) { return "Mon"; }
       })();
-      // Long form (e.g. "Monday") for matching the API workDays array
       const localDayLong = (() => {
         try {
           const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "long" });
@@ -473,31 +525,27 @@
           return fmt.format(moment);
         } catch (e) { return ""; }
       })();
-      // Local date in the city as YYYY-MM-DD (for next-day comparison)
       const localDateStrInCity = (() => {
         try {
           const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: city.timezone, year: "numeric", month: "2-digit", day: "2-digit" });
           return fmt.format(moment);
         } catch (e) { return ""; }
       })();
-      // Weekend detection: Sat or Sun in the city's local day
       const isWeekend = (localDayShort === "Sat" || localDayShort === "Sun");
-      // Show day label at the first tile of each new day in the city
-      // (localHour === 0 means midnight in that city, which is the start of a new day)
-      const showDayLabel = (localHour === 0);
-      // Next-day: city's local date is strictly AFTER the focused date in the anchor's tz
+      // Show day label at the first tile of each new day (local hour === 0 AND minute === 0)
+      const showDayLabel = (localHour === 0 && localMin === 0);
       const isNextDay = focusedDateStrInAnchor && localDateStrInCity && localDateStrInCity > focusedDateStrInAnchor;
       const isWork = isWorkHour(city, localHour, localDayLong);
       const isEarly = isEarlyHour(city, localHour, localDayLong);
       const isSleep = isSleepHour(localHour);
-      // Work edge (start/end) vs middle: start + end are darker, middle is lighter
       let isWorkEdge = false, isWorkMiddle = false;
       if (isWork) {
         isWorkEdge = (localHour === DEFAULT_WORK_OPEN) || (localHour === DEFAULT_WORK_CLOSE - 1);
         isWorkMiddle = isWork && !isWorkEdge;
       }
-      const isNow = isFocusedTodayInAnchor && (c === currentAnchorHour);
-      const isPast = isFocusedTodayInAnchor && (c < currentAnchorHour);
+      // "Now" is now a COLUMN highlight, not an individual tile
+      const isNowCol = isFocusedTodayInAnchor && (c === currentCol);
+      const isPast = isFocusedTodayInAnchor && (c < currentCol);
       const isInRange = selectedStartCol >= 0 && c >= selectedStartCol && c <= selectedEndCol;
       const isStart = isInRange && c === selectedStartCol;
       const isEnd = isInRange && c === selectedEndCol;
@@ -509,16 +557,16 @@
       if (isSleep) classes.push("sleep");
       if (isWeekend) classes.push("weekend");
       if (isNextDay) classes.push("next-day");
-      if (isNow) classes.push("now");
+      if (isNowCol) classes.push("now-col");
       if (isStart || isEnd) classes.push("is-selected");
       else if (isInRange) classes.push("in-range");
       if (showDayLabel) classes.push("day-change");
-      const fmt = fmtHour(localHour);
+      const fmt = fmtHalfHour(localHour, localMin, use24h);
       const dayLabelHtml = showDayLabel ? `<span class="day-label">${localDateShort.toUpperCase()}</span>` : "";
-      tiles += `<div class="${classes.join(" ")}" data-tile data-city="${city.id}" data-col="${c}" data-hour="${localHour}">${dayLabelHtml}<span class="h">${fmt.h}</span><span class="p">${fmt.p}</span></div>`;
+      tiles += `<div class="${classes.join(" ")}" data-tile data-city="${city.id}" data-col="${c}" data-hour="${localHour}" data-min="${localMin}">${dayLabelHtml}<span class="h">${fmt.h}</span><span class="p">${fmt.p}</span></div>`;
     }
 
-    const time = localTimeInCity(city.timezone, now);
+    const time = fmtLocalTime(now, city.timezone, use24h);
     const abbrev = localAbbrevInCity(city.timezone, now);
     const offset = localOffsetInCity(city.timezone, now);
     const homeLabel = isHome ? '<span class="home">\u2302</span> ' : "";
@@ -568,7 +616,20 @@
     function tick() {
       const now = new Date();
       const anchorTz = cities[0]?.timezone;
-      const currentAnchorHour = anchorTz ? localHourInCity(anchorTz, now) : new Date().getHours();
+      // Compute current 30-min column (0-47) in the anchor's tz
+      const currentCol = (() => {
+        if (!anchorTz) return 0;
+        try {
+          const fmt = new Intl.DateTimeFormat("en-US", { timeZone: anchorTz, hour: "numeric", minute: "numeric", hour12: false });
+          const parts = fmt.formatToParts(now);
+          let h = 0, m = 0;
+          for (const p of parts) {
+            if (p.type === "hour") h = parseInt(p.value, 10);
+            if (p.type === "minute") m = parseInt(p.value, 10);
+          }
+          return h * 2 + (m >= 30 ? 1 : 0);
+        } catch (e) { return 0; }
+      })();
       const isFocusedTodayInAnchor = (() => {
         if (!anchorTz) return true;
         try {
@@ -578,34 +639,25 @@
       })();
       cities.forEach(city => {
         const chipTime = document.querySelector(`.wt-city-chip[data-id="${city.id}"] .now`);
-        if (chipTime) chipTime.textContent = localTimeInCity(city.timezone, now);
-        // Update left info time
+        if (chipTime) chipTime.textContent = fmtLocalTime(now, city.timezone, use24h);
         const row = document.querySelector(`.wt-city-row[data-city="${city.id}"]`);
         if (row) {
           const timeEl = row.querySelector(".time");
-          if (timeEl) timeEl.textContent = localTimeInCity(city.timezone, now);
+          if (timeEl) timeEl.textContent = fmtLocalTime(now, city.timezone, use24h);
         }
       });
-      // Update "now" highlight on the grid: ALL rows at the same anchor column
+      // Update "now-col" highlight: ALL rows at the same anchor column
       if (isFocusedTodayInAnchor) {
-        $$(".wt-tile.now").forEach(t => t.classList.remove("now"));
-        $$(`.wt-tile[data-col="${currentAnchorHour}"]`).forEach(t => t.classList.add("now"));
-        // Also update past hours (in case the hour rolled over)
+        $$(".wt-tile.now-col").forEach(t => t.classList.remove("now-col"));
+        $$(`.wt-tile[data-col="${currentCol}"]`).forEach(t => t.classList.add("now-col"));
         $$(".wt-tile.past").forEach(t => t.classList.remove("past"));
-        for (let c = 0; c < currentAnchorHour; c++) {
+        for (let c = 0; c < currentCol; c++) {
           $$(`.wt-tile[data-col="${c}"]`).forEach(t => t.classList.add("past"));
         }
       } else {
-        // Not focused-today: clear all past and now classes (so other days show no past)
-        $$(".wt-tile.now, .wt-tile.past").forEach(t => t.classList.remove("now", "past"));
+        $$(".wt-tile.now-col, .wt-tile.past").forEach(t => t.classList.remove("now-col", "past"));
       }
-      // Reposition the now-line
-      positionNowLine(now);
-      const line = document.getElementById("wt-now-line");
-      if (line) {
-        const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone;
-        if (userTz) line.setAttribute("data-time", localTimeInCity(userTz, now));
-      }
+      positionNowLine(now, currentCol);
     }
     tick();
     window.__wtTickInterval = setInterval(tick, 1000);
@@ -613,7 +665,7 @@
 
   // ========== INTERACTIONS ==========
   // Click select (single hour only — matches user request "move 1 HR only")
-  let dragState = null; // {cityId, startHour}
+  let dragState = null; // {cityId, startCol}
   function setupDragSelect() {
     const main = $("#wt-main");
     if (!main) return;
@@ -624,9 +676,9 @@
       e.preventDefault();
       const cityId = parseInt(tile.dataset.city, 10);
       const col = parseInt(tile.dataset.col, 10);
-      dragState = { cityId, startHour: col };
-      // Always 1 hour (user clicked a single tile)
-      selectedRange = { anchorCityId: cityId, startHour: col, endHour: col };
+      dragState = { cityId, startCol: col };
+      // Selection is a 30-min slot (1 tile = 30 min)
+      selectedRange = { anchorCityId: cityId, startCol: col, endCol: col };
       render();
     });
     main.addEventListener("mouseover", (e) => {
@@ -650,8 +702,8 @@
       return;
     }
     bar.classList.add("is-visible");
-    const hours = selectedRange.endHour - selectedRange.startHour + 1;
-    $(".wt-selection-bar .duration", bar).textContent = hours === 1 ? "1 hour" : hours + " hours";
+    const slots = selectedRange.endCol - selectedRange.startCol + 1;
+    $(".wt-selection-bar .duration", bar).textContent = slots === 2 ? "1 hour" : (slots / 2) + " hours";
     // Per-city picked times
     const anchor = cities.find(c => c.id === selectedRange.anchorCityId);
     if (!anchor) return;
@@ -659,10 +711,10 @@
     if (!wrap) return;
     const evName = ($(".wt-event-name")?.value || "Meeting").trim();
     wrap.innerHTML = cities.map(city => {
-      const { startLocal, endLocal, dayOffset, crossesMidnight } = getLocalRangeForCity(city, anchor, selectedRange.startHour, selectedRange.endHour);
+      // Convert anchor columns (30-min slots) to local hours for the city
+      const { startLocal, endLocal, dayOffset, crossesMidnight } = getLocalRangeForCity(city, anchor, selectedRange.startCol / 2, selectedRange.endCol / 2 + 0.5);
       const startStr = formatLocalTime(startLocal);
       let endStr = formatLocalTime(endLocal);
-      if (endLocal === 0) endStr = "12am";
       const nextDay = dayOffset > 0 || (crossesMidnight && endLocal < startLocal);
       const dayLabel = nextDay ? " +1d" : (dayOffset < 0 ? " -1d" : "");
       return `<div class="wt-picked-time ${city.home ? 'home' : ''}">
@@ -703,6 +755,7 @@
 
     function close() {
       tooltip.classList.remove("is-open");
+      tooltip.style.display = "none";
     }
     if (tooltipClose) tooltipClose.addEventListener("click", close);
     // Close on click outside (but not on the same mousedown that opened it)
@@ -753,7 +806,7 @@
       // Build rows: one per city
       const rows = cities.map((city) => {
         const localHour = localHourInCity(city.timezone, moment);
-        const localTime = localTimeInCity(city.timezone, moment);
+        const localTime = fmtLocalTime(moment, city.timezone, use24h);
         const localDayShort = (() => {
           try {
             const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "short" });
@@ -880,6 +933,23 @@
       }
     });
   }
+  // 12/24 hour toggle
+  function setupTimeToggle() {
+    const btn = document.getElementById("wt-time-toggle");
+    if (!btn) return;
+    function update() {
+      btn.textContent = use24h ? "24h" : "12h";
+      btn.classList.toggle("is-24h", use24h);
+    }
+    update();
+    btn.addEventListener("click", () => {
+      use24h = !use24h;
+      try { localStorage.setItem("tdlWtUse24h", use24h ? "1" : "0"); } catch (e) {}
+      update();
+      render();
+    });
+  }
+
   function setupChipRemove() {
     document.addEventListener("click", (e) => {
       const x = e.target.closest(".wt-city-chip .x");
@@ -1041,7 +1111,7 @@
         e.preventDefault();
         const params = new URLSearchParams();
         if (cities.length) params.set("cities", cities.map(c => c.id).join(","));
-        if (selectedRange) params.set("time", String(selectedRange.startHour).padStart(2, "0") + ":00");
+        if (selectedRange) params.set("time", (`${String(Math.floor(selectedRange.startCol / 2)).padStart(2,'0')}:${selectedRange.startCol % 2 ? '30' : '00'}`));
         const url = window.location.origin + window.location.pathname + "?" + params;
         navigator.clipboard.writeText(url).then(() => {
           const old = linkView.textContent;
@@ -1058,7 +1128,7 @@
       if (!selectedRange) return;
       const city = cities.find(c => c.id === (selectedRange.anchorCityId || selectedRange.cityId));
       if (!city) return;
-      const startTime = `${String(selectedRange.startHour).padStart(2, "0")}:00`;
+      const startTime = `${String(Math.floor(selectedRange.startCol / 2)).padStart(2,"0")}:${selectedRange.startCol % 2 ? "30" : "00"}`;
       const endTime = `${String((selectedRange.endHour + 1) % 24).padStart(2, "0")}:00`;
       const dayLabel = $("#wt-day-label")?.textContent || "";
       const eventName = $(".wt-event-name")?.value || "Meeting";
@@ -1083,7 +1153,7 @@
       } else if (kind === "link") {
         const params = new URLSearchParams();
         params.set("cities", cities.map(c => c.id).join(","));
-        params.set("time", String(selectedRange.startHour).padStart(2, "0") + ":00");
+        params.set("time", (`${String(Math.floor(selectedRange.startCol / 2)).padStart(2,'0')}:${selectedRange.startCol % 2 ? '30' : '00'}`));
         const url = window.location.origin + window.location.pathname + "?" + params;
         navigator.clipboard.writeText(url).then(() => {
           const old = action.textContent;
@@ -1178,7 +1248,7 @@
       const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
       const params = new URLSearchParams();
       if (cities.length) params.set("cities", cities.map(c => c.id).join(","));
-      if (selectedRange) params.set("time", String(selectedRange.startHour).padStart(2, "0") + ":00");
+      if (selectedRange) params.set("time", (`${String(Math.floor(selectedRange.startCol / 2)).padStart(2,'0')}:${selectedRange.startCol % 2 ? '30' : '00'}`));
       const shareUrl = window.location.origin + window.location.pathname + "?" + params;
       const shareData = {
         title: "World Time schedule",
@@ -1324,6 +1394,8 @@ END:VCALENDAR`;
 
   // ========== INIT ==========
   async function init() {
+    // Load 12/24 preference
+    try { use24h = localStorage.getItem("tdlWtUse24h") === "1"; } catch (e) {}
     // 1. Load cities from URL params first, then localStorage, then default to home
     const params = new URLSearchParams(window.location.search);
     const urlCities = (params.get("cities") || "").split(",").map(s => parseInt(s, 10)).filter(Boolean);
@@ -1385,7 +1457,7 @@ END:VCALENDAR`;
     if (urlTime) {
       const [h] = urlTime.split(":").map(Number);
       if (!isNaN(h) && cities.length > 0) {
-        selectedRange = { anchorCityId: cities[0].id, startHour: h, endHour: h };
+        const col = h * 2 + (m >= 30 ? 1 : 0); selectedRange = { anchorCityId: cities[0].id, startCol: col, endCol: col };
         showSelectionBar();
       }
     }
@@ -1400,6 +1472,7 @@ END:VCALENDAR`;
     setupTileTooltip();
     setupTooltipReposition();
     setupChipRemove();
+    setupTimeToggle();
     setupDatePager();
     setupSelectionActions();
 
