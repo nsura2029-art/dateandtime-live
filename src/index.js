@@ -243,7 +243,10 @@ function injectSSR(html, location, initialTime, consent, region) {
 
   // 1. Inject window.__location + __initialTime + __consentRegion + __hasConsent
   //    BEFORE the first <script> tag.
-  const ssrGlobals = `<script>window.__location=${JSON.stringify(location)};window.__initialTime=${JSON.stringify(initialTime)};window.__consentRegion=${JSON.stringify(region)};window.__hasConsent=${JSON.stringify(consent || { essential: true, v: COOKIE_VERSION })};<\/script>`;
+  //    NOTE: only inject __hasConsent if we have a real cookie. Otherwise set
+  //    to null so cookie-consent.js shows the banner on first visit.
+  const hasConsentValue = consent ? JSON.stringify(consent) : "null";
+  const ssrGlobals = `<script>window.__location=${JSON.stringify(location)};window.__initialTime=${JSON.stringify(initialTime)};window.__consentRegion=${JSON.stringify(region)};window.__hasConsent=${hasConsentValue};<\/script>`;
 
   // 1a. Inject Google Consent Mode v2 default (BEFORE any Google tag).
   //     For EEA/UK: deny by default. For other regions: grant.

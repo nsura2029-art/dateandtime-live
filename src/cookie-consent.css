@@ -7,7 +7,7 @@
   --cookie-bg-soft: #f7f7fa;
   --cookie-accent: #5b4aaf;
   --cookie-accent-hover: #4a3c95;
-  --cookie-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  --cookie-shadow: 0 -8px 32px rgba(0,0,0,0.15);
 }
 
 [data-theme="dark"] {
@@ -18,7 +18,7 @@
   --cookie-bg-soft: #1f1f26;
   --cookie-accent: #a596f0;
   --cookie-accent-hover: #b8acf5;
-  --cookie-shadow: 0 -4px 24px rgba(0,0,0,0.4);
+  --cookie-shadow: 0 -8px 32px rgba(0,0,0,0.55);
 }
 
 .cookie-banner {
