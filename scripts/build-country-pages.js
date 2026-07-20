@@ -40,6 +40,12 @@ function fetchJson(path) {
 }
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const cca2ToFlag = (cca2) => {
+  // Convert ISO 3166-1 alpha-2 to flag emoji using regional indicator symbols
+  if (!cca2 || cca2.length !== 2) return '🌐';
+  const codePoints = cca2.toUpperCase().split('').map(c => 127397 + c.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
 
 function headerHtml(activePath) {
   return `<header class="site-header">
@@ -101,7 +107,7 @@ function headerHtml(activePath) {
 </header>`;
 }
 
-function mobileNavHtml(countryName) {
+function mobileNavHtml(countryName, cca2Lower) {
   return `<aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
   <div class="mobile-nav-header">
     <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
@@ -123,7 +129,7 @@ function mobileNavHtml(countryName) {
     <div class="mobile-nav-section">Timezone</div>
     <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
     <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
-    <a href="/time-zones/in/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">Time Zones in ${countryName || '[Country]'}</a>
+    <a href="/time-zones/in/${cca2Lower || ''}/" class="mobile-nav-link mobile-nav-sub is-active" aria-current="page">Time Zones in ${countryName || '[Country]'}</a>
     <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
     <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
     <a href="/time-zones/utc/" class="mobile-nav-link mobile-nav-sub">UTC &amp; GMT</a>
@@ -181,6 +187,7 @@ function generatePage(country, cities, timezones) {
   const landlocked = country.landlocked ? 'Yes' : 'No';
   const independent = country.independent ? 'Yes' : 'No';
 
+  const flag = cca2ToFlag(cca2);
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -256,7 +263,7 @@ ${headerHtml('/time-zones/in/' + cca2.toLowerCase() + '/')}
 <main class="tz-hub edu-page country-page">
   <article class="container">
     <header class="edu-header country-header">
-      <p class="edu-eyebrow"><span class="country-flag" aria-hidden="true">\uD83C\uDDFA\uD83C\uDDF8</span> ${continent} \u00B7 ${unRegion}</p>
+      <p class="edu-eyebrow"><span class="country-flag" aria-hidden="true">${flag}</span> ${continent} \u00B7 ${unRegion}</p>
       <h1>Time Zones in ${country.name}</h1>
       <p class="edu-subtitle">${timezones.length} time zone${timezones.length !== 1 ? 's' : ''} used across ${cities.length} cities. Current time in <strong>${capitalName}</strong> is <strong data-live-tz="${capital?.timezone}" class="live-cap-time">${capTime}</strong> (${capOffset}).</p>
       <div class="country-quick-stats">
@@ -358,7 +365,7 @@ ${headerHtml('/time-zones/in/' + cca2.toLowerCase() + '/')}
   </div>
 </footer>
 
-${mobileNavHtml(country.name)}
+${mobileNavHtml(country.name, cca2.toLowerCase())}
 </body>
 </html>
 `;

@@ -15,8 +15,6 @@
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-
-  <!-- World Time hub + tools -->
   <url>
     <loc>https://dateandtime.live/world-time/</loc>
     <changefreq>hourly</changefreq>
@@ -27,8 +25,6 @@
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
-
-  <!-- Time Zone hub + tools -->
   <url>
     <loc>https://dateandtime.live/time-zones/</loc>
     <changefreq>daily</changefreq>
@@ -54,8 +50,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-
-  <!-- Legal / info pages -->
   <url>
     <loc>https://dateandtime.live/about/</loc>
     <changefreq>monthly</changefreq>
@@ -76,4 +70,145 @@
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
+
+  <!-- Time zones by country (146 pages) -->
+  <url><loc>https://dateandtime.live/time-zones/in/ae/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/af/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/am/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ao/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/at/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/au/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/az/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bb/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bd/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/be/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bg/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bn/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bo/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/br/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bs/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bt/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bw/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/by/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/bz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ca/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ch/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ci/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/cl/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/cm/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/cn/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/co/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/cr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/cu/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/cy/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/cz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/de/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/dk/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/do/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/dz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ec/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ee/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/eg/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/es/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/et/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/fi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/fk/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/fr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/gb/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ge/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/gf/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/gh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/gr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/gt/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/gy/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/hk/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/hn/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/hr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ht/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/hu/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/id/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ie/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/il/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/in/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/iq/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ir/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/is/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/it/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/jm/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/jo/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/jp/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ke/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/kg/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/kh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/kr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/kw/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/kz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/la/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/lb/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/lk/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/lt/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/lu/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/lv/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ly/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ma/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mg/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mm/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mn/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mt/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mu/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mv/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mx/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/my/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/mz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/na/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ng/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ni/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/nl/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/no/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/np/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/nz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/om/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/pa/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/pe/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ph/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/pk/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/pl/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/pr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/pt/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/py/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/qa/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/re/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ro/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/rs/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ru/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sa/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sd/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/se/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sg/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/si/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sk/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sn/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sv/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/sy/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/th/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/tj/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/tm/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/tn/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/tr/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/tt/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/tz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ua/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ug/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/us/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/uy/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/uz/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ve/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/vn/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/ye/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/za/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/zm/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dateandtime.live/time-zones/in/zw/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>
