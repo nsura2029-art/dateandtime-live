@@ -354,6 +354,34 @@
     line.style.height = (firstRow.scrollHeight) + "px";
   }
 
+  // === SHARED WALL-CLOCK AXIS HELPERS ===
+  // Compute the wall-clock moment for a given anchor column (0-23) on the focused date.
+  // The moment represents col:00:00 in the ANCHOR city's tz (not the browser's local tz).
+  // This is critical when the browser's tz differs from the anchor's tz (e.g. test in UTC,
+  // user in Tampa). Without this, the tile text would show wrong local times.
+  function getAnchorColMoment(col) {
+    const anchorTz = cities[0]?.timezone;
+    if (!anchorTz) {
+      return new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate(), col, 0, 0, 0);
+    }
+    try {
+      // Get YYYY-MM-DD in the anchor tz for the focusedDate
+      const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: anchorTz, year: "numeric", month: "2-digit", day: "2-digit" });
+      const [y, m, d] = fmt.format(focusedDate).split("-").map(Number);
+      // Compute the UTC offset of the anchor tz at noon of that day
+      // (noon is safe: DST changes typically happen at 2am, not noon)
+      const noonUTC = Date.UTC(y, m - 1, d, 12, 0, 0);
+      const hourInAnchor = parseInt(new Intl.DateTimeFormat("en-US", { timeZone: anchorTz, hour: "numeric", hour12: false }).format(new Date(noonUTC)), 10);
+      let offset = 12 - hourInAnchor;
+      if (offset > 12) offset -= 24;
+      if (offset < -12) offset += 24;
+      // The moment for col:00 in anchor tz = Date.UTC(y, m, d, col - offset, 0, 0)
+      return new Date(Date.UTC(y, m - 1, d, col - offset, 0, 0));
+    } catch (e) {
+      return new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate(), col, 0, 0, 0);
+    }
+  }
+
   function renderCityRow(city, now) {
     // === Shared wall-clock axis (WTB model) ===
     // Columns are anchored to the FIRST/anchor city's local hours (0-23).
@@ -364,10 +392,8 @@
     const isHome = !!city.home;
 
     // Per-row date RANGE (in the city's tz) — shows start date to end date if it wraps days
-    const startMoment = new Date(focusedDate);
-    startMoment.setHours(0, 0, 0, 0);
-    const endMoment = new Date(focusedDate);
-    endMoment.setHours(23, 0, 0, 0);
+    const startMoment = getAnchorColMoment(0);
+    const endMoment = getAnchorColMoment(23);
     const fmtDayDate = (m) => {
       try {
         const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "short", day: "numeric", month: "short" });
@@ -379,7 +405,6 @@
     const dateLabel = startDayDate === endDayDate ? startDayDate : `${startDayDate} \u2192 ${endDayDate}`;
 
     // Is the focused date today in the anchor's tz?
-    // (only on the focused-today date do we dim past hours)
     const isFocusedTodayInAnchor = (() => {
       if (!anchorTz) return true;
       try {
@@ -405,10 +430,7 @@
     // Generate 24 tiles, one per anchor column
     let tiles = "";
     for (let c = 0; c < 24; c++) {
-      // The wall-clock moment for this column = focused date at c:00 (in browser local time)
-      // The local time in the city for that moment is computed via Intl.DateTimeFormat
-      const moment = new Date(focusedDate);
-      moment.setHours(c, 0, 0, 0);
+      const moment = getAnchorColMoment(c);
       const localHour = localHourInCity(city.timezone, moment);
       const localDayShort = (() => {
         try {
