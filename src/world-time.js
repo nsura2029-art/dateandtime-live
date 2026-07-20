@@ -835,15 +835,15 @@
       const anchorRow = rows[0];
       tooltipTitle.textContent = `${anchorRow.localTime} \u00b7 ${anchorRow.localDayShort}${anchorRow.isNextDay ? ' +1d' : ''}`;
 
-      // Body
-      tooltipBody.innerHTML = rows.map(r => {
+      // Body: one row per city, with dividers between rows
+      tooltipBody.innerHTML = rows.map((r, i) => {
         const home = r.isHome ? '<span class="home" title="Your home city">\u2302</span> ' : '';
         const nextDay = r.isNextDay ? ' <span class="plus">+1d</span>' : '';
-        return `<div class="wt-tooltip-row">
+        return `<div class="wt-tooltip-row ${r.status}${r.isHome ? ' is-home' : ''}${i === 0 ? ' is-first' : ''}">
           <span class="wt-tooltip-name">${home}${escapeHtml(r.city.name)}</span>
           <span class="wt-tooltip-time">${r.localTime}</span>
           <span class="wt-tooltip-day">${r.localDayShort}${nextDay}</span>
-          <span class="wt-tooltip-status ${r.status}">${r.statusLabel}</span>
+          <span class="wt-tooltip-status">${r.statusLabel}</span>
         </div>`;
       }).join("");
 
@@ -872,10 +872,10 @@
     const homeRect = homeRow.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
 
-    // Center horizontally on the home tile
-    let left = tileRect.left + tileRect.width / 2 - tooltipRect.width / 2;
-    // Default: below the home city row
-    let top = homeRect.bottom + 10;
+    // Left-align: tooltip's left edge starts at the home tile's left edge
+    let left = tileRect.left;
+    // Default: ABOVE the home city row (in the gap between header and city rows)
+    let top = homeRect.top - tooltipRect.height - 10;
     let arrowSide = "down";
 
     const margin = 12;
@@ -884,9 +884,9 @@
     if (left + tooltipRect.width > window.innerWidth - margin) {
       left = window.innerWidth - tooltipRect.width - margin;
     }
-    // If not enough space below, position above
-    if (top + tooltipRect.height > window.innerHeight - margin) {
-      top = homeRect.top - tooltipRect.height - 10;
+    // If not enough space above, position below the home city row
+    if (top < margin) {
+      top = homeRect.bottom + 10;
       arrowSide = "up";
     }
     // If still not enough space, position at top of viewport

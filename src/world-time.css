@@ -332,38 +332,178 @@
   .wt-legend-swatch { width: 0.75rem; height: 0.75rem; }
 }
 
-/* ===== Tooltip: overlay at home city row, at selected column ===== */
+/* ===== Tooltip: overlay ABOVE the home city row, left-aligned to the home tile ===== */
+/* The tooltip extends to the right from the home tile's left edge. */
+/* The arrow is on the bottom-left of the tooltip, pointing down to the home tile. */
+/* This way the tooltip never covers tiles in other city rows. */
 .wt-tooltip {
   position: fixed;
   z-index: 1000;
-  min-width: 280px;
-  max-width: 340px;
+  min-width: 300px;
+  max-width: 360px;
   background: var(--wt-bg-card);
   border: 1px solid var(--wt-border);
   border-radius: 10px;
-  box-shadow: 0 12px 36px rgba(0,0,0,0.22);
-  padding: 0.75rem;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.12);
+  padding: 0;
   font-size: 0.8125rem;
   pointer-events: auto;
   display: none;
+  overflow: hidden;
 }
 .wt-tooltip.is-open { display: block; }
+
+/* Tooltip header */
+.wt-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  background: var(--wt-bg-soft);
+  border-bottom: 1px solid var(--wt-border);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: var(--wt-fg);
+}
+.wt-tooltip-header #wt-tooltip-title {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.wt-tooltip-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--wt-fg-muted);
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.wt-tooltip-close:hover {
+  background: var(--wt-bg-soft);
+  color: var(--wt-fg);
+}
+
+/* Tooltip body: list of city rows */
+#wt-tooltip-body {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+/* Each city row in the tooltip */
+.wt-tooltip-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border-bottom: 1px solid var(--wt-border-soft, var(--wt-border));
+  transition: background 0.12s;
+}
+.wt-tooltip-row:last-child { border-bottom: none; }
+.wt-tooltip-row.is-first { background: var(--wt-bg-soft); }
+.wt-tooltip-row.is-home {
+  background: rgba(101, 147, 212, 0.08);
+  font-weight: 600;
+}
+.wt-tooltip-row:hover {
+  background: var(--wt-bg-soft);
+}
+
+/* City name (with optional home indicator) */
+.wt-tooltip-name {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--wt-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wt-tooltip-name .home {
+  color: var(--wt-accent, #6593d4);
+  font-size: 0.95em;
+  flex-shrink: 0;
+}
+
+/* Local time (e.g. "2:30 PM") */
+.wt-tooltip-time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--wt-fg);
+  white-space: nowrap;
+}
+
+/* Day label (e.g. "Mon" or "Mon +1d") */
+.wt-tooltip-day {
+  font-size: 0.75rem;
+  color: var(--wt-fg-muted);
+  white-space: nowrap;
+  min-width: 3.5em;
+  text-align: right;
+}
+.wt-tooltip-day .plus {
+  color: var(--wt-accent, #6593d4);
+  font-weight: 700;
+  margin-left: 0.2em;
+}
+
+/* Status badge (Work, Sleep, Weekend, Off) */
+.wt-tooltip-status {
+  grid-column: 1 / -1;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: var(--wt-bg-soft);
+  color: var(--wt-fg-muted);
+  white-space: nowrap;
+  margin-top: 0.2rem;
+  justify-self: start;
+}
+.wt-tooltip-row.work .wt-tooltip-status {
+  background: rgba(101, 147, 212, 0.18);
+  color: #3b6cb0;
+}
+.wt-tooltip-row.sleep .wt-tooltip-status {
+  background: rgba(99, 102, 241, 0.18);
+  color: #4f46e5;
+}
+.wt-tooltip-row.weekend .wt-tooltip-status {
+  background: rgba(244, 114, 182, 0.18);
+  color: #be185d;
+}
+.wt-tooltip-row.off .wt-tooltip-status {
+  background: var(--wt-bg-soft);
+  color: var(--wt-fg-muted);
+}
+
+/* Dark mode: status badge colors */
+[data-theme="dark"] .wt-tooltip-row.work .wt-tooltip-status { color: #a8c5e8; }
+[data-theme="dark"] .wt-tooltip-row.sleep .wt-tooltip-status { color: #a5b4fc; }
+[data-theme="dark"] .wt-tooltip-row.weekend .wt-tooltip-status { color: #f9a8d4; }
+
+/* Arrow: points down from the tooltip to the home tile */
 .wt-tooltip::before {
   content: "";
   position: absolute;
   left: var(--wt-tooltip-arrow-left, 50%);
   transform: translateX(-50%);
-  border: 7px solid transparent;
+  border: 8px solid transparent;
 }
 .wt-tooltip[data-arrow="down"]::before {
   top: 100%;
   border-top-color: var(--wt-bg-card);
-  filter: drop-shadow(0 1px 0 var(--wt-border));
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,0.1));
 }
 .wt-tooltip[data-arrow="up"]::before {
   bottom: 100%;
   border-bottom-color: var(--wt-bg-card);
-  filter: drop-shadow(0 -1px 0 var(--wt-border));
+  filter: drop-shadow(0 -2px 1px rgba(0,0,0,0.1));
 }
 @media (max-width: 760px) {
   .wt-tooltip {
