@@ -455,6 +455,13 @@
           return fmt.format(moment);
         } catch (e) { return "Mon"; }
       })();
+      // Long form (e.g. "Monday") for matching the API workDays array
+      const localDayLong = (() => {
+        try {
+          const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "long" });
+          return fmt.format(moment);
+        } catch (e) { return "Monday"; }
+      })();
       const localDateShort = (() => {
         try {
           const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "short", day: "2-digit", month: "short" });
@@ -475,8 +482,8 @@
       const showDayLabel = (localHour === 0);
       // Next-day: city's local date is strictly AFTER the focused date in the anchor's tz
       const isNextDay = focusedDateStrInAnchor && localDateStrInCity && localDateStrInCity > focusedDateStrInAnchor;
-      const isWork = isWorkHour(city, localHour, localDayShort);
-      const isEarly = isEarlyHour(city, localHour, localDayShort);
+      const isWork = isWorkHour(city, localHour, localDayLong);
+      const isEarly = isEarlyHour(city, localHour, localDayLong);
       const isNow = isFocusedTodayInAnchor && (c === currentAnchorHour);
       const isPast = isFocusedTodayInAnchor && (c < currentAnchorHour);
       const isInRange = selectedStartCol >= 0 && c >= selectedStartCol && c <= selectedEndCol;
