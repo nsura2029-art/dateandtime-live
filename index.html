@@ -200,7 +200,13 @@
     .live-location-icon { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; color: #047857; }
     [data-theme="dark"] .live-location-icon { color: #34d399; }
     .live-location-icon svg { width: 100%; height: 100%; }
-    .live-location-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 22rem; }
+    .live-location-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 22rem; min-width: 0; }
+    .live-location-tz { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 12rem; min-width: 0; }
+    @media (max-width: 480px) {
+      .live-location { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 2rem); padding: 0.4rem 0.75rem; }
+      .live-location-text { max-width: 100%; }
+      .live-location-tz { max-width: 100%; font-size: 0.75rem; opacity: 0.85; }
+    }
 
     /* Clock */
     .clock-block { margin: 0 auto 0.75rem; max-width: 720px; }
