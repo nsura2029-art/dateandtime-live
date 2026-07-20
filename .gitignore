@@ -46,3 +46,4 @@ temp/
 .worktrees/
 .wrangler/
 worker-configuration.d.ts
+.shell-tmp/
