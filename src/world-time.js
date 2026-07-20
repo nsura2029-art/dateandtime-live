@@ -839,7 +839,7 @@
       const tooltipSubtitle = document.getElementById("wt-tooltip-subtitle");
       if (tooltipSubtitle) {
         const homeCity = cities[0];
-        tooltipSubtitle.textContent = `When it's ${anchorRow.localTime} ${homeCity.timezone.split('/').pop().replace(/_/g, ' ')} time, here's what the rest of your cities show`;
+        tooltipSubtitle.textContent = `When it's ${anchorRow.localTime} ${homeCity.name} time, here's what the rest of your cities show`;
       }
 
       // Body: one row per city, with dividers between rows
