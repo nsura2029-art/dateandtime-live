@@ -208,3 +208,43 @@
 
 /* ===== Shared-axis date range label ===== */
 .wt-city-row .left .date-row .arrow { color: var(--wt-muted); font-weight: 400; margin: 0 0.15rem; }
+
+/* ===== Weekend tiles (Sat/Sun in city's local day) ===== */
+.wt-tile.weekend { background: #fda4af; color: #881337; }
+.wt-tile.weekend.work { background: #fb7185; color: white; }
+.wt-tile.weekend.early { background: #fed7aa; color: #7c2d12; }
+.wt-tile.weekend.past { opacity: 0.35; }
+.wt-tile.weekend.is-selected, .wt-tile.weekend.in-range { background: #e11d48; color: white; }
+
+[data-theme="dark"] .wt-tile.weekend { background: #9f1239; color: #fecdd3; }
+[data-theme="dark"] .wt-tile.weekend.work { background: #be123c; color: white; }
+[data-theme="dark"] .wt-tile.weekend.early { background: #7c2d12; color: #fed7aa; }
+[data-theme="dark"] .wt-tile.weekend.is-selected, [data-theme="dark"] .wt-tile.weekend.in-range { background: #f43f5e; color: white; }
+
+/* ===== Per-tile day-change label (e.g. "TUE JUL 21" at first tile of new day) ===== */
+.wt-tile { position: relative; }
+.wt-tile .day-label {
+  position: absolute;
+  top: -0.55rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  font-size: 0.5rem;
+  font-weight: 800;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  z-index: 1;
+  pointer-events: none;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+[data-theme="dark"] .wt-tile .day-label { background: #f3f4f6; color: #1f2937; }
+
+@media (max-width: 760px) {
+  .wt-tile .day-label { font-size: 0.4rem; padding: 0.05rem 0.2rem; }
+}
+
+/* Add top padding to the row's grid so the day label has room */
+.wt-cities-head .right, .wt-city-row .right { padding-top: 0.5rem; }

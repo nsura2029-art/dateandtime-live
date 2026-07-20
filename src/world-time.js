@@ -351,7 +351,11 @@
     const x = tileRect.left - gridRect.left + tileRect.width / 2;
     line.style.display = "block";
     line.style.left = (gridRect.left - firstRow.getBoundingClientRect().left + x) + "px";
-    line.style.height = (firstRow.scrollHeight) + "px";
+    // Use the max scrollHeight of all rows (day-change tiles can make some rows taller)
+    const allRows = document.querySelectorAll(".wt-city-row");
+    let maxH = 0;
+    allRows.forEach(r => { if (r.scrollHeight > maxH) maxH = r.scrollHeight; });
+    line.style.height = maxH + "px";
   }
 
   // === SHARED WALL-CLOCK AXIS HELPERS ===
@@ -442,6 +446,17 @@
           return fmt.format(moment);
         } catch (e) { return "Mon"; }
       })();
+      const localDateShort = (() => {
+        try {
+          const fmt = new Intl.DateTimeFormat("en-US", { timeZone: city.timezone, weekday: "short", day: "2-digit", month: "short" });
+          return fmt.format(moment);
+        } catch (e) { return ""; }
+      })();
+      // Weekend detection: Sat or Sun in the city's local day
+      const isWeekend = (localDayShort === "Sat" || localDayShort === "Sun");
+      // Show day label at the first tile of each new day in the city
+      // (localHour === 0 means midnight in that city, which is the start of a new day)
+      const showDayLabel = (localHour === 0);
       const isWork = isWorkHour(city, localHour, localDayShort);
       const isEarly = isEarlyHour(city, localHour, localDayShort);
       const isNow = isFocusedTodayInAnchor && (c === currentAnchorHour);
@@ -453,11 +468,14 @@
       if (isPast) classes.push("past");
       if (isWork) classes.push("work");
       if (isEarly) classes.push("early");
+      if (isWeekend) classes.push("weekend");
       if (isNow) classes.push("now");
       if (isStart || isEnd) classes.push("is-selected");
       else if (isInRange) classes.push("in-range");
+      if (showDayLabel) classes.push("day-change");
       const fmt = fmtHour(localHour);
-      tiles += `<div class="${classes.join(" ")}" data-tile data-city="${city.id}" data-col="${c}" data-hour="${localHour}"><span class="h">${fmt.h}</span><span class="p">${fmt.p}</span></div>`;
+      const dayLabelHtml = showDayLabel ? `<span class="day-label">${localDateShort.toUpperCase()}</span>` : "";
+      tiles += `<div class="${classes.join(" ")}" data-tile data-city="${city.id}" data-col="${c}" data-hour="${localHour}">${dayLabelHtml}<span class="h">${fmt.h}</span><span class="p">${fmt.p}</span></div>`;
     }
 
     const time = localTimeInCity(city.timezone, now);
