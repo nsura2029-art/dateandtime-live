@@ -318,7 +318,8 @@
     const dayName = localDayNameInCity(cities[0].timezone, now) + "day"; // Mon, Tue, etc. → Monday...
     // Actually need to get the full day name in the user's tz
     const userTz = (window.__location && window.__location.timezone) || cities[0].timezone;
-    const userDayName = localDayNameInCity(userTz, now);
+    // Day label uses focusedDate so it updates when user picks a different date
+    const userDayName = localDayNameInCity(userTz, focusedDate);
     const fullDayName = ({
       "Mon": "Monday", "Tue": "Tuesday", "Wed": "Wednesday", "Thu": "Thursday",
       "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"
@@ -338,7 +339,7 @@
             <button class="wt-time-toggle" id="wt-time-toggle" title="Toggle 12/24 hour format" aria-label="Toggle 12/24 hour format">12h</button>
           </div>
           <div class="wt-day-label-wrap">
-            <span class="day-label" id="wt-day-label">${fullDayName}, ${localDateInCity(userTz, now)}</span>
+            <span class="day-label" id="wt-day-label">${fullDayName}, ${localDateInCity(userTz, focusedDate)}</span>
           </div>
         </div>
       </div>
