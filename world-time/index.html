@@ -191,8 +191,11 @@
   <!-- Rich tooltip on tile click: shows time in all cities at that column -->
   <div class="wt-tooltip" id="wt-tooltip" role="dialog" aria-label="Time details">
     <div class="wt-tooltip-header">
-      <span id="wt-tooltip-title">Hour details</span>
-      <button class="wt-tooltip-close" id="wt-tooltip-close" aria-label="Close">×</button>
+      <div class="wt-tooltip-header-top">
+        <span id="wt-tooltip-title">Hour details</span>
+        <button class="wt-tooltip-close" id="wt-tooltip-close" aria-label="Close">×</button>
+      </div>
+      <div class="wt-tooltip-subtitle" id="wt-tooltip-subtitle"></div>
     </div>
     <div id="wt-tooltip-body"></div>
   </div>

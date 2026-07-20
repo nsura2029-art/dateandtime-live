@@ -743,6 +743,7 @@
     function close() {
       tooltip.classList.remove("is-open");
       tooltip.style.display = "none";
+      stopTooltipLiveTime();
     }
     if (tooltipClose) tooltipClose.addEventListener("click", close);
     // Close on click outside (but not on the same mousedown that opened it)
@@ -831,21 +832,37 @@
         return { city, localTime, localDayShort, isNextDay, status, statusLabel, isHome };
       });
 
-      // Title: the anchor city's time + day
+      // Title: the anchor city's time + day + user-friendly subtitle
       const anchorRow = rows[0];
       tooltipTitle.textContent = `${anchorRow.localTime} \u00b7 ${anchorRow.localDayShort}${anchorRow.isNextDay ? ' +1d' : ''}`;
+      // Subtitle: user-friendly explanation of what the selected time means
+      const tooltipSubtitle = document.getElementById("wt-tooltip-subtitle");
+      if (tooltipSubtitle) {
+        const homeCity = cities[0];
+        tooltipSubtitle.textContent = `When it's ${anchorRow.localTime} ${homeCity.timezone.split('/').pop().replace(/_/g, ' ')} time, here's what the rest of your cities show`;
+      }
 
       // Body: one row per city, with dividers between rows
+      // Each row also shows the current LIVE time with a green dot and seconds
       tooltipBody.innerHTML = rows.map((r, i) => {
         const home = r.isHome ? '<span class="home" title="Your home city">\u2302</span> ' : '';
         const nextDay = r.isNextDay ? ' <span class="plus">+1d</span>' : '';
-        return `<div class="wt-tooltip-row ${r.status}${r.isHome ? ' is-home' : ''}${i === 0 ? ' is-first' : ''}">
-          <span class="wt-tooltip-name">${home}${escapeHtml(r.city.name)}</span>
-          <span class="wt-tooltip-time">${r.localTime}</span>
-          <span class="wt-tooltip-day">${r.localDayShort}${nextDay}</span>
-          <span class="wt-tooltip-status">${r.statusLabel}</span>
+        return `<div class="wt-tooltip-row ${r.status}${r.isHome ? ' is-home' : ''}${i === 0 ? ' is-first' : ''}" data-tz="${escapeHtml(r.city.timezone)}">
+          <div class="wt-tooltip-row-main">
+            <span class="wt-tooltip-name">${home}${escapeHtml(r.city.name)}</span>
+            <span class="wt-tooltip-time">${r.localTime}</span>
+            <span class="wt-tooltip-day">${r.localDayShort}${nextDay}</span>
+          </div>
+          <div class="wt-tooltip-row-live">
+            <span class="live-dot"></span>
+            <span class="live-text" data-live-tz="${escapeHtml(r.city.timezone)}">--:--:--</span>
+            <span class="wt-tooltip-status">${r.statusLabel}</span>
+          </div>
         </div>`;
       }).join("");
+
+      // Start the live time updater for the tooltip
+      startTooltipLiveTime();
 
       // Position the tooltip as an overlay at the home city row, at the selected column
       tooltip.style.display = "block";
@@ -899,6 +916,46 @@
     const arrowX = tileRect.left + tileRect.width / 2 - left;
     tooltip.style.setProperty("--wt-tooltip-arrow-left", arrowX + "px");
     tooltip.dataset.arrow = arrowSide;
+  }
+
+  // ===== Tooltip live time =====
+  // Updates the live time (with seconds) in each tooltip row every 1s.
+  // Shows a green pulsing dot to indicate "live" data.
+  let tooltipLiveInterval = null;
+  function startTooltipLiveTime() {
+    stopTooltipLiveTime();
+    function tick() {
+      const els = document.querySelectorAll("[data-live-tz]");
+      if (els.length === 0) { stopTooltipLiveTime(); return; }
+      const now = new Date();
+      els.forEach(el => {
+        const tz = el.dataset.liveTz;
+        try {
+          const fmt = new Intl.DateTimeFormat("en-US", {
+            timeZone: tz,
+            hour: "numeric",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: !use24h
+          });
+          // Strip the AM/PM suffix — Intl puts it inside; we want it outside the live text
+          const parts = fmt.formatToParts(now);
+          const h = parts.find(p => p.type === "hour")?.value || "00";
+          const m = parts.find(p => p.type === "minute")?.value || "00";
+          const s = parts.find(p => p.type === "second")?.value || "00";
+          const p = parts.find(p => p.type === "dayPeriod")?.value || "";
+          el.textContent = use24h ? `${h}:${m}:${s}` : `${h}:${m}:${s} ${p}`;
+        } catch (e) { el.textContent = "--:--:--"; }
+      });
+    }
+    tick();
+    tooltipLiveInterval = setInterval(tick, 1000);
+  }
+  function stopTooltipLiveTime() {
+    if (tooltipLiveInterval) {
+      clearInterval(tooltipLiveInterval);
+      tooltipLiveInterval = null;
+    }
   }
 
   // Reposition the tooltip on scroll/resize so it follows the selected column

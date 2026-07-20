@@ -339,8 +339,8 @@
 .wt-tooltip {
   position: fixed;
   z-index: 1000;
-  min-width: 300px;
-  max-width: 360px;
+  min-width: 320px;
+  max-width: 400px;
   background: var(--wt-bg-card);
   border: 1px solid var(--wt-border);
   border-radius: 10px;
@@ -355,19 +355,29 @@
 
 /* Tooltip header */
 .wt-tooltip-header {
+  padding: 0.6rem 0.75rem 0.5rem;
+  background: var(--wt-bg-soft);
+  border-bottom: 1px solid var(--wt-border);
+  color: var(--wt-fg);
+}
+.wt-tooltip-header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 0.75rem;
-  background: var(--wt-bg-soft);
-  border-bottom: 1px solid var(--wt-border);
+  gap: 0.5rem;
   font-weight: 700;
-  font-size: 0.8125rem;
-  color: var(--wt-fg);
+  font-size: 0.9375rem;
 }
-.wt-tooltip-header #wt-tooltip-title {
+.wt-tooltip-header-top #wt-tooltip-title {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
+}
+.wt-tooltip-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--wt-fg-muted);
+  margin-top: 0.25rem;
+  line-height: 1.35;
 }
 .wt-tooltip-close {
   background: none;
@@ -379,26 +389,21 @@
   padding: 0.1rem 0.3rem;
   border-radius: 4px;
   transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
 }
 .wt-tooltip-close:hover {
   background: var(--wt-bg-soft);
   color: var(--wt-fg);
 }
 
-/* Tooltip body: list of city rows */
+/* Tooltip body: list of city rows (no scroll, full width) */
 #wt-tooltip-body {
-  max-height: 280px;
-  overflow-y: auto;
+  /* No max-height, no overflow — show all cities */
 }
 
 /* Each city row in the tooltip */
 .wt-tooltip-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8125rem;
+  padding: 0.55rem 0.75rem;
   border-bottom: 1px solid var(--wt-border-soft, var(--wt-border));
   transition: background 0.12s;
 }
@@ -406,10 +411,22 @@
 .wt-tooltip-row.is-first { background: var(--wt-bg-soft); }
 .wt-tooltip-row.is-home {
   background: rgba(101, 147, 212, 0.08);
-  font-weight: 600;
 }
+.wt-tooltip-row.is-home .wt-tooltip-name { font-weight: 600; }
 .wt-tooltip-row:hover {
   background: var(--wt-bg-soft);
+}
+
+/* Top line: name | time | day */
+.wt-tooltip-row-main {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.8125rem;
+}
+.wt-tooltip-row.is-home.is-home .wt-tooltip-row-main {
+  color: var(--wt-fg);
 }
 
 /* City name (with optional home indicator) */
@@ -450,10 +467,40 @@
   margin-left: 0.2em;
 }
 
+/* Bottom line: live time (with green dot + seconds) | status badge */
+.wt-tooltip-row-live {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+  font-size: 0.6875rem;
+  color: var(--wt-fg-muted);
+}
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  animation: live-dot-pulse 1.6s ease-out infinite;
+  flex-shrink: 0;
+}
+@keyframes live-dot-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(16, 185, 129, 0.55); }
+  70%  { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(16, 185, 129, 0); }
+}
+.live-text {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--wt-fg-soft);
+  letter-spacing: 0.01em;
+}
+
 /* Status badge (Work, Sleep, Weekend, Off) */
 .wt-tooltip-status {
-  grid-column: 1 / -1;
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -462,8 +509,7 @@
   background: var(--wt-bg-soft);
   color: var(--wt-fg-muted);
   white-space: nowrap;
-  margin-top: 0.2rem;
-  justify-self: start;
+  margin-left: auto;
 }
 .wt-tooltip-row.work .wt-tooltip-status {
   background: rgba(101, 147, 212, 0.18);
