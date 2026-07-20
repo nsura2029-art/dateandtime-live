@@ -15,18 +15,18 @@
   --wt-border: #e2e8f0;          /* slate-200 */
   --wt-border-soft: #f1f5f9;     /* slate-100 */
   /* Accents */
-  --wt-blue: rgba(99, 102, 241, 0.22);   /* work hours - indigo */
+  --wt-blue: rgba(99, 102, 241, 0.32);   /* work hours - indigo */
   --wt-blue-edge: #6366f1;
-  --wt-blue-fg: #3730a3;                  /* indigo-800 */
-  --wt-yellow: rgba(245, 158, 11, 0.22);  /* early/late - amber */
+  --wt-blue-fg: #312e81;                  /* indigo-900 */
+  --wt-yellow: rgba(245, 158, 11, 0.30);  /* early/late - amber */
   --wt-yellow-edge: #d97706;
-  --wt-yellow-fg: #92400e;
-  --wt-sleep: rgba(139, 92, 246, 0.18);  /* sleep - violet */
+  --wt-yellow-fg: #78350f;
+  --wt-sleep: rgba(139, 92, 246, 0.25);  /* sleep - violet */
   --wt-sleep-edge: #7c3aed;
-  --wt-sleep-fg: #5b21b6;
-  --wt-weekend: rgba(244, 114, 182, 0.22); /* weekend - pink */
+  --wt-sleep-fg: #4c1d95;
+  --wt-weekend: rgba(244, 114, 182, 0.28); /* weekend - pink */
   --wt-weekend-edge: #ec4899;
-  --wt-weekend-fg: #9d174d;
+  --wt-weekend-fg: #831843;
   --wt-next-day-border: rgba(15, 23, 42, 0.10);
   --wt-next-day-tint: rgba(15, 23, 42, 0.025);
   --wt-off: #f1f5f9;
