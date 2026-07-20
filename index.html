@@ -229,8 +229,29 @@
     .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.5vw, 1.1rem); margin: 0.5rem auto 0.5rem; max-width: 42rem; line-height: 1.5; }
     .subtitle strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.05em; }
     .greeting-seo { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 0.5rem; }
-    .hero-supporting { font-size: clamp(0.8125rem, 1.3vw, 0.9rem); color: var(--color-muted-soft); line-height: 1.6; margin: 1.25rem auto 0; max-width: 40rem; padding: 0 1rem; }
-    .hero-supporting .hero-line { margin: 0; padding: 0; }
+    .hero-supporting {
+      font-size: clamp(0.9375rem, 1.3vw, 1.0625rem);
+      color: var(--color-foreground-soft);
+      line-height: 1.5;
+      margin: 1.5rem 0 0;
+      padding: 0 1rem;
+      text-align: center;
+    }
+    .hero-supporting .hero-line { margin: 0 0 0.5rem; padding: 0; }
+    .hero-supporting .hero-line:last-child { margin-bottom: 0; }
+    .hero-supporting .stat {
+      color: var(--color-foreground);
+      font-weight: 700;
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+      font-size: 1.05em;
+      white-space: nowrap;
+    }
+    .hero-supporting .hero-divider {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--color-muted-soft);
+      opacity: 0.5;
+    }
     .clock-block { margin: 2.5rem auto 0.75rem; max-width: 720px; }
 
     /* ===== Live location indicator (green pulse + "City, State, Country") ===== */
@@ -661,9 +682,9 @@
         <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
 
         <div class="hero-supporting">
-          <p class="hero-line">The world clock for <strong>33,945 cities</strong> across <strong>408 time zones</strong> — current local time, UTC offset, and DST status in one place.</p>
-          <p class="hero-line">Plus sunrise &amp; sunset, public holidays, and business hours for every country. Auto-detect your city or search anywhere on Earth.</p>
-          <p class="hero-line"><strong>Free</strong> for meeting planners, travelers, and remote teams. Powered by official <strong>IANA time zone data</strong>.</p>
+          <p class="hero-line">The world clock for <span class="stat">33,945 cities</span> across <span class="stat">408 time zones</span> <span class="hero-divider">·</span> current time, UTC offset, and DST status in one place.</p>
+          <p class="hero-line">Plus sunrise &amp; sunset, public holidays, and business hours for every country <span class="hero-divider">·</span> search anywhere on Earth.</p>
+          <p class="hero-line"><strong>Free</strong> for meeting planners, travelers, and remote teams <span class="hero-divider">·</span> powered by official <strong>IANA time zone data</strong></p>
         </div>
       </div>
     </section>
