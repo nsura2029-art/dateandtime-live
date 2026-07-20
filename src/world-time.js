@@ -1111,6 +1111,7 @@
       const isSelected = (i === 2); // middle tab is the selected
       days.push({ d, dow, num, isToday, isSelected });
     }
+    console.log("[wt] renderDateTabs: days=", days.length, "first=", days[0]);
     tabs.innerHTML = days.map((day, i) => `
       <div class="wt-date-tab ${day.isSelected ? 'today' : ''}${day.isToday ? ' today-actual' : ''}" data-idx="${i}">
         <span class="dow">${day.dow}</span>
