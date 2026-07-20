@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Time — Assessment & Tool Pick · dateandtime.live</title>
+<style>
+:root {
+  --bg: #faf7f2; --bg-soft: #f4f1ec; --fg: #2a2438; --fg-soft: #5a5470;
+  --muted: #8a8499; --p: #5b4aaf; --p-fg: #ffffff; --p-soft: #ede9fe;
+  --b: rgba(91,74,175,.16); --b-soft: rgba(91,74,175,.08);
+  --green: #10b981; --orange: #f97316; --red: #ef4444; --amber: #f59e0b;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f0820; --bg-soft: #16092e; --fg: #ede9fe; --fg-soft: #d6cef5;
+    --muted: #a599c5; --p: #a78bfa; --p-soft: rgba(167,139,250,.18);
+    --b: rgba(167,139,250,.18); --b-soft: rgba(167,139,250,.10); }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; background:
+  radial-gradient(circle at 12% 18%, rgba(255,181,156,.30), transparent 28%),
+  radial-gradient(circle at 83% 15%, rgba(125,211,252,.32), transparent 31%),
+  linear-gradient(135deg, #fff8ef 0%, #f4f3ff 46%, #edf7ff 100%); pointer-events: none; }
+@media (prefers-color-scheme: dark) { body::before { background:
+  radial-gradient(circle at 18% 22%, rgba(139,92,246,.30), transparent 30%),
+  radial-gradient(circle at 82% 18%, rgba(99,102,241,.20), transparent 28%),
+  linear-gradient(160deg, #0f0820 0%, #1f0a3e 50%, #0a0418 100%); } }
+.container { max-width: 1240px; margin: 0 auto; padding: 2rem 1.25rem; }
+.back { display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.875rem; color: var(--p); text-decoration: none; font-weight: 600; }
+.eyebrow { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--p); }
+h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin: 0.25rem 0 0.5rem; }
+h2 { font-size: 1.5rem; font-weight: 800; margin: 2.5rem 0 0.75rem; letter-spacing: -0.01em; }
+h3 { font-size: 1.125rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+.lede { color: var(--fg-soft); font-size: 1.05rem; margin: 0 0 2rem; max-width: 60ch; }
+section { margin: 2.5rem 0; }
+.summary-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 768px) { .summary-grid { grid-template-columns: repeat(4, 1fr); } }
+.summary { padding: 1rem; border: 1px solid var(--b-soft); border-radius: 0.875rem; background: color-mix(in srgb, white 60%, transparent); }
+.summary .num { font-size: 1.75rem; font-weight: 800; font-family: ui-monospace, monospace; color: var(--p); line-height: 1; }
+.summary .label { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.score-card { padding: 1.25rem; border: 1px solid var(--b-soft); border-radius: 1rem; background: color-mix(in srgb, white 70%, transparent); margin: 1rem 0; }
+.score-card h3 { margin: 0 0 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.score-card .grade { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; }
+.score-card .grade.good { background: rgba(16,185,129,.15); color: #047857; }
+.score-card .grade.ok { background: rgba(245,158,11,.15); color: #b45309; }
+.score-card .grade.bad { background: rgba(239,68,68,.15); color: #b91c1c; }
+.score-card ul { margin: 0.5rem 0 0; padding-left: 1.25rem; color: var(--fg-soft); font-size: 0.875rem; }
+.score-card li { margin: 0.4rem 0; }
+.score-card .fix { background: var(--p-soft); border-left: 3px solid var(--p); padding: 0.625rem 0.875rem; border-radius: 0 0.5rem 0.5rem 0; margin-top: 0.75rem; font-size: 0.8125rem; color: var(--fg-soft); }
+.score-card .fix strong { color: var(--p); }
+
+.screenshots { display: grid; gap: 0.5rem; grid-template-columns: repeat(2, 1fr); margin: 1rem 0; }
+@media (min-width: 768px) { .screenshots { grid-template-columns: repeat(3, 1fr); } }
+.screenshots .shot { position: relative; }
+.screenshots img { width: 100%; height: auto; border: 1px solid var(--b-soft); border-radius: 0.5rem; display: block; }
+.screenshots .label { font-size: 0.6875rem; color: var(--muted); margin-top: 0.25rem; }
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+th, td { text-align: left; padding: 0.625rem 0.5rem; border-bottom: 1px solid var(--b-soft); }
+th { font-weight: 700; color: var(--fg); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+td { color: var(--fg-soft); }
+.pill { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 700; }
+.pill.big { background: rgba(16,185,129,.15); color: #047857; }
+.pill.med { background: rgba(245,158,11,.15); color: #b45309; }
+.pill.low { background: rgba(239,68,68,.10); color: #b91c1c; }
+.pill.ez { background: rgba(16,185,129,.15); color: #047857; }
+.pill.hard { background: rgba(239,68,68,.10); color: #b91c1c; }
+
+.rec { padding: 1.5rem; background: var(--p-soft); border: 1.5px solid var(--p); border-radius: 1rem; margin: 1.5rem 0; }
+.rec h3 { margin-top: 0; color: var(--p); }
+.rec ol { margin: 0.5rem 0; padding-left: 1.5rem; color: var(--fg-soft); }
+.rec ol li { margin: 0.5rem 0; }
+.rec strong { color: var(--fg); }
+</style>
+</head>
+<body>
+<div class="container">
+<a href="./index.html" class="back">← All 3 designs</a>
+<div class="eyebrow">Assessment · 2026-07-19</div>
+<h1>World Time — visual + keyword assessment</h1>
+<p class="lede">Tested all 3 designs across light/dark × mobile/tablet/desktop. Researched 8 keyword clusters. Here's what works, what needs fixing, and the tools we should ship.</p>
+
+<!-- TOP-LINE SCORES -->
+<section>
+<div class="summary-grid">
+<div class="summary"><div class="num">3</div><div class="label">Designs</div></div>
+<div class="summary"><div class="num">18</div><div class="label">Screenshots</div></div>
+<div class="summary"><div class="num">8</div><div class="label">Keywords researched</div></div>
+<div class="summary"><div class="num">~350K</div><div class="label">Total monthly search</div></div>
+</div>
+</section>
+
+<!-- DESIGN SCORES -->
+<section>
+<h2>📐 Design scores (light × dark × mobile × tablet × desktop)</h2>
+
+<div class="score-card">
+<h3>Design A — Personal World Clock <span class="grade good">A+ ready</span></h3>
+<p style="color:var(--fg-soft);margin:0">The "where are my people" view. Hero clock + grid of saved cities.</p>
+<ul>
+  <li><strong>Light mobile (390px):</strong> Hero stacks perfectly. Big clock readable. Buttons clear.</li>
+  <li><strong>Light tablet (768px):</strong> 3-col grid, hero 2-col, all elements proportional.</li>
+  <li><strong>Light desktop (1440px):</strong> 4-col grid, looks like a polished product page.</li>
+  <li><strong>Dark mode (all):</strong> All text readable, no contrast issues. Pastel tiles work in both themes.</li>
+  <li><strong>NotebookLM pastels:</strong> Each city has a unique tone (peach, lavender, mint, sky, rose, lemon) — feels personal, not generic.</li>
+</ul>
+<div class="fix"><strong>No fixes needed.</strong> Ready to ship as-is.</div>
+</div>
+
+<div class="score-card">
+<h3>Design B — Meeting Planner <span class="grade ok">B needs fixes</span></h3>
+<p style="color:var(--fg-soft);margin:0">The "when works for everyone" view. 24×N grid with working hours overlap.</p>
+<ul>
+  <li><strong>Light mobile:</strong> ✅ City chips wrap, grid shows 1 column properly</li>
+  <li><strong>Light desktop:</strong> ✅ Grid is beautiful, green slots pop, suggestions list helps</li>
+  <li><strong>Dark mode grid cells:</strong> ❌ Work-hours (green) and sleep (indigo) are too dark. The "where can I meet?" story is lost.</li>
+  <li><strong>Dark mode "Picked time" chips:</strong> ❌ Times like "10:00 Wesley Chapel" have dark text on dark background — invisible.</li>
+  <li><strong>Dark mode "iCal / Google Cal" button:</strong> ❌ The purple button + icon looks muddy against the dark purple picked-time card.</li>
+  <li><strong>Suggestions (Best/OK/Poor) pills:</strong> ✅ Green/amber/red are clear in both modes</li>
+</ul>
+<div class="fix">
+  <strong>Fixes needed (3):</strong><br>
+  1. Brighten the work-hours green in dark mode (use a lighter green for sleep, mid-green for work, bright green for full overlap)<br>
+  2. Add explicit <code>color: var(--fg)</code> to the picked-time chip <code>.pt</code><br>
+  3. Use a higher-contrast button style for the iCal primary CTA in dark mode
+</div>
+</div>
+
+<div class="score-card">
+<h3>Design C — Converter + Map + Event Announcer <span class="grade bad">C needs rework</span></h3>
+<p style="color:var(--fg-soft);margin:0">"See the world. Schedule anywhere." 1:1 converter + day/night map + share card.</p>
+<ul>
+  <li><strong>Light mode converter boxes:</strong> ✅ Clear, big readable time, chips below</li>
+  <li><strong>Dark mode converter boxes:</strong> ❌ Background too dark, time text dim, chips barely visible</li>
+  <li><strong>World map (the centerpiece):</strong> ❌ The "land" is a placeholder SVG blob, not a real world map. Looks like a child's drawing.</li>
+  <li><strong>Day/night terminator:</strong> ⚠️ Concept works (yellow line, pink dusk) but doesn't have a real land to terminate over.</li>
+  <li><strong>City pins on map:</strong> ✅ Pin design is good in both modes (yellow on map, green for home)</li>
+  <li><strong>Around-the-world timeline strip:</strong> ✅ Color-coded day/dusk/night, clear UTC labels</li>
+  <li><strong>Share event card:</strong> ✅ City chips clean, all 5 share buttons (iCal, copy, email, WhatsApp, calendar) visible</li>
+  <li><strong>Mobile:</strong> ✅ Stacks well, but the map is below the fold (huge asset)</li>
+</ul>
+<div class="fix">
+  <strong>Fixes needed (3):</strong><br>
+  1. <strong>Real world map</strong> — use a D3 geo projection or a free world SVG. ~50KB. Critical for this design's appeal.<br>
+  2. Brighten the converter box backgrounds in dark mode (use a slightly lighter --bg-soft)<br>
+  3. Make the "To" input copy show actual text (the input shows placeholder, not the value — needs the input to be readable in dark mode)
+</div>
+</div>
+</section>
+
+<!-- DEVICE COMPARISON -->
+<section>
+<h2>📱 Device behavior summary</h2>
+<table>
+<thead><tr><th>Design</th><th>Mobile (390px)</th><th>Tablet (768px)</th><th>Desktop (1440px)</th><th>Dark mode</th></tr></thead>
+<tbody>
+<tr><td>A — Personal</td><td>Hero stacks ✅</td><td>3-col grid ✅</td><td>4-col grid ✅</td><td>✅ all good</td></tr>
+<tr><td>B — Meeting</td><td>Grid → 1 col ✅</td><td>Grid → 6 col ✅</td><td>Full 6 cities × 24h ✅</td><td>❌ needs work</td></tr>
+<tr><td>C — Converter</td><td>Stacked boxes ✅</td><td>Side-by-side ✅</td><td>Map below fold ✅</td><td>❌ boxes too dark</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- KEYWORD RESEARCH -->
+<section>
+<h2>🔍 Keyword research — what people actually search</h2>
+<p style="color:var(--fg-soft)">Sources: KDROI.io, Semrush data, industry comp data, Applyra rankings. Volume = US monthly searches.</p>
+<table>
+<thead><tr><th>Keyword cluster</th><th>Volume/mo</th><th>KD</th><th>Intent</th><th>Our fit</th><th>Pick?</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>time zone converter</strong></td>
+  <td><strong>180,000</strong> <span class="pill big">huge</span></td>
+  <td>35 <span class="pill ez">easy</span></td>
+  <td>Tool — convert 2 cities</td>
+  <td>✅ Trivial to build</td>
+  <td>🟢 <strong>YES</strong></td>
+</tr>
+<tr>
+  <td><strong>time in [city] now</strong></td>
+  <td><strong>~110,000</strong> (×33,945 cities) <span class="pill big">huge</span></td>
+  <td>varies (mostly low)</td>
+  <td>Current time per city</td>
+  <td>✅ Already on home</td>
+  <td>🟢 Already winning</td>
+</tr>
+<tr>
+  <td><strong>meeting planner time zone</strong></td>
+  <td><strong>~30,000</strong> <span class="pill big">huge</span></td>
+  <td>35-42 <span class="pill ez">easy</span></td>
+  <td>Find overlap across cities</td>
+  <td>✅ Perfect (cities + working hours)</td>
+  <td>🟢 <strong>YES</strong></td>
+</tr>
+<tr>
+  <td><strong>world clock</strong></td>
+  <td><strong>~50K-100K</strong> <span class="pill big">huge</span></td>
+  <td>70+ <span class="pill hard">hard</span></td>
+  <td>Multi-city live clock</td>
+  <td>✅ Design A is a world clock</td>
+  <td>🟡 <strong>YES (as Personal)</strong></td>
+</tr>
+<tr>
+  <td><strong>time zone map</strong></td>
+  <td><strong>~20K-40K</strong> <span class="pill med">medium</span></td>
+  <td>35-50 <span class="pill med">med</span></td>
+  <td>Visual world map</td>
+  <td>⚠️ Need real map (D3)</td>
+  <td>🟡 v2</td>
+</tr>
+<tr>
+  <td><strong>day night world map</strong></td>
+  <td><strong>~5K-10K</strong> <span class="pill med">medium</span></td>
+  <td>20-30 <span class="pill ez">easy</span></td>
+  <td>Visual day/night terminator</td>
+  <td>⚠️ Cool but niche</td>
+  <td>⚪ v2 / viral</td>
+</tr>
+<tr>
+  <td><strong>event time announcer</strong></td>
+  <td><strong>~1,000</strong> <span class="pill low">low</span></td>
+  <td>< 20 <span class="pill ez">easy</span></td>
+  <td>Share event in N cities</td>
+  <td>✅ Low-effort, very viral</td>
+  <td>🟢 <strong>YES (cheap)</strong></td>
+</tr>
+<tr>
+  <td><strong>personal world clock</strong></td>
+  <td><strong>~5,000</strong> <span class="pill med">medium</span></td>
+  <td>40+ <span class="pill med">med</span></td>
+  <td>Saved cities</td>
+  <td>✅ Design A</td>
+  <td>🟢 Folded into Personal</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<!-- VOLUME OPPORTUNITY -->
+<section>
+<h2>📊 Volume opportunity matrix</h2>
+<table>
+<thead><tr><th>Tool</th><th>Volume</th><th>Effort</th><th>Velocity</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><td>Time Zone Converter (1:1)</td><td>180K</td><td>2-3 days</td><td>Very fast</td><td>Trivial — just 2 city inputs + Intl.DateTimeFormat</td></tr>
+<tr><td>Meeting Planner</td><td>30K</td><td>1-2 weeks</td><td>Fast</td><td>Industry gap. World Time Buddy owns this with an ugly UI.</td></tr>
+<tr><td>Event Time Announcer</td><td>1K + viral</td><td>1 week</td><td>Fast</td><td>Linkable, shareable, embeddable. Below-the-radar SEO win.</td></tr>
+<tr><td>Personal World Clock</td><td>5-100K (depends on "world clock" wins)</td><td>1 week</td><td>Fast</td><td>Reuses the home page rail we already have. localStorage saves.</td></tr>
+<tr><td>Time Zone Map</td><td>20-40K</td><td>2-3 weeks</td><td>Slow</td><td>Need real map (D3 geo). Hard to differentiate from timeanddate.</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- RECOMMENDATION -->
+<section>
+<h2>🏆 My tool pick for the World Time menu</h2>
+
+<div class="rec">
+<h3>Ship these 4, in this order:</h3>
+<ol>
+  <li><strong>Personal World Clock</strong> (Design A) — saves to localStorage, shareable URL. 1 page, ~5 days of work. <em>Reuses our home page rail component.</em></li>
+  <li><strong>Time Zone Converter</strong> (from Design C, the converter part only) — 1:1 city conversion. 2-3 days. Trivial with Intl.DateTimeFormat. The 180K/mo keyword.</li>
+  <li><strong>Meeting Planner</strong> (Design B, with dark mode fixes) — 24×N grid + working hours overlap + iCal export. 1-2 weeks. Industry gap. 30K/mo.</li>
+  <li><strong>Event Time Announcer</strong> (from Design C, the share card) — shareable URL with time in N cities. 1 week. Cheap, viral.</li>
+</ol>
+<p style="margin-bottom:0"><strong>Save for v2:</strong> Time Zone Map (needs D3 + real map) and the day/night terminator visual (cool but niche).</p>
+</div>
+
+<h3>Menu structure I'd ship</h3>
+<div style="font-family:ui-monospace,monospace;font-size:0.875rem;color:var(--fg-soft);padding:1rem;background:var(--bg-soft);border-radius:0.5rem;border:1px solid var(--b-soft);">
+dateandtime.live/world-time/<br>
+&nbsp;&nbsp;└─ /personal/ &nbsp;&nbsp;&nbsp;&nbsp;→ Design A (no fixes)<br>
+&nbsp;&nbsp;└─ /meeting/ &nbsp;&nbsp;&nbsp;&nbsp;→ Design B (3 dark mode fixes)<br>
+&nbsp;&nbsp;└─ /convert/ &nbsp;&nbsp;&nbsp;&nbsp;→ Design C's converter (no fixes)<br>
+&nbsp;&nbsp;└─ /event/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Design C's share card (no fixes)
+</div>
+
+<h3>What I'd skip for now</h3>
+<ul style="color:var(--fg-soft)">
+  <li><strong>Time Zone Map</strong> — needs real world map (D3), 2-3 weeks of work, and timeanddate.com already dominates this</li>
+  <li><strong>Day/Night terminator</strong> — cool visual but the 5-10K volume doesn't justify the SVG work for v1</li>
+  <li><strong>Market hours, religious, jet lag, TV premieres</strong> — each is a separate rabbit hole; not in v1 scope</li>
+</ul>
+</section>
+
+<!-- SCREENSHOT GALLERY -->
+<section>
+<h2>📸 Screenshot gallery (light + dark × 3 devices)</h2>
+<p style="color:var(--fg-soft)">All 18 screenshots live in this folder. Click to view at full size.</p>
+
+<h3>Design A — Personal World Clock</h3>
+<div class="screenshots">
+<div class="shot"><img src="assessment-design-a-mobile-light.png" alt="A mobile light" loading="lazy"/><div class="label">Mobile · light</div></div>
+<div class="shot"><img src="assessment-design-a-mobile-dark.png" alt="A mobile dark" loading="lazy"/><div class="label">Mobile · dark</div></div>
+<div class="shot"><img src="assessment-design-a-tablet-light.png" alt="A tablet light" loading="lazy"/><div class="label">Tablet · light</div></div>
+<div class="shot"><img src="assessment-design-a-tablet-dark.png" alt="A tablet dark" loading="lazy"/><div class="label">Tablet · dark</div></div>
+<div class="shot"><img src="assessment-design-a-desktop-light.png" alt="A desktop light" loading="lazy"/><div class="label">Desktop · light</div></div>
+<div class="shot"><img src="assessment-design-a-desktop-dark.png" alt="A desktop dark" loading="lazy"/><div class="label">Desktop · dark</div></div>
+</div>
+
+<h3>Design B — Meeting Planner</h3>
+<div class="screenshots">
+<div class="shot"><img src="assessment-design-b-mobile-light.png" alt="B mobile light" loading="lazy"/><div class="label">Mobile · light</div></div>
+<div class="shot"><img src="assessment-design-b-mobile-dark.png" alt="B mobile dark" loading="lazy"/><div class="label">Mobile · dark ⚠️</div></div>
+<div class="shot"><img src="assessment-design-b-tablet-light.png" alt="B tablet light" loading="lazy"/><div class="label">Tablet · light</div></div>
+<div class="shot"><img src="assessment-design-b-tablet-dark.png" alt="B tablet dark" loading="lazy"/><div class="label">Tablet · dark ⚠️</div></div>
+<div class="shot"><img src="assessment-design-b-desktop-light.png" alt="B desktop light" loading="lazy"/><div class="label">Desktop · light</div></div>
+<div class="shot"><img src="assessment-design-b-desktop-dark.png" alt="B desktop dark" loading="lazy"/><div class="label">Desktop · dark ⚠️</div></div>
+</div>
+
+<h3>Design C — Converter + Map</h3>
+<div class="screenshots">
+<div class="shot"><img src="assessment-design-c-mobile-light.png" alt="C mobile light" loading="lazy"/><div class="label">Mobile · light</div></div>
+<div class="shot"><img src="assessment-design-c-mobile-dark.png" alt="C mobile dark" loading="lazy"/><div class="label">Mobile · dark</div></div>
+<div class="shot"><img src="assessment-design-c-tablet-light.png" alt="C tablet light" loading="lazy"/><div class="label">Tablet · light</div></div>
+<div class="shot"><img src="assessment-design-c-tablet-dark.png" alt="C tablet dark" loading="lazy"/><div class="label">Tablet · dark</div></div>
+<div class="shot"><img src="assessment-design-c-desktop-light.png" alt="C desktop light" loading="lazy"/><div class="label">Desktop · light</div></div>
+<div class="shot"><img src="assessment-design-c-desktop-dark.png" alt="C desktop dark" loading="lazy"/><div class="label">Desktop · dark</div></div>
+</div>
+</section>
+</div>
+</body>
+</html>
