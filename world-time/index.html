@@ -188,11 +188,11 @@
       const tabs = document.getElementById('wt-date-tabs');
       const now = new Date();
       const days = [];
-      // Show 7 days starting from today-3
-      for (let i = -3; i <= 3; i++) {
+      // Show 7 days starting from yesterday (-1) to +5 days
+      for (let i = -1; i <= 5; i++) {
         const d = new Date(now);
         d.setDate(d.getDate() + i);
-        const isToday = i === 0;
+        const isToday = i === 1; // today is at position 1 in the new range
         const dow = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
         const num = d.getDate();
         days.push({ d, dow, num, isToday });

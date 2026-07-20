@@ -752,7 +752,7 @@
         let newDate;
         if (todayInUserTz) {
           const [y, m, d] = todayInUserTz.split("-").map(Number);
-          const target = new Date(y, m - 1, d + (idx - 3));
+          const target = new Date(y, m - 1, d + (idx - 1));
           target.setHours(12, 0, 0, 0); // noon to avoid timezone edge cases
           newDate = target;
         } else {
@@ -788,10 +788,10 @@
     if (!tabs) return;
     const now = new Date();
     const days = [];
-    for (let i = -3; i <= 3; i++) {
+    for (let i = -1; i <= 5; i++) {
       const d = new Date(now);
       d.setDate(d.getDate() + i);
-      const isToday = i === 0;
+      const isToday = i === 1; // today is at position 1 in the new range
       const dow = d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
       const num = d.getDate();
       days.push({ d, dow, num, isToday });
