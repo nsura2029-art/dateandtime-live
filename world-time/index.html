@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>World Time — Meeting Planner & Time Zone Converter | dateandtime.live</title>
+  <meta name="description" content="Compare times across cities. Plan meetings across time zones. Convert any time to any other city. Like World Time Buddy, but cleaner. Free, no sign-up." />
+  <meta name="theme-color" content="#5b4aaf" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://dateandtime.live/world-time/" />
+  <meta property="og:title" content="World Time — Meeting Planner & Time Zone Converter" />
+  <meta property="og:description" content="Compare times across cities. Plan meetings across time zones. Convert any time to any other city." />
+  <meta property="og:url" content="https://dateandtime.live/world-time/" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/world-time.css" />
+  <link rel="stylesheet" href="/src/site-shell.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "World Time by dateandtime.live",
+    "description": "Compare times across cities. Plan meetings across time zones.",
+    "url": "https://dateandtime.live/world-time/",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0" }
+  }
+  </script>
+  <script src="/src/site-shell.js" defer></script>
+  <script src="/src/world-time.js" defer></script>
+</head>
+<body class="shell-page">
+<header class="site-header">
+  <div class="container header-row">
+    <a href="/" class="logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <nav class="nav-main" aria-label="Main">
+      <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="nav-link">Holidays</a>
+      <a href="/onthisday/" class="nav-link">On this day</a>
+      <a href="#" class="nav-link">Meeting finder</a>
+      <a href="/world-time/" class="nav-link is-active">World time</a>
+      <a href="#" class="nav-link">Blog</a>
+    </nav>
+    <div class="header-actions">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+        <span class="nav-toggle-icon" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+<aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+  <div class="mobile-nav-header">
+    <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+      <span class="logo-mark">T</span>
+      <span class="logo-text">dateandtime.live</span>
+    </a>
+    <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav-list" aria-label="Mobile main">
+    <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+    <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+    <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+    <a href="#" class="mobile-nav-link">Meeting finder</a>
+    <a href="/world-time/" class="mobile-nav-link">World time</a>
+    <a href="#" class="mobile-nav-link">Blog</a>
+  </nav>
+</aside>
+
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/world-time/" aria-current="page">World time</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <div class="page-title-block">
+    <div class="container">
+      <h1 class="page-title">World time</h1>
+      <p class="page-subtitle">Compare times across cities. Plan meetings across time zones. Your home city loads first — add up to 9 more.</p>
+    </div>
+  </div>
+
+  <div class="wt-container">
+
+    <!-- URL STATE (shows what was parsed from the URL) -->
+    <div class="wt-url-state is-hidden" id="wt-url-state"></div>
+
+    <!-- TOP TOOLBAR -->
+    <div class="wt-toolbar-top">
+      <div class="wt-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <input id="wt-search-input" type="text" placeholder="+ Place or timezone — type a city" autocomplete="off" />
+        <div class="wt-suggestions" id="wt-suggestions"></div>
+      </div>
+      <div class="wt-date-tabs" id="wt-date-tabs">
+        <!-- Populated by JS -->
+      </div>
+      <div class="wt-toolbar-actions">
+        <button class="icon-btn" data-action="settings">⚙️ Settings</button>
+        <a href="#" class="link" data-selection-action="link">🔗 LINK TO THIS VIEW</a>
+      </div>
+    </div>
+
+    <!-- SELECTION BAR (hidden until selection made) -->
+    <div class="wt-selection-bar" id="wt-selection-bar">
+      <span class="measure"><span class="line"></span> <span class="duration">1 hour</span></span>
+      <div class="actions">
+        <button class="action" data-selection-action="ical">📅 Outlook / iCal</button>
+        <button class="action" data-selection-action="google">📅 Google Cal</button>
+        <button class="action" data-selection-action="clipboard">📋 Clipboard</button>
+        <button class="action" data-selection-action="gmail">✉️ Gmail</button>
+        <span class="event">📌 Event: <input type="text" class="wt-event-name" value="Meeting" placeholder="Event name" /></span>
+        <button class="action" data-selection-action="clear">✕ Clear</button>
+        <a href="#" class="link" data-selection-action="link">🔗 LINK TO THIS SELECTION</a>
+      </div>
+    </div>
+
+    <!-- CITY CHIPS (compact, removable) -->
+    <div class="wt-city-chips" id="wt-city-chips"></div>
+
+    <!-- MAIN: per-city timelines -->
+    <div class="wt-main" id="wt-main">
+      <div class="wt-empty">
+        <p>Loading cities…</p>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS (best times for everyone) -->
+    <div class="wt-suggestions-section" id="wt-suggestions-section" style="display:none">
+      <h3>Best times for everyone (all cities at work)</h3>
+      <div id="wt-suggestions-list"></div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    <div class="page-footer-inner">
+      <nav class="page-footer-nav" aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/world-time/">World time</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="page-footer-meta">© 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones" rel="noopener">IANA</a> · <a href="https://www.geonames.org/" rel="noopener">GeoNames</a> · <a href="https://date.nager.at/" rel="noopener">Nager.Date</a> · <a href="https://www.wikipedia.org/" rel="noopener">Wikipedia</a></p>
+      <p class="page-footer-meta"><a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)</p>
+    </div>
+  </footer>
+
+  <script>
+    /* Tiny inline script to populate date tabs and initial event handlers.
+       The big logic is in /src/world-time.js */
+    (function () {
+      'use strict';
+      const tabs = document.getElementById('wt-date-tabs');
+      const now = new Date();
+      const days = [];
+      // Show 7 days starting from today-3
+      for (let i = -3; i <= 3; i++) {
+        const d = new Date(now);
+        d.setDate(d.getDate() + i);
+        const isToday = i === 0;
+        const dow = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+        const num = d.getDate();
+        days.push({ d, dow, num, isToday });
+      }
+      tabs.innerHTML = days.map((day, i) => `
+        <div class="wt-date-tab ${day.isToday ? 'today' : ''}" data-idx="${i}">
+          <span class="dow">${day.dow}</span>
+          <span class="num">${day.num}</span>
+        </div>
+      `).join('');
+    })();
+  </script>
+</body>
+</html>
