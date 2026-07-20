@@ -32,6 +32,11 @@
   const MAX_CITIES = 10;
 
   // ========== STATE ==========
+  // Default work hours: 8am-5pm Mon-Fri (hardcoded for all cities, regardless of country)
+  const DEFAULT_WORK_OPEN = 8;   // 8am
+  const DEFAULT_WORK_CLOSE = 17;  // 5pm
+  const DEFAULT_WORK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
   let cities = []; // {id, name, countryCode, countryName, stateCode, timezone, home, currentTime, offsetMinutes, workStart, workEnd, workDays, currentHour}
   let workHoursCache = {}; // {cca2: {workDays: [...], hours: {open, close}}}
   let selectedRange = null; // {anchorCityId, startHour, endHour} — anchor city is the first one selected
