@@ -178,8 +178,12 @@
 
   async function searchCities(query) {
     if (!query || query.length < 2) return [];
-    const data = await api("/api/v2/search?q=" + encodeURIComponent(query) + "&limit=6");
-    return (data.data && data.data.cities) || [];
+    const data = await api("/api/v2/search?q=" + encodeURIComponent(query) + "&limit=10");
+    const cities = (data.data && data.data.cities) || [];
+    // Prefer more populous cities when names match (avoids San Antonio FL vs TX confusion)
+    // The API already returns results sorted by relevance, but we re-sort by population
+    // for ambiguous names where multiple cities exist.
+    return cities.sort((a, b) => (b.population || 0) - (a.population || 0)).slice(0, 6);
   }
 
   async function getCity(id) {
@@ -323,7 +327,30 @@
         </div>
       </div>
       ${cities.map(city => renderCityRow(city, now)).join("")}
+      <div class="wt-now-line" id="wt-now-line" style="display:none"></div>
     `;
+    // Position the now-line in the first city's row at the now hour
+    positionNowLine(now);
+  }
+
+  function positionNowLine(now) {
+    const line = document.getElementById("wt-now-line");
+    if (!line || cities.length === 0) return;
+    const firstRow = document.querySelector(".wt-city-row");
+    if (!firstRow) return;
+    const firstTiles = firstRow.querySelectorAll(".wt-tile");
+    const tz = cities[0].timezone;
+    const hour = localHourInCity(tz, now);
+    const targetTile = firstTiles[hour];
+    if (!targetTile) { line.style.display = "none"; return; }
+    const grid = firstRow.querySelector(".right");
+    if (!grid) { line.style.display = "none"; return; }
+    const gridRect = grid.getBoundingClientRect();
+    const tileRect = targetTile.getBoundingClientRect();
+    const x = tileRect.left - gridRect.left + tileRect.width / 2;
+    line.style.display = "block";
+    line.style.left = (gridRect.left - firstRow.getBoundingClientRect().left + x) + "px";
+    line.style.height = (firstRow.scrollHeight) + "px";
   }
 
   function renderCityRow(city, now) {
@@ -340,6 +367,32 @@
     const date = localDateInCity(tz, now);
     const isHome = !!city.home;
 
+    // Per-city day label (uses focusedDate so it matches the displayed date)
+    // Compute the day in the city for the focusedDate
+    const focusedDayName = (() => {
+      try {
+        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, weekday: "short" });
+        const short = fmt.format(focusedDate);
+        return ({ "Mon": "MON", "Tue": "TUE", "Wed": "WED", "Thu": "THU", "Fri": "FRI", "Sat": "SAT", "Sun": "SUN" })[short] || "";
+      } catch (e) { return ""; }
+    })();
+    const focusedDateStr = (() => {
+      try {
+        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, day: "numeric", month: "short" });
+        return fmt.format(focusedDate);
+      } catch (e) { return ""; }
+    })();
+    // Detect if focused date is different from "today" in this city
+    const todayInCity = (() => {
+      try {
+        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, day: "numeric", month: "short" });
+        return fmt.format(now);
+      } catch (e) { return ""; }
+    })();
+    const isNextDay = focusedDateStr && todayInCity && focusedDateStr !== todayInCity && focusedDate > now;
+    const isPrevDay = focusedDateStr && todayInCity && focusedDateStr !== todayInCity && focusedDate < now;
+    const dayLabel = `${focusedDayName} ${focusedDateStr}` + (isNextDay ? " <span class=\"next-day\">+1d</span>" : (isPrevDay ? " <span class=\"next-day\">-1d</span>" : ""));
+
     // Compute selected tiles (offset-based, WTB-style)
     let selectedStartCol = -1, selectedEndCol = -1;
     if (selectedRange) {
@@ -347,30 +400,36 @@
       if (anchor) {
         const { startLocal, endLocal, dayOffset } = getLocalRangeForCity(city, anchor, selectedRange.startHour, selectedRange.endHour);
         if (startLocal < endLocal) {
-          // Simple range
           selectedStartCol = Math.floor(startLocal);
           selectedEndCol = Math.floor(endLocal);
-          if (Math.floor(endLocal) === Math.floor(startLocal) && endLocal > startLocal) selectedEndCol = Math.floor(endLocal);
-          // Adjust for partial hours
           if (endLocal !== Math.floor(endLocal)) selectedEndCol = Math.floor(endLocal);
         } else {
-          // Crosses midnight: two ranges
           selectedStartCol = Math.floor(startLocal);
-          selectedEndCol = 23; // end of day
-          // Second range handled separately via a marker
+          selectedEndCol = 23;
         }
       }
     }
+
+    // Disable past hours (before "now" in this city, for the focusedDate)
+    // For "today", hours before now are past. For other dates, all 24 hours are selectable.
+    const isFocusedToday = (() => {
+      try {
+        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, day: "numeric", month: "numeric" });
+        return fmt.format(focusedDate) === fmt.format(now);
+      } catch (e) { return true; }
+    })();
 
     let tiles = "";
     for (let h = 0; h < 24; h++) {
       const isWork = isWorkHour(city, h, dayName);
       const isEarly = isEarlyHour(city, h, dayName);
-      const isNow = (h === hour);
+      const isNow = isFocusedToday && (h === hour);
+      const isPast = isFocusedToday && h < hour;
       const isInRange = selectedStartCol >= 0 && h >= selectedStartCol && h <= selectedEndCol;
       const isStart = isInRange && h === selectedStartCol;
       const isEnd = isInRange && h === selectedEndCol;
       const classes = ["wt-tile"];
+      if (isPast) classes.push("past");
       if (isWork) classes.push("work");
       if (isEarly) classes.push("early");
       if (isNow) classes.push("now");
@@ -384,6 +443,7 @@
     return `
       <div class="wt-city-row" data-city="${city.id}">
         <div class="left">
+          <button class="row-remove" data-row-remove="${city.id}" title="Remove ${escapeHtml(city.name)}" aria-label="Remove city">×</button>
           <div class="row">
             ${homeLabel}<span class="name">${escapeHtml(city.name)}</span>
             <span class="abbrev">${escapeHtml(abbrev)}</span>
@@ -391,7 +451,7 @@
           </div>
           <div class="country">${escapeHtml((city.stateCode ? city.stateCode + ", " : "") + city.countryName)}</div>
           <div class="time">${time}</div>
-          <div class="date">${date}</div>
+          <div class="date-row"><span class="day">${dayLabel}</span></div>
         </div>
         <div class="right">${tiles}</div>
       </div>
@@ -442,13 +502,21 @@
         const newNow = document.querySelector(`.wt-city-row[data-city="${city.id}"] .wt-tile[data-hour="${newHour}"]`);
         if (newNow) newNow.classList.add("now");
       });
+      // Reposition the now-line
+      positionNowLine(now);
+      // Update the now-line label
+      const line = document.getElementById("wt-now-line");
+      if (line) {
+        const userTz = (window.__location && window.__location.timezone) || cities[0]?.timezone;
+        if (userTz) line.setAttribute("data-time", localTimeInCity(userTz, now));
+      }
     }
     tick();
     window.__wtTickInterval = setInterval(tick, 1000);
   }
 
   // ========== INTERACTIONS ==========
-  // Drag select
+  // Click select (single hour only — matches user request "move 1 HR only")
   let dragState = null; // {cityId, startHour}
   function setupDragSelect() {
     const main = $("#wt-main");
@@ -456,26 +524,18 @@
     main.addEventListener("mousedown", (e) => {
       const tile = e.target.closest("[data-tile]");
       if (!tile) return;
+      if (tile.classList.contains("past")) return; // can't select past hours
       e.preventDefault();
       const cityId = parseInt(tile.dataset.city, 10);
       const startHour = parseInt(tile.dataset.hour, 10);
       dragState = { cityId, startHour };
-      // Anchor city = the city the user starts dragging on
+      // Always 1 hour (user clicked a single tile)
       selectedRange = { anchorCityId: cityId, startHour, endHour: startHour };
       render();
     });
     main.addEventListener("mouseover", (e) => {
-      if (!dragState) return;
-      const tile = e.target.closest("[data-tile]");
-      if (!tile) return;
-      const cityId = parseInt(tile.dataset.city, 10);
-      if (cityId !== dragState.cityId) return;
-      const hour = parseInt(tile.dataset.hour, 10);
-      const lo = Math.min(dragState.startHour, hour);
-      const hi = Math.max(dragState.startHour, hour);
-      selectedRange = { anchorCityId: dragState.cityId, startHour: lo, endHour: hi };
-      render();
-      showSelectionBar();
+      // Just highlight the column across all rows (1 hour window)
+      // No drag-select for multi-hour ranges (per user request)
     });
     document.addEventListener("mouseup", () => {
       if (dragState) {
@@ -538,14 +598,22 @@
     });
   }
 
-  // Chip remove
+  // Chip remove + row remove
   function setupChipRemove() {
     document.addEventListener("click", (e) => {
       const x = e.target.closest(".wt-city-chip .x");
-      if (!x) return;
-      e.stopPropagation();
-      const id = parseInt(x.dataset.id, 10);
-      removeCity(id);
+      if (x) {
+        e.stopPropagation();
+        const id = parseInt(x.dataset.id, 10);
+        removeCity(id);
+        return;
+      }
+      const rowRemove = e.target.closest("[data-row-remove]");
+      if (rowRemove) {
+        const id = parseInt(rowRemove.dataset.rowRemove, 10);
+        removeCity(id);
+        return;
+      }
     });
   }
 
@@ -560,15 +628,19 @@
     function showSuggestions(items) {
       lastResults = items;
       if (items.length === 0) { suggestions.classList.remove("is-open"); return; }
-      suggestions.innerHTML = items.map((c, i) => `
+      suggestions.innerHTML = items.map((c, i) => {
+        const state = c.stateCode ? c.stateCode + ", " : "";
+        const pop = c.population ? ` · ${(c.population / 1000).toFixed(0)}k people` : "";
+        return `
         <div class="wt-suggestion" data-idx="${i}">
           <div>
             <div class="name">${escapeHtml(c.name)}${c.isCapital ? " ★" : ""}</div>
-            <div class="meta">${escapeHtml((c.stateCode ? c.stateCode + ", " : "") + c.countryName)} · ${c.timezone}</div>
+            <div class="meta"><strong>${escapeHtml(state + c.countryName)}</strong> · ${escapeHtml(c.timezone)}${pop}</div>
           </div>
           <span class="plus">+</span>
         </div>
-      `).join("");
+      `;
+      }).join("");
       suggestions.classList.add("is-open");
     }
 
@@ -606,13 +678,60 @@
   // Date pager
   function setupDatePager() {
     document.addEventListener("click", (e) => {
+      // Click on date tab (Jul 17, 18, 19, ...)
+      const tab = e.target.closest("[data-idx]");
+      if (tab) {
+        e.preventDefault();
+        const idx = parseInt(tab.dataset.idx, 10);
+        // Re-build the dates array (matches the HTML generation)
+        const now = new Date();
+        const newDate = new Date(now);
+        newDate.setDate(newDate.getDate() + (idx - 3));
+        focusedDate = newDate;
+        // Update the .today class
+        $$(".wt-date-tab").forEach(t => t.classList.remove("today"));
+        tab.classList.add("today");
+        // Update the day label
+        const dayName = tab.querySelector(".dow").textContent;
+        const dayNum = tab.querySelector(".num").textContent;
+        const dayNameFull = ({ MON: "Monday", TUE: "Tuesday", WED: "Wednesday", THU: "Thursday", FRI: "Friday", SAT: "Saturday", SUN: "Sunday" })[dayName];
+        $(".wt-cities-head .day-label")?.replaceChildren(document.createTextNode(`${dayNameFull}, ${localDateInCity(window.__location?.timezone || cities[0]?.timezone || "UTC", newDate)}`));
+        render();
+        return;
+      }
+      // Click on ‹/› pager
       const pager = e.target.closest("[data-pager]");
       if (!pager) return;
       const dir = pager.dataset.pager === "prev" ? -1 : 1;
       focusedDate.setDate(focusedDate.getDate() + dir);
-      // Re-render
+      // Re-render (and update today class)
+      renderDateTabs();
       render();
     });
+  }
+
+  // Render the date tabs (re-render when pager changes)
+  function renderDateTabs() {
+    const tabs = $("#wt-date-tabs");
+    if (!tabs) return;
+    const now = new Date();
+    const days = [];
+    for (let i = -3; i <= 3; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() + i);
+      const isToday = i === 0;
+      const dow = d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
+      const num = d.getDate();
+      days.push({ d, dow, num, isToday });
+    }
+    // Highlight the focusedDate
+    const focusedDiff = Math.round((focusedDate - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / (1000 * 60 * 60 * 24));
+    tabs.innerHTML = days.map((day, i) => `
+      <div class="wt-date-tab ${i === focusedDiff ? 'today' : day.isToday ? '' : ''}${day.isToday ? ' today' : ''}" data-idx="${i}">
+        <span class="dow">${day.dow}</span>
+        <span class="num">${day.num}</span>
+      </div>
+    `).join('');
   }
 
   // Selection bar actions

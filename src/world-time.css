@@ -187,3 +187,21 @@
 /* PNG download button */
 .wt-png-btn { padding: 0.3rem 0.55rem; background: var(--wt-primary); color: var(--wt-primary-fg); border: none; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; font-family: inherit; }
 .wt-png-btn:hover { filter: brightness(1.1); }
+
+/* ===== Past hours disabled ===== */
+.wt-tile.past { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.wt-tile.past:hover { outline: none; }
+
+/* ===== "Now" vertical line spans all rows ===== */
+.wt-now-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--wt-now); pointer-events: none; z-index: 2; opacity: 0.7; box-shadow: 0 0 6px var(--wt-now); }
+.wt-now-line::before { content: "NOW"; position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: var(--wt-now); color: white; font-size: 0.625rem; font-weight: 800; padding: 0.1rem 0.35rem; border-radius: 4px; white-space: nowrap; }
+[data-theme="dark"] .wt-now-line { background: #f87171; box-shadow: 0 0 6px #f87171; }
+
+/* ===== Per-city date label on each row ===== */
+.wt-city-row .left .date-row { display: flex; align-items: center; gap: 0.4rem; font-size: 0.6875rem; color: var(--wt-muted); }
+.wt-city-row .left .date-row .day { color: var(--wt-fg); font-weight: 700; }
+.wt-city-row .left .date-row .next-day { color: #f59e0b; font-weight: 800; }
+
+/* ===== Row remove (×) button on each city row ===== */
+.wt-city-row .left .row-remove { position: absolute; top: 0.5rem; right: 0.5rem; width: 22px; height: 22px; border: none; background: transparent; color: var(--wt-muted); cursor: pointer; font-size: 1rem; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 100ms ease; }
+.wt-city-row .left .row-remove:hover { background: rgba(239,68,68,.15); color: #b91c1c; }
