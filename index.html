@@ -85,6 +85,7 @@
   <!-- Suppress noise from third-party browser-extension scripts -->
   <link rel="stylesheet" href="/src/site-shell.css" />
   <script src="/src/site-shell.js" defer></script>
+  <script src="/src/api-data.js" defer></script>
   <script>
     (function () {
       const NOISE = /(share-modal\.js|frame start\.js|chrome-extension|moz-extension)/i;
@@ -251,6 +252,78 @@
       line-height: 1.5;
     }
     .section--onthisday-section { padding: clamp(2rem, 5vw, 3rem) 0; }
+
+    /* ===== TIER 2 — Knowledge base chip cloud ===== */
+    .section--kbc { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .kb-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; justify-content: center; }
+    .kb-chip { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.95rem; background: var(--color-card-bg, var(--color-background)); border: 1px solid var(--color-border); border-radius: 9999px; text-decoration: none; color: var(--color-foreground); font-size: 0.875rem; font-weight: 500; transition: border-color 0.15s, transform 0.15s, background 0.15s; }
+    .kb-chip:hover { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 8%, transparent); transform: translateY(-1px); text-decoration: none; }
+    .kb-chip-emoji { font-size: 1.05rem; line-height: 1; }
+    .kb-chip-count { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.7rem; color: var(--color-muted); padding: 0.1rem 0.4rem; background: color-mix(in srgb, var(--color-primary) 8%, transparent); border-radius: 9999px; font-weight: 600; }
+
+    /* ===== TIER 2 — Today's snapshot ===== */
+    .section--snapshot { padding: clamp(2rem, 5vw, 3rem) 0; }
+    .snapshot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .snapshot-card { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem; background: var(--color-card-bg, var(--color-background)); border: 1px solid var(--color-border); border-radius: 0.75rem; text-decoration: none; color: inherit; transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s; }
+    .snapshot-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); text-decoration: none; }
+    .snapshot-label { font-size: 0.7rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .snapshot-title { font-size: 1.05rem; font-weight: 700; color: var(--color-foreground); line-height: 1.3; }
+    .snapshot-detail { font-size: 0.85rem; color: var(--color-muted); }
+    .snapshot-detail strong { color: var(--color-foreground); font-weight: 600; }
+
+    /* ===== TIER 2 — Long weekend finder ===== */
+    .section--lwf { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .lwf-card { max-width: 720px; margin: 1.5rem auto 0; padding: 1.5rem; background: var(--color-card-bg, var(--color-background)); border: 1px solid var(--color-border); border-radius: 0.75rem; }
+    .lwf-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .lwf-label { font-size: 0.85rem; font-weight: 600; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .lwf-select { flex: 1; min-width: 220px; padding: 0.65rem 0.9rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 0.5rem; color: var(--color-foreground); font-size: 0.95rem; font-family: inherit; }
+    .lwf-link { font-size: 0.85rem; color: var(--color-primary); text-decoration: none; font-weight: 600; }
+    .lwf-link:hover { text-decoration: underline; }
+    .lwf-loading { color: var(--color-muted); font-style: italic; }
+    .lwf-summary { margin: 0 0 0.75rem; font-size: 0.95rem; }
+    .lwf-summary strong { color: var(--color-primary); }
+    .lwf-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    .lwf-item { display: grid; grid-template-columns: 2rem 1fr auto auto; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; background: color-mix(in srgb, var(--color-background-soft) 50%, transparent); border-radius: 0.5rem; font-size: 0.9rem; }
+    .lwf-icon { font-size: 1.2rem; line-height: 1; }
+    .lwf-name { font-weight: 600; color: var(--color-foreground); }
+    .lwf-dates { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.8rem; color: var(--color-muted); }
+    .lwf-badge { display: inline-block; padding: 0.15rem 0.5rem; background: var(--color-primary); color: var(--color-primary-foreground, white); border-radius: 9999px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; }
+
+    /* ===== TIER 3 — Did you know ===== */
+    .section--dyk { padding: clamp(2rem, 5vw, 3rem) 0; }
+    .dyk-card { max-width: 720px; margin: 1.5rem auto 0; padding: 1.5rem 1.75rem; background: color-mix(in srgb, var(--color-primary) 5%, var(--color-card-bg, var(--color-background))); border-left: 4px solid var(--color-primary); border-radius: 0.5rem; }
+    .dyk-loading { color: var(--color-muted); font-style: italic; margin: 0; }
+    .dyk-text { font-size: 1.05rem; line-height: 1.6; color: var(--color-foreground); margin: 0 0 0.5rem; }
+    .dyk-meta { font-size: 0.85rem; color: var(--color-muted); margin: 0; }
+
+    /* ===== TIER 3 — Famous Birthdays (deceased) ===== */
+    .section--bd { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 30%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .bd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }
+    .bd-loading, .cbd-loading, .deaths-loading, .yt-loading { color: var(--color-muted); font-style: italic; text-align: center; padding: 2rem 1rem; }
+    .bd-card, .cbd-card, .deaths-card { display: flex; flex-direction: column; gap: 0.4rem; padding: 1rem; background: var(--color-card-bg, var(--color-background)); border: 1px solid var(--color-border); border-radius: 0.5rem; text-decoration: none; color: inherit; transition: border-color 0.15s, transform 0.15s; }
+    .bd-card:hover, .cbd-card:hover, .deaths-card:hover { border-color: var(--color-primary); transform: translateY(-1px); text-decoration: none; }
+    .bd-year, .cbd-year, .deaths-year { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.7rem; color: var(--color-primary); font-weight: 700; letter-spacing: 0.05em; }
+    .bd-name, .cbd-name, .deaths-name { font-size: 0.95rem; font-weight: 700; color: var(--color-foreground); line-height: 1.3; }
+    .bd-meta, .cbd-meta, .deaths-meta { font-size: 0.75rem; color: var(--color-muted); }
+    .bd-portrait, .cbd-portrait, .deaths-portrait { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 0.4rem; background: var(--color-background-soft); margin-bottom: 0.25rem; }
+    .bd-more, .cbd-more, .deaths-more, .yt-more { text-align: center; margin: 1.25rem 0 0; }
+    .bd-more a, .cbd-more a, .deaths-more a, .yt-more a { display: inline-block; font-size: 0.875rem; font-weight: 700; color: var(--color-primary); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent); border-radius: 9999px; }
+    .bd-more a:hover, .cbd-more a:hover, .deaths-more a:hover, .yt-more a:hover { background: color-mix(in srgb, var(--color-primary) 8%, transparent); text-decoration: none; }
+
+    /* ===== TIER 3 — Celebrity Birthdays (living) — uses same .cbd-* selectors ===== */
+    .section--cbd { padding: clamp(2rem, 5vw, 3rem) 0; }
+
+    /* ===== TIER 3 — Famous Deaths — uses same .deaths-* selectors ===== */
+    .section--deaths { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 30%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+
+    /* ===== TIER 3 — Year timeline ===== */
+    .section--yt { padding: clamp(2rem, 5vw, 3rem) 0; }
+    .yt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }
+    .yt-card { display: flex; flex-direction: column; gap: 0.4rem; padding: 1rem; background: var(--color-card-bg, var(--color-background)); border: 1px solid var(--color-border); border-radius: 0.5rem; text-decoration: none; color: inherit; transition: border-color 0.15s, transform 0.15s; }
+    .yt-card:hover { border-color: var(--color-primary); transform: translateY(-1px); text-decoration: none; }
+    .yt-month { font-size: 0.7rem; color: var(--color-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .yt-title { font-size: 0.95rem; font-weight: 700; color: var(--color-foreground); line-height: 1.3; }
+    .yt-year { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.75rem; color: var(--color-muted); }
 
     /* ===== SECTION 2b: TODAY ON EARTH strip (Tier 1) ===== */
     .section--today-on-earth { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 30%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
@@ -907,6 +980,179 @@
             <p>Browse all 408 time zones. Learn about UTC, DST, and how time zones work worldwide.</p>
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4d: TIER 2 — KNOWLEDGE BASE CHIP CLOUD   -->
+    <!-- ============================================== -->
+    <section class="section section--kbc" aria-labelledby="kbc-title">
+      <div class="container">
+        <p class="section-eyebrow">Explore the knowledge base</p>
+        <h2 class="section-title" id="kbc-title">33,945 cities · 408 time zones · 242 countries · 1,600+ holidays</h2>
+        <p class="section-subtitle">Every entry in our knowledge graph is one click away.</p>
+
+        <nav class="kb-cloud" aria-label="Knowledge base categories">
+          <a href="/time-zones/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">🌐</span> Time Zones <span class="kb-chip-count">408</span></a>
+          <a href="/cities/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">🏙️</span> Cities <span class="kb-chip-count">33,945</span></a>
+          <a href="/countries/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">🗺️</span> Countries <span class="kb-chip-count">242</span></a>
+          <a href="/holidays/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">🎉</span> Holidays <span class="kb-chip-count">1,600+</span></a>
+          <a href="/onthisday/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">📅</span> On This Day <span class="kb-chip-count">71,992</span></a>
+          <a href="/time-zones/dst/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">🕒</span> DST Schedule</a>
+          <a href="/time-zones/utc/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">⏰</span> UTC &amp; GMT</a>
+          <a href="/calendars/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">🗓️</span> Calendar Systems</a>
+          <a href="/time-zones/working-hours/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">💼</span> Working Hours</a>
+          <a href="/climate/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">🌡️</span> Climate</a>
+          <a href="/travel/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">✈️</span> Travel Times</a>
+          <a href="/history/" class="kb-chip"><span class="kb-chip-emoji" aria-hidden="true">📜</span> History</a>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4e: TIER 2 — TODAY'S SNAPSHOT             -->
+    <!-- ============================================== -->
+    <section class="section section--snapshot" aria-labelledby="snapshot-title">
+      <div class="container">
+        <p class="section-eyebrow">Today's snapshot</p>
+        <h2 class="section-title" id="snapshot-title">Four answers in one glance</h2>
+        <p class="section-subtitle">Direct answers to the questions people ask Google most about today.</p>
+
+        <div class="snapshot-grid" id="snapshot-grid" aria-live="polite">
+          <a href="/holidays/" class="snapshot-card" data-snapshot="holiday">
+            <div class="snapshot-label">Today's holiday · <span data-snap-cc>—</span></div>
+            <div class="snapshot-title" data-snap-holiday-title>—</div>
+            <div class="snapshot-detail" data-snap-holiday-detail>Loading…</div>
+          </a>
+          <a href="/onthisday/" class="snapshot-card" data-snapshot="onthisday">
+            <div class="snapshot-label">On this day</div>
+            <div class="snapshot-title" data-snap-otd-title>—</div>
+            <div class="snapshot-detail" data-snap-otd-detail>Loading…</div>
+          </a>
+          <a href="/time-zones/dst/" class="snapshot-card" data-snapshot="dst">
+            <div class="snapshot-label">DST this week</div>
+            <div class="snapshot-title" data-snap-dst-title>—</div>
+            <div class="snapshot-detail" data-snap-dst-detail>Loading…</div>
+          </a>
+          <a href="/time-zones/in/" class="snapshot-card" data-snapshot="sun">
+            <div class="snapshot-label">Sunrise / Sunset · <span data-snap-city>—</span></div>
+            <div class="snapshot-title" data-snap-sun-title>—</div>
+            <div class="snapshot-detail" data-snap-sun-detail>Loading…</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4f: TIER 2 — LONG WEEKEND FINDER         -->
+    <!-- ============================================== -->
+    <section class="section section--lwf" aria-labelledby="lwf-title">
+      <div class="container">
+        <p class="section-eyebrow">Long weekend finder</p>
+        <h2 class="section-title" id="lwf-title">Find your next long weekend</h2>
+        <p class="section-subtitle">80K+ searches/month for "long weekend [country] [year]". Pick a country to see the long weekends this year.</p>
+
+        <div class="lwf-card">
+          <div class="lwf-controls">
+            <label for="lwf-country" class="lwf-label">Country</label>
+            <select id="lwf-country" class="lwf-select" aria-label="Country">
+              <option value="US" data-year="2026">🇺🇸 United States · 2026</option>
+              <option value="GB" data-year="2026">🇬🇧 United Kingdom · 2026</option>
+              <option value="CA" data-year="2026">🇨🇦 Canada · 2026</option>
+              <option value="AU" data-year="2026">🇦🇺 Australia · 2026</option>
+              <option value="DE" data-year="2026">🇩🇪 Germany · 2026</option>
+              <option value="FR" data-year="2026">🇫🇷 France · 2026</option>
+              <option value="BR" data-year="2026">🇧🇷 Brazil · 2026</option>
+              <option value="IN" data-year="2026">🇮🇳 India · 2026</option>
+              <option value="JP" data-year="2026">🇯🇵 Japan · 2026</option>
+              <option value="MX" data-year="2026">🇲🇽 Mexico · 2026</option>
+              <option value="ES" data-year="2026">🇪🇸 Spain · 2026</option>
+              <option value="IT" data-year="2026">🇮🇹 Italy · 2026</option>
+            </select>
+            <a href="/long-weekend/" class="lwf-link">View all countries →</a>
+          </div>
+          <div class="lwf-result" id="lwf-result" aria-live="polite">
+            <p class="lwf-loading">Loading…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4g: TIER 3 — DID YOU KNOW?               -->
+    <!-- ============================================== -->
+    <section class="section section--dyk" aria-labelledby="dyk-title">
+      <div class="container">
+        <p class="section-eyebrow">Did you know?</p>
+        <h2 class="section-title" id="dyk-title">A fun fact for today</h2>
+        <p class="section-subtitle">One short, surprising story from our historical archive — refreshed daily.</p>
+
+        <div class="dyk-card" id="dyk-card" aria-live="polite">
+          <p class="dyk-loading">Loading…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4h: TIER 3 — FAMOUS BIRTHDAYS (DECEASED)  -->
+    <!-- ============================================== -->
+    <section class="section section--bd" aria-labelledby="bd-title">
+      <div class="container">
+        <p class="section-eyebrow">Famous birthdays</p>
+        <h2 class="section-title" id="bd-title">Born on this day, in history</h2>
+        <p class="section-subtitle">Six historical figures who share today's date.</p>
+
+        <div class="bd-grid" id="bd-grid" aria-live="polite">
+          <p class="bd-loading">Loading…</p>
+        </div>
+        <p class="bd-more"><a href="/onthisday/birthdays/">See all birthdays →</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4i: TIER 3 — CELEBRITY BIRTHDAYS (LIVING) -->
+    <!-- ============================================== -->
+    <section class="section section--cbd" aria-labelledby="cbd-title">
+      <div class="container">
+        <p class="section-eyebrow">Celebrity birthdays today</p>
+        <h2 class="section-title" id="cbd-title">Living legends turning a year older today</h2>
+        <p class="section-subtitle">Six notable living people who share today's date — with the age they're turning.</p>
+
+        <div class="cbd-grid" id="cbd-grid" aria-live="polite">
+          <p class="cbd-loading">Loading…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4j: TIER 3 — FAMOUS DEATHS                -->
+    <!-- ============================================== -->
+    <section class="section section--deaths" aria-labelledby="deaths-title">
+      <div class="container">
+        <p class="section-eyebrow">Famous deaths</p>
+        <h2 class="section-title" id="deaths-title">Lives that ended on this day</h2>
+        <p class="section-subtitle">Six historical figures who died on today's date, with the ages they lived to.</p>
+
+        <div class="deaths-grid" id="deaths-grid" aria-live="polite">
+          <p class="deaths-loading">Loading…</p>
+        </div>
+        <p class="deaths-more"><a href="/onthisday/deaths/">See all deaths →</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4k: TIER 3 — YEAR TIMELINE                -->
+    <!-- ============================================== -->
+    <section class="section section--yt" aria-labelledby="yt-title">
+      <div class="container">
+        <p class="section-eyebrow">This year in history</p>
+        <h2 class="section-title" id="yt-title">Top events of <span data-yt-year>—</span>, month by month</h2>
+        <p class="section-subtitle">One standout event from each month of the current year.</p>
+
+        <div class="yt-grid" id="yt-grid" aria-live="polite">
+          <p class="yt-loading">Loading…</p>
+        </div>
+        <p class="yt-more"><a href="/onthisday/this-year/">See full year timeline →</a></p>
       </div>
     </section>
 
@@ -2350,6 +2596,251 @@
       // Start the rAF loop
       updateClock();
     })();
-  </script>
+
+    /* ============================================================
+       TIER 2 + TIER 3 SECTIONS — init after window.DTData loads
+       (api-data.js is loaded with defer so it's available here)
+       ============================================================ */
+    (function () {
+      if (!window.DTData) return;
+      const D = window.DTData;
+      const today = new Date();
+      const mm = today.getMonth() + 1;
+      const dd = today.getDate();
+      const yr = today.getFullYear();
+
+      // ---- 4d. KNOWLEDGE BASE CHIP CLOUD -----------------------
+      // Pure HTML, no JS needed — but wire up the count badges if the
+      // API exposes aggregate counts. Best-effort, hides on failure.
+      // (Currently static; counts are baked into the HTML.)
+
+      // ---- 4e. TODAY'S SNAPSHOT --------------------------------
+      async function loadSnapshot() {
+        // Determine user's country from existing state (best-effort)
+        const homeCc = (state.citiesWithHome && state.citiesWithHome[0] && state.citiesWithHome[0].country) || "US";
+        const homeCity = (state.citiesWithHome && state.citiesWithHome[0] && state.citiesWithHome[0].name) || "New York";
+        const homeLat = (state.citiesWithHome && state.citiesWithHome[0] && state.citiesWithHome[0].latitude) || 40.7128;
+        const homeLon = (state.citiesWithHome && state.citiesWithHome[0] && state.citiesWithHome[0].longitude) || -74.0060;
+        const homeTz = (state.citiesWithHome && state.citiesWithHome[0] && state.citiesWithHome[0].tz) || "America/New_York";
+
+        // Set country / city labels immediately
+        const ccEl = D.$("[data-snap-cc]");
+        if (ccEl) ccEl.textContent = homeCc;
+        const cityEl = D.$("[data-snap-city]");
+        if (cityEl) cityEl.textContent = homeCity;
+
+        // (1) Today's holiday
+        const hol = await D.getHolidaysToday(homeCc);
+        const hTitle = D.$("[data-snap-holiday-title]");
+        const hDetail = D.$("[data-snap-holiday-detail]");
+        if (hol && Array.isArray(hol.holidays) && hol.holidays.length > 0) {
+          const name = hol.holidays[0].name || hol.holidays[0].localName || "Public holiday";
+          hTitle.textContent = "Today is " + name;
+          hDetail.textContent = "Banks, government, and many shops closed.";
+        } else {
+          // No holiday today — try to find the next one
+          const upcoming = await D.getHolidaysUpcoming(homeCc, 30);
+          const list = (upcoming && (upcoming.holidays || upcoming)) || [];
+          if (Array.isArray(list) && list.length > 0) {
+            hTitle.textContent = "No public holiday today";
+            const next = list[0];
+            const daysUntil = Math.max(0, Math.round((new Date(next.date) - today) / 86400000));
+            hDetail.innerHTML = "Next: <strong>" + D.esc(next.name) + "</strong> · in " + daysUntil + " days";
+          } else {
+            hTitle.textContent = "No public holiday today";
+            hDetail.textContent = "See all holidays →";
+          }
+        }
+
+        // (2) On this day (top event)
+        const otd = await D.getOnThisDay(mm, dd);
+        const otdTitle = D.$("[data-snap-otd-title]");
+        const otdDetail = D.$("[data-snap-otd-detail]");
+        if (otd && Array.isArray(otd.events) && otd.events[0]) {
+          const top = otd.events[0];
+          const slug = (top.title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+          const yrs = yr - (top.year || yr);
+          otdTitle.textContent = (top.year || "") + ": " + (top.title || "");
+          otdDetail.innerHTML = yrs + " years ago today · <a href=\"/onthisday/event/" + encodeURIComponent(slug) + "/\" style=\"color: var(--color-primary);\">read more</a>";
+        } else {
+          otdTitle.textContent = "Historical events today";
+          otdDetail.textContent = "See onthisday.com →";
+        }
+
+        // (3) DST this week
+        const dst = await D.getDSTUpcoming(homeTz);
+        const dstTitle = D.$("[data-snap-dst-title]");
+        const dstDetail = D.$("[data-snap-dst-detail]");
+        if (dst && (dst.next_change || dst.transition)) {
+          const next = dst.next_change || dst.transition;
+          dstTitle.textContent = "DST change on " + (next.date || "—");
+          dstDetail.innerHTML = "Offset moves from " + D.esc(next.from || "—") + " to " + D.esc(next.to || "—") + " · in " + (next.days_until || "?") + " days";
+        } else {
+          dstTitle.textContent = "No DST change this week";
+          dstDetail.textContent = "Next global DST: Oct 25 (Europe) · in ~96 days";
+        }
+
+        // (4) Sunrise / sunset
+        const sun = await D.getSun(homeLat, homeLon, yr + "-" + String(mm).padStart(2, "0") + "-" + String(dd).padStart(2, "0"));
+        const sunTitle = D.$("[data-snap-sun-title]");
+        const sunDetail = D.$("[data-snap-sun-detail]");
+        if (sun && (sun.sunrise || sun.sunrise_utc)) {
+          const fmt = function (iso) {
+            if (!iso) return "—";
+            const d = new Date(iso);
+            return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: homeTz });
+          };
+          sunTitle.textContent = fmt(sun.sunrise || sun.sunrise_utc) + " · " + fmt(sun.sunset || sun.sunset_utc);
+          if (sun.daylight_hours) {
+            sunDetail.textContent = "Day length: " + sun.daylight_hours.toFixed(2) + " hours";
+          } else if (sun.sunrise && sun.sunset) {
+            const ms = new Date(sun.sunset) - new Date(sun.sunrise);
+            const hours = (ms / 3600000).toFixed(2);
+            sunDetail.textContent = "Day length: " + hours + " hours";
+          } else {
+            sunDetail.textContent = "Computed in your timezone (" + homeTz + ")";
+          }
+        } else {
+          sunTitle.textContent = "Sun times unavailable";
+          sunDetail.textContent = "Try /time-zones/in/" + homeCc.toLowerCase() + "/";
+        }
+      }
+      loadSnapshot();
+
+      // ---- 4f. LONG WEEKEND FINDER -----------------------------
+      const lwfCountry = D.$("#lwf-country");
+      const lwfResult = D.$("#lwf-result");
+      const lwfCache = {};
+
+      async function loadLWF() {
+        if (!lwfCountry || !lwfResult) return;
+        const cc = lwfCountry.value;
+        const year = parseInt(lwfCountry.options[lwfCountry.selectedIndex].getAttribute("data-year") || yr, 10);
+        const cacheKey = cc + "-" + year;
+        lwfResult.innerHTML = '<p class="lwf-loading">Loading…</p>';
+
+        let list = lwfCache[cacheKey];
+        if (!list) {
+          const data = await D.getHolidaysForYear(cc, year);
+          list = data && (Array.isArray(data) ? data : data.holidays || data.data || []) || [];
+          // Try alternate shapes
+          if (list.length === 0 && data && data.holidays) list = data.holidays;
+          lwfCache[cacheKey] = list;
+        }
+
+        const weekends = D.computeLongWeekends(list, { year: year, minDays: 3 });
+        if (weekends.length === 0) {
+          lwfResult.innerHTML = '<p class="lwf-summary">No 3+ day long weekends in ' + year + ' for this country. Try a different country.</p>';
+          return;
+        }
+        const ccName = lwfCountry.options[lwfCountry.selectedIndex].text.split("·")[0].trim();
+        let html = '<p class="lwf-summary"><strong>' + weekends.length + ' long weekend' + (weekends.length === 1 ? '' : 's') + '</strong> in ' + year + ' for ' + D.esc(ccName) + ':</p><ul class="lwf-list">';
+        weekends.forEach(w => {
+          html += '<li class="lwf-item"><span class="lwf-icon" aria-hidden="true">🗓️</span><span class="lwf-name">' + D.esc(w.name) + '</span><span class="lwf-dates">' + D.fmtDateRange(w.start, w.end) + '</span><span class="lwf-badge">' + w.days + ' days</span></li>';
+        });
+        html += '</ul>';
+        lwfResult.innerHTML = html;
+      }
+      if (lwfCountry) {
+        lwfCountry.addEventListener("change", loadLWF);
+        loadLWF();
+      }
+
+      // ---- 4g. DID YOU KNOW? -----------------------------------
+      async function loadDYK() {
+        const card = D.$("#dyk-card");
+        if (!card) return;
+        const otd = await D.getOnThisDay(mm, dd);
+        let pick = null;
+        if (otd && Array.isArray(otd.events) && otd.events.length) {
+          // Prefer a "fun fact" / "trivia" entry if any
+          pick = otd.events.find(e => e.subcategory === "trivia" || e.subcategory === "fun_fact") || otd.events[0];
+        }
+        if (!pick || !pick.description) {
+          card.innerHTML = '<p class="dyk-text">A historical fact for today is being curated. Check back soon.</p>';
+          return;
+        }
+        const slug = (pick.title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        card.innerHTML = '<p class="dyk-text">' + D.esc(pick.description) + '</p><p class="dyk-meta">' + (pick.year || "") + ' · <a href="/onthisday/event/' + encodeURIComponent(slug) + '/" style="color: var(--color-primary);">Read more →</a></p>';
+      }
+      loadDYK();
+
+      // ---- 4h. FAMOUS BIRTHDAYS (deceased) --------------------
+      function renderPersonCard(p, type) {
+        const yrs = p.death_year && p.birth_year ? (p.death_year - p.birth_year) : null;
+        const ageLabel = type === "death" ? (yrs ? yrs + " yrs" : "—") : (yrs ? "b. " + p.birth_year : "b. " + (p.birth_year || "—"));
+        const portrait = p.image_url ? '<img class="' + type + '-portrait" src="' + D.esc(p.image_url) + '" alt="' + D.esc(p.name) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+        const slug = p.slug || p.wikidata_id || p.name;
+        return '<a href="/person/' + encodeURIComponent(slug) + '/" class="' + type + '-card">' + portrait + '<span class="' + type + '-year">' + D.esc(ageLabel) + '</span><span class="' + type + '-name">' + D.esc(p.name) + '</span><span class="' + type + '-meta">' + D.esc(p.profession || p.country || "") + '</span></a>';
+      }
+
+      async function loadBD() {
+        const grid = D.$("#bd-grid");
+        if (!grid) return;
+        const data = await D.getPersonToday({ type: "birth", status: "deceased", limit: 6 });
+        const list = (data && (data.persons || data.data || data)) || [];
+        if (!Array.isArray(list) || list.length === 0) {
+          grid.innerHTML = '<p class="bd-loading">No data for today.</p>';
+          return;
+        }
+        grid.innerHTML = list.map(p => renderPersonCard(p, "bd")).join("");
+      }
+      loadBD();
+
+      // ---- 4i. CELEBRITY BIRTHDAYS (living) -------------------
+      async function loadCBD() {
+        const grid = D.$("#cbd-grid");
+        if (!grid) return;
+        const data = await D.getPersonToday({ type: "birth", status: "living", limit: 6 });
+        const list = (data && (data.persons || data.data || data)) || [];
+        if (!Array.isArray(list) || list.length === 0) {
+          grid.innerHTML = '<p class="cbd-loading">No data for today.</p>';
+          return;
+        }
+        const ageThisYear = yr; // they turn N+1 this year if their birthday has passed
+        grid.innerHTML = list.map(p => {
+          const slug = p.slug || p.wikidata_id || p.name;
+          const portrait = p.image_url ? '<img class="cbd-portrait" src="' + D.esc(p.image_url) + '" alt="' + D.esc(p.name) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+          return '<a href="/person/' + encodeURIComponent(slug) + '/" class="cbd-card">' + portrait + '<span class="cbd-year">' + (p.birth_year ? "b. " + p.birth_year : "—") + '</span><span class="cbd-name">' + D.esc(p.name) + '</span><span class="cbd-meta">' + D.esc(p.profession || "") + '</span></a>';
+        }).join("");
+      }
+      loadCBD();
+
+      // ---- 4j. FAMOUS DEATHS -----------------------------------
+      async function loadDeaths() {
+        const grid = D.$("#deaths-grid");
+        if (!grid) return;
+        const data = await D.getPersonToday({ type: "death", limit: 6 });
+        const list = (data && (data.persons || data.data || data)) || [];
+        if (!Array.isArray(list) || list.length === 0) {
+          grid.innerHTML = '<p class="deaths-loading">No data for today.</p>';
+          return;
+        }
+        grid.innerHTML = list.map(p => renderPersonCard(p, "deaths")).join("");
+      }
+      loadDeaths();
+
+      // ---- 4k. YEAR TIMELINE -----------------------------------
+      async function loadYT() {
+        const grid = D.$("#yt-grid");
+        const yrEl = D.$("[data-yt-year]");
+        if (yrEl) yrEl.textContent = yr;
+        if (!grid) return;
+        const data = await D.getYearTimeline(yr);
+        const list = (data && (data.events || data.timeline || data.data || data)) || [];
+        if (!Array.isArray(list) || list.length === 0) {
+          grid.innerHTML = '<p class="yt-loading">No data for ' + yr + ' yet.</p>';
+          return;
+        }
+        // Take top 12 (one per month) if more
+        const top = list.slice(0, 12);
+        grid.innerHTML = top.map(e => {
+          const monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][(e.month || 1) - 1];
+          const slug = (e.title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+          return '<a href="/onthisday/event/' + encodeURIComponent(slug) + '/" class="yt-card"><span class="yt-month">' + monthName + '</span><span class="yt-title">' + D.esc(e.title || "") + '</span><span class="yt-year">' + (e.year || "") + '</span></a>';
+        }).join("");
+      }
+      loadYT();
+    })();
 </body>
 </html>

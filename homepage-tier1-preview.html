@@ -1,0 +1,867 @@
+<!doctype html>
+<!--
+  STATIC PREVIEW: Tier 1 + Tier 2 visual mockup
+  Light mode only. No JS dependencies. All content is hardcoded.
+  Open this file in a browser to see what the homepage will look like after
+  the proposed SEO/KG/AI-Search improvements.
+
+  Tier 1 (NOW):
+    [HIDDEN] 5 JSON-LD blocks (WebSite, Organization, WebApplication, FAQPage, ItemList)
+    [HIDDEN] <link rel="alternate" hreflang> for 14 languages
+    [VISIBLE] "Today on Earth" strip (NEW)
+    [VISIBLE] Clock pills become clickable links
+    [VISIBLE] FAQ expanded from 8 to 14 Q&A
+    [VISIBLE] OnThisDay shows 3-5 events (ItemList)
+
+  Tier 2 (PREVIEW, marked with [TIER 2] badge):
+    [TIER 2] Knowledge base chip cloud
+    [TIER 2] Today's snapshot 4 micro-cards
+    [TIER 2] Long weekend finder (interactive preview)
+-->
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[PREVIEW] Tier 1 + Tier 2 mockup — dateandtime.live</title>
+  <meta name="description" content="Static mockup showing proposed Knowledge Graph Entry Point homepage for dateandtime.live. Light mode only." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ===== EXACT SAME DESIGN SYSTEM AS PRODUCTION ===== */
+    :root, [data-theme="light"] {
+      --color-primary: #5b4aaf; --color-primary-fg: #ffffff;
+      --color-foreground: #49445f; --color-foreground-soft: #6b6585;
+      --color-muted: #77718f; --color-muted-soft: #9a92b0;
+      --color-border: rgba(92,74,175,.16); --color-border-soft: rgba(92,74,175,.08);
+      --color-background: #ffffff; --color-background-soft: #faf8ff;
+      --color-glow: drop-shadow(0 5px 8px rgba(91,77,145,.10));
+      --color-nav-underline: linear-gradient(90deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --color-logo-gradient: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+      --color-pill-purple-bg: rgba(91,74,175,.10); --color-pill-purple-fg: #5b4aaf; --color-pill-purple-bd: rgba(91,74,175,.30);
+      --color-pill-orange-bg: rgba(249,115,22,.10); --color-pill-orange-fg: #c2410c; --color-pill-orange-bd: rgba(249,115,22,.30);
+      --color-pill-green-bg: rgba(16,185,129,.10); --color-pill-green-fg: #047857; --color-pill-green-bd: rgba(16,185,129,.30);
+      --color-pill-rose-bg: rgba(244,63,94,.10); --color-pill-rose-fg: #be123c; --color-pill-rose-bd: rgba(244,63,94,.30);
+      --color-pill-blue-bg: rgba(59,130,246,.10); --color-pill-blue-fg: #1d4ed8; --color-pill-blue-bd: rgba(59,130,246,.30);
+      --color-page-texture:
+        radial-gradient(circle at 12% 18%, rgba(255,216,170,.92), transparent 27%),
+        radial-gradient(circle at 83% 15%, rgba(197,220,255,.95), transparent 31%),
+        radial-gradient(circle at 75% 82%, rgba(221,202,255,.92), transparent 28%),
+        radial-gradient(circle at 24% 82%, rgba(202,242,229,.78), transparent 30%),
+        linear-gradient(135deg,#fff8ef 0%,#f4f3ff 46%,#edf7ff 100%);
+      color-scheme: light;
+    }
+
+    /* ===== City pastel palette (same as prod) ===== */
+    :root {
+      --city-peach: #FFB59C; --city-peach-bg: rgba(255,181,156,0.10);
+      --city-lavender: #C4B5FD; --city-lavender-bg: rgba(196,181,253,0.10);
+      --city-mint: #6EE7B7; --city-mint-bg: rgba(110,231,183,0.10);
+      --city-sky: #7DD3FC; --city-sky-bg: rgba(125,211,252,0.10);
+      --city-rose: #FDA4AF; --city-rose-bg: rgba(253,164,175,0.10);
+      --city-lemon: #FCD34D; --city-lemon-bg: rgba(252,211,77,0.10);
+    }
+
+    /* ===== Base ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body { margin: 0; min-height: 100vh; background: var(--color-background); color: var(--color-foreground); font-family: "Inter", ui-sans-serif, system-ui, sans-serif; line-height: 1.55; position: relative; }
+    body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--color-page-texture); pointer-events: none; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; background: none; border: none; padding: 0; color: inherit; }
+    ::selection { background: color-mix(in srgb, var(--color-primary) 25%, transparent); }
+    .container { width: 100%; margin-inline: auto; padding-inline: 1.25rem; max-width: 1240px; }
+    @media (min-width: 640px) { .container { padding-inline: 1.5rem; } }
+    @media (min-width: 1024px) { .container { padding-inline: 2rem; } }
+    @media (min-width: 1280px) { .container { padding-inline: 2.5rem; } }
+
+    /* ===== Header (simplified for preview) ===== */
+    .site-header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--color-background) 75%, transparent); backdrop-filter: saturate(180%) blur(14px); border-bottom: 1px solid var(--color-border); }
+    .header-row { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 1rem; }
+    .logo { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 0.5rem; background-image: var(--color-logo-gradient); color: white; font-size: 0.875rem; font-weight: 800; font-family: ui-monospace, monospace; }
+    .logo-text { font-size: 1.0625rem; font-weight: 800; letter-spacing: -0.02em; }
+    .nav-main { display: none; gap: 0.25rem; }
+    @media (min-width: 1024px) { .nav-main { display: inline-flex; } }
+    .nav-link { position: relative; padding: 0.5rem 0.875rem; font-size: 0.875rem; font-weight: 700; border-radius: 0.5rem; }
+    .nav-link:hover { color: var(--color-primary); }
+    .nav-link-active { color: var(--color-primary); }
+    .nav-link-active::after { content: ""; position: absolute; left: 0.875rem; right: 0.875rem; bottom: 0.25rem; height: 1.5px; background: var(--color-nav-underline); border-radius: 9999px; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 700; height: 40px; padding: 0 1rem; border-radius: 9999px; border: 1px solid transparent; }
+    .btn-sm { height: 34px; padding: 0 0.75rem; font-size: 0.8125rem; }
+    .btn-primary { color: var(--color-primary-fg); background-image: var(--color-button-primary); }
+
+    /* ===== Section system (same as prod) ===== */
+    .section { padding: clamp(2rem, 5vw, 3.5rem) 0; text-align: center; position: relative; }
+    .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+    .section--clock { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--favorites { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-primary); margin: 0 0 0.5rem; }
+    .section-title { font-size: clamp(1.5rem, 3vw, 1.875rem); font-weight: 800; letter-spacing: -0.02em; color: var(--color-foreground); margin: 0 0 0.5rem; }
+    .section-subtitle { font-size: 0.95rem; color: var(--color-muted); margin: 0 auto 1.5rem; max-width: 600px; }
+
+    /* ===== Hero ===== */
+    .greeting-seo { font-size: clamp(1.875rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin: 0.5rem 0 0.75rem; color: var(--color-foreground); }
+    .greeting-city { color: var(--color-primary); }
+    .subtitle { font-size: 1.0625rem; color: var(--color-foreground-soft); margin: 0 0 1.5rem; }
+    .hero-supporting { max-width: 720px; margin: 0 auto; }
+    .hero-line { font-size: 0.9375rem; color: var(--color-muted); margin: 0 0 0.5rem; }
+    .hero-line .stat { color: var(--color-foreground); font-weight: 700; }
+    .hero-divider { color: var(--color-muted-soft); margin: 0 0.5rem; }
+
+    /* ===== Clock ===== */
+    .clock-block { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .mono-clock { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; color: var(--color-foreground); line-height: 1; }
+    .format-toggle { display: inline-flex; padding: 0.25rem; background: var(--color-pill-purple-bg); border: 1px solid var(--color-pill-purple-bd); border-radius: 9999px; gap: 0.25rem; }
+    .format-toggle button { padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--color-muted); border-radius: 9999px; }
+    .format-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; }
+    .day-date { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9375rem; color: var(--color-foreground-soft); margin: 0.5rem 0 0.25rem; }
+    .day-date-icon { width: 1rem; height: 1rem; }
+    .timezone { font-size: 0.875rem; color: var(--color-muted); margin: 0 0 1rem; }
+    .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--color-muted); margin-bottom: 1rem; }
+    .sync-dot { width: 6px; height: 6px; border-radius: 9999px; background: #10b981; }
+    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 0.5rem 0 0; }
+    .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; border: 1px solid; }
+    .pill-purple { background: var(--color-pill-purple-bg); color: var(--color-pill-purple-fg); border-color: var(--color-pill-purple-bd); }
+    .pill-orange { background: var(--color-pill-orange-bg); color: var(--color-pill-orange-fg); border-color: var(--color-pill-orange-bd); }
+    .pill-green { background: var(--color-pill-green-bg); color: var(--color-pill-green-fg); border-color: var(--color-pill-green-bd); }
+    .pill-rose { background: var(--color-pill-rose-bg); color: var(--color-pill-rose-fg); border-color: var(--color-pill-rose-bd); }
+    .pill-blue { background: var(--color-pill-blue-bg); color: var(--color-pill-blue-fg); border-color: var(--color-pill-blue-bd); }
+    .pill a { color: inherit; }
+    .pill-link { text-decoration: none; transition: filter .15s; }
+    .pill-link:hover { filter: brightness(0.95); }
+
+    /* ===== SECTION 3 (existing prod): Search + popular cities ===== */
+    .search-section { max-width: 720px; margin: 0 auto; }
+    .search-wrap { position: relative; }
+    .search-input { width: 100%; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
+    .search-input::placeholder { color: var(--color-muted-soft); }
+    .search-input:focus { outline: none; border-color: var(--color-primary); }
+    .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
+    .popular-cities-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1.5rem 0 0.625rem; text-align: left; }
+    .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    .popular-city { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid var(--city-color, var(--color-border)); background: var(--city-color-bg, transparent); color: var(--color-foreground); transition: transform 150ms ease, box-shadow 150ms ease; }
+    .popular-city:hover { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--city-color, var(--color-primary)) 30%, transparent); }
+    .popular-city-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--city-color); flex-shrink: 0; }
+    .popular-city-add { font-size: 0.95rem; line-height: 1; color: var(--color-muted-soft); font-weight: 400; }
+
+    /* ===== SECTION 4 (existing prod): Favorites rail ===== */
+    .section--favorites { background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding: 0.5rem 0.25rem 1rem; max-width: 1100px; margin: 0 auto; }
+    @media (min-width: 600px) { .rail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .city-card { padding: 1.125rem 1.25rem; text-align: center; min-width: 0; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; position: relative; }
+    .city-card.is-home { box-shadow: 0 0 0 2px color-mix(in srgb, #f59e0b 60%, transparent), 0 4px 16px rgba(245, 158, 11, 0.15); }
+    .home-badge { position: absolute; top: 0.4rem; right: 0.5rem; display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.4rem; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 9999px; text-transform: uppercase; }
+    .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.75rem; position: relative; }
+    .live-pulse { width: 8px; height: 8px; border-radius: 50%; background: #10b981; position: relative; }
+    .live-pulse::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; background: #10b981; opacity: 0.3; }
+    .city-name { font-size: 0.8125rem; font-weight: 700; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 13rem; }
+    .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--color-foreground); }
+    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.4rem; text-align: center; }
+    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
+    .city-day { font-weight: 600; }
+    .city-day-sep { color: var(--color-muted-soft); }
+    .city-hours-diff { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-foreground); padding: 0.05rem 0.35rem; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
+
+    /* ===== TIER 1 NEW: "Today on Earth" strip ===== */
+    .earth-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 0 auto; max-width: 900px; }
+    @media (min-width: 640px) { .earth-strip { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .earth-strip { grid-template-columns: repeat(6, 1fr); } }
+    .earth-card { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 1rem 0.5rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; transition: transform .15s, border-color .15s, box-shadow .15s; text-decoration: none; color: inherit; }
+    .earth-card:hover { transform: translateY(-2px); border-color: var(--color-primary); box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 12%, transparent); }
+    .earth-flag { font-size: 1.5rem; line-height: 1; }
+    .earth-city { font-size: 0.875rem; font-weight: 700; color: var(--color-foreground); }
+    .earth-time { font-family: "JetBrains Mono", monospace; font-size: 1.125rem; font-weight: 700; color: var(--color-primary); }
+    .earth-offset { font-size: 0.6875rem; color: var(--color-muted); font-family: "JetBrains Mono", monospace; }
+
+    /* ===== TIER 2 PREVIEW: Knowledge base chip cloud ===== */
+    .kb-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; max-width: 800px; margin: 0 auto; }
+    .kb-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 1rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 9999px; font-size: 0.875rem; font-weight: 600; color: var(--color-foreground); transition: all .15s; text-decoration: none; }
+    .kb-chip:hover { background: var(--color-pill-purple-bg); border-color: var(--color-primary); color: var(--color-primary); }
+    .kb-chip-emoji { font-size: 1rem; }
+
+    /* ===== TIER 2 PREVIEW: Today's snapshot 4 micro-cards ===== */
+    .snapshot-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; max-width: 1100px; margin: 0 auto; }
+    @media (min-width: 640px) { .snapshot-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .snapshot-grid { grid-template-columns: repeat(4, 1fr); } }
+    .snapshot-card { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.25rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; text-align: left; transition: transform .15s, border-color .15s; text-decoration: none; color: inherit; }
+    .snapshot-card:hover { transform: translateY(-2px); border-color: var(--color-primary); }
+    .snapshot-label { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-primary); }
+    .snapshot-title { font-size: 0.875rem; font-weight: 700; color: var(--color-foreground); line-height: 1.3; }
+    .snapshot-detail { font-size: 0.8125rem; color: var(--color-muted); line-height: 1.4; }
+    .snapshot-detail strong { color: var(--color-foreground); font-weight: 700; }
+
+    /* ===== TIER 2 PREVIEW: Long weekend finder ===== */
+    .lwf-card { max-width: 700px; margin: 0 auto; padding: 1.5rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; }
+    .lwf-controls { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .lwf-select { flex: 1; min-width: 200px; padding: 0.5rem 0.75rem; background: var(--color-background-soft); border: 1px solid var(--color-border); border-radius: 8px; font-size: 0.875rem; font-weight: 600; color: var(--color-foreground); }
+    .lwf-result { text-align: left; }
+    .lwf-summary { font-size: 0.9375rem; color: var(--color-foreground); margin-bottom: 0.75rem; }
+    .lwf-summary strong { color: var(--color-primary); font-weight: 800; }
+    .lwf-list { list-style: none; padding: 0; margin: 0; }
+    .lwf-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--color-border-soft); }
+    .lwf-item:last-child { border-bottom: none; }
+    .lwf-icon { font-size: 1.25rem; }
+    .lwf-name { flex: 1; font-size: 0.875rem; font-weight: 700; color: var(--color-foreground); }
+    .lwf-dates { font-size: 0.8125rem; color: var(--color-muted); font-family: "JetBrains Mono", monospace; }
+    .lwf-badge { padding: 0.15rem 0.55rem; background: var(--color-pill-green-bg); color: var(--color-pill-green-fg); border: 1px solid var(--color-pill-green-bd); border-radius: 9999px; font-size: 0.6875rem; font-weight: 700; }
+
+    /* ===== Preview badge ===== */
+    .preview-badge { position: fixed; top: 0; right: 0; background: var(--color-primary); color: white; padding: 0.4rem 0.75rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; border-bottom-left-radius: 8px; z-index: 100; }
+    .tier-tag { display: inline-block; padding: 0.15rem 0.5rem; background: var(--color-pill-orange-bg); color: var(--color-pill-orange-fg); border: 1px solid var(--color-pill-orange-bd); border-radius: 9999px; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.08em; margin-left: 0.5rem; vertical-align: middle; }
+    .tier-tag.tier1 { background: var(--color-pill-green-bg); color: var(--color-pill-green-fg); border-color: var(--color-pill-green-bd); }
+    .tier-tag.tier2 { background: var(--color-pill-orange-bg); color: var(--color-pill-orange-fg); border-color: var(--color-pill-orange-bd); }
+
+    /* ===== TIER 1: OTD ItemList (3-5 events) ===== */
+    .otd-list { display: grid; grid-template-columns: 1fr; gap: 0.75rem; max-width: 900px; margin: 0 auto; }
+    @media (min-width: 768px) { .otd-list { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .otd-list { grid-template-columns: repeat(3, 1fr); } }
+    .otd-card { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.25rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; text-align: left; transition: transform .15s, border-color .15s; text-decoration: none; color: inherit; }
+    .otd-card:hover { transform: translateY(-2px); border-color: var(--color-primary); }
+    .otd-year { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; font-weight: 700; color: var(--color-primary); letter-spacing: 0.05em; }
+    .otd-title { font-size: 0.9375rem; font-weight: 700; color: var(--color-foreground); line-height: 1.3; }
+    .otd-type { font-size: 0.6875rem; font-weight: 700; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ===== FAQ (expanded) ===== */
+    .faq-list { max-width: 760px; margin: 0 auto; text-align: left; }
+    .faq-item { border-bottom: 1px solid var(--color-border-soft); padding: 0.5rem 0; }
+    .faq-item summary { padding: 0.75rem 0; font-weight: 700; color: var(--color-foreground); cursor: pointer; list-style: none; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::before { content: "+"; display: inline-block; width: 1.25rem; color: var(--color-primary); font-weight: 800; }
+    .faq-item[open] summary::before { content: "−"; }
+    .faq-item p { margin: 0.5rem 0 0.75rem 1.25rem; color: var(--color-foreground-soft); font-size: 0.9375rem; }
+
+    /* ===== Footer ===== */
+    .site-footer { padding: 2rem 0; border-top: 1px solid var(--color-border); }
+    .site-footer-inner { max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
+    .site-footer-nav { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; justify-content: center; margin-bottom: 1rem; }
+    .site-footer-nav a { font-size: 0.875rem; font-weight: 600; color: var(--color-foreground-soft); }
+    .site-footer-meta { text-align: center; font-size: 0.8125rem; color: var(--color-muted); margin: 0.25rem 0; }
+  </style>
+
+  <!-- ============================================== -->
+  <!-- TIER 1: JSON-LD BLOCKS (HIDDEN, all the new schemas) -->
+  <!-- ============================================== -->
+
+  <!-- 1. WebSite with SearchAction (triggers sitelinks search box) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "dateandtime.live",
+    "url": "https://dateandtime.live/",
+    "description": "World clock for 33,945 cities across 408 time zones. Current time, UTC offset, DST, sunrise & sunset, public holidays, and business hours.",
+    "inLanguage": "en",
+    "publisher": {"@id": "https://dateandtime.live/#organization"},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://dateandtime.live/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- 2. Organization with sameAs to knowledge graph hubs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://dateandtime.live/#organization",
+    "name": "dateandtime.live",
+    "url": "https://dateandtime.live/",
+    "logo": "https://dateandtime.live/assets/logo-512.png",
+    "description": "The world's largest Date, Time, Timezone, Calendar, Holiday, Travel and Geographic Knowledge Platform. Built on official IANA time zone data.",
+    "foundingDate": "2026",
+    "sameAs": [
+      "https://github.com/dateandtime-live",
+      "https://www.wikidata.org/wiki/Q106840703",
+      "https://en.wikipedia.org/wiki/Time_zone",
+      "https://www.iana.org/time-zones"
+    ]
+  }
+  </script>
+
+  <!-- 3. WebApplication (the "world clock app" entity) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "World Clock by dateandtime.live",
+    "url": "https://dateandtime.live/",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any (web-based)",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Live current time in 33,945 cities",
+      "408 IANA time zones",
+      "UTC offset and DST status",
+      "Sunrise and sunset times",
+      "Public holidays in 197 countries",
+      "Business working hours",
+      "Meeting planner across time zones",
+      "Time zone converter",
+      "On-this-day historical events",
+      "Long weekend finder"
+    ]
+  }
+  </script>
+
+  <!-- 4. FAQPage (the missing one!) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"What time is it in Tokyo right now?","acceptedAnswer":{"@type":"Answer","text":"The current time in Tokyo is 8:42 AM JST (UTC+9). Tokyo observes Japan Standard Time year-round with no daylight saving time. For more details, visit dateandtime.live/time-zones/in/jp/."}},
+      {"@type":"Question","name":"What time zone is New York in?","acceptedAnswer":{"@type":"Answer","text":"New York is in the America/New_York IANA time zone. In winter it's EST (UTC-5); during daylight saving time (mid-March to early November) it's EDT (UTC-4). Currently observing EDT."}},
+      {"@type":"Question","name":"Is daylight saving time active right now?","acceptedAnswer":{"@type":"Answer","text":"Yes, daylight saving time is currently active in most of North America, Europe, and parts of the Middle East. It will end on Sunday, November 2, 2026 in the US and Europe. See dateandtime.live/time-zones/dst/ for the global DST schedule."}},
+      {"@type":"Question","name":"When does DST end in 2026?","acceptedAnswer":{"@type":"Answer","text":"DST ends on Sunday, November 2, 2026 in the United States, Canada, Mexico (most), and the European Union. Clocks fall back one hour at 2:00 AM local time. See dateandtime.live/time-zones/dst/ for the global schedule."}},
+      {"@type":"Question","name":"What is UTC?","acceptedAnswer":{"@type":"Answer","text":"UTC (Coordinated Universal Time) is the primary time standard by which the world regulates clocks. It is within about 1 second of mean solar time at 0° longitude and is not adjusted for daylight saving. UTC replaced GMT in 1967 as the official reference."}},
+      {"@type":"Question","name":"How do I find a meeting time across time zones?","acceptedAnswer":{"@type":"Answer","text":"Use the dateandtime.live Meeting Planner at dateandtime.live/world-time/meeting/. Add the cities of all attendees, then drag-select a time window to see each person's local time. The tool highlights overlapping working hours (typically 9 AM – 6 PM) for every attendee."}},
+      {"@type":"Question","name":"How many time zones are there in the world?","acceptedAnswer":{"@type":"Answer","text":"There are 408 IANA time zones in the dateandtime.live database, covering 33,945 cities across 242 countries and territories. The exact number changes as regions adopt or abolish DST or change their time zone boundaries."}},
+      {"@type":"Question","name":"What is the IANA time zone database?","acceptedAnswer":{"@type":"Answer","text":"The IANA (Internet Assigned Numbers Authority) Time Zone Database, often called tzdata or zoneinfo, is the de facto global standard for time zone identifiers. Every computer and operating system uses it. Format examples: America/New_York, Europe/London, Asia/Tokyo. See iana.org/time-zones."}},
+      {"@type":"Question","name":"What is the difference between GMT and UTC?","acceptedAnswer":{"@type":"Answer","text":"GMT (Greenwich Mean Time) and UTC (Coordinated Universal Time) differ by less than 1 second. GMT is a time zone historically based on mean solar time at Greenwich. UTC is an atomic time scale. For practical purposes, they are interchangeable."}},
+      {"@type":"Question","name":"What holiday is today in the United States?","acceptedAnswer":{"@type":"Answer","text":"Today's holiday in the US is shown at dateandtime.live/holidays/ and includes public holidays, bank holidays, school holidays, and observances. The site tracks 1,600+ holidays across 39 countries via Nager.Date."}},
+      {"@type":"Question","name":"What happened on this day in history?","acceptedAnswer":{"@type":"Answer","text":"On This Day in history covers 71,992 dated events, births, and deaths from Wikimedia sources. Today's entry is shown at dateandtime.live/onthisday/. Browse all 366 days of history with images and citations."}},
+      {"@type":"Question","name":"What countries observe daylight saving time?","acceptedAnswer":{"@type":"Answer","text":"Approximately 70 countries observe DST, including most of North America, the European Union, parts of the Middle East, and southern Australia/New Zealand. Most countries in Asia, Africa, and the tropics do not. See dateandtime.live/time-zones/dst/ for the full list."}},
+      {"@type":"Question","name":"How many days until Christmas 2026?","acceptedAnswer":{"@type":"Answer","text":"Christmas Day is December 25, 2026. The countdown and other holiday countdowns are available at dateandtime.live/holidays/."}},
+      {"@type":"Question","name":"What is the ISO 8601 date format?","acceptedAnswer":{"@type":"Answer","text":"ISO 8601 is the international standard for date and time representation. Date format: YYYY-MM-DD (e.g. 2026-07-20). Time format: hh:mm:ss (e.g. 14:23:45). Combined: 2026-07-20T14:23:45Z. UTC is indicated by Z or +00:00."}}
+    ]
+  }
+  </script>
+
+  <!-- 5. ItemList of popular cities (Knowledge Graph entry points) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Today's time in major world cities",
+    "description": "Live current time in 6 major world cities, updated every second.",
+    "numberOfItems": 6,
+    "itemListElement": [
+      {"@type":"ListItem","position":1,"name":"Tokyo","url":"https://dateandtime.live/time-zones/in/jp/","image":"https://flagcdn.com/w80/jp.png"},
+      {"@type":"ListItem","position":2,"name":"London","url":"https://dateandtime.live/time-zones/in/gb/","image":"https://flagcdn.com/w80/gb.png"},
+      {"@type":"ListItem","position":3,"name":"New York","url":"https://dateandtime.live/time-zones/in/us/","image":"https://flagcdn.com/w80/us.png"},
+      {"@type":"ListItem","position":4,"name":"Sydney","url":"https://dateandtime.live/time-zones/in/au/","image":"https://flagcdn.com/w80/au.png"},
+      {"@type":"ListItem","position":5,"name":"Lagos","url":"https://dateandtime.live/time-zones/in/ng/","image":"https://flagcdn.com/w80/ng.png"},
+      {"@type":"ListItem","position":6,"name":"São Paulo","url":"https://dateandtime.live/time-zones/in/br/","image":"https://flagcdn.com/w80/br.png"}
+    ]
+  }
+  </script>
+
+  <!-- 6. hreflang for 14 languages (Tier 1) -->
+  <link rel="alternate" hreflang="en" href="https://dateandtime.live/" />
+  <link rel="alternate" hreflang="pt" href="https://dateandtime.live/pt/" />
+  <link rel="alternate" hreflang="es" href="https://dateandtime.live/es/" />
+  <link rel="alternate" hreflang="de" href="https://dateandtime.live/de/" />
+  <link rel="alternate" hreflang="fr" href="https://dateandtime.live/fr/" />
+  <link rel="alternate" hreflang="it" href="https://dateandtime.live/it/" />
+  <link rel="alternate" hreflang="nl" href="https://dateandtime.live/nl/" />
+  <link rel="alternate" hreflang="pl" href="https://dateandtime.live/pl/" />
+  <link rel="alternate" hreflang="sv" href="https://dateandtime.live/sv/" />
+  <link rel="alternate" hreflang="uk" href="https://dateandtime.live/uk/" />
+  <link rel="alternate" hreflang="fa" href="https://dateandtime.live/fa/" />
+  <link rel="alternate" hreflang="he" href="https://dateandtime.live/he/" />
+  <link rel="alternate" hreflang="ar" href="https://dateandtime.live/ar/" />
+  <link rel="alternate" hreflang="hi" href="https://dateandtime.live/hi/" />
+  <link rel="alternate" hreflang="x-default" href="https://dateandtime.live/" />
+</head>
+
+<body>
+  <div class="preview-badge">STATIC PREVIEW · LIGHT MODE</div>
+
+  <!-- ===== Header (matches production) ===== -->
+  <header class="site-header">
+    <div class="container header-row">
+      <a href="/" class="logo" aria-label="dateandtime.live home">
+        <span class="logo-mark">d·t</span>
+        <span class="logo-text">dateandtime<span style="color:var(--color-muted);font-weight:500">.live</span></span>
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="/holidays/" class="nav-link">Holidays</a>
+        <a href="/onthisday/" class="nav-link">On this day</a>
+        <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+        <a href="/world-time/" class="nav-link nav-link-active">World time</a>
+        <a href="/time-zones/" class="nav-link">Time zones</a>
+      </nav>
+      <div class="header-actions">
+        <a href="#feedback" class="btn btn-sm btn-primary">Send feedback</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== SECTION 1: HERO (unchanged) ===== -->
+    <section class="section section--hero">
+      <div class="container">
+        <h1 class="greeting-seo">Current time in <span class="greeting-city">your city</span></h1>
+        <p class="subtitle">It's <strong>14:23</strong> in <span>your city</span> right now. Updates every second.</p>
+        <div class="hero-supporting">
+          <p class="hero-line">The world clock for <span class="stat">33,945 cities</span> across <span class="stat">408 time zones</span> <span class="hero-divider">·</span> current time, UTC offset, and DST status in one place.</p>
+          <p class="hero-line">Plus sunrise &amp; sunset, public holidays, and business hours for every country <span class="hero-divider">·</span> search anywhere on Earth.</p>
+          <p class="hero-line"><strong>Free</strong> for meeting planners, travelers, and remote teams <span class="hero-divider">·</span> powered by official <strong>IANA time zone data</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 2: CLOCK + CLICKABLE PILLS (Tier 1) ===== -->
+    <section class="section section--clock">
+      <div class="container">
+        <div class="clock-block">
+          <div class="mono-clock" aria-label="Live current time">14:23:45.45</div>
+          <div class="format-toggle" role="group" aria-label="Time format">
+            <button type="button" aria-pressed="false">12h</button>
+            <button type="button" aria-pressed="true">24h</button>
+          </div>
+        </div>
+        <div class="day-date">
+          <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Monday, July 20, 2026</span>
+        </div>
+        <div class="timezone">EDT · Coordinated Universal Time Offset: <strong>UTC−4</strong></div>
+        <div class="sync-row">
+          <span class="sync-dot"></span>
+          <span>Your clock is <strong>0.023 seconds</strong> behind · Accuracy ±0.012 seconds</span>
+        </div>
+        <div class="pills">
+          <!-- TIER 1: All pills now clickable links -->
+          <a class="pill pill-rose pill-link" href="/onthisday/">
+            🚀 Apollo 11 Moon landing (1969)
+          </a>
+          <a class="pill pill-green pill-link" href="/holidays/us/">
+            ❤️ Independence Day is in 11 days
+          </a>
+          <a class="pill pill-purple pill-link" href="/time-zones/working-hours/">
+            🕘 Working hours · 9 AM – 6 PM
+          </a>
+          <a class="pill pill-orange pill-link" href="/time-zones/in/us/">
+            ☀️ Sunrise 5:42 · Sunset 20:23
+          </a>
+          <a class="pill pill-blue pill-link" href="/time-zones/dst/">
+            🕒 DST · ends Nov 2
+          </a>
+          <a class="pill pill-purple pill-link" href="/onthisday/by-date/7-20/">
+            🎂 3 famous birthdays today
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 3 (existing prod, hardcoded): Search + popular cities -->
+    <!-- ============================================== -->
+    <section class="section">
+      <div class="container">
+        <p class="section-eyebrow">Add cities</p>
+        <h2 class="section-title">Build your world clock</h2>
+        <p class="section-subtitle">Search any city worldwide, or pick a popular one below to add it to your favorites rail.</p>
+
+        <div class="search-section" id="search-section">
+          <div class="search-wrap">
+            <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <p class="popular-cities-label">Popular cities</p>
+          <div class="popular-cities" aria-label="Popular cities to add">
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>New York <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>London <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Tokyo <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>Paris <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Sydney <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Lagos <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Berlin <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Singapore <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>São Paulo <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Dubai <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Mumbai <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Mexico City <span class="popular-city-add">+</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4 (existing prod, hardcoded): Favorites rail -->
+    <!-- ============================================== -->
+    <section class="section section--favorites">
+      <div class="container">
+        <p class="section-eyebrow">Your world clock</p>
+        <h2 class="section-title">Favorite cities</h2>
+        <p class="section-subtitle">Click any city to update the big clock + pills. The first one (⌂) is your home and stays put.</p>
+
+        <div class="rail">
+          <!-- Home city (gold ring) -->
+          <div class="city-card is-home" style="--city-color:#FCD34D">
+            <div class="home-badge">⌂ Home</div>
+            <div class="city-head">
+              <span class="live-pulse"></span>
+              <span class="city-name">New York</span>
+            </div>
+            <div class="city-time">14:24</div>
+            <div class="city-tz">EDT · UTC−4</div>
+            <div class="city-day-diff">
+              <span class="city-day">Mon · Jul 20</span>
+            </div>
+          </div>
+          <div class="city-card" style="--city-color:#FFB59C">
+            <div class="city-head">
+              <span class="live-pulse"></span>
+              <span class="city-name">Tokyo</span>
+            </div>
+            <div class="city-time">03:24</div>
+            <div class="city-tz">JST · UTC+9</div>
+            <div class="city-day-diff">
+              <span class="city-day">Tue · Jul 21</span>
+              <span class="city-day-sep">·</span>
+              <span class="city-hours-diff">+13h</span>
+            </div>
+          </div>
+          <div class="city-card" style="--city-color:#C4B5FD">
+            <div class="city-head">
+              <span class="live-pulse"></span>
+              <span class="city-name">London</span>
+            </div>
+            <div class="city-time">19:24</div>
+            <div class="city-tz">BST · UTC+1</div>
+            <div class="city-day-diff">
+              <span class="city-day">Mon · Jul 20</span>
+              <span class="city-day-sep">·</span>
+              <span class="city-hours-diff">+5h</span>
+            </div>
+          </div>
+          <div class="city-card" style="--city-color:#FDA4AF">
+            <div class="city-head">
+              <span class="live-pulse"></span>
+              <span class="city-name">Sydney</span>
+            </div>
+            <div class="city-time">04:24</div>
+            <div class="city-tz">AEST · UTC+10</div>
+            <div class="city-day-diff">
+              <span class="city-day">Tue · Jul 21</span>
+              <span class="city-day-sep">·</span>
+              <span class="city-hours-diff">+14h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TIER 1 NEW SECTION: "Today on Earth" strip      -->
+    <!-- ============================================== -->
+    <section class="section">
+      <div class="container">
+        <p class="section-eyebrow">Today on Earth <span class="tier-tag tier1">TIER 1</span></p>
+        <h2 class="section-title">Live in 6 cities around the world</h2>
+        <p class="section-subtitle">What time is it right now where the people you care about are? Click any city to open its full time zone page.</p>
+
+        <div class="earth-strip">
+          <a href="/time-zones/in/jp/" class="earth-card">
+            <span class="earth-flag">🇯🇵</span>
+            <div class="earth-city">Tokyo</div>
+            <div class="earth-time">03:24</div>
+            <div class="earth-offset">JST · UTC+9</div>
+          </a>
+          <a href="/time-zones/in/gb/" class="earth-card">
+            <span class="earth-flag">🇬🇧</span>
+            <div class="earth-city">London</div>
+            <div class="earth-time">19:24</div>
+            <div class="earth-offset">BST · UTC+1</div>
+          </a>
+          <a href="/time-zones/in/us/" class="earth-card">
+            <span class="earth-flag">🇺🇸</span>
+            <div class="earth-city">New York</div>
+            <div class="earth-time">14:24</div>
+            <div class="earth-offset">EDT · UTC−4</div>
+          </a>
+          <a href="/time-zones/in/au/" class="earth-card">
+            <span class="earth-flag">🇦🇺</span>
+            <div class="earth-city">Sydney</div>
+            <div class="earth-time">04:24</div>
+            <div class="earth-offset">AEST · UTC+10</div>
+          </a>
+          <a href="/time-zones/in/ng/" class="earth-card">
+            <span class="earth-flag">🇳🇬</span>
+            <div class="earth-city">Lagos</div>
+            <div class="earth-time">19:24</div>
+            <div class="earth-offset">WAT · UTC+1</div>
+          </a>
+          <a href="/time-zones/in/br/" class="earth-card">
+            <span class="earth-flag">🇧🇷</span>
+            <div class="earth-city">São Paulo</div>
+            <div class="earth-time">15:24</div>
+            <div class="earth-offset">BRT · UTC−3</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TIER 1 EXPANDED: OnThisDay ItemList (3-5 events) ===== -->
+    <section class="section">
+      <div class="container">
+        <p class="section-eyebrow">On this day <span class="tier-tag tier1">TIER 1 · expanded</span></p>
+        <h2 class="section-title">July 20 in history</h2>
+        <p class="section-subtitle">Five historical events, famous birthdays, and cultural milestones that happened on this date.</p>
+
+        <div class="otd-list">
+          <a class="otd-card" href="/onthisday/by-date/7-20/">
+            <div class="otd-type">Event</div>
+            <div class="otd-year">1969 · 57 years ago</div>
+            <div class="otd-title">Apollo 11 lands on the Moon</div>
+          </a>
+          <a class="otd-card" href="/onthisday/by-date/7-20/">
+            <div class="otd-type">Birthday</div>
+            <div class="otd-year">1963 · 63 years ago</div>
+            <div class="otd-title">Coolio, American rapper</div>
+          </a>
+          <a class="otd-card" href="/onthisday/by-date/7-20/">
+            <div class="otd-type">Event</div>
+            <div class="otd-year">1944 · 82 years ago</div>
+            <div class="otd-title">Operation Valkyrie assassination attempt on Hitler</div>
+          </a>
+          <a class="otd-card" href="/onthisday/by-date/7-20/">
+            <div class="otd-type">Birthday</div>
+            <div class="otd-year">1509 · 517 years ago</div>
+            <div class="otd-title">John Calvin, French theologian</div>
+          </a>
+          <a class="otd-card" href="/onthisday/by-date/7-20/">
+            <div class="otd-type">Event</div>
+            <div class="otd-year">1923 · 103 years ago</div>
+            <div class="otd-title">Pancho Villa, Mexican revolutionary, dies</div>
+          </a>
+        </div>
+        <p style="margin-top: 1.5rem;"><a href="/onthisday/" style="color: var(--color-primary); font-weight: 700;">Browse all on-this-day events →</a></p>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TIER 2 PREVIEW: Knowledge base chip cloud       -->
+    <!-- ============================================== -->
+    <section class="section" style="background: color-mix(in srgb, var(--color-background-soft) 40%, transparent);">
+      <div class="container">
+        <p class="section-eyebrow">Explore the knowledge base <span class="tier-tag tier2">TIER 2 PREVIEW</span></p>
+        <h2 class="section-title">33,945 cities · 408 time zones · 242 countries · 1,600+ holidays</h2>
+        <p class="section-subtitle">Every entry in our knowledge graph is one click away.</p>
+
+        <div class="kb-cloud">
+          <a href="/time-zones/" class="kb-chip"><span class="kb-chip-emoji">🌐</span> Time Zones (408)</a>
+          <a href="/cities/" class="kb-chip"><span class="kb-chip-emoji">🏙️</span> Cities (33,945)</a>
+          <a href="/countries/" class="kb-chip"><span class="kb-chip-emoji">🗺️</span> Countries (242)</a>
+          <a href="/holidays/" class="kb-chip"><span class="kb-chip-emoji">🎉</span> Holidays (1,600+)</a>
+          <a href="/onthisday/" class="kb-chip"><span class="kb-chip-emoji">📅</span> On This Day (71,992)</a>
+          <a href="/time-zones/dst/" class="kb-chip"><span class="kb-chip-emoji">🕒</span> DST Schedule</a>
+          <a href="/time-zones/utc/" class="kb-chip"><span class="kb-chip-emoji">⏰</span> UTC & GMT</a>
+          <a href="/calendars/" class="kb-chip"><span class="kb-chip-emoji">🗓️</span> Calendar Systems</a>
+          <a href="/time-zones/working-hours/" class="kb-chip"><span class="kb-chip-emoji">💼</span> Working Hours</a>
+          <a href="/climate/" class="kb-chip"><span class="kb-chip-emoji">🌡️</span> Climate</a>
+          <a href="/travel/" class="kb-chip"><span class="kb-chip-emoji">✈️</span> Travel Times</a>
+          <a href="/history/" class="kb-chip"><span class="kb-chip-emoji">📜</span> History</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TIER 2 PREVIEW: Today's snapshot 4 micro-cards   -->
+    <!-- ============================================== -->
+    <section class="section">
+      <div class="container">
+        <p class="section-eyebrow">Today's snapshot <span class="tier-tag tier2">TIER 2 PREVIEW</span></p>
+        <h2 class="section-title">Four answers in one glance</h2>
+        <p class="section-subtitle">Direct answers to the questions people ask Google most about today.</p>
+
+        <div class="snapshot-grid">
+          <a href="/holidays/us/" class="snapshot-card">
+            <div class="snapshot-label">Today's holiday · US</div>
+            <div class="snapshot-title">No federal holiday today</div>
+            <div class="snapshot-detail">Next: <strong>Independence Day</strong> · in 11 days</div>
+          </a>
+          <a href="/onthisday/by-date/7-20/" class="snapshot-card">
+            <div class="snapshot-label">On this day · 1969</div>
+            <div class="snapshot-title">Apollo 11 lands on the Moon</div>
+            <div class="snapshot-detail">First crewed Moon landing · 57 years ago</div>
+          </a>
+          <a href="/time-zones/dst/" class="snapshot-card">
+            <div class="snapshot-label">DST this week</div>
+            <div class="snapshot-title">No changes in the next 7 days</div>
+            <div class="snapshot-detail">Next global DST: <strong>Oct 25 (Europe)</strong> · in 97 days</div>
+          </a>
+          <a href="/time-zones/in/us/" class="snapshot-card">
+            <div class="snapshot-label">Sunrise / Sunset · New York</div>
+            <div class="snapshot-title">5:42 AM · 8:23 PM</div>
+            <div class="snapshot-detail">Day length: <strong>14h 41m</strong> · golden hour 7:42 PM</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TIER 2 PREVIEW: Long weekend finder (interactive) -->
+    <!-- ============================================== -->
+    <section class="section" style="background: color-mix(in srgb, var(--color-background-soft) 40%, transparent);">
+      <div class="container">
+        <p class="section-eyebrow">Long weekend finder <span class="tier-tag tier2">TIER 2 PREVIEW</span></p>
+        <h2 class="section-title">Find your next long weekend</h2>
+        <p class="section-subtitle">80K+ searches/month for "long weekend [country] [year]". We have the data.</p>
+
+        <div class="lwf-card">
+          <div class="lwf-controls">
+            <select class="lwf-select" aria-label="Country">
+              <option>🇺🇸 United States · 2026</option>
+              <option>🇬🇧 United Kingdom · 2026</option>
+              <option>🇨🇦 Canada · 2026</option>
+              <option>🇦🇺 Australia · 2026</option>
+              <option>🇩🇪 Germany · 2026</option>
+              <option>🇫🇷 France · 2026</option>
+              <option>🇧🇷 Brazil · 2026</option>
+              <option>🇮🇳 India · 2026</option>
+              <option>🇯🇵 Japan · 2026</option>
+              <option>🇲🇽 Mexico · 2026</option>
+            </select>
+          </div>
+          <div class="lwf-result">
+            <p class="lwf-summary"><strong>5 long weekends</strong> found in 2026 for the United States:</p>
+            <ul class="lwf-list">
+              <li class="lwf-item">
+                <span class="lwf-icon">🪖</span>
+                <span class="lwf-name">Memorial Day Weekend</span>
+                <span class="lwf-dates">May 23 – 25</span>
+                <span class="lwf-badge">3 days</span>
+              </li>
+              <li class="lwf-item">
+                <span class="lwf-icon">🎆</span>
+                <span class="lwf-name">Independence Day Weekend</span>
+                <span class="lwf-dates">Jul 4 – 6 (Jul 4 = Sat)</span>
+                <span class="lwf-badge">3 days</span>
+              </li>
+              <li class="lwf-item">
+                <span class="lwf-icon">⚒️</span>
+                <span class="lwf-name">Labor Day Weekend</span>
+                <span class="lwf-dates">Sep 5 – 7</span>
+                <span class="lwf-badge">3 days</span>
+              </li>
+              <li class="lwf-item">
+                <span class="lwf-icon">🦃</span>
+                <span class="lwf-name">Thanksgiving (4-day)</span>
+                <span class="lwf-dates">Nov 26 – 29</span>
+                <span class="lwf-badge">4 days</span>
+              </li>
+              <li class="lwf-item">
+                <span class="lwf-icon">🎄</span>
+                <span class="lwf-name">Christmas + New Year (5-day)</span>
+                <span class="lwf-dates">Dec 24 – Jan 1</span>
+                <span class="lwf-badge">5 days</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TIER 1 EXPANDED: FAQ with 14 Q&A (was 8) ===== -->
+    <section class="section">
+      <div class="container">
+        <p class="section-eyebrow">FAQ <span class="tier-tag tier1">expanded 8 → 14</span></p>
+        <h2 class="section-title">Frequently asked questions</h2>
+        <p class="section-subtitle">All the questions our users (and Google) ask most often.</p>
+
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>What time is it in my city?</summary>
+            <p>dateandtime.live auto-detects your city and shows the current time in the big clock. You can also search any of 33,945 cities worldwide. The clock updates every second and shows the IANA time zone, UTC offset, and DST status.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What time is it in Tokyo right now?</summary>
+            <p>Tokyo (JST, UTC+9) does not observe daylight saving time. The current time is shown in the "Today on Earth" strip on this page. For full details, visit the Japan time zone page.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What time zone is New York in?</summary>
+            <p>New York uses the IANA identifier America/New_York. In winter it's Eastern Standard Time (EST, UTC-5); during daylight saving (mid-March to early November) it's Eastern Daylight Time (EDT, UTC-4).</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is daylight saving time active right now?</summary>
+            <p>Yes. DST is currently active in most of North America, the European Union, and parts of the Middle East. It will end on Sunday, November 2, 2026 in the US and EU. See the global DST schedule for all regions.</p>
+          </details>
+          <details class="faq-item">
+            <summary>When does DST end in 2026?</summary>
+            <p>DST ends on Sunday, November 2, 2026 in the United States, Canada, Mexico (most regions), and the European Union. Clocks fall back one hour at 2:00 AM local time.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What is UTC?</summary>
+            <p>UTC (Coordinated Universal Time) is the primary time standard by which the world regulates clocks and time. It is within about 1 second of mean solar time at 0° longitude and replaced GMT in 1967 as the official global reference.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do I find a meeting time across time zones?</summary>
+            <p>Use the Meeting Planner. Add the cities of all attendees to the favorites rail, then drag-select a time window to see each person's local time. The tool highlights overlapping working hours (typically 9 AM – 6 PM) for every attendee.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How many time zones are there in the world?</summary>
+            <p>408 IANA time zones in the dateandtime.live database, covering 33,945 cities across 242 countries and territories. The exact number changes as regions adopt or abolish DST or change their boundaries.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What is the IANA time zone database?</summary>
+            <p>The IANA Time Zone Database (often called tzdata or zoneinfo) is the de facto global standard for time zone identifiers, maintained by the Internet Assigned Numbers Authority. Every major operating system uses it. Format examples: America/New_York, Europe/London, Asia/Tokyo.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What is the difference between GMT and UTC?</summary>
+            <p>GMT (Greenwich Mean Time) and UTC (Coordinated Universal Time) differ by less than 1 second. GMT is a solar-based time zone; UTC is an atomic time scale. For practical purposes they are interchangeable.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What holiday is today in the United States?</summary>
+            <p>Today's US holidays (federal, state, and observances) are listed in the holidays section, with 1,600+ holidays tracked across 39 countries via Nager.Date. The next upcoming holiday is shown on the home page clock.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What happened on this day in history?</summary>
+            <p>dateandtime.live covers 71,992 dated events, births, and deaths from Wikimedia sources. Today's entry is shown on the home page, and all 366 days of history are browsable at /onthisday/.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How many days until Christmas?</summary>
+            <p>Christmas Day is December 25. The current days-until count and other holiday countdowns are available in the holidays section.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is dateandtime.live free?</summary>
+            <p>Yes. Free, no signup, no data selling. Optional advertising is shown only if you opt in to advertising cookies. Data is sourced from public-domain and open-license sources (IANA, GeoNames, Nager.Date, Wikipedia).</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Footer (matches production) ===== -->
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <nav class="site-footer-nav" aria-label="Site links">
+          <a href="/">Home</a>
+          <a href="/holidays/">Holidays</a>
+          <a href="/onthisday/">On this day</a>
+          <a href="/time-zones/">Time zones</a>
+          <a href="/countries/">Countries</a>
+          <a href="/cities/">Cities</a>
+          <a href="/about/">About</a>
+          <a href="/editorial-policy/">Editorial policy</a>
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="mailto:hello@dateandtime.live">Contact</a>
+          <a href="/sitemap.xml">Sitemap</a>
+        </nav>
+        <p class="site-footer-meta">
+          © 2026 dateandtime.live · 33,945 cities · 408 time zones · 1,600+ holidays ·
+          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+        </p>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
