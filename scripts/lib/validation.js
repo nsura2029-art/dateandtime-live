@@ -30,7 +30,7 @@ const VALIDATION_RULES = {
   description: {
     required: true,
     type: 'string',
-    minLength: 50,
+    minLength: 30,
     maxLength: 1500,
     severity: 'error'
   },

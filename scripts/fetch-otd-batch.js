@@ -31,9 +31,16 @@ const USER_AGENT = 'dateandtime.live/1.0';
 
 const wikidata = require('./sources/wikidata');
 const wikipedia = require('./sources/wikipedia');
+const byabbe = require('./sources/byabbe');
+const muffinlabs = require('./sources/muffinlabs');
+const nager = require('./sources/nager');
+const openholidays = require('./sources/openholidays');
+const dayPage = require('./sources/day-page');
 const { scoreEntry, generateReport, printReport } = require('./lib/quality-scorer');
 const { validateEntry, findDuplicate, batchValidate } = require('./lib/validation');
 const { improveBatch } = require('./lib/auto-improve');
+const { dedupe, markVerified } = require('./lib/dedup');
+const { score: notabilityScore, sourceLabel } = require('./lib/notability');
 
 // Top 50 high-search dates (curated based on search volume and user interest)
 const TOP_50_DATES = [
@@ -115,19 +122,28 @@ function parseArgs() {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     const next = args[i + 1];
-    
+
     if (arg === '--month' && next) { opts.month = parseInt(next); i++; }
     else if (arg === '--day' && next) { opts.day = parseInt(next); i++; }
     else if (arg === '--date' && next) { opts.date = next; i++; }
-    else if (arg === '--range' && next && args[i + 2]) { 
-      opts.range = [next, args[i + 2]]; 
-      i += 2; 
+    else if (arg === '--range' && next && args[i + 2]) {
+      opts.range = [next, args[i + 2]];
+      i += 2;
     }
     else if (arg === '--top-dates') { opts.topDates = true; }
     else if (arg === '--all-365') { opts.all365 = true; }
     else if (arg === '--api-base' && next) { opts.apiBase = next; i++; }
     else if (arg === '--no-images') { opts.noImages = true; }
     else if (arg === '--no-improve') { opts.noImprove = true; }
+    else if (arg === '--no-wikidata') { opts.useWikidata = false; }
+    else if (arg === '--no-nager') { opts.useNager = false; }
+    else if (arg === '--no-openholidays') { opts.useOpenHolidays = false; }
+    else if (arg === '--no-day-page') { opts.useDayPage = false; }
+    else if (arg === '--sources' && next) {
+      // e.g. --sources wikipedia,byabbe,muffinlabs
+      opts.sources = next.split(',').map(s => s.trim());
+      i++;
+    }
     else if (arg === '--dry-run') { opts.dryRun = true; }
     else if (arg === '--save-to-file') { opts.saveToFile = true; }
     else if (arg === '--output-dir' && next) { opts.outputDir = next; i++; }
@@ -176,81 +192,127 @@ function buildDateList(opts) {
 
 /**
  * Fetch all entries for a (month, day) tuple from all sources.
+ * Per Blueprint Prompt A: Wikimedia Feed (primary) + 2 mirrors (byabbe, muffinlabs)
+ *   + Nager holidays + recency backfill via day-page.
  */
 async function fetchAllSourcesForDay(month, day, opts) {
   console.log(`\n📅 Fetching data for ${monthName(month)} ${day}...`);
-  
+
   const allEntries = [];
-  
-  // 1. Wikidata (events, births, deaths)
+  const sourceStats = {};
+
+  // 1. Wikimedia Feed API (canonical) — primary source
   try {
-    if (opts.verbose) console.log('  → Querying Wikidata...');
-    const [events, births, deaths] = await Promise.all([
-      wikidata.fetchEventsForDay(month, day, { limit: opts.maxPerDay }),
-      wikidata.fetchBirthsForDay(month, day, { limit: opts.maxPerDay }),
-      wikidata.fetchDeathsForDay(month, day, { limit: opts.maxPerDay })
-    ]);
-    
-    for (const event of events) {
-      allEntries.push({
-        ...event,
-        type: 'event',
-        category: 'events',
-        wikipedia_url: `https://en.wikipedia.org/wiki/${encodeURIComponent(event.title?.replace(/ /g, '_') || '')}`,
-        data_sources: JSON.stringify([{ name: 'wikidata', retrieved_at: new Date().toISOString() }])
-      });
-    }
-    
-    for (const birth of births) {
-      allEntries.push({
-        ...birth,
-        type: 'birth',
-        category: 'births',
-        wikipedia_url: `https://en.wikipedia.org/wiki/${encodeURIComponent(birth.title?.replace(/ /g, '_') || '')}`
-      });
-    }
-    
-    for (const death of deaths) {
-      allEntries.push({
-        ...death,
-        type: 'death',
-        category: 'deaths',
-        wikipedia_url: `https://en.wikipedia.org/wiki/${encodeURIComponent(death.title?.replace(/ /g, '_') || '')}`
-      });
-    }
-    
-    if (opts.verbose) {
-      console.log(`    Found ${events.length} events, ${births.length} births, ${deaths.length} deaths`);
-    }
-  } catch (err) {
-    console.warn(`  ⚠️  Wikidata failed: ${err.message}`);
-  }
-  
-  // 2. Wikipedia "On this day" feed (different selection)
-  try {
-    if (opts.verbose) console.log('  → Querying Wikipedia...');
+    if (opts.verbose) console.log('  → Wikimedia Feed (canonical)...');
     const data = await wikipedia.fetchOnThisDayEntries(month, day);
-    // Merge — Wikipedia's curated list often has different entries than raw Wikidata
-    for (const e of data.events) {
-      allEntries.push({ ...e, data_sources: JSON.stringify([{ name: 'wikipedia', url: e.wikipedia_url, retrieved_at: new Date().toISOString() }]) });
-    }
-    for (const b of data.births) {
-      allEntries.push({ ...b, type: 'birth', category: 'births' });
-    }
-    for (const d of data.deaths) {
-      allEntries.push({ ...d, type: 'death', category: 'deaths' });
-    }
-    for (const h of data.holidays) {
-      allEntries.push({ ...h, type: 'event', category: 'events' });
-    }
-    if (opts.verbose) {
-      console.log(`    Found ${data.events.length} curated events, ${data.births.length} births, ${data.deaths.length} deaths, ${data.holidays.length} holidays`);
-    }
+    allEntries.push(...data.events, ...data.births, ...data.deaths, ...data.holidays);
+    sourceStats.wikipedia_feed = {
+      events: data.events.length,
+      births: data.births.length,
+      deaths: data.deaths.length,
+      holidays: data.holidays.length
+    };
   } catch (err) {
-    console.warn(`  ⚠️  Wikipedia failed: ${err.message}`);
+    console.warn(`  ⚠️  Wikimedia Feed failed: ${err.message}`);
   }
-  
-  return allEntries;
+
+  // 2. byabbe.se (mirror, no zero-padding)
+  try {
+    if (opts.verbose) console.log('  → byabbe.se...');
+    const data = await byabbe.fetchOnThisDayEntries(month, day);
+    allEntries.push(...data.events, ...data.births, ...data.deaths);
+    sourceStats.byabbe = { events: data.events.length, births: data.births.length, deaths: data.deaths.length };
+  } catch (err) {
+    console.warn(`  ⚠️  byabbe failed: ${err.message}`);
+  }
+
+  // 3. Muffin Labs (mirror)
+  try {
+    if (opts.verbose) console.log('  → Muffin Labs...');
+    const data = await muffinlabs.fetchOnThisDayEntries(month, day);
+    allEntries.push(...data.events, ...data.births, ...data.deaths);
+    sourceStats.muffinlabs = { events: data.events.length, births: data.births.length, deaths: data.deaths.length };
+  } catch (err) {
+    console.warn(`  ⚠️  Muffin Labs failed: ${err.message}`);
+  }
+
+  // 4. Wikidata (QLever primary, WDQS fallback) — events, births, deaths
+  if (opts.useWikidata !== false) {
+    try {
+      if (opts.verbose) console.log('  → Wikidata (QLever)...');
+      const [events, births, deaths] = await Promise.all([
+        wikidata.fetchEventsForDay(month, day, { limit: opts.maxPerDay }),
+        wikidata.fetchBirthsForDay(month, day, { limit: opts.maxPerDay }),
+        wikidata.fetchDeathsForDay(month, day, { limit: opts.maxPerDay })
+      ]);
+
+      for (const event of events) {
+        allEntries.push({
+          ...event,
+          type: 'event',
+          category: 'events',
+          data_sources: JSON.stringify([{ name: 'wikidata_qlever', url: 'https://qlever.dev/api/wikidata', retrieved_at: new Date().toISOString() }])
+        });
+      }
+      for (const birth of births) {
+        allEntries.push({ ...birth, type: 'birth', category: 'births' });
+      }
+      for (const death of deaths) {
+        allEntries.push({ ...death, type: 'death', category: 'deaths' });
+      }
+      sourceStats.wikidata = { events: events.length, births: births.length, deaths: deaths.length };
+    } catch (err) {
+      console.warn(`  ⚠️  Wikidata failed: ${err.message}`);
+    }
+  }
+
+  // 5. Nager.Date (holidays for current year)
+  if (opts.useNager !== false) {
+    try {
+      if (opts.verbose) console.log('  → Nager.Date holidays...');
+      const year = new Date().getFullYear();
+      const countries = ['US', 'GB', 'CA', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BR', 'JP', 'IN', 'CN'];
+      const holidays = await nager.getHolidaysForDay(month, day, year, countries);
+      allEntries.push(...holidays);
+      sourceStats.nager = { holidays: holidays.length };
+    } catch (err) {
+      console.warn(`  ⚠️  Nager failed: ${err.message}`);
+    }
+  }
+
+  // 6. OpenHolidays (EU school + public holidays)
+  if (opts.useOpenHolidays !== false) {
+    try {
+      if (opts.verbose) console.log('  → OpenHolidays...');
+      const year = new Date().getFullYear();
+      const euCountries = ['DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'PT', 'PL', 'CZ', 'SK', 'HU', 'RO', 'BG', 'GR', 'IE', 'FI', 'SE', 'DK'];
+      const holidays = await openholidays.getHolidaysForDay(month, day, year, euCountries);
+      allEntries.push(...holidays);
+      sourceStats.openholidays = { holidays: holidays.length };
+    } catch (err) {
+      console.warn(`  ⚠️  OpenHolidays failed: ${err.message}`);
+    }
+  }
+
+  // 7. Recency backfill via day-page parsing (per Blueprint Prompt A)
+  if (opts.useDayPage !== false) {
+    try {
+      if (opts.verbose) console.log('  → Day-article recency backfill...');
+      const currentYear = new Date().getFullYear();
+      const data = await dayPage.fetchEvents(month, day, { yearStart: currentYear - 1, yearEnd: currentYear + 1 });
+      const events = data.events.map(e => dayPage.normalizeEvent(e, month, day));
+      allEntries.push(...events);
+      sourceStats.day_page = { events: events.length, totalFound: data.allCount };
+    } catch (err) {
+      console.warn(`  ⚠️  Day-page failed: ${err.message}`);
+    }
+  }
+
+  if (opts.verbose) {
+    console.log(`    Source stats: ${JSON.stringify(sourceStats)}`);
+  }
+
+  return { entries: allEntries, sourceStats };
 }
 
 /**
@@ -322,29 +384,54 @@ async function pushToApi(entries, opts) {
 }
 
 /**
- * Save entries to a JSON file.
+ * Save entries to per-date JSON files in outputDir/dates/.
+ * Also accumulates a master index file.
  */
 async function saveToFile(entries, opts) {
   const fs = require('fs');
   const path = require('path');
-  
+
   const outputDir = opts.outputDir || '/tmp/otd-data';
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = path.join(outputDir, `otd-${timestamp}.json`);
-  
-  fs.writeFileSync(filename, JSON.stringify(entries, null, 2));
-  
-  // Also write a "latest" file for easy access
-  const latestFile = path.join(outputDir, 'otd-latest.json');
-  fs.writeFileSync(latestFile, JSON.stringify(entries, null, 2));
-  
-  console.log(`  💾 Saved ${entries.length} entries to ${filename}`);
-  
-  return { pushed: entries.length, failed: 0, file: filename };
+
+  // Group entries by (month, day) to save per-date
+  const byDate = new Map();
+  for (const e of entries) {
+    const key = `${String(e.month).padStart(2, '0')}-${String(e.day).padStart(2, '0')}`;
+    if (!byDate.has(key)) byDate.set(key, []);
+    byDate.get(key).push(e);
+  }
+
+  const datesDir = path.join(outputDir, 'dates');
+  if (!fs.existsSync(datesDir)) {
+    fs.mkdirSync(datesDir, { recursive: true });
+  }
+
+  let totalSaved = 0;
+  for (const [dateKey, dateEntries] of byDate) {
+    const filename = path.join(datesDir, `${dateKey}.json`);
+    fs.writeFileSync(filename, JSON.stringify(dateEntries, null, 0));  // minified
+    totalSaved += dateEntries.length;
+  }
+
+  // Also update the master index (list of date files + counts)
+  const index = {
+    generated_at: new Date().toISOString(),
+    total_entries: totalSaved,
+    total_dates: byDate.size,
+    dates: [...byDate.entries()].map(([k, v]) => ({
+      date: k,
+      count: v.length,
+      file: `dates/${k}.json`
+    })).sort((a, b) => a.date.localeCompare(b.date))
+  };
+  fs.writeFileSync(path.join(outputDir, 'index.json'), JSON.stringify(index, null, 2));
+
+  console.log(`  💾 Saved ${totalSaved} entries across ${byDate.size} dates to ${datesDir}/`);
+
+  return { pushed: totalSaved, failed: 0, files: byDate.size, dir: datesDir };
 }
 
 /**
@@ -368,17 +455,26 @@ async function main() {
   
   for (const [month, day] of dates) {
     try {
-      // 1. Fetch from all sources
-      let entries = await fetchAllSourcesForDay(month, day, opts);
-      
-      // 2. Dedupe within batch
-      entries = dedupeBatch(entries);
-      
+      // 1. Fetch from all sources (per Blueprint Prompt A)
+      const { entries: rawEntries, sourceStats } = await fetchAllSourcesForDay(month, day, opts);
+
+      // 2. Multi-source dedup (strict + fuzzy per Blueprint Insight #7)
+      const dedupResult = dedupe(rawEntries, { fuzzyThreshold: 0.7 });
+      let entries = dedupResult.deduped;
+
+      if (opts.verbose) {
+        console.log(`    Dedup: ${dedupResult.stats.total} → ${dedupResult.stats.kept} (removed ${dedupResult.stats.removed})`);
+        console.log(`    Verified: ${entries.filter(e => e.verified === 1).length} cross-source entries`);
+      }
+
+      // 3. Mark verified based on sources
+      entries = markVerified(entries);
+
       if (entries.length === 0) {
         console.log(`  No entries found for ${monthName(month)} ${day}`);
         continue;
       }
-      
+
       console.log(`  → ${entries.length} unique entries after dedup`);
       
       // 3. Validate
@@ -391,12 +487,15 @@ async function main() {
           }
         }
       }
-      
+
+      // 3.5 Extract just the entries (batchValidate returns wrappers)
+      let validEntries = valid.map(v => v.entry);
+
       // 4. Auto-improve (if not skipped)
-      let improved = valid;
-      if (!opts.noImprove && valid.length > 0) {
-        if (opts.verbose) console.log(`  → Auto-improving ${valid.length} entries...`);
-        const improveResult = await improveBatch(valid, { 
+      let improved = validEntries;
+      if (!opts.noImprove && validEntries.length > 0) {
+        if (opts.verbose) console.log(`  → Auto-improving ${validEntries.length} entries...`);
+        const improveResult = await improveBatch(validEntries, {
           skipImageFetch: opts.noImages,
           concurrency: 3
         });
