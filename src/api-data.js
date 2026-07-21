@@ -133,10 +133,11 @@
 
   // ---- long weekend algorithm (client-side, no API call needed) ------
   // Given a list of holidays for a year (Nager.Date format), compute
-  // long weekends: clusters of 3+ consecutive non-working days starting
-  // on a Friday or ending on a Monday.
-  // We accept either raw Nager.Date format [{date, name, ...}]
-  // or our wrapped format {holidays: [...]}
+  // long weekends: clusters of 3+ consecutive non-working days that
+  // touch a weekend OR a holiday. We also apply a "bridge" rule so a
+  // Thursday or Tuesday holiday expands to include the surrounding
+  // weekend (because people commonly take off the day between the
+  // holiday and the weekend).
   function computeLongWeekends(holidays, opts) {
     const o = opts || {};
     const minDays = o.minDays || 3;
@@ -156,10 +157,26 @@
 
     // Build a set of YYYY-MM-DD that are holidays
     const holidayDays = new Set(list.map(h => h.date));
-    // Identify each day of the year as weekend (Sat/Sun), holiday, or work
-    // A "long weekend" = >= minDays consecutive non-work days that include at
-    // least one weekend OR a single holiday on Tue/Wed/Thu (those are usually
-    // not "long weekends" but we'll keep them in the data for completeness).
+
+    // "Bridge" rule: if a holiday falls on a Thursday, treat the
+    // following Friday as also off (since most workers take it).
+    // If a holiday falls on a Tuesday, treat the previous Monday as off.
+    // This turns a single Thu or Tue holiday + adjacent weekend into a
+    // proper "long weekend" cluster.
+    const bridgeDays = new Set();
+    for (const h of list) {
+      const d = new Date(h.date + "T00:00:00Z");
+      const dow = d.getUTCDay(); // 0=Sun, 6=Sat
+      if (dow === 4) {
+        // Thursday holiday — add Friday
+        const fri = new Date(d.getTime() + 86400000);
+        bridgeDays.add(fri.toISOString().slice(0, 10));
+      } else if (dow === 2) {
+        // Tuesday holiday — add Monday
+        const mon = new Date(d.getTime() - 86400000);
+        bridgeDays.add(mon.toISOString().slice(0, 10));
+      }
+    }
 
     // Walk the year day by day, group consecutive non-work days.
     const start = new Date(Date.UTC(year, 0, 1));
@@ -168,36 +185,36 @@
     let cur = null;
     for (let d = new Date(start); d <= end; d = new Date(d.getTime() + 86400000)) {
       const iso = d.toISOString().slice(0, 10);
-      const dow = d.getUTCDay(); // 0=Sun, 6=Sat
+      const dow = d.getUTCDay();
       const isHoliday = holidayDays.has(iso);
+      const isBridge = bridgeDays.has(iso);
       const isWeekend = dow === 0 || dow === 6;
-      const isWork = !isWeekend && !isHoliday;
+      const isWork = !isWeekend && !isHoliday && !isBridge;
       if (!isWork) {
-        if (!cur) cur = { start: iso, end: iso, days: [], holiday: isHoliday, dowStart: dow };
+        if (!cur) cur = { start: iso, end: iso, days: [], holiday: isHoliday };
         cur.end = iso;
-        cur.days.push({ date: iso, holiday: isHoliday, weekend: isWeekend });
+        cur.days.push({ date: iso, holiday: isHoliday, bridge: isBridge, weekend: isWeekend });
       } else {
         if (cur) { groups.push(cur); cur = null; }
       }
     }
     if (cur) groups.push(cur);
 
-    // Each group's "length" in days
+    // Each group's "length" in days + name from the first holiday
     const enriched = groups
       .map(g => {
         const a = new Date(g.start + "T00:00:00Z");
         const b = new Date(g.end + "T00:00:00Z");
         const len = Math.round((b - a) / 86400000) + 1;
-        // Find the holiday that anchors this group (if any)
         const anchor = g.days.find(x => x.holiday);
-        // Name based on anchor or first day
         const name = anchor ? list.find(h => h.date === anchor.date).name : "Weekend";
         return {
           start: g.start,
           end: g.end,
           days: len,
           name,
-          anchor: anchor ? anchor.date : null
+          anchor: anchor ? anchor.date : null,
+          has_bridge: g.days.some(x => x.bridge)
         };
       })
       .filter(g => g.days >= minDays)
