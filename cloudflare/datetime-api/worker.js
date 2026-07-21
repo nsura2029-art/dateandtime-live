@@ -2,30 +2,24 @@
  * Main API Worker — dateandtime.live / api.dateandtime.live
  *
  * Composes all route modules:
- *   - /api/v1/*            existing (cities, time, holidays, etc.)
+ *   - /api/v1/*            existing (cities, time, holidays, etc.) — proxied to prod
  *   - /api/v1/person/*     new (per-person, today's birthdays, birthday-twin)
  *   - /api/v1/onthisday/*  new + existing (per-event, batch POST)
  *   - /api/v1/time/now/multi  new (batched time lookup)
  *   - /api/v1/snapshot       new (today's combined snapshot)
+ *   - /api/v1/year/*       new (year-page data, multi-year compare)
  *
  * Each route module exports `handle(env, path, request)` that returns
  * either a Response (matched) or null (no match).
  *
+ * FALLBACK: paths that don't match any of the new route modules are
+ * forwarded to the prod API (api.dateandtime.live). This lets the dev
+ * frontend keep using legacy routes (cities, countries, holidays/today,
+ * dst, search, feedback, etc.) while the new endpoints use the dev D1.
+ *
  * Deployment:
- *   wrangler deploy --name datetime-api \
- *     --compatibility-date 2024-09-23 \
- *     --main worker.js
- *
- * Required bindings in wrangler.toml [env.production]:
- *   [[d1_databases]]
- *   binding = "OTD_DB"
- *   database_name = "timeandtimepro-full"
- *   database_id = "<UUID>"
- *
- *   [vars]
- *   OTD_DATES_DIR = "/tmp/otd-data-final/dates"  # optional fallback
- *   OTD_WEDDINGS_DIR = "/tmp/otd-weddings/by-date"
- *   OTD_PERSONS_FILE = "/tmp/otd-final/persons-top-50k.json"
+ *   wrangler deploy --name datetime-api-dev
+ *   (see cloudflare/datetime-api/wrangler.toml)
  */
 
 import { handle as personRoutes } from './routes/person.js';
@@ -83,6 +77,31 @@ function jsonServerError(err) {
 }
 
 // ============================================================================
+// Fallback proxy to prod API (for legacy routes)
+// ============================================================================
+
+async function proxyToProd(request) {
+  const url = new URL(request.url);
+  const target = `https://api.dateandtime.live${url.pathname}${url.search}`;
+  try {
+    const r = await fetch(target, {
+      headers: { "Accept": "application/json" }
+    });
+    const body = await r.text();
+    return new Response(body, {
+      status: r.status,
+      headers: {
+        "content-type": r.headers.get("content-type") || "application/json",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=300"
+      }
+    });
+  } catch (e) {
+    return jsonError("upstream_unavailable", 502, { message: e?.message });
+  }
+}
+
+// ============================================================================
 // Main fetch handler
 // ============================================================================
 
@@ -101,7 +120,7 @@ export default {
         status: 'ok',
         service: 'datetime-api',
         version: '2.0.0',
-        routes: ['person', 'event', 'time-multi', 'otd'],
+        routes: ['person', 'event', 'time-multi', 'year', 'otd', 'fallback-proxy'],
         timestamp: new Date().toISOString()
       }, null, 2), {
         status: 200,
@@ -109,7 +128,7 @@ export default {
       });
     }
 
-    // Try each route module
+    // Try each new route module
     for (const routeFn of ROUTE_MODULES) {
       try {
         const response = await routeFn(env, path, request);
@@ -125,6 +144,11 @@ export default {
         console.error(`Route error for ${path}:`, err);
         return jsonServerError(err);
       }
+    }
+
+    // Fallback: forward unmatched /api/* paths to prod
+    if (path.startsWith('/api/')) {
+      return proxyToProd(request);
     }
 
     return jsonNotFound(path);

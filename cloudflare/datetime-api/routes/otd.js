@@ -321,52 +321,44 @@ function getWeekNumber(date) {
 /**
  * Main router for /api/v1/* OTD endpoints
  */
-export async function handle(request, env) {
+export async function handle(env, path, request) {
+  // Signature matches other route modules: (env, path, request)
   const url = new URL(request.url);
-  const path = url.pathname;
+  const routePath = path || url.pathname;
 
   // Route matching
   const routes = [
     { match: /^\/api\/v1\/on-this-day\/(\d{1,2}-\d{1,2})$/, handler: (req, env) => {
-      const m = path.match(/^\/api\/v1\/on-this-day\/(\d{1,2}-\d{1,2})$/);
+      const m = routePath.match(/^\/api\/v1\/on-this-day\/(\d{1,2}-\d{1,2})$/);
       return handleOnThisDay(env, req, m[1]);
     }},
     { match: /^\/api\/v1\/born\/(\d{1,2}-\d{1,2})$/, handler: (req, env) => {
-      const m = path.match(/^\/api\/v1\/born\/(\d{1,2}-\d{1,2})$/);
+      const m = routePath.match(/^\/api\/v1\/born\/(\d{1,2}-\d{1,2})$/);
       return handleBorn(env, req, m[1]);
     }},
     { match: /^\/api\/v1\/died\/(\d{1,2}-\d{1,2})$/, handler: (req, env) => {
-      const m = path.match(/^\/api\/v1\/died\/(\d{1,2}-\d{1,2})$/);
+      const m = routePath.match(/^\/api\/v1\/died\/(\d{1,2}-\d{1,2})$/);
       return handleDied(env, req, m[1]);
     }},
     { match: /^\/api\/v1\/today$/, handler: handleToday },
     { match: /^\/api\/v1\/holidays\/([A-Z]{2})\/(\d{4})$/, handler: (req, env) => {
-      const m = path.match(/^\/api\/v1\/holidays\/([A-Z]{2})\/(\d{4})$/);
+      const m = routePath.match(/^\/api\/v1\/holidays\/([A-Z]{2})\/(\d{4})$/);
       return handleHolidays(env, req, m[1], m[2]);
     }},
     { match: /^\/api\/v1\/national-days\/(\d{1,2}-\d{1,2})$/, handler: (req, env) => {
-      const m = path.match(/^\/api\/v1\/national-days\/(\d{1,2}-\d{1,2})$/);
+      const m = routePath.match(/^\/api\/v1\/national-days\/(\d{1,2}-\d{1,2})$/);
       return handleNationalDays(env, req, m[1]);
     }},
     { match: /^\/api\/v1\/ask$/, handler: handleAsk }
   ];
 
   for (const route of routes) {
-    if (route.match.test(path)) {
+    if (route.match.test(routePath)) {
       return route.handler(request, env);
     }
   }
 
-  return new Response(JSON.stringify({
-    error: 'Not found',
-    available_routes: [
-      'GET /api/v1/on-this-day/{MM-DD}',
-      'GET /api/v1/born/{MM-DD}',
-      'GET /api/v1/died/{MM-DD}',
-      'GET /api/v1/today',
-      'GET /api/v1/holidays/{CC}/{YYYY}',
-      'GET /api/v1/national-days/{MM-DD}',
-      'GET /api/v1/ask?q=...'
-    ]
-  }), { status: 404, headers: CACHE_HEADERS });
+  // No route matched — return null so the worker can fall through to
+  // the legacy proxy (api.dateandtime.live) for unmatched paths.
+  return null;
 }
