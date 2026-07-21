@@ -17,7 +17,7 @@
  *   { year, month, day, total, events: [...], byType: {event, birth, death, ...} }
  */
 
-import { queryOTD, attributionBlock, CACHE_HEADERS } from '../lib/d1.js';
+import { queryOTD, parseOTDRow, attributionBlock, CACHE_HEADERS } from '../lib/d1.js';
 import { useFileFallback, loadOTDFromFiles } from '../lib/fallback.js';
 
 const YEAR_CACHE = { ...CACHE_HEADERS };
@@ -50,22 +50,25 @@ export async function handleYear(env, year, request) {
     // File fallback: scan all per-date files for matching entries
     entries = await loadYearFromFiles(env, yearNum, month, day, type, minRank, limit);
   } else {
-    const opts = {
-      year: yearNum,
-      month: month || 0,
-      day: day || 0,
-      rankMin: minRank,
-      limit,
-      verifiedOnly: false  // year pages should show all entries, even unverified
-    };
-    if (type) opts.type = type;
-
-    if (month && day) {
-      // Specific date in this year
-      entries = await queryOTD(env.OTD_DB, { ...opts, month, day, year: undefined, yearMin: yearNum, yearMax: yearNum });
-    } else {
-      entries = await queryOTD(env.OTD_DB, opts);
+    // Direct D1 query (bypass queryOTD which requires month+day)
+    const where = ['year = ?'];
+    const binds = [yearNum];
+    if (month && day) { where.push('month = ?', 'day = ?'); binds.push(month, day); }
+    if (type) {
+      if (Array.isArray(type)) {
+        where.push(`type IN (${type.map(() => '?').join(',')})`);
+        binds.push(...type);
+      } else {
+        where.push('type = ?');
+        binds.push(type);
+      }
     }
+    where.push('rank_score >= ?');
+    binds.push(minRank);
+    const sql = `SELECT * FROM onthisday WHERE ${where.join(' AND ')} ORDER BY rank_score DESC, year ASC LIMIT ?`;
+    binds.push(limit);
+    const result = await env.OTD_DB.prepare(sql).bind(...binds).all();
+    entries = (result.results || []).map(parseOTDRow);
   }
 
   // Bucket by type
@@ -120,15 +123,14 @@ export async function handleYearMulti(env, request) {
     if (useFileFallback(env)) {
       entries = await loadYearFromFiles(env, year, month, day, null, 0, limit);
     } else {
-      const opts = { year, rankMin: 0, limit, verifiedOnly: false };
-      if (month && day) {
-        opts.month = month;
-        opts.day = day;
-        opts.year = undefined;
-        opts.yearMin = year;
-        opts.yearMax = year;
-      }
-      entries = await queryOTD(env.OTD_DB, opts);
+      // Direct D1 query
+      const where = ['year = ?'];
+      const binds = [year];
+      if (month && day) { where.push('month = ?', 'day = ?'); binds.push(month, day); }
+      const sql = `SELECT * FROM onthisday WHERE ${where.join(' AND ')} ORDER BY rank_score DESC LIMIT ?`;
+      binds.push(limit);
+      const result = await env.OTD_DB.prepare(sql).bind(...binds).all();
+      entries = (result.results || []).map(parseOTDRow);
     }
     results.push({ year, total: entries.length, events: entries });
   }
@@ -211,9 +213,10 @@ export async function handleYearTimeline(env, year, request) {
   if (useFileFallback(env)) {
     allEntries = await loadYearFromFiles(env, yearNum, null, null, 'event', 30, 500);
   } else {
-    allEntries = await queryOTD(env.OTD_DB, {
-      year: yearNum, type: 'event', rankMin: 30, limit: 500, verifiedOnly: false
-    });
+    // Direct D1 query — bypass queryOTD since we need all months
+    const sql = `SELECT * FROM onthisday WHERE year = ? AND type = ? AND rank_score >= ? ORDER BY rank_score DESC LIMIT ?`;
+    const result = await env.OTD_DB.prepare(sql).bind(yearNum, 'event', 30, 500).all();
+    allEntries = (result.results || []).map(parseOTDRow);
   }
 
   // Group by month

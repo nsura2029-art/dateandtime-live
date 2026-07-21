@@ -396,17 +396,38 @@ export default {
     // Per-event detail pages: /onthisday/event/{slug}/
     // The template is a single static file at /onthisday/event/index.html
     // and the JS reads the slug from window.location.pathname.
+    // CF Pages' env.ASSETS.fetch returns a 307 redirect for /foo/index.html →
+    // /foo/; we need to follow the redirect and return the body as 200.
     const eventPageMatch = url.pathname.match(/^\/onthisday\/event\/[^/]+\/?$/);
     if (eventPageMatch) {
       const templateReq = new Request(new URL("/onthisday/event/index.html", request.url), request);
-      return await env.ASSETS.fetch(templateReq);
+      const r = await env.ASSETS.fetch(templateReq);
+      // If the asset returned a 307/301 redirect to a clean URL, return the body as 200.
+      if (r.status === 307 || r.status === 301) {
+        const finalUrl = new URL(r.headers.get("location") || "/onthisday/event/", request.url);
+        const final = await env.ASSETS.fetch(new Request(finalUrl, request));
+        if (final.ok) {
+          const body = await final.text();
+          return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+        }
+      }
+      return r;
     }
 
     // Per-person detail pages: /person/{slug}/
     const personPageMatch = url.pathname.match(/^\/person\/[^/]+\/?$/);
     if (personPageMatch) {
       const templateReq = new Request(new URL("/person/index.html", request.url), request);
-      return await env.ASSETS.fetch(templateReq);
+      const r = await env.ASSETS.fetch(templateReq);
+      if (r.status === 307 || r.status === 301) {
+        const finalUrl = new URL(r.headers.get("location") || "/person/", request.url);
+        const final = await env.ASSETS.fetch(new Request(finalUrl, request));
+        if (final.ok) {
+          const body = await final.text();
+          return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+        }
+      }
+      return r;
     }
 
     // Get the asset (HTML or other) from the [assets] binding.

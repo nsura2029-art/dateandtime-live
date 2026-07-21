@@ -15,7 +15,7 @@
  *     relatedEvents, onthisdayEntries, sources, citations, knowledgeGraphLinks }
  */
 
-import { queryEntity, queryOTD, attributionBlock, CACHE_HEADERS, TODAY_CACHE_HEADERS } from '../lib/d1.js';
+import { queryEntity, getEntriesForEntity, attributionBlock, CACHE_HEADERS, TODAY_CACHE_HEADERS } from '../lib/d1.js';
 import { loadEntityFromFile, loadEntriesForEntityFromFiles, loadBornOnFromFiles, useFileFallback } from '../lib/fallback.js';
 
 const PERSON_CACHE = { ...CACHE_HEADERS };
@@ -49,14 +49,7 @@ export async function handlePerson(env, slug) {
       limit: 1
     });
     if (person) {
-      onthisdayEntries = await queryOTD(env.OTD_DB, {
-        month: 0, day: 0,  // placeholder, overridden below
-        year: undefined,
-        rankMin: 0
-      }).catch(() => []);
-      // Actually use the entity-specific query
-      const entries = await getEntriesForEntity(env.OTD_DB, person.id);
-      onthisdayEntries = entries;
+      onthisdayEntries = await getEntriesForEntity(env.OTD_DB, person.id);
     }
   }
 

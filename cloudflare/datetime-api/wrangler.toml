@@ -1,0 +1,18 @@
+name = "datetime-api-dev"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 binding — points to the dev D1 database
+[[d1_databases]]
+binding = "OTD_DB"
+database_name = "timeandtimepro-dev"
+database_id = "ea1ef5ff-7132-40f4-b952-fff27621580c"
+
+# Public URL: https://datetime-api-dev.nsura2029.workers.dev/api/v1/*
+# (Not the prod api.dateandtime.live — that's a separate Worker)
+#
+# Env vars (optional overrides for the JSON file fallback paths):
+#   OTD_DATES_DIR     — /tmp/otd-data-final/dates
+#   OTD_WEDDINGS_DIR  — /tmp/otd-weddings/by-date
+#   OTD_PERSONS_FILE  — /tmp/otd-final/persons-top-50k.json

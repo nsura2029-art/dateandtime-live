@@ -218,13 +218,13 @@ async function lookupCities(env, ids, names) {
     }
     if (!where.length) return [];
 
-    const sql = `SELECT id, name, country, timezone, lat, lon FROM cities WHERE ${where.join(' OR ')}`;
+    const sql = `SELECT id, name, country, tz, latitude AS lat, longitude AS lon FROM cities WHERE ${where.join(' OR ')}`;
     const result = await env.OTD_DB.prepare(sql).bind(...binds).all();
     return (result.results || []).map(r => ({
       cityId: r.id,
       cityName: r.name,
       country: r.country,
-      timezone: r.timezone,
+      timezone: r.tz,
       lat: r.lat,
       lon: r.lon
     }));
