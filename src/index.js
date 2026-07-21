@@ -393,6 +393,22 @@ export default {
       return new Response(null, { status: 301, headers: { Location: "/" + url.search } });
     }
 
+    // Per-event detail pages: /onthisday/event/{slug}/
+    // The template is a single static file at /onthisday/event/index.html
+    // and the JS reads the slug from window.location.pathname.
+    const eventPageMatch = url.pathname.match(/^\/onthisday\/event\/[^/]+\/?$/);
+    if (eventPageMatch) {
+      const templateReq = new Request(new URL("/onthisday/event/index.html", request.url), request);
+      return await env.ASSETS.fetch(templateReq);
+    }
+
+    // Per-person detail pages: /person/{slug}/
+    const personPageMatch = url.pathname.match(/^\/person\/[^/]+\/?$/);
+    if (personPageMatch) {
+      const templateReq = new Request(new URL("/person/index.html", request.url), request);
+      return await env.ASSETS.fetch(templateReq);
+    }
+
     // Get the asset (HTML or other) from the [assets] binding.
     const response = await env.ASSETS.fetch(request);
 
