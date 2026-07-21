@@ -2601,8 +2601,18 @@
        TIER 2 + TIER 3 SECTIONS — init after window.DTData loads
        (api-data.js is loaded with defer so it's available here)
        ============================================================ */
-    (function () {
-      if (!window.DTData) return;
+    function initTier23Sections() {
+      if (!window.DTData) {
+        // api-data.js hasn't loaded yet (it's deferred). Wait for it.
+        // DOMContentLoaded fires after all defer scripts run, so by then
+        // window.DTData will be defined. If for some reason it isn't,
+        // we give up rather than spin forever.
+        document.addEventListener("DOMContentLoaded", function once() {
+          document.removeEventListener("DOMContentLoaded", once);
+          if (window.DTData) initTier23Sections();
+        });
+        return;
+      }
       const D = window.DTData;
       const today = new Date();
       const mm = today.getMonth() + 1;
@@ -2841,6 +2851,7 @@
         }).join("");
       }
       loadYT();
-    })();
+    }
+    initTier23Sections();
 </body>
 </html>
