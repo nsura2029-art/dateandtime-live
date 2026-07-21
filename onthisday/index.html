@@ -58,6 +58,20 @@
       font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
       font-weight: 700;
     }
+    .otd-quality-note {
+      font-size: 0.875rem;
+      color: var(--color-foreground-soft);
+      margin: 1rem auto 0;
+      max-width: 700px;
+      line-height: 1.5;
+      background: rgba(91, 74, 175, 0.08);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+    }
+    .otd-quality-note a {
+      color: var(--otd-primary);
+      font-weight: 600;
+    }
 
     /* ===== Section header ===== */
     .otd-section { padding: 2.5rem 0; }
@@ -493,6 +507,12 @@
         <span><strong>174+</strong> births</span>
         <span><strong>30+</strong> deaths</span>
         <span><strong>16</strong> categories</span>
+        <span><strong>5</strong> data sources</span>
+        <span><strong>63/100</strong> quality</span>
+      </p>
+      <p class="otd-quality-note">
+        🛡️ <strong>Auto-enriched</strong> via 5-tier image fallback + quality scoring pipeline.
+        Every entry validated, deduped, and auto-improved. <a href="/onthisday/by-date/">Browse 1,500+ curated entries →</a>
       </p>
     </div>
   </section>
@@ -972,6 +992,22 @@
       <span>Ad — 728×90 bottom (will be replaced with AdSense)</span>
     </div>
   </div>
+
+  <!-- ===== Browse by date (NEW: generated from pipeline) ===== -->
+  <section class="otd-section">
+    <div class="container">
+      <h2 class="otd-section-title">📅 Browse by date</h2>
+      <p class="otd-section-subtitle">Our data pipeline curates 1,500+ entries per day from Wikipedia, Wikidata, and 10+ sources. All entries are auto-enriched with images, key people, and SEO metadata.</p>
+      <div class="otd-explore-grid">
+        <a class="otd-explore-card" href="/onthisday/by-date/1-01/"><h3>🎆 January 1 — New Year's Day</h3><p>See what happened on New Year's Day throughout history — holidays, births, deaths, and major events</p></a>
+        <a class="otd-explore-card" href="/onthisday/by-date/7-04/"><h3>🎆 July 4 — Independence Day</h3><p>US Independence Day and 300+ other events throughout history on July 4</p></a>
+        <a class="otd-explore-card" href="/onthisday/by-date/7-20/"><h3>🚀 July 20 — Moon Landing</h3><p>Apollo 11, July 20 plot, and 200+ other events on this iconic day</p></a>
+        <a class="otd-explore-card" href="/onthisday/by-date/12-25/"><h3>🎄 December 25 — Christmas</h3><p>Christmas Day, Newton born, and 300+ other historical events</p></a>
+        <a class="otd-explore-card" href="/onthisday/by-date/12-31/"><h3>🎉 December 31 — New Year's Eve</h3><p>New Year's Eve history, J Edgar Hoover, and 200+ other events</p></a>
+        <a class="otd-explore-card" href="/onthisday/by-date/"><h3>📚 See all dates</h3><p>Index of all generated date pages with full pipeline metadata</p></a>
+      </div>
+    </div>
+  </section>
 
   <!-- ===== Explore more ===== -->
   <section class="otd-section">
