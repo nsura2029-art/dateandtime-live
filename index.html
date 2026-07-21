@@ -42,6 +42,39 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/" />
+
+  <!-- Hreflang: 14 languages (i18n readiness — pages not yet translated but hreflang prevents duplicate-content SEO issues) -->
+  <link rel="alternate" hreflang="x-default" href="https://dateandtime.live/" />
+  <link rel="alternate" hreflang="en" href="https://dateandtime.live/" />
+  <link rel="alternate" hreflang="es" href="https://dateandtime.live/es/" />
+  <link rel="alternate" hreflang="pt" href="https://dateandtime.live/pt/" />
+  <link rel="alternate" hreflang="fr" href="https://dateandtime.live/fr/" />
+  <link rel="alternate" hreflang="de" href="https://dateandtime.live/de/" />
+  <link rel="alternate" hreflang="it" href="https://dateandtime.live/it/" />
+  <link rel="alternate" hreflang="nl" href="https://dateandtime.live/nl/" />
+  <link rel="alternate" hreflang="pl" href="https://dateandtime.live/pl/" />
+  <link rel="alternate" hreflang="ja" href="https://dateandtime.live/ja/" />
+  <link rel="alternate" hreflang="zh" href="https://dateandtime.live/zh/" />
+  <link rel="alternate" hreflang="ko" href="https://dateandtime.live/ko/" />
+  <link rel="alternate" hreflang="ar" href="https://dateandtime.live/ar/" />
+  <link rel="alternate" hreflang="ru" href="https://dateandtime.live/ru/" />
+  <link rel="alternate" hreflang="tr" href="https://dateandtime.live/tr/" />
+
+  <!-- JSON-LD: WebSite + SearchAction (Google sitelinks search box) -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"dateandtime.live","url":"https://dateandtime.live/","description":"World clock for 33,945 cities across 408 time zones. Current time, UTC offset, DST, sunrise & sunset, public holidays, and business hours.","inLanguage":"en","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://dateandtime.live/?q={search_term_string}"},"query-input":"required name=search_term_string"}}</script>
+
+  <!-- JSON-LD: Organization + sameAs (knowledge graph identity) -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"dateandtime.live","url":"https://dateandtime.live/","logo":{"@type":"ImageObject","url":"https://dateandtime.live/logo.png","width":512,"height":512},"description":"Free, accurate world clock and time zone reference for 33,945 cities, 408 time zones, and 1,600+ public holidays.","foundingDate":"2024","sameAs":["https://dateandtime.live/about/","https://dateandtime.live/editorial-policy/"],"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"hello@dateandtime.live","url":"https://dateandtime.live/contact/"}}</script>
+
+  <!-- JSON-LD: WebApplication + featureList + offers (app store rich results) -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"dateandtime.live","url":"https://dateandtime.live/","applicationCategory":"UtilityApplication","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript. Modern browser recommended.","featureList":["Current time in 33,945 cities","UTC offset and IANA time zone lookup","DST change dates and countdown","Sunrise and sunset times","Public holidays in 39 countries","Business hours / working hours","Meeting planner across time zones","On this day: historical events, births, deaths","Multi-city world clock","API for developers"],"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"}}</script>
+
+  <!-- JSON-LD: ItemList of 6 "Today on Earth" cities (Tier 1 strip) -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","name":"Today on Earth — major cities","description":"Live local time in 6 major world cities, updated every second.","itemListOrder":"https://schema.org/ItemListOrderAscending","numberOfItems":6,"itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"Place","name":"Tokyo","address":{"@type":"PostalAddress","addressCountry":"JP"},"geo":{"@type":"GeoCoordinates","latitude":35.6762,"longitude":139.6503},"timeZone":"Asia/Tokyo","url":"https://dateandtime.live/time-zones/in/jp/"}},{"@type":"ListItem","position":2,"item":{"@type":"Place","name":"London","address":{"@type":"PostalAddress","addressCountry":"GB"},"geo":{"@type":"GeoCoordinates","latitude":51.5074,"longitude":-0.1278},"timeZone":"Europe/London","url":"https://dateandtime.live/time-zones/in/gb/"}},{"@type":"ListItem","position":3,"item":{"@type":"Place","name":"New York","address":{"@type":"PostalAddress","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":40.7128,"longitude":-74.006},"timeZone":"America/New_York","url":"https://dateandtime.live/time-zones/in/us/"}},{"@type":"ListItem","position":4,"item":{"@type":"Place","name":"Sydney","address":{"@type":"PostalAddress","addressCountry":"AU"},"geo":{"@type":"GeoCoordinates","latitude":-33.8688,"longitude":151.2093},"timeZone":"Australia/Sydney","url":"https://dateandtime.live/time-zones/in/au/"}},{"@type":"ListItem","position":5,"item":{"@type":"Place","name":"Lagos","address":{"@type":"PostalAddress","addressCountry":"NG"},"geo":{"@type":"GeoCoordinates","latitude":6.5244,"longitude":3.3792},"timeZone":"Africa/Lagos","url":"https://dateandtime.live/time-zones/in/ng/"}},{"@type":"ListItem","position":6,"item":{"@type":"Place","name":"São Paulo","address":{"@type":"PostalAddress","addressCountry":"BR"},"geo":{"@type":"GeoCoordinates","latitude":-23.5505,"longitude":-46.6333},"timeZone":"America/Sao_Paulo","url":"https://dateandtime.live/time-zones/in/br/"}}]}</script>
+
+  <!-- JSON-LD: FAQPage — matches the 8 FAQ items below (Schema 1:1 alignment) -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What time is it in my city?","acceptedAnswer":{"@type":"Answer","text":"dateandtime.live auto-detects your city and shows the current time in the big clock. You can also search any of 33,945 cities worldwide. The clock updates every second and shows the IANA time zone, UTC offset, and DST status."}},{"@type":"Question","name":"How do I find the time difference between two cities?","acceptedAnswer":{"@type":"Answer","text":"Add both cities to your favorites rail. Click one to show its time in the big clock; the other stays visible in the rail. The UTC offset of each card tells you the difference."}},{"@type":"Question","name":"Is this site free?","acceptedAnswer":{"@type":"Answer","text":"Yes. dateandtime.live is free, with no signup. We don't sell your data. Optional advertising keeps the site free (only shown if you opt in to advertising cookies)."}},{"@type":"Question","name":"How accurate is the time?","acceptedAnswer":{"@type":"Answer","text":"The time is computed in your browser using JavaScript's Intl.DateTimeFormat API (IANA Time Zone Database). We cross-check against our server time to within ~50ms. For safety-critical timing, consult an official source (NIST, USNO)."}},{"@type":"Question","name":"Do you have data for my country?","acceptedAnswer":{"@type":"Answer","text":"We cover 33,945 cities in 242 countries, 408 IANA time zones, and 1,600+ public holidays across 39 countries. If something is missing, use the feedback button and we'll add it."}},{"@type":"Question","name":"How do I report an error?","acceptedAnswer":{"@type":"Answer","text":"Click the feedback button at the bottom-right of any page, or email hello@dateandtime.live. We aim to fix critical errors within 7 days."}},{"@type":"Question","name":"Can I use this site commercially?","acceptedAnswer":{"@type":"Answer","text":"Yes. You may use the site for personal or commercial purposes. The data is sourced from public-domain and open-license sources (IANA, GeoNames, Nager.Date, Wikipedia). See our Editorial Policy for details."}},{"@type":"Question","name":"Does the site work offline?","acceptedAnswer":{"@type":"Answer","text":"After your first visit, much of the site works offline. We use Cloudflare's edge cache and have minimal JS dependencies."}}]}</script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -218,6 +251,25 @@
       line-height: 1.5;
     }
     .section--onthisday-section { padding: clamp(2rem, 5vw, 3rem) 0; }
+
+    /* ===== SECTION 2b: TODAY ON EARTH strip (Tier 1) ===== */
+    .section--today-on-earth { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 30%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .earth-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+    .earth-card { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 1.25rem 0.75rem; background: var(--color-card-bg, var(--color-background)); border: 1px solid var(--color-border); border-radius: 0.75rem; text-decoration: none; color: inherit; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; min-width: 0; }
+    .earth-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); border-color: var(--color-primary); text-decoration: none; }
+    .earth-flag { font-size: 1.5rem; line-height: 1; }
+    .earth-city { font-weight: 700; font-size: 0.9rem; color: var(--color-foreground); letter-spacing: -0.01em; }
+    .earth-time { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.25rem; font-weight: 700; color: var(--color-primary); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+    .earth-date { font-size: 0.7rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .earth-offset { font-size: 0.7rem; color: var(--color-muted); font-family: ui-monospace, monospace; }
+    .earth-source { text-align: center; margin: 1.25rem 0 0; font-size: 0.8125rem; color: var(--color-muted); }
+    .earth-source a { color: var(--color-primary); font-weight: 600; text-decoration: none; }
+    .earth-source a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      .earth-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+      .earth-card { padding: 1rem 0.5rem; }
+      .earth-time { font-size: 1.1rem; }
+    }
     .section--footer-note { padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(3rem, 6vw, 4rem); }
     .section-eyebrow { display: inline-block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--color-primary); margin-bottom: 0.5rem; }
     .section-title { font-size: clamp(1.125rem, 2.4vw, 1.5rem); font-weight: 800; letter-spacing: -0.01em; margin: 0 0 0.5rem; color: var(--color-foreground); }
@@ -335,8 +387,9 @@
 
     .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin: 0.75rem 0 0; }
     .pills.is-hidden { display: none; }
-    .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
+    .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; border: 1px solid; text-decoration: none; color: inherit; transition: transform 0.15s, box-shadow 0.15s; }
     .pill.is-hidden { display: none; }
+    .pill:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; }
     /* Tooltip on pills (hover or focus) */
     .pill-tip { position: relative; cursor: help; }
     .pill-tip .pill-help { display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: rgba(31, 26, 58, 0.12); color: inherit; font-size: 0.65rem; font-weight: 700; margin-left: 0.15rem; flex-shrink: 0; }
@@ -719,12 +772,12 @@
         </div>
 
         <div class="pills" id="home-pills">
-          <span class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Today's holiday: A public or religious holiday for this country today. Banks, government offices, and many shops will be closed. Plan calls, deliveries, and meetings accordingly."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
-          <span class="pill pill-green is-hidden pill-tip" id="next-holiday-pill" tabindex="0" data-tip="Next holiday: The next upcoming public or religious holiday for this country. Click to see all holidays in the calendar."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="next-holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
-          <span class="pill pill-rose is-hidden pill-tip" id="onthisday-pill" tabindex="0" data-tip="On this day: A historical event, famous birthday, or cultural milestone that happened on today's date. Click to see more."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="onthisday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
-          <span class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></span>
-          <span class="pill pill-orange pill-tip" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="sun-pill">Sunrise · Sunset <span style="opacity:0.5">—</span></span><span class="pill-help" aria-hidden="true">?</span></span>
-          <span class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></span>
+          <a href="/holidays/" class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Today's holiday: A public or religious holiday for this country today. Banks, government offices, and many shops will be closed. Plan calls, deliveries, and meetings accordingly."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/holidays/" class="pill pill-green is-hidden pill-tip" id="next-holiday-pill" tabindex="0" data-tip="Next holiday: The next upcoming public or religious holiday for this country. Click to see all holidays in the calendar."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="next-holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/onthisday/" class="pill pill-rose is-hidden pill-tip" id="onthisday-pill" tabindex="0" data-tip="On this day: A historical event, famous birthday, or cultural milestone that happened on today's date. Click to see more."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="onthisday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/time-zones/working-hours/" class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/time-zones/in/" class="pill pill-orange pill-tip" id="sun-pill" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span>Sunrise · Sunset <span style="opacity:0.5">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/time-zones/dst/" class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
         </div>
 
         </div>
@@ -750,6 +803,62 @@
           <p class="popular-cities-label">Popular cities</p>
           <div class="popular-cities" id="popular-cities" aria-label="Popular cities to add"></div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 2b: TODAY ON EARTH (Tier 1 — 6-city live time strip) -->
+    <!-- ============================================== -->
+    <section class="section section--today-on-earth" aria-labelledby="today-on-earth-title">
+      <div class="container">
+        <p class="section-eyebrow">Live · Updates every second</p>
+        <h2 class="section-title" id="today-on-earth-title">Today on Earth</h2>
+        <p class="section-subtitle">Live local time in 6 major cities across the continents. Each card links to the country page for more detail.</p>
+        <div class="earth-grid" id="earth-grid" aria-label="Current time in 6 major cities">
+          <a href="/time-zones/in/jp/" class="earth-card" data-timezone="Asia/Tokyo" data-country="JP" data-city="Tokyo" data-cca2="jp">
+            <span class="earth-flag" aria-hidden="true">🇯🇵</span>
+            <span class="earth-city">Tokyo</span>
+            <span class="earth-time" data-time-field>—</span>
+            <span class="earth-date" data-date-field>—</span>
+            <span class="earth-offset" data-offset-field>—</span>
+          </a>
+          <a href="/time-zones/in/gb/" class="earth-card" data-timezone="Europe/London" data-country="GB" data-city="London" data-cca2="gb">
+            <span class="earth-flag" aria-hidden="true">🇬🇧</span>
+            <span class="earth-city">London</span>
+            <span class="earth-time" data-time-field>—</span>
+            <span class="earth-date" data-date-field>—</span>
+            <span class="earth-offset" data-offset-field>—</span>
+          </a>
+          <a href="/time-zones/in/us/" class="earth-card" data-timezone="America/New_York" data-country="US" data-city="New York" data-cca2="us">
+            <span class="earth-flag" aria-hidden="true">🇺🇸</span>
+            <span class="earth-city">New York</span>
+            <span class="earth-time" data-time-field>—</span>
+            <span class="earth-date" data-date-field>—</span>
+            <span class="earth-offset" data-offset-field>—</span>
+          </a>
+          <a href="/time-zones/in/au/" class="earth-card" data-timezone="Australia/Sydney" data-country="AU" data-city="Sydney" data-cca2="au">
+            <span class="earth-flag" aria-hidden="true">🇦🇺</span>
+            <span class="earth-city">Sydney</span>
+            <span class="earth-time" data-time-field>—</span>
+            <span class="earth-date" data-date-field>—</span>
+            <span class="earth-offset" data-offset-field>—</span>
+          </a>
+          <a href="/time-zones/in/ng/" class="earth-card" data-timezone="Africa/Lagos" data-country="NG" data-city="Lagos" data-cca2="ng">
+            <span class="earth-flag" aria-hidden="true">🇳🇬</span>
+            <span class="earth-city">Lagos</span>
+            <span class="earth-time" data-time-field>—</span>
+            <span class="earth-date" data-date-field>—</span>
+            <span class="earth-offset" data-offset-field>—</span>
+          </a>
+          <a href="/time-zones/in/br/" class="earth-card" data-timezone="America/Sao_Paulo" data-country="BR" data-city="São Paulo" data-cca2="br">
+            <span class="earth-flag" aria-hidden="true">🇧🇷</span>
+            <span class="earth-city">São Paulo</span>
+            <span class="earth-time" data-time-field>—</span>
+            <span class="earth-date" data-date-field>—</span>
+            <span class="earth-offset" data-offset-field>—</span>
+          </a>
+        </div>
+        <p class="earth-source">Times computed in your browser via the IANA Time Zone Database. <a href="/world-time/">View all 33,945 cities →</a></p>
       </div>
     </section>
 
@@ -1407,6 +1516,61 @@
       if (isSunset && hh >= 24) { u.setUTCDate(u.getUTCDate() + 1); u.setUTCHours(u.getUTCHours() - 24); }
       try { const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(u); const h = parts.find(p => p.type === "hour")?.value || "—"; const mn = parts.find(p => p.type === "minute")?.value || "—"; const p = parts.find(p => p.type === "dayPeriod")?.value || ""; return `${h}:${mn} ${p}`; } catch (e) { return "—"; }
     }
+
+    /* ----- TODAY ON EARTH strip (Tier 1) -----
+       Computes local time in 6 cities client-side via Intl.DateTimeFormat.
+       Updates every second. No API call needed (avoids CORS, works offline).
+       If the /api/v1/time/now/multi endpoint is available, we could swap to it
+       — but client-side is faster and works in all regions. */
+    (function initTodayOnEarth() {
+      const grid = document.getElementById("earth-grid");
+      if (!grid) return;
+      const cards = grid.querySelectorAll(".earth-card");
+      if (!cards.length) return;
+
+      function fmt2(n) { return String(n).padStart(2, "0"); }
+      function computeForTz(tz) {
+        const now = new Date();
+        try {
+          const parts = new Intl.DateTimeFormat("en-US", {
+            timeZone: tz, hour12: false,
+            year: "numeric", month: "2-digit", day: "2-digit",
+            hour: "2-digit", minute: "2-digit", second: "2-digit",
+            timeZoneName: "short"
+          }).formatToParts(now).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+          const date = `${parts.year}-${parts.month}-${parts.day}`;
+          const time = `${parts.hour}:${parts.minute}:${parts.second}`;
+          const offset = computeOffset(tz, now);
+          const dayOfWeek = new Date(parts.year, parseInt(parts.month, 10) - 1, parseInt(parts.day, 10)).getDay();
+          const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          return { time, date, offset, abbr: parts.timeZoneName || "", dayOfWeek: dayNames[dayOfWeek] };
+        } catch (e) {
+          return null;
+        }
+      }
+      function computeOffset(tz, date) {
+        try {
+          const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "longOffset" });
+          const parts = fmt.formatToParts(date);
+          const off = parts.find(p => p.type === "timeZoneName")?.value || "";
+          return off.replace(/^GMT/, "") || "+00:00";
+        } catch (e) {
+          return "+00:00";
+        }
+      }
+      function tick() {
+        for (const card of cards) {
+          const tz = card.dataset.timezone;
+          const r = computeForTz(tz);
+          if (!r) continue;
+          card.querySelector("[data-time-field]").textContent = r.time;
+          card.querySelector("[data-date-field]").textContent = `${r.dayOfWeek} · ${r.date}`;
+          card.querySelector("[data-offset-field]").textContent = `${r.abbr} ${r.offset}`;
+        }
+        requestAnimationFrame(() => setTimeout(tick, 1000));
+      }
+      tick();
+    })();
 
     /* ----- On-this-day SECTION CARD (full event of the day) ----- */
     async function loadOnThisDaySection() {

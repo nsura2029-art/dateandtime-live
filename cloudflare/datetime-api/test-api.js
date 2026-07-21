@@ -60,6 +60,7 @@ function assertField(obj, field, type) {
 import { handle as personRoutes } from './routes/person.js';
 import { handle as eventRoutes } from './routes/event.js';
 import { handle as timeMultiRoutes } from './routes/time-multi.js';
+import { handle as yearRoutes } from './routes/year.js';
 
 const REQ = (path) => ({ url: `https://api.dateandtime.live${path}`, method: 'GET' });
 
@@ -268,6 +269,60 @@ async function main() {
     // /api/v1/person/ doesn't match the slug pattern, so the module returns null
     // and the main worker responds with 404. This is correct behavior.
     assert(resp === null, `expected null, got ${JSON.stringify(resp)?.slice(0, 80)}`);
+  })();
+
+  // ==========================================================================
+  // YEAR ROUTES
+  // ==========================================================================
+
+  console.log('\nYEAR ROUTES:\n');
+
+  // Test: /api/v1/year/1969?month=7&day=20 (Apollo 11)
+  await test('GET /api/v1/year/1969?month=7&day=20 (Apollo 11)', async () => {
+    const resp = await callRoute(yearRoutes, '/api/v1/year/1969', REQ('/api/v1/year/1969?month=7&day=20'));
+    assert(resp, 'should have response');
+    if (resp) {
+      const data = await readJSON(resp);
+      assertField(data, 'year', 'number');
+      assertField(data, 'events', 'array');
+      assert(data.year === 1969, `year should be 1969`);
+    }
+  })();
+
+  // Test: /api/v1/year/multi?years=1969,2001&month=7&day=20
+  await test('GET /api/v1/year/multi', async () => {
+    const resp = await callRoute(yearRoutes, '/api/v1/year/multi', REQ('/api/v1/year/multi?years=1969,2001&month=7&day=20'));
+    if (resp) {
+      const data = await readJSON(resp);
+      assertField(data, 'years', 'array');
+      assertField(data, 'results', 'array');
+    }
+  })();
+
+  // Test: /api/v1/year/{year}/timeline
+  await test('GET /api/v1/year/1969/timeline', async () => {
+    const resp = await callRoute(yearRoutes, '/api/v1/year/1969/timeline', REQ('/api/v1/year/1969/timeline'));
+    if (resp) {
+      const data = await readJSON(resp);
+      assertField(data, 'year', 'number');
+      assertField(data, 'timeline', 'array');
+    }
+  })();
+
+  // Test: invalid year
+  await test('GET /api/v1/year/abc returns 400', async () => {
+    const resp = await callRoute(yearRoutes, '/api/v1/year/abc');
+    if (resp) {
+      assert(resp.status === 400, `should be 400, got ${resp.status}`);
+    }
+  })();
+
+  // Test: missing years for /multi
+  await test('GET /api/v1/year/multi (no years) returns 400', async () => {
+    const resp = await callRoute(yearRoutes, '/api/v1/year/multi');
+    if (resp) {
+      assert(resp.status === 400, `should be 400, got ${resp.status}`);
+    }
   })();
 
   // ==========================================================================
