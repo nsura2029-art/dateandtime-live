@@ -13,6 +13,8 @@ const path = require('path');
 const https = require('https');
 
 const API = process.env.API || 'https://dev.api.dateandtime.live';
+// Use prod for city data (has all 33,945 cities, dev D1 only has 190)
+const CITY_API = process.env.CITY_API || 'https://api.dateandtime.live';
 
 // Top 10 cities to ship first
 const DEFAULT_CITIES = [
@@ -54,6 +56,38 @@ function fetchJson(url) {
       });
     }).on('error', reject);
   });
+}
+
+// Country name lookup (for dev D1 where countries table isn't joined)
+// Top 50 countries by population cover ~95% of cities
+const COUNTRY_NAMES = {
+  US: 'United States', CN: 'China', IN: 'India', ID: 'Indonesia',
+  PK: 'Pakistan', BR: 'Brazil', NG: 'Nigeria', BD: 'Bangladesh',
+  RU: 'Russia', MX: 'Mexico', JP: 'Japan', ET: 'Ethiopia',
+  PH: 'Philippines', EG: 'Egypt', VN: 'Vietnam', CD: 'DR Congo',
+  TR: 'Türkiye', IR: 'Iran', DE: 'Germany', TH: 'Thailand',
+  GB: 'United Kingdom', FR: 'France', IT: 'Italy', TZ: 'Tanzania',
+  ZA: 'South Africa', MM: 'Myanmar', KR: 'South Korea', CO: 'Colombia',
+  ES: 'Spain', AR: 'Argentina', UG: 'Uganda', AL: 'Albania',
+  DZ: 'Algeria', PL: 'Poland', CA: 'Canada', AF: 'Afghanistan',
+  SA: 'Saudi Arabia', MA: 'Morocco', IQ: 'Iraq', AFG: 'Afghanistan',
+  PE: 'Peru', AO: 'Angola', IDN: 'Indonesia', MY: 'Malaysia',
+  AU: 'Australia', NL: 'Netherlands', SE: 'Sweden', BE: 'Belgium',
+  CH: 'Switzerland', AT: 'Austria', DK: 'Denmark', FI: 'Finland',
+  NO: 'Norway', IE: 'Ireland', NZ: 'New Zealand', PT: 'Portugal',
+  GR: 'Greece', CZ: 'Czech Republic', HU: 'Hungary', IL: 'Israel',
+  AE: 'United Arab Emirates', SAU: 'Saudi Arabia', KW: 'Kuwait',
+  QA: 'Qatar', OM: 'Oman', BH: 'Bahrain', JO: 'Jordan',
+  LB: 'Lebanon', SY: 'Syria', YE: 'Yemen', CL: 'Chile',
+  PE: 'Peru', VE: 'Venezuela', CR: 'Costa Rica', PA: 'Panama',
+  DO: 'Dominican Republic', CU: 'Cuba', HT: 'Haiti', JM: 'Jamaica',
+  PR: 'Puerto Rico', GT: 'Guatemala', HN: 'Honduras', SV: 'El Salvador',
+  NI: 'Nicaragua', BO: 'Bolivia', PY: 'Paraguay', UY: 'Uruguay',
+  EC: 'Ecuador', GY: 'Guyana', SR: 'Suriname'
+};
+
+function getCountryName(iso2) {
+  return COUNTRY_NAMES[iso2] || COUNTRY_NAMES[iso2?.toUpperCase()] || iso2 || '';
 }
 
 // WMO weather codes → emoji + label
@@ -140,11 +174,19 @@ function estimateClimate(lat) {
 async function fetchAll(city) {
   console.log(`\n→ Fetching data for ${city.slug} (id ${city.id})...`);
 
-  // 1. City data — use direct /api/cities with a fetch
-  const cityData = await fetchJson(`${API}/api/v2/search?q=${encodeURIComponent(city.slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' '))}`);
-  const c = cityData.data.cities[0];
-  if (!c) throw new Error(`No city found for ${city.slug}`);
-  c.slug = city.slug;  // attach our known slug for URL building
+  // 1. City data — use prod /api/v1/cities/:id endpoint (has all 33,945 cities)
+  const cityData = await fetchJson(`${CITY_API}/api/v1/cities/${city.id}`);
+  if (!cityData.success || !cityData.data) {
+    throw new Error(`No city found for id ${city.id} via ${CITY_API}/api/v1/cities/${city.id}`);
+  }
+  // Prod returns {city: {...}}, unwrap it
+  const c = cityData.data.city || cityData.data;
+  c.countryCode = c.countryCode || c.country;
+  c.countryName = c.countryName || getCountryName(c.countryCode);
+  c.stateCode = c.stateCode || c.state_code;
+  c.timezone = c.timezone || c.tz;
+  c.isCapital = c.isCapital || !!c.is_capital;
+  c.slug = city.slug;  // attach our disambiguated slug for URL building
 
   // 2. Time in city
   const timeData = await fetchJson(`${API}/api/v1/time/now?tz=${encodeURIComponent(c.timezone)}`);

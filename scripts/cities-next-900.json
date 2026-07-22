@@ -1066,7 +1066,7 @@
   },
   {
     "id": 1176734,
-    "slug": "hyderabad",
+    "slug": "hyderabad-pk",
     "code": "pk"
   },
   {
@@ -1351,7 +1351,7 @@
   },
   {
     "id": 1793743,
-    "slug": "suzhou",
+    "slug": "suzhou-cn",
     "code": "cn"
   },
   {
@@ -1591,7 +1591,7 @@
   },
   {
     "id": 8400694,
-    "slug": "taizhou",
+    "slug": "taizhou-cn",
     "code": "cn"
   },
   {
@@ -2466,7 +2466,7 @@
   },
   {
     "id": 1810820,
-    "slug": "fuzhou",
+    "slug": "fuzhou-cn",
     "code": "cn"
   },
   {
@@ -2991,7 +2991,7 @@
   },
   {
     "id": 1281673,
-    "slug": "baoshan",
+    "slug": "baoshan-cn",
     "code": "cn"
   },
   {
@@ -3411,7 +3411,7 @@
   },
   {
     "id": 2509954,
-    "slug": "valencia",
+    "slug": "valencia-es",
     "code": "es"
   },
   {
@@ -3451,7 +3451,7 @@
   },
   {
     "id": 3648559,
-    "slug": "barcelona",
+    "slug": "barcelona-ve",
     "code": "ve"
   },
   {
@@ -3976,7 +3976,7 @@
   },
   {
     "id": 1815463,
-    "slug": "changzhi",
+    "slug": "changzhi-cn",
     "code": "cn"
   },
   {
@@ -4051,7 +4051,7 @@
   },
   {
     "id": 1796989,
-    "slug": "changsha",
+    "slug": "changsha-cn",
     "code": "cn"
   },
   {
@@ -4151,7 +4151,7 @@
   },
   {
     "id": 1270927,
-    "slug": "gorakhpur",
+    "slug": "gorakhpur-in",
     "code": "in"
   },
   {
@@ -4296,7 +4296,7 @@
   },
   {
     "id": 9181182,
-    "slug": "puyang",
+    "slug": "puyang-cn",
     "code": "cn"
   },
   {
