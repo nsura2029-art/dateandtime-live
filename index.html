@@ -515,9 +515,9 @@
     .pill-icon svg { width: 100%; height: 100%; }
 
     /* ===== Search bar (CENTERED above favorite cities) ===== */
-    .search-section { margin: 1.5rem auto 0.5rem; max-width: 640px; position: relative; }
+    .search-section { margin: 1.5rem auto 0.5rem; max-width: 720px; position: relative; }
     .search-wrap { position: relative; }
-    .search-input { width: 75%; max-width: 480px; margin: 0 auto; display: block; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
+    .search-input { width: 100%; max-width: 720px; margin: 0 auto; display: block; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
     .search-input::placeholder { color: var(--color-muted-soft); }
     .search-input:focus { outline: none; border-color: var(--color-primary); }
     .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
@@ -900,10 +900,6 @@
     <!-- ============================================== -->
     <section class="section section--search">
       <div class="container">
-        <p class="section-eyebrow">Add cities</p>
-        <h2 class="section-title">Build your world clock</h2>
-        <p class="section-subtitle">Search any city worldwide, or pick a popular one below to add it to your favorites rail.</p>
-
         <div class="search-section" id="search-section">
           <div class="search-wrap">
             <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
