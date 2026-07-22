@@ -580,6 +580,10 @@
     .popular-city-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--city-color); flex-shrink: 0; }
     .popular-city-add { font-size: 0.95rem; line-height: 1; color: var(--color-muted-soft); font-weight: 400; }
     .popular-city.is-added { opacity: 0.4; cursor: default; pointer-events: none; }
+    /* Tier-based sizing: tier-1 (smallest, 12-15 per row), tier-2 (medium, 10-12), tier-3 (largest, 8-10) */
+    .popular-city.tier-1 { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+    .popular-city.tier-2 { font-size: 0.875rem; padding: 0.45rem 0.85rem; }
+    .popular-city.tier-3 { font-size: 1rem; padding: 0.55rem 1rem; font-weight: 700; }
 
     /* ===== Favorite cities label + rail ===== */
     .rail-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1.5rem 0 0.625rem; text-align: left; }
@@ -927,7 +931,6 @@
             <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
           </div>
           <p class="search-disabled-note">Loading cities…</p>
-          <p class="popular-cities-label is-hidden" aria-hidden="true">Popular cities</p>
           <div class="popular-cities" id="popular-cities" aria-label="Popular cities to add"></div>
         </div>
       </div>
@@ -1385,58 +1388,99 @@
        filtering out the home city and the 5 rail defaults, the first 10
        are shown. Larger pool so we always have 10 to display even if
        the user's home overlaps with one of these. */
+    // POPULAR_CITIES is organized in 3 tiers for visual rhythm:
+    //   tier 1 (smallest, ~12-15 per row)  — top world cities
+    //   tier 2 (medium,   ~10-12 per row)  — important regional cities
+    //   tier 3 (largest,  ~8-10 per row)   — additional regional cities
+    // Each timezone has 2-4 cities (good for SEO — internal link diversity).
     const POPULAR_CITIES = [
-      // America/New_York (3)
-      { id: 5128581, name: "New York",    country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0 },
-      { id: 4560349, name: "Philadelphia", country: "US", state_code: "PA", latitude: 39.9526, longitude: -75.1652, tz: "America/New_York", is_capital: 0 },
-      { id: 4930956, name: "Boston",      country: "US", state_code: "MA", latitude: 42.3601, longitude: -71.0589, tz: "America/New_York", is_capital: 0 },
-      // America/Los_Angeles (3)
-      { id: 5368361, name: "Los Angeles", country: "US", state_code: "CA", latitude: 34.0522, longitude: -118.2437, tz: "America/Los_Angeles", is_capital: 0 },
-      { id: 5391959, name: "San Francisco", country: "US", state_code: "CA", latitude: 37.7749, longitude: -122.4194, tz: "America/Los_Angeles", is_capital: 0 },
-      { id: 5391811, name: "San Diego",   country: "US", state_code: "CA", latitude: 32.7157, longitude: -117.1611, tz: "America/Los_Angeles", is_capital: 0 },
-      // America/Chicago (2)
-      { id: 4887398, name: "Chicago",     country: "US", state_code: "IL", latitude: 41.8781, longitude: -87.6298, tz: "America/Chicago", is_capital: 0 },
-      { id: 5039192, name: "Minneapolis", country: "US", state_code: "MN", latitude: 44.9778, longitude: -93.2650, tz: "America/Chicago", is_capital: 0 },
-      // America/Toronto (2)
-      { id: 6167865, name: "Toronto",     country: "CA", state_code: "ON", latitude: 43.6532, longitude: -79.3832, tz: "America/Toronto", is_capital: 0 },
-      { id: 6077243, name: "Montreal",    country: "CA", state_code: "QC", latitude: 45.5017, longitude: -73.5673, tz: "America/Toronto", is_capital: 0 },
-      // America/Mexico_City (2)
-      { id: 3530597, name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz: "America/Mexico_City", is_capital: 1 },
-      { id: 4011743, name: "Guadalajara", country: "MX", latitude: 20.6597, longitude: -103.3496, tz: "America/Mexico_City", is_capital: 0 },
-      // America/Sao_Paulo (2)
-      { id: 3448439, name: "São Paulo",   country: "BR", latitude: -23.5505, longitude: -46.6333, tz: "America/Sao_Paulo", is_capital: 0 },
-      { id: 3451190, name: "Rio de Janeiro", country: "BR", latitude: -22.9068, longitude: -43.1729, tz: "America/Sao_Paulo", is_capital: 0 },
-      // Europe/London (3)
-      { id: 2643743, name: "London",      country: "GB", latitude: 51.5074, longitude: -0.1278, tz: "Europe/London", is_capital: 1 },
-      { id: 2643123, name: "Manchester",  country: "GB", latitude: 53.4808, longitude: -2.2426, tz: "Europe/London", is_capital: 0 },
-      { id: 2650225, name: "Edinburgh",   country: "GB", latitude: 55.9533, longitude: -3.1883, tz: "Europe/London", is_capital: 1 },
-      // Europe/Paris (2)
-      { id: 2988507, name: "Paris",       country: "FR", latitude: 48.8566, longitude: 2.3522, tz: "Europe/Paris", is_capital: 1 },
-      { id: 2996944, name: "Lyon",        country: "FR", latitude: 45.7640, longitude: 4.8357, tz: "Europe/Paris", is_capital: 0 },
-      // Europe/Berlin (2)
-      { id: 2950159, name: "Berlin",      country: "DE", latitude: 52.5200, longitude: 13.4050, tz: "Europe/Berlin", is_capital: 1 },
-      { id: 2867714, name: "Munich",      country: "DE", latitude: 48.1351, longitude: 11.5820, tz: "Europe/Berlin", is_capital: 0 },
-      // Europe/Rome (1)
-      { id: 3169070, name: "Rome",        country: "IT", latitude: 41.9028, longitude: 12.4964, tz: "Europe/Rome", is_capital: 1 },
-      // Europe/Madrid (1)
-      { id: 3117735, name: "Madrid",      country: "ES", latitude: 40.4168, longitude: -3.7038, tz: "Europe/Madrid", is_capital: 1 },
-      // Europe/Istanbul (1)
-      { id: 745044,  name: "Istanbul",    country: "TR", latitude: 41.0082, longitude: 28.9784, tz: "Europe/Istanbul", is_capital: 0 },
-      // Asia/Tokyo (2)
-      { id: 1850147, name: "Tokyo",       country: "JP", latitude: 35.6762, longitude: 139.6503, tz: "Asia/Tokyo", is_capital: 1 },
-      { id: 1853908, name: "Osaka",       country: "JP", latitude: 34.6937, longitude: 135.5023, tz: "Asia/Tokyo", is_capital: 0 },
-      // Asia/Singapore (1)
-      { id: 1880252, name: "Singapore",   country: "SG", latitude: 1.3521, longitude: 103.8198, tz: "Asia/Singapore", is_capital: 1 },
-      // Asia/Dubai (1)
-      { id: 292223,  name: "Dubai",       country: "AE", latitude: 25.2048, longitude: 55.2708, tz: "Asia/Dubai", is_capital: 0 },
-      // Asia/Hong_Kong (1)
-      { id: 1819729, name: "Hong Kong",   country: "HK", latitude: 22.3193, longitude: 114.1694, tz: "Asia/Hong_Kong", is_capital: 0 },
-      // Asia/Kolkata (2)
-      { id: 1275339, name: "Mumbai",      country: "IN", state_code: "MH", latitude: 19.0760, longitude: 72.8777, tz: "Asia/Kolkata", is_capital: 0 },
-      { id: 1273294, name: "Delhi",       country: "IN", state_code: "DL", latitude: 28.7041, longitude: 77.1025, tz: "Asia/Kolkata", is_capital: 1 },
-      // Asia/Bangkok (1)
-      { id: 1609350, name: "Bangkok",     country: "TH", latitude: 13.7563, longitude: 100.5018, tz: "Asia/Bangkok", is_capital: 1 },
-      { id: 1835848, name: "Seoul",       country: "KR", latitude: 37.5665, longitude: 126.9780, tz: "Asia/Seoul", is_capital: 1 }
+      // ===== Tier 1: top world cities (15) — smallest pills =====
+      // America/New_York
+      { id: 5128581, name: "New York",    country: "US", state_code: "NY", latitude: 40.7128, longitude: -74.0060, tz: "America/New_York", is_capital: 0, tier: 1 },
+      // America/Los_Angeles
+      { id: 5368361, name: "Los Angeles", country: "US", state_code: "CA", latitude: 34.0522, longitude: -118.2437, tz: "America/Los_Angeles", is_capital: 0, tier: 1 },
+      // America/Toronto
+      { id: 6167865, name: "Toronto",     country: "CA", state_code: "ON", latitude: 43.6532, longitude: -79.3832, tz: "America/Toronto", is_capital: 0, tier: 1 },
+      // America/Mexico_City
+      { id: 3530597, name: "Mexico City", country: "MX", latitude: 19.4326, longitude: -99.1332, tz: "America/Mexico_City", is_capital: 1, tier: 1 },
+      // America/Sao_Paulo
+      { id: 3448439, name: "São Paulo",   country: "BR", latitude: -23.5505, longitude: -46.6333, tz: "America/Sao_Paulo", is_capital: 0, tier: 1 },
+      // Europe/London
+      { id: 2643743, name: "London",      country: "GB", latitude: 51.5074, longitude: -0.1278, tz: "Europe/London", is_capital: 1, tier: 1 },
+      // Europe/Paris
+      { id: 2988507, name: "Paris",       country: "FR", latitude: 48.8566, longitude: 2.3522, tz: "Europe/Paris", is_capital: 1, tier: 1 },
+      // Europe/Berlin
+      { id: 2950159, name: "Berlin",      country: "DE", latitude: 52.5200, longitude: 13.4050, tz: "Europe/Berlin", is_capital: 1, tier: 1 },
+      // Europe/Madrid
+      { id: 3117735, name: "Madrid",      country: "ES", latitude: 40.4168, longitude: -3.7038, tz: "Europe/Madrid", is_capital: 1, tier: 1 },
+      // Asia/Tokyo
+      { id: 1850147, name: "Tokyo",       country: "JP", latitude: 35.6762, longitude: 139.6503, tz: "Asia/Tokyo", is_capital: 1, tier: 1 },
+      // Asia/Shanghai
+      { id: 1796236, name: "Shanghai",    country: "CN", latitude: 31.2304, longitude: 121.4737, tz: "Asia/Shanghai", is_capital: 0, tier: 1 },
+      // Asia/Singapore
+      { id: 1880252, name: "Singapore",   country: "SG", latitude: 1.3521, longitude: 103.8198, tz: "Asia/Singapore", is_capital: 1, tier: 1 },
+      // Asia/Dubai
+      { id: 292223,  name: "Dubai",       country: "AE", latitude: 25.2048, longitude: 55.2708, tz: "Asia/Dubai", is_capital: 0, tier: 1 },
+      // Asia/Hong_Kong
+      { id: 1819729, name: "Hong Kong",   country: "HK", latitude: 22.3193, longitude: 114.1694, tz: "Asia/Hong_Kong", is_capital: 0, tier: 1 },
+      // Australia/Sydney
+      { id: 2147714, name: "Sydney",      country: "AU", latitude: -33.8688, longitude: 151.2093, tz: "Australia/Sydney", is_capital: 1, tier: 1 },
+
+      // ===== Tier 2: important regional cities (15) — medium pills =====
+      // America/Chicago
+      { id: 4887398, name: "Chicago",     country: "US", state_code: "IL", latitude: 41.8781, longitude: -87.6298, tz: "America/Chicago", is_capital: 0, tier: 2 },
+      // America/Argentina/Buenos_Aires
+      { id: 3435910, name: "Buenos Aires", country: "AR", latitude: -34.6037, longitude: -58.3816, tz: "America/Argentina/Buenos_Aires", is_capital: 1, tier: 2 },
+      // America/Vancouver
+      { id: 6173331, name: "Vancouver",   country: "CA", state_code: "BC", latitude: 49.2827, longitude: -123.1207, tz: "America/Vancouver", is_capital: 0, tier: 2 },
+      // Europe/Rome
+      { id: 3169070, name: "Rome",        country: "IT", latitude: 41.9028, longitude: 12.4964, tz: "Europe/Rome", is_capital: 1, tier: 2 },
+      // Europe/Amsterdam
+      { id: 2759794, name: "Amsterdam",   country: "NL", latitude: 52.3676, longitude: 4.9041, tz: "Europe/Amsterdam", is_capital: 1, tier: 2 },
+      // Europe/Istanbul
+      { id: 745044,  name: "Istanbul",    country: "TR", latitude: 41.0082, longitude: 28.9784, tz: "Europe/Istanbul", is_capital: 0, tier: 2 },
+      // Europe/Moscow
+      { id: 524901,  name: "Moscow",      country: "RU", latitude: 55.7558, longitude: 37.6173, tz: "Europe/Moscow", is_capital: 1, tier: 2 },
+      // Africa/Cairo
+      { id: 360630,  name: "Cairo",       country: "EG", latitude: 30.0444, longitude: 31.2357, tz: "Africa/Cairo", is_capital: 1, tier: 2 },
+      // Asia/Shanghai (Beijing)
+      { id: 1816670, name: "Beijing",     country: "CN", latitude: 39.9042, longitude: 116.4074, tz: "Asia/Shanghai", is_capital: 1, tier: 2 },
+      // Asia/Kolkata
+      { id: 1275339, name: "Mumbai",      country: "IN", state_code: "MH", latitude: 19.0760, longitude: 72.8777, tz: "Asia/Kolkata", is_capital: 0, tier: 2 },
+      // Asia/Bangkok
+      { id: 1609350, name: "Bangkok",     country: "TH", latitude: 13.7563, longitude: 100.5018, tz: "Asia/Bangkok", is_capital: 1, tier: 2 },
+      // Asia/Jakarta
+      { id: 1642911, name: "Jakarta",     country: "ID", latitude: -6.2088, longitude: 106.8456, tz: "Asia/Jakarta", is_capital: 1, tier: 2 },
+      // Asia/Manila
+      { id: 1701668, name: "Manila",      country: "PH", latitude: 14.5995, longitude: 120.9842, tz: "Asia/Manila", is_capital: 1, tier: 2 },
+      // Asia/Seoul
+      { id: 1835848, name: "Seoul",       country: "KR", latitude: 37.5665, longitude: 126.9780, tz: "Asia/Seoul", is_capital: 1, tier: 2 },
+      // Pacific/Auckland
+      { id: 2193733, name: "Auckland",    country: "NZ", latitude: -36.8485, longitude: 174.7633, tz: "Pacific/Auckland", is_capital: 0, tier: 2 },
+
+      // ===== Tier 3: additional regional cities (10) — largest pills =====
+      // America/New_York
+      { id: 4930956, name: "Boston",      country: "US", state_code: "MA", latitude: 42.3601, longitude: -71.0589, tz: "America/New_York", is_capital: 0, tier: 3 },
+      { id: 4560349, name: "Philadelphia", country: "US", state_code: "PA", latitude: 39.9526, longitude: -75.1652, tz: "America/New_York", is_capital: 0, tier: 3 },
+      // America/Los_Angeles
+      { id: 5391959, name: "San Francisco", country: "US", state_code: "CA", latitude: 37.7749, longitude: -122.4194, tz: "America/Los_Angeles", is_capital: 0, tier: 3 },
+      // America/Chicago
+      { id: 4699066, name: "Houston",     country: "US", state_code: "TX", latitude: 29.7604, longitude: -95.3698, tz: "America/Chicago", is_capital: 0, tier: 3 },
+      // Europe/London
+      { id: 2643123, name: "Manchester",  country: "GB", latitude: 53.4808, longitude: -2.2426, tz: "Europe/London", is_capital: 0, tier: 3 },
+      { id: 2650225, name: "Edinburgh",   country: "GB", latitude: 55.9533, longitude: -3.1883, tz: "Europe/London", is_capital: 1, tier: 3 },
+      // Europe/Berlin
+      { id: 2867714, name: "Munich",      country: "DE", latitude: 48.1351, longitude: 11.5820, tz: "Europe/Berlin", is_capital: 0, tier: 3 },
+      // Europe/Paris
+      { id: 2996944, name: "Lyon",        country: "FR", latitude: 45.7640, longitude: 4.8357, tz: "Europe/Paris", is_capital: 0, tier: 3 },
+      // Europe/Madrid
+      { id: 3128760, name: "Barcelona",   country: "ES", latitude: 41.3851, longitude: 2.1734, tz: "Europe/Madrid", is_capital: 0, tier: 3 },
+      // Asia/Tokyo
+      { id: 1853908, name: "Osaka",       country: "JP", latitude: 34.6937, longitude: 135.5023, tz: "Asia/Tokyo", is_capital: 0, tier: 3 },
+      // Asia/Kolkata
+      { id: 1273294, name: "Delhi",       country: "IN", state_code: "DL", latitude: 28.7041, longitude: 77.1025, tz: "Asia/Kolkata", is_capital: 1, tier: 3 },
+      // Australia/Sydney
+      { id: 2158177, name: "Melbourne",   country: "AU", latitude: -37.8136, longitude: 144.9631, tz: "Australia/Melbourne", is_capital: 1, tier: 3 }
     ];
     const RAIL_DEFAULT_NAMES = new Set(["New York", "London", "Tokyo", "Beijing", "Sydney"]);
 
@@ -1702,19 +1746,26 @@
       const home = state.citiesWithHome[0];
       const homeTz = home ? home.tz : null;
       const homeName = home ? (home.name || "").toLowerCase() : null;
-      const filtered = POPULAR_CITIES.filter(c => {
+      // Apply the same filter to ALL tiers, then slice per tier.
+      const matches = POPULAR_CITIES.filter(c => {
         if (homeTz && c.tz === homeTz) return false;       // exclude the home tz
         if (homeName && c.name.toLowerCase() === homeName) return false; // exclude the home name
         if (RAIL_DEFAULT_NAMES.has(c.name)) return false;  // exclude rail defaults
         return true;
-      }).slice(0, 12);
+      });
+      // Tier-based slicing: row 1 (15 tier-1), row 2 (15 tier-2), row 3 (12 tier-3)
+      const filtered = [
+        ...matches.filter(c => c.tier === 1).slice(0, 15),
+        ...matches.filter(c => c.tier === 2).slice(0, 15),
+        ...matches.filter(c => c.tier === 3).slice(0, 12)
+      ];
       filtered.forEach((c, i) => {
         const color = cityColor(c.name, i);
         // "Already added" check by name (not tz — multiple cities can share tz)
         const already = state.citiesWithHome.some(x => (x.name || "").toLowerCase() === c.name.toLowerCase());
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "popular-city" + (already ? " is-added" : "");
+        btn.className = "popular-city tier-" + (c.tier || 2) + (already ? " is-added" : "");
         btn.style.setProperty("--city-color", `var(--city-${color})`);
         btn.style.setProperty("--city-color-bg", `var(--city-${color}-bg)`);
         btn.disabled = already;
