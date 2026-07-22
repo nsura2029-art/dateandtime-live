@@ -444,6 +444,28 @@ export default {
       return new Response("Asset not found: " + r.status, { status: 500 });
     }
 
+    // City pages: /world-time/city/{slug}/
+    // (Pre-rendered static HTML files at /world-time/city/{slug}/index.html)
+    const cityPageMatch = url.pathname.match(/^\/world-time\/city\/[^/]+\/?$/);
+    if (cityPageMatch) {
+      const templateReq = new Request(new URL(url.pathname + "index.html", request.url).toString());
+      const r = await env.ASSETS.fetch(templateReq);
+      if (r.ok) {
+        const body = await r.text();
+        return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+      }
+      // Try the slug without trailing slash
+      if (r.status === 307 || r.status === 301) {
+        const finalUrl = new URL(r.headers.get("location") || url.pathname, request.url);
+        const final = await env.ASSETS.fetch(new Request(finalUrl, request));
+        if (final.ok) {
+          const body = await final.text();
+          return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+        }
+      }
+      return new Response("City page not found: " + r.status, { status: 404 });
+    }
+
     // Get the asset (HTML or other) from the [assets] binding.
     const response = await env.ASSETS.fetch(request);
 
