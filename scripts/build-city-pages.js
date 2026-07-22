@@ -15,7 +15,7 @@ const https = require('https');
 const API = process.env.API || 'https://dev.api.dateandtime.live';
 
 // Top 10 cities to ship first
-const CITIES = [
+const DEFAULT_CITIES = [
   { id: 5128581, slug: 'new-york',     code: 'us' },
   { id: 5368361, slug: 'los-angeles',  code: 'us' },
   { id: 2643743, slug: 'london',       code: 'gb' },
@@ -25,8 +25,21 @@ const CITIES = [
   { id: 3448439, slug: 'sao-paulo',    code: 'br' },
   { id: 2988507, slug: 'paris',        code: 'fr' },
   { id: 292223,  slug: 'dubai',        code: 'ae' },
-  { id: 1880252, slug: 'singapore',    code: 'sg' }
+  { id: 1880252, slug: 'singapore',    code: 'sg' },
+  { id: 4174757, slug: 'tampa',        code: 'us' }  // User's requested test city
 ];
+
+// Load cities: either from CITIES_FILE env, or from a single file
+let CITIES = DEFAULT_CITIES;
+if (process.env.CITIES_FILE) {
+  try {
+    CITIES = JSON.parse(fs.readFileSync(process.env.CITIES_FILE, 'utf8'));
+    console.log(`Loaded ${CITIES.length} cities from ${process.env.CITIES_FILE}`);
+  } catch (e) {
+    console.error(`Failed to load ${process.env.CITIES_FILE}: ${e.message}`);
+    process.exit(1);
+  }
+}
 
 function fetchJson(url) {
   return new Promise((resolve, reject) => {
@@ -41,6 +54,47 @@ function fetchJson(url) {
       });
     }).on('error', reject);
   });
+}
+
+// WMO weather codes → emoji + label
+// https://open-meteo.com/en/docs (WMO Weather interpretation codes)
+const WMO_CODES = {
+  0:  { emoji: '☀️', label: 'Clear' },
+  1:  { emoji: '🌤', label: 'Mostly clear' },
+  2:  { emoji: '⛅', label: 'Partly cloudy' },
+  3:  { emoji: '☁️', label: 'Overcast' },
+  45: { emoji: '🌫', label: 'Fog' },
+  48: { emoji: '🌫', label: 'Rime fog' },
+  51: { emoji: '🌦', label: 'Light drizzle' },
+  53: { emoji: '🌦', label: 'Drizzle' },
+  55: { emoji: '🌧', label: 'Heavy drizzle' },
+  61: { emoji: '🌦', label: 'Light rain' },
+  63: { emoji: '🌧', label: 'Rain' },
+  65: { emoji: '🌧', label: 'Heavy rain' },
+  71: { emoji: '🌨', label: 'Light snow' },
+  73: { emoji: '❄️', label: 'Snow' },
+  75: { emoji: '❄️', label: 'Heavy snow' },
+  77: { emoji: '🌨', label: 'Snow grains' },
+  80: { emoji: '🌦', label: 'Rain showers' },
+  81: { emoji: '🌧', label: 'Heavy showers' },
+  82: { emoji: '⛈', label: 'Violent showers' },
+  85: { emoji: '🌨', label: 'Snow showers' },
+  86: { emoji: '❄️', label: 'Heavy snow showers' },
+  95: { emoji: '⛈', label: 'Thunderstorm' },
+  96: { emoji: '⛈', label: 'Thunderstorm w/ hail' },
+  99: { emoji: '⛈', label: 'Severe thunderstorm' }
+};
+const wmo = (c) => WMO_CODES[c] || { emoji: '🌤', label: '—' };
+
+// Haversine distance in km
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 async function fetchAll(city) {
@@ -76,11 +130,41 @@ async function fetchAll(city) {
   // 7. Climate (for chart heights)
   const climateData = await fetchJson(`${API}/api/v1/cities/${c.id}/climate`);
 
+  // 8. 7-day weather forecast (Open-Meteo, no API key needed)
+  // https://open-meteo.com/ (CC BY 4.0)
+  const weatherData = await fetchJson(
+    `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${c.latitude}&longitude=${c.longitude}` +
+    `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max` +
+    `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=${encodeURIComponent(c.timezone)}&forecast_days=7`
+  );
+
+  // 9. Cities near (haversine, computed from full city list)
+  // /api/v1/cities doesn't filter by country, so fetch top 2000 by pop and filter ourselves.
+  let nearbyCities = [];
+  try {
+    const candidates = [];
+    for (let offset = 0; offset < 2000; offset += 500) {
+      const nearbyResp = await fetchJson(`${API}/api/v1/cities?limit=500&offset=${offset}`);
+      const list = nearbyResp.data?.cities || nearbyResp.cities || [];
+      candidates.push(...list.filter(x => x.countryCode === c.countryCode));
+      if (candidates.length >= 20) break; // enough
+    }
+    nearbyCities = candidates
+      .filter(x => x.id !== c.id)
+      .map(x => ({ ...x, distanceKm: haversineKm(c.latitude, c.longitude, x.latitude, x.longitude) }))
+      .sort((a, b) => a.distanceKm - b.distanceKm)
+      .slice(0, 6);
+  } catch (e) { console.warn('nearby fetch failed:', e.message); }
+
   return {
     city: c,
     time: t,
     holidays: holidaysData.data || holidaysData,
     otd: otdData,
+    weather: weatherData,
+    nearby: nearbyCities,
     sun: sunData.data || sunData,
     dst: dstData ? (dstData.data || dstData) : null,
     climate: climateData.data || climateData
@@ -124,7 +208,7 @@ function numberFormat(n) {
 }
 
 function renderTemplate(d) {
-  const { city: c, time: t, holidays, otd, sun, dst, climate } = d;
+  const { city: c, time: t, holidays, otd, sun, dst, climate, weather, nearby } = d;
   const today = new Date();
   const sunRise = sun?.sunrise_utc ? new Date(sun.sunrise_utc).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: c.timezone }) : '6:00 AM';
   const sunSet = sun?.sunset_utc ? new Date(sun.sunset_utc).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: c.timezone }) : '6:00 PM';
@@ -229,6 +313,53 @@ function renderTemplate(d) {
   }).join('') : `
     <div class="data-row"><div class="date">—</div><div><div class="name">No upcoming holidays</div><div class="meta">2026 calendar available via API</div></div><div class="when">—</div></div>
   `;
+
+  // 7-day weather forecast (Open-Meteo, no API key)
+  const wDaily = weather?.daily || {};
+  const wCurrent = weather?.current || {};
+  const daysShort = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const todayIdx = (wDaily.time || []).findIndex(d => d === new Date().toISOString().slice(0,10));
+  const weatherHtml = (wDaily.time && wDaily.time.length > 0) ? `
+    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">
+      ${(wDaily.time || []).map((d, i) => {
+        const date = new Date(d + 'T12:00:00');
+        const code = wDaily.weather_code?.[i] ?? 0;
+        const emoji = wmo(code).emoji;
+        const hi = Math.round(wDaily.temperature_2m_max?.[i] ?? 0);
+        const lo = Math.round(wDaily.temperature_2m_min?.[i] ?? 0);
+        const isToday = i === 0;
+        return `
+          <div class="weather-day"${isToday ? ' style="border: 2px solid var(--color-primary);"' : ''}>
+            <div class="day">${isToday ? 'Today' : daysShort[date.getDay()]}</div>
+            <div class="icon">${emoji}</div>
+            <div class="hi">${hi}°</div>
+            <div class="lo">${lo}°</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
+      <span>💧 ${wCurrent.relative_humidity_2m ?? '—'}% humidity</span>
+      <span>💨 ${Math.round(wCurrent.wind_speed_10m ?? 0)} mph wind</span>
+      <span>🌡 ${Math.round((wCurrent.apparent_temperature ?? wCurrent.temperature_2m) * 9/5 + 32)}°F feels like</span>
+      <span>🕵 UV ${wDaily.uv_index_max?.[0] ?? '—'}</span>
+      <span>📏 ${wCurrent.surface_pressure ?? '—'} hPa</span>
+    </div>
+    <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
+  ` : '<p style="color: var(--color-muted);">Weather forecast unavailable.</p>';
+
+  // Cities near (haversine, top 6)
+  const nearbyHtml = (nearby && nearby.length > 0) ? `
+    <div class="nearby-grid">
+      ${nearby.map(n => `
+        <a href="/world-time/city/${n.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}/" class="nearby-card">
+          <div class="name">${n.name}</div>
+          <div class="meta">${Math.round(n.distanceKm)} km ${n.stateCode ? `· ${n.stateCode}` : ''} · ${n.countryCode}</div>
+          <div class="time" data-tz="${n.timezone}">${fmtTime(new Date().toLocaleString('en-US', { timeZone: n.timezone }), false).split(' ')[0]}<span class="ampm">${fmtTime(new Date().toLocaleString('en-US', { timeZone: n.timezone }), false).split(' ')[1]}</span></div>
+        </a>
+      `).join('')}
+    </div>
+  ` : '<p style="color: var(--color-muted);">No nearby cities in our database.</p>';
 
   return `<!doctype html>
 <html lang="en" data-theme="light">
@@ -359,6 +490,19 @@ function renderTemplate(d) {
     .stat-cell .value { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--color-foreground); }
     .stat-cell .label { font-size: 0.75rem; color: var(--color-muted); letter-spacing: 0.05em; text-transform: uppercase; }
     .data-list { padding: 0.5rem 0; }
+    .weather-day { padding: 1rem 0.5rem; text-align: center; background: var(--color-bg-soft); border-radius: 0.5rem; }
+    .weather-day .day { font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .weather-day .icon { font-size: 1.875rem; line-height: 1; margin: 0.375rem 0; }
+    .weather-day .hi { font-family: var(--font-mono); font-weight: 700; color: var(--color-foreground); }
+    .weather-day .lo { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-muted); }
+    .nearby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    @media (max-width: 700px) { .nearby-grid { grid-template-columns: repeat(2, 1fr); } }
+    .nearby-card { padding: 0.875rem; background: var(--color-bg-soft); border-radius: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .nearby-card:hover { background: var(--color-primary-soft); text-decoration: none; }
+    .nearby-card .name { font-weight: 600; color: var(--color-foreground); }
+    .nearby-card .meta { font-size: 0.8125rem; color: var(--color-muted); }
+    .nearby-card .time { font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-primary); }
+    .nearby-card .time .ampm { opacity: 0.6; font-size: 0.75em; margin-left: 0.2em; }
     .data-row { display: grid; grid-template-columns: 6rem 1fr auto; gap: 1rem; align-items: center; padding: 0.625rem 0; border-bottom: 1px solid var(--color-border-soft); }
     .data-row:last-child { border-bottom: none; }
     .data-row .date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-muted); }
@@ -462,16 +606,30 @@ function renderTemplate(d) {
     </div>
     <section class="data-list">${otdHtml}</section>
 
-    <!-- Section 05: Holidays -->
+    <!-- Section 05: 7-day weather -->
     <div class="section-head">
-      <h2><span class="num">05</span> · Upcoming ${c.countryName} holidays</h2>
+      <h2><span class="num">05</span> · 7-day weather in ${c.name}</h2>
+      <a class="more" href="/world-time/city/${d.city.slug}/weather/">Full forecast →</a>
+    </div>
+    <section>${weatherHtml}</section>
+
+    <!-- Section 06: Holidays -->
+    <div class="section-head">
+      <h2><span class="num">06</span> · Upcoming ${c.countryName} holidays</h2>
       <a class="more" href="/holidays/${c.countryCode.toLowerCase()}/">All 2026 →</a>
     </div>
     <section class="data-list">${holidaysHtml}</section>
 
-    <!-- Section 06: More to explore -->
+    <!-- Section 07: Cities near -->
     <div class="section-head">
-      <h2><span class="num">06</span> · More to explore</h2>
+      <h2><span class="num">07</span> · Cities near ${c.name}</h2>
+      <a class="more" href="/world-time/${c.countryCode.toLowerCase()}/${(c.stateCode||'').toLowerCase()}/">All nearby →</a>
+    </div>
+    <section>${nearbyHtml}</section>
+
+    <!-- Section 08: More to explore -->
+    <div class="section-head">
+      <h2><span class="num">08</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/${c.countryCode.toLowerCase()}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>

@@ -127,6 +127,19 @@
     .stat-cell .value { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--color-foreground); }
     .stat-cell .label { font-size: 0.75rem; color: var(--color-muted); letter-spacing: 0.05em; text-transform: uppercase; }
     .data-list { padding: 0.5rem 0; }
+    .weather-day { padding: 1rem 0.5rem; text-align: center; background: var(--color-bg-soft); border-radius: 0.5rem; }
+    .weather-day .day { font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .weather-day .icon { font-size: 1.875rem; line-height: 1; margin: 0.375rem 0; }
+    .weather-day .hi { font-family: var(--font-mono); font-weight: 700; color: var(--color-foreground); }
+    .weather-day .lo { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-muted); }
+    .nearby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    @media (max-width: 700px) { .nearby-grid { grid-template-columns: repeat(2, 1fr); } }
+    .nearby-card { padding: 0.875rem; background: var(--color-bg-soft); border-radius: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .nearby-card:hover { background: var(--color-primary-soft); text-decoration: none; }
+    .nearby-card .name { font-weight: 600; color: var(--color-foreground); }
+    .nearby-card .meta { font-size: 0.8125rem; color: var(--color-muted); }
+    .nearby-card .time { font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-primary); }
+    .nearby-card .time .ampm { opacity: 0.6; font-size: 0.75em; margin-left: 0.2em; }
     .data-row { display: grid; grid-template-columns: 6rem 1fr auto; gap: 1rem; align-items: center; padding: 0.625rem 0; border-bottom: 1px solid var(--color-border-soft); }
     .data-row:last-child { border-bottom: none; }
     .data-row .date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-muted); }
@@ -192,7 +205,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">4:59:43<span class="ms">.00</span><span class="ampm">AM</span></span>
+          <span class="clock-time" id="clockTime">5:11:03<span class="ms">.00</span><span class="ampm">AM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Wednesday, July 22, 2026</div>
         <div class="clock-tz">
@@ -224,7 +237,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Dubai">4:59:43 AM<br>+4 · Wednesday</div>
+      <div class="value" data-tz="Asia/Dubai">5:11:03 AM<br>+4 · Wednesday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -286,18 +299,133 @@
     <div class="data-row"><div class="date">—</div><div><div class="name">No events on file for today</div><div class="meta">Check back tomorrow for new historical content</div></div><div class="when">—</div></div>
   </section>
 
-    <!-- Section 05: Holidays -->
+    <!-- Section 05: 7-day weather -->
     <div class="section-head">
-      <h2><span class="num">05</span> · Upcoming United Arab Emirates holidays</h2>
+      <h2><span class="num">05</span> · 7-day weather in Dubai</h2>
+      <a class="more" href="/world-time/city/undefined/weather/">Full forecast →</a>
+    </div>
+    <section>
+    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">
+      
+          <div class="weather-day" style="border: 2px solid var(--color-primary);">
+            <div class="day">Today</div>
+            <div class="icon">☁️</div>
+            <div class="hi">105°</div>
+            <div class="lo">86°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Thu</div>
+            <div class="icon">☁️</div>
+            <div class="hi">108°</div>
+            <div class="lo">84°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Fri</div>
+            <div class="icon">⛅</div>
+            <div class="hi">107°</div>
+            <div class="lo">82°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Sat</div>
+            <div class="icon">☀️</div>
+            <div class="hi">110°</div>
+            <div class="lo">82°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Sun</div>
+            <div class="icon">⛅</div>
+            <div class="hi">106°</div>
+            <div class="lo">84°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Mon</div>
+            <div class="icon">⛅</div>
+            <div class="hi">104°</div>
+            <div class="lo">84°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Tue</div>
+            <div class="icon">⛅</div>
+            <div class="hi">104°</div>
+            <div class="lo">87°</div>
+          </div>
+        
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
+      <span>💧 45% humidity</span>
+      <span>💨 11 mph wind</span>
+      <span>🌡 221°F feels like</span>
+      <span>🕵 UV 8.9</span>
+      <span>📏 995.3 hPa</span>
+    </div>
+    <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
+  </section>
+
+    <!-- Section 06: Holidays -->
+    <div class="section-head">
+      <h2><span class="num">06</span> · Upcoming United Arab Emirates holidays</h2>
       <a class="more" href="/holidays/ae/">All 2026 →</a>
     </div>
     <section class="data-list">
     <div class="data-row"><div class="date">—</div><div><div class="name">No upcoming holidays</div><div class="meta">2026 calendar available via API</div></div><div class="when">—</div></div>
   </section>
 
-    <!-- Section 06: More to explore -->
+    <!-- Section 07: Cities near -->
     <div class="section-head">
-      <h2><span class="num">06</span> · More to explore</h2>
+      <h2><span class="num">07</span> · Cities near Dubai</h2>
+      <a class="more" href="/world-time/ae/03/">All nearby →</a>
+    </div>
+    <section>
+    <div class="nearby-grid">
+      
+        <a href="/world-time/city/dayrah/" class="nearby-card">
+          <div class="name">Dayrah</div>
+          <div class="meta">22 km · 03 · AE</div>
+          <div class="time" data-tz="Asia/Dubai">9:11:03<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/sharjah/" class="nearby-card">
+          <div class="name">Sharjah</div>
+          <div class="meta">30 km · 06 · AE</div>
+          <div class="time" data-tz="Asia/Dubai">9:11:03<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/ajman/" class="nearby-card">
+          <div class="name">Ajman</div>
+          <div class="meta">40 km · 02 · AE</div>
+          <div class="time" data-tz="Asia/Dubai">9:11:03<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/ras-al-khaimah/" class="nearby-card">
+          <div class="name">Ras Al Khaimah</div>
+          <div class="meta">102 km · 05 · AE</div>
+          <div class="time" data-tz="Asia/Dubai">9:11:03<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/al-ain-city/" class="nearby-card">
+          <div class="name">Al Ain City</div>
+          <div class="meta">109 km · 01 · AE</div>
+          <div class="time" data-tz="Asia/Dubai">9:11:03<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/abu-dhabi/" class="nearby-card">
+          <div class="name">Abu Dhabi</div>
+          <div class="meta">115 km · 01 · AE</div>
+          <div class="time" data-tz="Asia/Dubai">9:11:03<span class="ampm">AM</span></div>
+        </a>
+      
+    </div>
+  </section>
+
+    <!-- Section 08: More to explore -->
+    <div class="section-head">
+      <h2><span class="num">08</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/ae/" class="explore-link"><span class="label">🇦🇪 United Arab Emirates</span>All United Arab Emirates cities</a>
