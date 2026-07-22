@@ -169,8 +169,8 @@
     .search-input::placeholder { color: var(--color-muted-soft); }
     .search-input:focus { outline: none; border-color: var(--color-primary); }
     .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
-    .popular-cities-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1.5rem 0 0.625rem; text-align: left; }
-    .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    /* .popular-cities-label removed per user request — no header text below search */
+    .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; max-width: 1100px; margin: 0.75rem auto 0; }
     .popular-city { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid var(--city-color, var(--color-border)); background: var(--city-color-bg, transparent); color: var(--color-foreground); transition: transform 150ms ease, box-shadow 150ms ease; }
     .popular-city:hover { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--city-color, var(--color-primary)) 30%, transparent); }
     .popular-city-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--city-color); flex-shrink: 0; }
@@ -606,7 +606,7 @@
             <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           </div>
-          <p class="popular-cities-label">Popular cities</p>
+          <p class="popular-cities-label is-hidden" aria-hidden="true">Popular cities</p>
           <div class="popular-cities" aria-label="Popular cities to add">
             <!-- America/New_York (3) -->
             <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>New York <span class="popular-city-add">+</span></button>

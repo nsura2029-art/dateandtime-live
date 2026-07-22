@@ -556,7 +556,7 @@
     /* Popular cities are independent of the search API — always show. */
 
     /* ===== Popular cities (below the search input) ===== */
-    .popular-cities-label { font-family: 'Inter', system-ui, sans-serif; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; color: var(--color-foreground); margin: 1rem 0 0.625rem; text-align: left; }
+    /* .popular-cities-label removed per user request — no header text below search */
     /* ---- Feedback prompt (floating, contextual CTA) ---- */
     .feedback-prompt { position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 50; }
     .feedback-pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.9rem; border-radius: 999px; background: var(--color-card-bg); color: var(--color-foreground); border: 1px solid var(--color-pill-border); box-shadow: 0 4px 14px rgba(0,0,0,0.10); font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease; font-family: inherit; }
@@ -573,7 +573,7 @@
     .feedback-panel button.submit:disabled { opacity: 0.5; cursor: not-allowed; }
     .feedback-panel .thanks { color: var(--color-primary); font-size: 0.9rem; text-align: center; padding: 0.5rem 0; margin: 0; }
     .feedback-panel .error { color: #dc2626; font-size: 0.75rem; margin: 0; }
-    .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    .popular-cities { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; max-width: 1100px; margin: 0.75rem auto 0; }
     .popular-city { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid var(--city-color, var(--color-border)); background: var(--city-color-bg, transparent); color: var(--color-foreground); transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease; }
     .popular-city:hover { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--city-color, var(--color-primary)) 30%, transparent); }
     .popular-city:active { transform: translateY(0); }
@@ -927,7 +927,7 @@
             <div class="search-results" id="search-results" role="listbox" aria-label="City results"></div>
           </div>
           <p class="search-disabled-note">Loading cities…</p>
-          <p class="popular-cities-label">Popular cities</p>
+          <p class="popular-cities-label is-hidden" aria-hidden="true">Popular cities</p>
           <div class="popular-cities" id="popular-cities" aria-label="Popular cities to add"></div>
         </div>
       </div>
@@ -1469,7 +1469,8 @@
         const now = d || new Date();
         const cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
         // Respects the global 12h/24h toggle (state.use24Hour).
-        // 24h: HH:MM:SS.cs  /  12h: h:MM:SS.cs <span class="ampm">AM/PM</span>
+        // Returns PLAIN TEXT only (no HTML) — safe for both textContent and innerHTML.
+        // 24h: HH:MM:SS.cs  /  12h: h:MM:SS.cs AM/PM
         const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(now);
         const g = t => p.find(x => x.type === t)?.value || "00";
         let h = parseInt(g("hour"), 10);
@@ -1480,7 +1481,7 @@
         } else {
           const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
           const ampm = h >= 12 ? "PM" : "AM";
-          return `${h12}:${m}:${s}.${cs} <span class="ampm">${ampm}</span>`;
+          return `${h12}:${m}:${s}.${cs} ${ampm}`;
         }
       } catch (e) { return "--:--:--.--"; }
     }
@@ -1706,7 +1707,7 @@
         if (homeName && c.name.toLowerCase() === homeName) return false; // exclude the home name
         if (RAIL_DEFAULT_NAMES.has(c.name)) return false;  // exclude rail defaults
         return true;
-      }).slice(0, 24);
+      }).slice(0, 12);
       filtered.forEach((c, i) => {
         const color = cityColor(c.name, i);
         // "Already added" check by name (not tz — multiple cities can share tz)
@@ -2392,7 +2393,9 @@
       const heroC = document.getElementById("hero-current-city");
       if (heroT) {
         const t = timeIn(tz, now);
-        heroT.textContent = t.replace(/\.\d+$/, "") + (state.use24Hour ? "" : " " + (h >= 12 ? "PM" : "AM"));
+        // timeIn already returns plain text with AM/PM appended in 12h mode.
+        // Strip the centiseconds for the hero subtitle (it shows whole seconds only).
+        heroT.textContent = t.replace(/\.\d+(\s*(?:AM|PM))?$/, "");
       }
       if (heroC) heroC.textContent = home?.name || "your city";
       document.getElementById("greeting-city").textContent = home?.name || "your city";
@@ -2405,7 +2408,13 @@
       else if (home?.country) regionParts.push(home.country);
       const cityRegion = document.getElementById("current-city-region");
       if (cityRegion) cityRegion.textContent = regionParts.join(", ");
-      document.querySelectorAll(".city-time[data-tz]").forEach(el => { el.innerHTML = timeIn(el.dataset.tz, now); });
+      // For the rail city cards, wrap the trailing AM/PM in a styled span
+      // so it's small/subtle while the time stays large. Use innerHTML to
+      // render the span (timeIn returns plain text by default for safety).
+      document.querySelectorAll(".city-time[data-tz]").forEach(el => {
+        const t = timeIn(el.dataset.tz, now);
+        el.innerHTML = t.replace(/(\s*)(AM|PM)$/, '$1<span class="ampm">$2</span>');
+      });
       if (home) document.getElementById("off-hours-pill").textContent = getOffHoursForTz(tz, now);
       updateCityDayDiffs(now);
       requestAnimationFrame(updateClock);
