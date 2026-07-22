@@ -430,6 +430,23 @@ export default {
       return r;
     }
 
+    // City page preview files: /city-page-preview/{slug}.html
+    // (Templates A, B, C, D + comparison)
+    const cityPreviewMatch = url.pathname.match(/^\/city-page-preview\/[^/]+\.html$/);
+    if (cityPreviewMatch) {
+      const templateReq = new Request(url.pathname, request);
+      const r = await env.ASSETS.fetch(templateReq);
+      if (r.status === 307 || r.status === 301) {
+        const finalUrl = new URL(r.headers.get("location") || url.pathname.replace(/\.html$/, ""), request.url);
+        const final = await env.ASSETS.fetch(new Request(finalUrl, request));
+        if (final.ok) {
+          const body = await final.text();
+          return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+        }
+      }
+      return r;
+    }
+
     // Get the asset (HTML or other) from the [assets] binding.
     const response = await env.ASSETS.fetch(request);
 
