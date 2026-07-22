@@ -354,8 +354,6 @@
     .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.5vw, 1.1rem); margin: 0.5rem auto 0.5rem; max-width: 42rem; line-height: 1.5; }
     .subtitle strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.05em; }
     .greeting-seo { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 0.5rem; }
-    .seo-paragraph { font-size: clamp(0.9375rem, 1.4vw, 1.0625rem); color: var(--color-foreground-soft); line-height: 1.5; margin: 0 0 1.25rem; max-width: 38rem; }
-    .seo-paragraph strong { color: var(--color-foreground); font-weight: 700; }
     .clock-block { margin: 2.5rem auto 0.75rem; max-width: 720px; }
 
     /* ===== Stats lead (3-line pill format, used above clock + in Time tools) ===== */
@@ -833,12 +831,6 @@
         </div>
 
         <h1 class="greeting-seo">Current time in <span class="greeting-city" id="greeting-city">your city</span></h1>
-
-        <!-- SEO paragraph: keyword-rich, scannable, ~45 words.
-             Helps AI search (LLMs) extract a clean page summary and adds
-             long-tail keyword coverage beyond the H1 + subtitle. -->
-        <p class="seo-paragraph">Get the <strong>exact time in your city</strong> and 33,944 other cities worldwide. Live world clock with UTC offset, DST status, sunrise and sunset times, public holidays, and business hours — all in one place, updated every second.</p>
-
         <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
       </div>
     </section>
