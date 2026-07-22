@@ -180,6 +180,56 @@
     .city-day-sep { color: var(--color-muted-soft); }
     .city-hours-diff { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-foreground); padding: 0.05rem 0.35rem; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
 
+    /* ===== Stats lead (3-line pill format) ===== */
+    .stats-lead {
+      font-size: clamp(0.875rem, 1.3vw, 0.9375rem);
+      color: var(--color-foreground-soft);
+      line-height: 1.55;
+      margin: 1.25rem auto 0;
+      padding: 0 1rem;
+      max-width: 56rem;
+      text-align: center;
+    }
+    .stats-lead--compact {
+      font-size: clamp(0.8125rem, 1.1vw, 0.875rem);
+      line-height: 1.5;
+      margin: 0.75rem auto 0;
+      max-width: 52rem;
+    }
+    .stats-lead-line {
+      margin: 0 0 0.5rem;
+      padding: 0.4rem 0.75rem;
+      background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+      border-radius: 0.5rem;
+      display: block;
+    }
+    .stats-lead-line:last-child { margin-bottom: 0; }
+    .stats-lead-stat {
+      color: var(--color-foreground);
+      font-weight: 700;
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+      font-size: 1.05em;
+      white-space: nowrap;
+    }
+    .stats-lead-divider {
+      display: inline-block;
+      margin: 0 0.4rem;
+      color: var(--color-muted-soft);
+      opacity: 0.4;
+    }
+    @media (max-width: 600px) {
+      .stats-lead-line { padding: 0.35rem 0.5rem; }
+      .stats-lead-divider {
+        display: block;
+        margin: 0.25rem 0 0;
+        text-align: center;
+        opacity: 0.3;
+      }
+      .stats-lead-divider::before { content: "\2022"; }
+    }
+    /* Search input 3/4 width */
+    .search-input { width: 75%; max-width: 480px; margin: 0 auto; display: block; }
+
     /* ===== TIER 1 NEW: "Today on Earth" strip ===== */
     .earth-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 0 auto; max-width: 900px; }
     @media (min-width: 640px) { .earth-strip { grid-template-columns: repeat(3, 1fr); } }
