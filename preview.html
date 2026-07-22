@@ -160,12 +160,12 @@
     @media (min-width: 1024px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @media (min-width: 1280px) { .rail { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 
-    /* ===== SECTION 4: Search (full-width, no header, no gap with favorites) ===== */
+    /* ===== SECTION 4: Search (full-width section, 720px input matching clock) ===== */
     .section--search { padding: 0 0 clamp(2rem, 5vw, 3rem); border-top: 1px solid var(--color-border-soft); }
     .section--search .container { max-width: 100%; padding-left: clamp(0.75rem, 2vw, 1.5rem); padding-right: clamp(0.75rem, 2vw, 1.5rem); }
-    .search-section { max-width: 100%; margin: 0 auto 0.5rem; }
+    .search-section { max-width: 720px; margin: 0 auto 0.5rem; }
     .search-wrap { position: relative; }
-    .search-input { width: 100%; max-width: 100%; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
+    .search-input { width: 100%; max-width: 720px; margin: 0 auto; display: block; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
     .search-input::placeholder { color: var(--color-muted-soft); }
     .search-input:focus { outline: none; border-color: var(--color-primary); }
     .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
@@ -608,18 +608,56 @@
           </div>
           <p class="popular-cities-label">Popular cities</p>
           <div class="popular-cities" aria-label="Popular cities to add">
+            <!-- America/New_York (3) -->
             <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>New York <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Philadelphia <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Boston <span class="popular-city-add">+</span></button>
+            <!-- America/Los_Angeles (3) -->
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Los Angeles <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>San Francisco <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>San Diego <span class="popular-city-add">+</span></button>
+            <!-- America/Chicago (2) -->
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Chicago <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Minneapolis <span class="popular-city-add">+</span></button>
+            <!-- America/Toronto (2) -->
+            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>Toronto <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>Montreal <span class="popular-city-add">+</span></button>
+            <!-- America/Mexico_City (2) -->
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Mexico City <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Guadalajara <span class="popular-city-add">+</span></button>
+            <!-- America/Sao_Paulo (2) -->
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>São Paulo <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Rio de Janeiro <span class="popular-city-add">+</span></button>
+            <!-- Europe/London (3) -->
             <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>London <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Tokyo <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Manchester <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Edinburgh <span class="popular-city-add">+</span></button>
+            <!-- Europe/Paris (2) -->
             <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>Paris <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Sydney <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Lagos <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>Lyon <span class="popular-city-add">+</span></button>
+            <!-- Europe/Berlin (2) -->
             <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Berlin <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Munich <span class="popular-city-add">+</span></button>
+            <!-- Europe/Rome (1) -->
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Rome <span class="popular-city-add">+</span></button>
+            <!-- Europe/Madrid (1) -->
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Madrid <span class="popular-city-add">+</span></button>
+            <!-- Europe/Istanbul (1) -->
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Istanbul <span class="popular-city-add">+</span></button>
+            <!-- Asia/Tokyo (2) -->
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Tokyo <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Osaka <span class="popular-city-add">+</span></button>
+            <!-- Asia/Singapore (1) -->
             <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Singapore <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>São Paulo <span class="popular-city-add">+</span></button>
+            <!-- Asia/Dubai (1) -->
             <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Dubai <span class="popular-city-add">+</span></button>
+            <!-- Asia/Hong_Kong (1) -->
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Hong Kong <span class="popular-city-add">+</span></button>
+            <!-- Asia/Kolkata (2) -->
             <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Mumbai <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Mexico City <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Delhi <span class="popular-city-add">+</span></button>
+            <!-- Asia/Bangkok (1) -->
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Bangkok <span class="popular-city-add">+</span></button>
           </div>
         </div>
       </div>
