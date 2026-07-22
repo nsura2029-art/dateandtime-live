@@ -144,6 +144,7 @@ async function fetchAll(city) {
   const cityData = await fetchJson(`${API}/api/v2/search?q=${encodeURIComponent(city.slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' '))}`);
   const c = cityData.data.cities[0];
   if (!c) throw new Error(`No city found for ${city.slug}`);
+  c.slug = city.slug;  // attach our known slug for URL building
 
   // 2. Time in city
   const timeData = await fetchJson(`${API}/api/v1/time/now?tz=${encodeURIComponent(c.timezone)}`);
@@ -708,7 +709,7 @@ function renderTemplate(d) {
     <!-- Section 08: Climate year-round -->
     <div class="section-head">
       <h2><span class="num">08</span> · ${c.name} climate year-round</h2>
-      <a class="more" href="/world-time/city/${d.city.slug}/climate/">Full climate →</a>
+      <a class="more" href="/world-time/city/${d.city.slug || c.slug || ''}/climate/">Full climate →</a>
     </div>
     <section>${climateHtml}</section>
 
