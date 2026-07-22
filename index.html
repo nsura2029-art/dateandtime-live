@@ -208,6 +208,20 @@
     .section { padding: clamp(2rem, 5vw, 3.5rem) 0; text-align: center; position: relative; }
     .section + .section { margin-top: 0; }
     .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(0.75rem, 2vw, 1.25rem); }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+    .hero-left { text-align: left; min-width: 0; }
+    .hero-left .live-location { justify-content: flex-start; }
+    .hero-left .greeting-seo { margin: 0.5rem 0 0.5rem; }
+    .hero-left .subtitle { margin: 0; }
+    .hero-divider { width: 1px; background: var(--color-border-soft); align-self: stretch; min-height: 4rem; }
+    .hero-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; min-width: 0; }
+    .hero-meta .day-date { margin: 0; }
+    .hero-meta .timezone { margin: 0; }
+    .hero-meta .sync-row { margin: 0; }
+    @media (max-width: 720px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .hero-divider { width: 100%; height: 1px; min-height: 0; }
+    }
     .section--clock { padding: clamp(0.75rem, 2vw, 1.25rem) 0 clamp(0.5rem, 1.5vw, 0.75rem); background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
     .section--search { padding: 0 0 clamp(2rem, 5vw, 3rem); border-top: 1px solid var(--color-border-soft); }
     .section--favorites { padding: clamp(0.5rem, 1.5vw, 0.75rem) 0 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
@@ -827,50 +841,53 @@
 
   <main>
     <!-- ============================================== -->
-    <!-- SECTION 1: HERO — H1 + subhead + live location + 3-line description -->
+    <!-- SECTION 1: HERO — 2-column with vertical line -->
+    <!-- Left: H1 + live location. Right: 3 meta rows from CLOCK. -->
     <!-- ============================================== -->
     <section class="section section--hero">
       <div class="container">
-        <div class="live-location is-hidden" id="live-location" aria-live="polite">
-          <span class="live-location-dot" aria-hidden="true"></span>
-          <span class="live-location-flag"></span>
-          <span class="live-location-text" id="live-location-text">Detecting your location…</span>
-          <span class="live-location-tz"></span>
-        </div>
+        <div class="hero-grid">
+          <div class="hero-left">
+            <div class="live-location is-hidden" id="live-location" aria-live="polite">
+              <span class="live-location-dot" aria-hidden="true"></span>
+              <span class="live-location-flag"></span>
+              <span class="live-location-text" id="live-location-text">Detecting your location…</span>
+              <span class="live-location-tz"></span>
+            </div>
+            <h1 class="greeting-seo">Current time in <span class="greeting-city" id="greeting-city">your city</span></h1>
+            <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
+          </div>
 
-        <h1 class="greeting-seo">Current time in <span class="greeting-city" id="greeting-city">your city</span></h1>
-        <p class="subtitle">It's <strong id="hero-current-time">--:--</strong> in <span id="hero-current-city">your city</span> right now. Updates every second.</p>
+          <div class="hero-divider" aria-hidden="true"></div>
+
+          <div class="hero-meta">
+            <div class="day-date">
+              <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span id="day-date-text" class="day-date-text">—</span>
+              <span class="day-date-divider" aria-hidden="true"></span>
+              <div class="format-toggle format-toggle--inline" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
+                <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
+                <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
+              </div>
+            </div>
+            <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
+            <div class="sync-row" id="sync-row" aria-live="polite">
+              <span class="sync-dot" aria-hidden="true"></span>
+              <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</span></span>
+              <span class="dst-countdown is-hidden" id="dst-countdown"></span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ============================================== -->
     <!-- SECTION 2: CLOCK — big mono clock + pills (subtle background tint) -->
+    <!-- The 3 meta rows now live in the HERO section (right column) -->
     <!-- ============================================== -->
     <section class="section section--clock">
       <div class="container">
-        <!-- 3 meta rows — moved ABOVE the 4 pills per user request -->
-        <div class="day-date">
-          <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span id="day-date-text" class="day-date-text">—</span>
-          <span class="day-date-divider" aria-hidden="true"></span>
-          <div class="format-toggle format-toggle--inline" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
-            <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
-            <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
-          </div>
-        </div>
-        <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
-
-        <!-- Sync row with green pulsing dot — shows the live sync-accuracy
-             message. refreshSync() calls /api/time/now (local Worker proxy)
-             on boot to populate the offset + accuracy with real
-             round-trip numbers. -->
-        <div class="sync-row" id="sync-row" aria-live="polite">
-          <span class="sync-dot" aria-hidden="true"></span>
-          <span>Your clock is <strong id="clock-offset">0.0 seconds</strong> behind. <span class="sync-accuracy">Accuracy of synchronization was <strong id="clock-accuracy">±0.000</strong> seconds.</span></span>
-          <span class="dst-countdown is-hidden" id="dst-countdown"></span>
-        </div>
-
-        <!-- 4 main pills — below the meta rows, above the clock -->
+        <!-- 4 main pills — above the big clock -->
         <div class="pills" id="home-pills">
           <a href="/holidays/" class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Today's holiday: A public or religious holiday for this country today. Banks, government offices, and many shops will be closed. Plan calls, deliveries, and meetings accordingly."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
           <a href="/holidays/" class="pill pill-green is-hidden pill-tip" id="next-holiday-pill" tabindex="0" data-tip="Next holiday: The next upcoming public or religious holiday for this country. Click to see all holidays in the calendar."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="next-holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>

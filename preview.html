@@ -101,7 +101,18 @@
 
     /* ===== Section system (same as prod) ===== */
     .section { padding: clamp(2rem, 5vw, 3.5rem) 0; text-align: center; position: relative; }
-    .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+    .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(0.75rem, 2vw, 1.25rem); }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+    .hero-left { text-align: left; min-width: 0; }
+    .hero-divider { width: 1px; background: var(--color-border-soft); align-self: stretch; min-height: 4rem; }
+    .hero-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; min-width: 0; }
+    .hero-meta .day-date { margin: 0; }
+    .hero-meta .timezone { margin: 0; }
+    .hero-meta .sync-row { margin: 0; }
+    @media (max-width: 720px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .hero-divider { width: 100%; height: 1px; min-height: 0; }
+    }
     .section--clock { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
     .section--favorites { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
     .section-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-primary); margin: 0 0 0.5rem; }
@@ -475,32 +486,39 @@
   </header>
 
   <main>
-    <!-- ===== SECTION 1: HERO (unchanged) ===== -->
+    <!-- ===== SECTION 1: HERO (2-column with vertical line) ===== -->
     <section class="section section--hero">
       <div class="container">
-        <h1 class="greeting-seo">Current time in <span class="greeting-city">your city</span></h1>
+        <div class="hero-grid">
+          <div class="hero-left">
+            <h1 class="greeting-seo">Current time in <span class="greeting-city">your city</span></h1>
+            <p class="subtitle" style="margin: 0;">It's <strong>14:23</strong> in your city right now. Updates every second.</p>
+          </div>
+          <div class="hero-divider" aria-hidden="true"></div>
+          <div class="hero-meta">
+            <div class="day-date">
+              <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>Monday, July 20, 2026</span>
+              <span class="day-date-divider" aria-hidden="true"></span>
+              <div class="format-toggle format-toggle--inline" role="group" aria-label="Time format">
+                <button type="button" aria-pressed="false">12h</button>
+                <button type="button" aria-pressed="true">24h</button>
+              </div>
+            </div>
+            <div class="timezone">EDT · Coordinated Universal Time Offset: <strong>UTC−4</strong></div>
+            <div class="sync-row">
+              <span class="sync-dot"></span>
+              <span>Your clock is <strong>0.023 seconds</strong> behind · Accuracy ±0.012 seconds</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ===== SECTION 2: CLOCK + CLICKABLE PILLS (Tier 1) ===== -->
     <section class="section section--clock">
       <div class="container">
-        <!-- 3 meta rows above pills (per user request) -->
-        <div class="day-date">
-          <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>Monday, July 20, 2026</span>
-          <span class="day-date-divider" aria-hidden="true"></span>
-          <div class="format-toggle format-toggle--inline" role="group" aria-label="Time format">
-            <button type="button" aria-pressed="false">12h</button>
-            <button type="button" aria-pressed="true">24h</button>
-          </div>
-        </div>
-        <div class="timezone">EDT · Coordinated Universal Time Offset: <strong>UTC−4</strong></div>
-        <div class="sync-row">
-          <span class="sync-dot"></span>
-          <span>Your clock is <strong>0.023 seconds</strong> behind · Accuracy ±0.012 seconds</span>
-        </div>
-        <!-- 4 pills above the big clock -->
+        <!-- 4 pills above the big clock (3 meta rows now live in HERO) -->
         <div class="pills">
           <a class="pill pill-rose pill-link" href="/onthisday/">🚀 Apollo 11 Moon landing (1969)</a>
           <a class="pill pill-green pill-link" href="/holidays/us/">❤️ Independence Day is in 11 days</a>
