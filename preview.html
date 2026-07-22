@@ -1,28 +1,20 @@
 <!doctype html>
 <!--
-  STATIC PREVIEW: Tier 1 + Tier 2 visual mockup
+  STATIC PREVIEW: Home page v57 — full mockup (current dev state)
   Light mode only. No JS dependencies. All content is hardcoded.
-  Open this file in a browser to see what the homepage will look like after
-  the proposed SEO/KG/AI-Search improvements.
+  Open this file in a browser to see the current home page design.
 
-  Tier 1 (NOW):
-    [HIDDEN] 5 JSON-LD blocks (WebSite, Organization, WebApplication, FAQPage, ItemList)
-    [HIDDEN] <link rel="alternate" hreflang> for 14 languages
-    [VISIBLE] "Today on Earth" strip (NEW)
-    [VISIBLE] Clock pills become clickable links
-    [VISIBLE] OnThisDay shows 3-5 events (ItemList)
-
-  Tier 2 (SHIPPED):
-    [TIER 2] Knowledge base chip cloud
-    [TIER 2] Today's snapshot 4 micro-cards
-    [TIER 2] Long weekend finder (interactive, with bridge rule)
-
-  Tier 3 (SHIPPED):
-    [TIER 3] Did you know? (1 fun fact)
-    [TIER 3] Famous birthdays (6 deceased, with portraits)
-    [TIER 3] Celebrity birthdays (6 living)
-    [TIER 3] Famous deaths (6 with lifespans)
-    [TIER 3] Year timeline (12 monthly highlights)
+  Page sections (in order):
+    1. HERO — H1 + live location only (no 3-line subtitle)
+    2. CLOCK — day-date (12h/24h inline) | timezone | sync | 4 pills | big clock
+    3. FAVORITES — full-width rail (no header)
+    4. SEARCH — full-width search input + popular cities (no header, no gap with favorites)
+    5. Today on Earth (6-city strip)
+    6. Explore Time tools (with stats lead)
+    7. Tier 2: chip cloud, snapshot, long weekend
+    8. Tier 3: DYK, birthdays, deaths, year timeline
+    9. OTD (1 card)
+   10. FAQ (8 items)
 -->
 <html lang="en" data-theme="light">
 <head>
@@ -122,17 +114,20 @@
     .subtitle { font-size: 1.0625rem; color: var(--color-foreground-soft); margin: 0 0 1.5rem; }
 
     /* ===== Clock ===== */
-    .clock-block { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .clock-block { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 0.5rem auto 0.75rem; max-width: 720px; }
     .mono-clock { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; color: var(--color-foreground); line-height: 1; }
     .format-toggle { display: inline-flex; padding: 0.25rem; background: var(--color-pill-purple-bg); border: 1px solid var(--color-pill-purple-bd); border-radius: 9999px; gap: 0.25rem; }
     .format-toggle button { padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--color-muted); border-radius: 9999px; }
     .format-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; }
-    .day-date { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9375rem; color: var(--color-foreground-soft); margin: 0.5rem 0 0.25rem; }
+    .format-toggle--inline { padding: 0.15rem; }
+    .format-toggle--inline button { padding: 0.15rem 0.55rem; font-size: 0.6875rem; }
+    .day-date { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-foreground-soft); margin: 0.5rem 0 0.25rem; }
     .day-date-icon { width: 1rem; height: 1rem; }
-    .timezone { font-size: 0.875rem; color: var(--color-muted); margin: 0 0 1rem; }
+    .day-date-divider { width: 1px; height: 0.875rem; background: var(--color-border); display: inline-block; }
+    .timezone { font-size: 0.875rem; color: var(--color-muted); margin: 0 0 0.5rem; }
     .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--color-muted); margin-bottom: 1rem; }
     .sync-dot { width: 6px; height: 6px; border-radius: 9999px; background: #10b981; }
-    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 0.5rem 0 0; }
+    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 0.5rem 0 0.5rem; }
     .pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; border: 1px solid; }
     .pill-purple { background: var(--color-pill-purple-bg); color: var(--color-pill-purple-fg); border-color: var(--color-pill-purple-bd); }
     .pill-orange { background: var(--color-pill-orange-bg); color: var(--color-pill-orange-fg); border-color: var(--color-pill-orange-bd); }
@@ -143,10 +138,20 @@
     .pill-link { text-decoration: none; transition: filter .15s; }
     .pill-link:hover { filter: brightness(0.95); }
 
-    /* ===== SECTION 3 (existing prod): Search + popular cities ===== */
-    .search-section { max-width: 720px; margin: 0 auto; }
+    /* ===== SECTION 3: Favorites rail (full-width, no header) ===== */
+    .section--favorites { padding: clamp(0.5rem, 1.5vw, 0.75rem) 0 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--favorites .container { max-width: 100%; padding-left: clamp(0.75rem, 2vw, 1.5rem); padding-right: clamp(0.75rem, 2vw, 1.5rem); }
+    .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding: 0.5rem 0.25rem 1rem; max-width: 100%; margin: 0 auto; }
+    @media (min-width: 600px) { .rail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (min-width: 1280px) { .rail { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+    /* ===== SECTION 4: Search (full-width, no header, no gap with favorites) ===== */
+    .section--search { padding: 0 0 clamp(2rem, 5vw, 3rem); border-top: 1px solid var(--color-border-soft); }
+    .section--search .container { max-width: 100%; padding-left: clamp(0.75rem, 2vw, 1.5rem); padding-right: clamp(0.75rem, 2vw, 1.5rem); }
+    .search-section { max-width: 100%; margin: 0 auto 0.5rem; }
     .search-wrap { position: relative; }
-    .search-input { width: 100%; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
+    .search-input { width: 100%; max-width: 100%; height: 48px; padding: 0 2.75rem 0 1rem; background: color-mix(in srgb, var(--color-background) 70%, transparent); border: 1px solid var(--color-border); border-radius: 0.625rem; color: var(--color-foreground); font: inherit; font-size: 0.9375rem; transition: border-color 200ms ease; backdrop-filter: blur(8px); }
     .search-input::placeholder { color: var(--color-muted-soft); }
     .search-input:focus { outline: none; border-color: var(--color-primary); }
     .search-icon { position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--color-muted-soft); width: 1.125rem; height: 1.125rem; pointer-events: none; }
@@ -156,12 +161,6 @@
     .popular-city:hover { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--city-color, var(--color-primary)) 30%, transparent); }
     .popular-city-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--city-color); flex-shrink: 0; }
     .popular-city-add { font-size: 0.95rem; line-height: 1; color: var(--color-muted-soft); font-weight: 400; }
-
-    /* ===== SECTION 4 (existing prod): Favorites rail ===== */
-    .section--favorites { background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
-    .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding: 0.5rem 0.25rem 1rem; max-width: 1100px; margin: 0 auto; }
-    @media (min-width: 600px) { .rail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (min-width: 1024px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     .city-card { padding: 1.125rem 1.25rem; text-align: center; min-width: 0; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; position: relative; }
     .city-card.is-home { box-shadow: 0 0 0 2px color-mix(in srgb, #f59e0b 60%, transparent), 0 4px 16px rgba(245, 158, 11, 0.15); }
     .home-badge { position: absolute; top: 0.4rem; right: 0.5rem; display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.4rem; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 9999px; text-transform: uppercase; }
@@ -223,13 +222,22 @@
       }
       .stats-lead-divider::before { content: "\2022"; }
     }
-    /* Search input 3/4 width */
-    .search-input { width: 75%; max-width: 480px; margin: 0 auto; display: block; }
 
     /* ===== TIER 1 NEW: "Today on Earth" strip ===== */
     .earth-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 0 auto; max-width: 900px; }
     @media (min-width: 640px) { .earth-strip { grid-template-columns: repeat(3, 1fr); } }
     @media (min-width: 1024px) { .earth-strip { grid-template-columns: repeat(6, 1fr); } }
+
+    /* ===== Explore tools grid ===== */
+    .section--explore { padding: clamp(2rem, 5vw, 3rem) 0; }
+    .explore-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; max-width: 1100px; margin: 1.25rem auto 0; }
+    @media (min-width: 600px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1000px) { .explore-grid { grid-template-columns: repeat(4, 1fr); } }
+    .explore-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; padding: 1.25rem 1rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; text-decoration: none; color: var(--color-foreground); transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease; }
+    .explore-card:hover { transform: translateY(-2px); border-color: var(--color-primary); box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 12%, transparent); }
+    .explore-icon { font-size: 1.5rem; line-height: 1; }
+    .explore-card h3 { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; margin: 0; color: var(--color-foreground); }
+    .explore-card p { font-size: 0.8125rem; color: var(--color-muted); line-height: 1.5; margin: 0; }
     .earth-card { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 1rem 0.5rem; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 14px; transition: transform .15s, border-color .15s, box-shadow .15s; text-decoration: none; color: inherit; }
     .earth-card:hover { transform: translateY(-2px); border-color: var(--color-primary); box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 12%, transparent); }
     .earth-flag { font-size: 1.5rem; line-height: 1; }
@@ -471,95 +479,46 @@
     <section class="section section--hero">
       <div class="container">
         <h1 class="greeting-seo">Current time in <span class="greeting-city">your city</span></h1>
-        <p class="subtitle">It's <strong>14:23</strong> in <span>your city</span> right now. Updates every second.</p>
       </div>
     </section>
 
     <!-- ===== SECTION 2: CLOCK + CLICKABLE PILLS (Tier 1) ===== -->
     <section class="section section--clock">
       <div class="container">
-        <div class="clock-block">
-          <div class="mono-clock" aria-label="Live current time">14:23:45.45</div>
-          <div class="format-toggle" role="group" aria-label="Time format">
-            <button type="button" aria-pressed="false">12h</button>
-            <button type="button" aria-pressed="true">24h</button>
-          </div>
-        </div>
+        <!-- 3 meta rows above pills (per user request) -->
         <div class="day-date">
           <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           <span>Monday, July 20, 2026</span>
+          <span class="day-date-divider" aria-hidden="true"></span>
+          <div class="format-toggle format-toggle--inline" role="group" aria-label="Time format">
+            <button type="button" aria-pressed="false">12h</button>
+            <button type="button" aria-pressed="true">24h</button>
+          </div>
         </div>
         <div class="timezone">EDT · Coordinated Universal Time Offset: <strong>UTC−4</strong></div>
         <div class="sync-row">
           <span class="sync-dot"></span>
           <span>Your clock is <strong>0.023 seconds</strong> behind · Accuracy ±0.012 seconds</span>
         </div>
+        <!-- 4 pills above the big clock -->
         <div class="pills">
-          <!-- TIER 1: All pills now clickable links -->
-          <a class="pill pill-rose pill-link" href="/onthisday/">
-            🚀 Apollo 11 Moon landing (1969)
-          </a>
-          <a class="pill pill-green pill-link" href="/holidays/us/">
-            ❤️ Independence Day is in 11 days
-          </a>
-          <a class="pill pill-purple pill-link" href="/time-zones/working-hours/">
-            🕘 Working hours · 9 AM – 6 PM
-          </a>
-          <a class="pill pill-orange pill-link" href="/time-zones/in/us/">
-            ☀️ Sunrise 5:42 · Sunset 20:23
-          </a>
-          <a class="pill pill-blue pill-link" href="/time-zones/dst/">
-            🕒 DST · ends Nov 2
-          </a>
-          <a class="pill pill-purple pill-link" href="/onthisday/by-date/7-20/">
-            🎂 3 famous birthdays today
-          </a>
+          <a class="pill pill-rose pill-link" href="/onthisday/">🚀 Apollo 11 Moon landing (1969)</a>
+          <a class="pill pill-green pill-link" href="/holidays/us/">❤️ Independence Day is in 11 days</a>
+          <a class="pill pill-purple pill-link" href="/time-zones/working-hours/">🕘 Working hours · 9 AM – 6 PM</a>
+          <a class="pill pill-orange pill-link" href="/time-zones/in/us/">☀️ Sunrise 5:42 · Sunset 20:23</a>
+          <a class="pill pill-blue pill-link" href="/time-zones/dst/">🕒 DST · ends Nov 2</a>
+        </div>
+        <div class="clock-block">
+          <div class="mono-clock" aria-label="Live current time">14:23:45.45</div>
         </div>
       </div>
     </section>
 
     <!-- ============================================== -->
-    <!-- SECTION 3 (existing prod, hardcoded): Search + popular cities -->
-    <!-- ============================================== -->
-    <section class="section">
-      <div class="container">
-        <p class="section-eyebrow">Add cities</p>
-        <h2 class="section-title">Build your world clock</h2>
-        <p class="section-subtitle">Search any city worldwide, or pick a popular one below to add it to your favorites rail.</p>
-
-        <div class="search-section" id="search-section">
-          <div class="search-wrap">
-            <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          </div>
-          <p class="popular-cities-label">Popular cities</p>
-          <div class="popular-cities" aria-label="Popular cities to add">
-            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>New York <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>London <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Tokyo <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>Paris <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Sydney <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Lagos <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Berlin <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Singapore <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>São Paulo <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Dubai <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Mumbai <span class="popular-city-add">+</span></button>
-            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Mexico City <span class="popular-city-add">+</span></button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- SECTION 4 (existing prod, hardcoded): Favorites rail -->
+    <!-- SECTION 3 (existing prod, hardcoded): Favorites rail (full-width, no header) -->
     <!-- ============================================== -->
     <section class="section section--favorites">
       <div class="container">
-        <p class="section-eyebrow">Your world clock</p>
-        <h2 class="section-title">Favorite cities</h2>
-        <p class="section-subtitle">Click any city to update the big clock + pills. The first one (⌂) is your home and stays put.</p>
-
         <div class="rail">
           <!-- Home city (gold ring) -->
           <div class="city-card is-home" style="--city-color:#FCD34D">
@@ -616,6 +575,36 @@
         </div>
       </div>
     </section>
+    <!-- ============================================== -->
+    <!-- SECTION 4 (existing prod, hardcoded): Search + popular cities (full-width, no header) -->
+    <!-- ============================================== -->
+    <section class="section section--search">
+      <div class="container">
+        <div class="search-section" id="search-section">
+          <div class="search-wrap">
+            <input id="city-search" class="search-input" type="search" placeholder="Search to add a city (e.g. Tokyo, Lagos, Reykjavík)…" autocomplete="off" spellcheck="false" />
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <p class="popular-cities-label">Popular cities</p>
+          <div class="popular-cities" aria-label="Popular cities to add">
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>New York <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>London <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Tokyo <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>Paris <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Sydney <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Lagos <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#C4B5FD;--city-color-bg:rgba(196,181,253,0.10)"><span class="popular-city-dot"></span>Berlin <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#6EE7B7;--city-color-bg:rgba(110,231,183,0.10)"><span class="popular-city-dot"></span>Singapore <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#7DD3FC;--city-color-bg:rgba(125,211,252,0.10)"><span class="popular-city-dot"></span>São Paulo <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FDA4AF;--city-color-bg:rgba(253,164,175,0.10)"><span class="popular-city-dot"></span>Dubai <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FCD34D;--city-color-bg:rgba(252,211,77,0.10)"><span class="popular-city-dot"></span>Mumbai <span class="popular-city-add">+</span></button>
+            <button class="popular-city" style="--city-color:#FFB59C;--city-color-bg:rgba(255,181,156,0.10)"><span class="popular-city-dot"></span>Mexico City <span class="popular-city-add">+</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
 
     <!-- ============================================== -->
     <!-- TIER 1 NEW SECTION: "Today on Earth" strip      -->
@@ -662,6 +651,58 @@
             <div class="earth-city">São Paulo</div>
             <div class="earth-time">15:24</div>
             <div class="earth-offset">BRT · UTC−3</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SECTION 4c: EXPLORE MORE TOOLS (with stats lead) -->
+    <!-- ============================================== -->
+    <section class="section section--explore">
+      <div class="container">
+        <p class="section-eyebrow">Explore more tools</p>
+        <h2 class="section-title">Time tools for every need</h2>
+
+        <div class="stats-lead stats-lead--compact" aria-label="What this site covers">
+          <p class="stats-lead-line">
+            <span class="stats-lead-text">The world clock for <strong class="stats-lead-stat">33,945 cities</strong> across <strong class="stats-lead-stat">408 time zones</strong></span>
+            <span class="stats-lead-divider" aria-hidden="true">|</span>
+            <span class="stats-lead-text">current time, UTC offset, and DST status in one place.</span>
+          </p>
+          <p class="stats-lead-line">
+            <span class="stats-lead-text">Plus sunrise &amp; sunset, public holidays, and business hours for every country</span>
+            <span class="stats-lead-divider" aria-hidden="true">|</span>
+            <span class="stats-lead-text">search anywhere on Earth.</span>
+          </p>
+          <p class="stats-lead-line">
+            <span class="stats-lead-text"><strong>Free</strong> for meeting planners, travelers, and remote teams</span>
+            <span class="stats-lead-divider" aria-hidden="true">|</span>
+            <span class="stats-lead-text">powered by official <strong>IANA time zone data</strong></span>
+          </p>
+        </div>
+        <p class="section-subtitle">From a quick world clock to planning meetings across continents — pick the tool that fits.</p>
+
+        <div class="explore-grid">
+          <a href="/world-time/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">🕐</span>
+            <h3>World Clock</h3>
+            <p>Live current time in 33,945 cities across 408 time zones. Real-time updates every second.</p>
+          </a>
+          <a href="/world-time/meeting/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">📅</span>
+            <h3>Meeting Planner</h3>
+            <p>Find meeting times that work for everyone. Drag-select a time slot, see local time in every city.</p>
+          </a>
+          <a href="/time-zones/converter/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">🔄</span>
+            <h3>Time Zone Converter</h3>
+            <p>Calculate the exact time difference between any two cities or time zones. Handles DST.</p>
+          </a>
+          <a href="/time-zones/" class="explore-card">
+            <span class="explore-icon" aria-hidden="true">🌐</span>
+            <h3>Time Zones</h3>
+            <p>Browse all 408 time zones. Learn about UTC, DST, and how time zones work worldwide.</p>
           </a>
         </div>
       </div>
