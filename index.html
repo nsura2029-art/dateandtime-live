@@ -207,11 +207,12 @@
     /* === SECTION SYSTEM: clean gaps + visual differentiation === */
     .section { padding: clamp(2rem, 5vw, 3.5rem) 0; text-align: center; position: relative; }
     .section + .section { margin-top: 0; }
-    .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(0.75rem, 2vw, 1.25rem); }
+    .section--hero { padding-top: clamp(0.5rem, 1.5vw, 1rem); padding-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+    .section--hero .container { max-width: 100%; padding-left: clamp(1.25rem, 3vw, 2.5rem); padding-right: clamp(1.25rem, 3vw, 2.5rem); }
     .hero-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
     .hero-left { text-align: left; min-width: 0; }
     .hero-left .live-location { justify-content: flex-start; }
-    .hero-left .greeting-seo { margin: 0.5rem 0 0.5rem; }
+    .hero-left .greeting-seo { margin: 0.25rem 0 0.25rem; }
     .hero-left .subtitle { margin: 0; }
     .hero-divider { width: 1px; background: var(--color-border-soft); align-self: stretch; min-height: 4rem; }
     .hero-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; min-width: 0; }
@@ -367,9 +368,9 @@
     .hero { padding: clamp(2rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2.5rem); text-align: center; position: relative; }
     .greeting { font-size: clamp(1.5rem, 4.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 0 0 0.4rem; }
     .greeting-city { color: var(--color-primary); }
-    .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.5vw, 1.1rem); margin: 0.5rem auto 0.5rem; max-width: 42rem; line-height: 1.5; }
+    .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.3vw, 1.0625rem); margin: 0.25rem 0 0; line-height: 1.5; }
     .subtitle strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.05em; }
-    .greeting-seo { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 0.5rem; }
+    .greeting-seo { font-size: clamp(1.5rem, 2.5vw, 1.875rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 0.25rem; }
     .clock-block { margin: 2.5rem auto 0.75rem; max-width: 720px; }
 
     /* ===== Stats lead (3-line pill format, used above clock + in Time tools) ===== */
@@ -486,14 +487,14 @@
     .format-toggle button { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.85rem; border-radius: 9999px; font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-muted); transition: all 200ms ease; }
     .format-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
-    .day-date { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.85rem, 1.3vw, 0.95rem); font-weight: 700; margin: 0.5rem 0 0.25rem; }
+    .day-date { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(1rem, 1.5vw, 1.125rem); font-weight: 700; margin: 0; }
     .day-date-icon { width: 0.95rem; height: 0.95rem; color: var(--color-primary); flex-shrink: 0; }
     .day-date-divider { display: inline-block; width: 1px; height: 1rem; background: var(--color-border); margin: 0 0.25rem; opacity: 0.6; }
     .format-toggle--inline { margin: 0; padding: 0.15rem; }
     .format-toggle--inline button { padding: 0.25rem 0.65rem; font-size: 0.625rem; }
-    .timezone { font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); margin: 0 0 0.5rem; }
+    .timezone { font-size: clamp(0.9rem, 1.2vw, 1rem); color: var(--color-muted); margin: 0; }
     .timezone strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, monospace; }
-    .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.8125rem, 1.2vw, 0.9rem); color: var(--color-foreground); margin: 0 0 1rem; }
+    .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.9rem, 1.2vw, 1rem); color: var(--color-foreground); margin: 0; }
     .sync-row.is-hidden { display: none; }
     .sync-dot { position: relative; flex-shrink: 0; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 25%, transparent); }
     .sync-dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; background: #10b981; opacity: 0.3; animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
