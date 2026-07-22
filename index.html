@@ -1607,8 +1607,21 @@
     //   - Home at position 0 is never touched
     function addCityToRail(cityObj) {
       ensureHomeFirst();
-      const existingIdx = state.citiesWithHome.findIndex(x => x.tz === cityObj.tz);
-      if (existingIdx >= 0) return existingIdx;
+      // Dedup by city id (unique per city), NOT by tz — multiple cities
+      // can share the same timezone (e.g. Tampa and New York both in
+      // America/New_York). User expects each searched city to be added
+      // as its own card even if the timezone is already in the rail.
+      const cId = cityObj.id != null ? String(cityObj.id) : null;
+      if (cId) {
+        const existingIdx = state.citiesWithHome.findIndex(x => x.id != null && String(x.id) === cId);
+        if (existingIdx >= 0) return existingIdx;
+      }
+      // Fallback dedup by name (in case the API result didn't include id)
+      const cName = (cityObj.name || "").toLowerCase();
+      if (cName) {
+        const existingIdx = state.citiesWithHome.findIndex(x => (x.name || "").toLowerCase() === cName);
+        if (existingIdx >= 0) return existingIdx;
+      }
       // Insert the new city at position 1 (right after home)
       const insertAt = 1;
       // If the array is already full, drop the last entry first
@@ -1634,7 +1647,8 @@
       }).slice(0, 10);
       filtered.forEach((c, i) => {
         const color = cityColor(c.name, i);
-        const already = state.citiesWithHome.some(x => x.tz === c.tz);
+        // "Already added" check by name (not tz — multiple cities can share tz)
+        const already = state.citiesWithHome.some(x => (x.name || "").toLowerCase() === c.name.toLowerCase());
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "popular-city" + (already ? " is-added" : "");
