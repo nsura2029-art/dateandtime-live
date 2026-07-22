@@ -829,10 +829,24 @@ async function buildCity(city) {
 
 (async () => {
   console.log(`Building ${CITIES.length} city pages via ${API}...`);
+  const CONCURRENCY = parseInt(process.env.CONCURRENCY || '5', 10);
+  console.log(`Concurrency: ${CONCURRENCY}`);
+
   let ok = 0;
-  for (const city of CITIES) {
-    const r = await buildCity(city);
-    if (r) ok++;
+  let failed = 0;
+  const startTime = Date.now();
+
+  // Process in batches with concurrency
+  for (let i = 0; i < CITIES.length; i += CONCURRENCY) {
+    const batch = CITIES.slice(i, i + CONCURRENCY);
+    const results = await Promise.all(batch.map(city => buildCity(city)));
+    const batchOk = results.filter(r => r).length;
+    ok += batchOk;
+    failed += batch.length - batchOk;
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    process.stdout.write(`\r  Progress: ${ok + failed}/${CITIES.length} (ok=${ok}, failed=${failed}, ${elapsed}s)`);
   }
-  console.log(`\n${ok}/${CITIES.length} pages built successfully.`);
+
+  const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+  console.log(`\n\n${ok}/${CITIES.length} pages built successfully in ${totalTime}s.`);
 })();

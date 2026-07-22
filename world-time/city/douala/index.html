@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Douala, 05 — Current Time, Time Zone, Weather & People · dateandtime.live</title>
+  <meta name="description" content="Douala: live local time (CET, +01:00), 7-day weather, sunrise & sunset, holidays, famous people, climate, and time difference from every major city. Updated every second." />
+  <link rel="canonical" href="https://dateandtime.live/world-time/city/douala/" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "City",
+    "name": "Douala",
+    "containedInPlace": { "@type": "Country", "name": "Cameroon" },
+    "geo": { "@type": "GeoCoordinates", "latitude": 4.04827, "longitude": 9.70428 },
+    "population": 1338082,
+    "timeZone": "Africa/Douala"
+  }
+  </script>
+  <style>
+    :root {
+      --color-bg: #ffffff; --color-bg-soft: #f8f9fb; --color-bg-elev: #ffffff;
+      --color-foreground: #0a1929; --color-foreground-soft: #2c3e50;
+      --color-muted: #5a6878; --color-muted-soft: #95a3b3;
+      --color-border: #e3e7ec; --color-border-soft: #eef1f4;
+      --color-primary: #c44536; --color-primary-soft: #fdf1ee;
+      --color-accent: #2c5d63; --color-link: #1a5490;
+      --blk-time-bg: #fce8e1; --blk-time-fg: #c44536;
+      --blk-zone-bg: #fef3e6; --blk-zone-fg: #d97706;
+      --blk-sun-bg: #fef9c3; --blk-sun-fg: #ca8a04;
+      --blk-moon-bg: #ede9fe; --blk-moon-fg: #7c3aed;
+      --blk-tide-bg: #cffafe; --blk-tide-fg: #0e7490;
+      --blk-weather-bg: #dbeafe; --blk-weather-fg: #1d4ed8;
+      --blk-air-bg: #d1fae5; --blk-air-fg: #047857;
+      --blk-pop-bg: #fce7f3; --blk-pop-fg: #be185d;
+      --blk-dst-bg: #fef3c7; --blk-dst-fg: #92400e;
+      --container: 1280px;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    }
+    [data-theme="dark"] {
+      --color-bg: #0a1929; --color-bg-soft: #102438; --color-bg-elev: #142d44;
+      --color-foreground: #f0f4f8; --color-foreground-soft: #c8d4e0;
+      --color-muted: #95a3b3; --color-muted-soft: #5a6878;
+      --color-border: #1d3552; --color-border-soft: #14283d;
+      --color-primary: #e87664; --color-primary-soft: #2c1a16;
+      --color-accent: #5e9ba3; --color-link: #6ba4d6;
+      --blk-time-bg: #3a1d18; --blk-time-fg: #e87664;
+      --blk-zone-bg: #3a2a18; --blk-zone-fg: #fbbf24;
+      --blk-sun-bg: #3a3214; --blk-sun-fg: #fde047;
+      --blk-moon-bg: #1f1a36; --blk-moon-fg: #c4b5fd;
+      --blk-tide-bg: #0e2e36; --blk-tide-fg: #67e8f9;
+      --blk-weather-bg: #1a2a44; --blk-weather-fg: #93c5fd;
+      --blk-air-bg: #0e2e22; --blk-air-fg: #6ee7b7;
+      --blk-pop-bg: #2e1a26; --blk-pop-fg: #f9a8d4;
+      --blk-dst-bg: #2e2410; --blk-dst-fg: #fde047;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-foreground); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--color-link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 1.5rem; }
+    h1, h2, h3, h4 { font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+    h1 { font-size: clamp(1.875rem, 3.5vw, 2.5rem); }
+    h2 { font-size: clamp(1.25rem, 2vw, 1.5rem); margin: 2.5rem 0 1rem; }
+    h3 { font-size: 1.0625rem; margin: 1.5rem 0 0.5rem; }
+    p { color: var(--color-foreground-soft); }
+    .serif { font-family: var(--font-serif); }
+    .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 100; width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: var(--color-bg-elev); border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .theme-toggle svg { width: 1.125rem; height: 1.125rem; color: var(--color-foreground); }
+    .topnav { padding: 0.875rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-border-soft); background: var(--color-bg); position: sticky; top: 0; z-index: 50; }
+    .topnav .logo { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--color-foreground); }
+    .topnav nav { display: flex; gap: 1rem; font-size: 0.875rem; }
+    .topnav nav a { color: var(--color-muted); }
+    .crumbs { padding: 0.75rem 0; font-size: 0.8125rem; color: var(--color-muted); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+    .crumbs a { color: var(--color-muted); }
+    .crumbs .sep { opacity: 0.4; }
+    .crumbs .current { color: var(--color-foreground); font-weight: 600; }
+    .hero { padding: 1.5rem 0 2rem; display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; align-items: end; }
+    @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } }
+    .hero-left .pre-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 0.5rem; }
+    .hero-left h1 { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 3.75rem); line-height: 1.05; margin-bottom: 0.75rem; }
+    .hero-left h1 .name { color: var(--color-primary); }
+    .hero-left .lede { font-size: 1.0625rem; line-height: 1.6; color: var(--color-foreground-soft); max-width: 32rem; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted); }
+    .hero-clock { background: var(--color-bg-soft); border-radius: 1rem; padding: 1.5rem; border: 1px solid var(--color-border-soft); }
+    .clock-row { display: flex; align-items: baseline; gap: 0.5rem; }
+    .clock-time { font-family: var(--font-mono); font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; line-height: 1; letter-spacing: -0.025em; color: var(--color-foreground); }
+    .clock-time .ampm { font-size: 0.35em; opacity: 0.55; font-weight: 500; margin-left: 0.4em; }
+    .clock-time .ms { font-size: 0.4em; opacity: 0.4; font-weight: 500; }
+    .clock-date { font-size: 0.9375rem; color: var(--color-foreground-soft); margin-top: 0.5rem; }
+    .clock-tz { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 1rem; }
+    .clock-tz .pill { padding: 0.25rem 0.625rem; border-radius: 9999px; background: var(--color-primary-soft); color: var(--color-primary); font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; }
+    .clock-tz .meta { font-size: 0.8125rem; color: var(--color-muted); }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.3); animation: pulse 2s infinite; display: inline-block; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } }
+    .pillbar { padding: 0.5rem 0 1.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .pillbar-row { display: flex; gap: 0.5rem; min-width: min-content; }
+    .pillbar .pill { flex-shrink: 0; padding: 0.625rem 1rem; border-radius: 9999px; background: var(--color-bg-soft); border: 1px solid var(--color-border-soft); font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+    .pillbar .pill .icon { font-size: 1rem; }
+    .pillbar .pill .value { font-weight: 700; color: var(--color-foreground); }
+    .pillbar .pill .label { color: var(--color-muted); font-size: 0.8125rem; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; margin: 2.5rem 0 1rem; padding-bottom: 0.625rem; border-bottom: 2px solid var(--color-foreground); }
+    .section-head .num { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--color-muted); letter-spacing: 0.05em; }
+    .section-head h2 { margin: 0; padding: 0; border: none; font-size: 1.25rem; font-weight: 800; }
+    .section-head .more { font-size: 0.8125rem; color: var(--color-link); font-weight: 600; }
+    .info-blocks { display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.5rem; }
+    @media (max-width: 1000px) { .info-blocks { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 600px) { .info-blocks { grid-template-columns: repeat(2, 1fr); } }
+    .info-block { padding: 1.25rem 0.875rem; text-align: center; display: flex; flex-direction: column; gap: 0.5rem; min-height: 140px; }
+    .info-block .icon { font-size: 2rem; line-height: 1; }
+    .info-block .label { font-size: 0.875rem; font-weight: 700; color: var(--blk-fg); }
+    .info-block .value { font-size: 0.75rem; color: var(--color-muted); line-height: 1.4; }
+    .info-block.time { background: var(--blk-time-bg); --blk-fg: var(--blk-time-fg); }
+    .info-block.zone { background: var(--blk-zone-bg); --blk-fg: var(--blk-zone-fg); }
+    .info-block.sun { background: var(--blk-sun-bg); --blk-fg: var(--blk-sun-fg); }
+    .info-block.moon { background: var(--blk-moon-bg); --blk-fg: var(--blk-moon-fg); }
+    .info-block.tide { background: var(--blk-tide-bg); --blk-fg: var(--blk-tide-fg); }
+    .info-block.weather { background: var(--blk-weather-bg); --blk-fg: var(--blk-weather-fg); }
+    .info-block.air { background: var(--blk-air-bg); --blk-fg: var(--blk-air-fg); }
+    .info-block.pop { background: var(--blk-pop-bg); --blk-fg: var(--blk-pop-fg); }
+    .info-block.dst { background: var(--blk-dst-bg); --blk-fg: var(--blk-dst-fg); }
+    .stats-inline { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; padding: 1rem 0; }
+    @media (max-width: 800px) { .stats-inline { grid-template-columns: repeat(3, 1fr); } }
+    .stat-cell { text-align: center; }
+    .stat-cell .value { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--color-foreground); }
+    .stat-cell .label { font-size: 0.75rem; color: var(--color-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+    .data-list { padding: 0.5rem 0; }
+    .weather-day { padding: 1rem 0.5rem; text-align: center; background: var(--color-bg-soft); border-radius: 0.5rem; }
+    .weather-day .day { font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .weather-day .icon { font-size: 1.875rem; line-height: 1; margin: 0.375rem 0; }
+    .weather-day .hi { font-family: var(--font-mono); font-weight: 700; color: var(--color-foreground); }
+    .weather-day .lo { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-muted); }
+    .nearby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    @media (max-width: 700px) { .nearby-grid { grid-template-columns: repeat(2, 1fr); } }
+    .nearby-card { padding: 0.875rem; background: var(--color-bg-soft); border-radius: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .nearby-card:hover { background: var(--color-primary-soft); text-decoration: none; }
+    .nearby-card .name { font-weight: 600; color: var(--color-foreground); }
+    .nearby-card .meta { font-size: 0.8125rem; color: var(--color-muted); }
+    .nearby-card .time { font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-primary); }
+    .nearby-card .time .ampm { opacity: 0.6; font-size: 0.75em; margin-left: 0.2em; }
+    .data-row { display: grid; grid-template-columns: 6rem 1fr auto; gap: 1rem; align-items: center; padding: 0.625rem 0; border-bottom: 1px solid var(--color-border-soft); }
+    .data-row:last-child { border-bottom: none; }
+    .data-row .date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-muted); }
+    .data-row .name { font-weight: 600; }
+    .data-row .meta { font-size: 0.8125rem; color: var(--color-muted); margin-top: 0.125rem; }
+    .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
+    .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
+    @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
+    .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
+    .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
+    footer { margin-top: 4rem; padding: 2.5rem 0 1.5rem; border-top: 1px solid var(--color-border); background: var(--color-bg-soft); }
+    .footer-cols { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 800px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
+    .footer-col h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); margin-bottom: 0.75rem; font-weight: 700; }
+    .footer-col a { display: block; padding: 0.2rem 0; font-size: 0.8125rem; color: var(--color-foreground-soft); }
+    .footer-col a:hover { color: var(--color-link); text-decoration: none; }
+    .footer-bottom { padding-top: 1.5rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.75rem; color: var(--color-muted); }
+    .city-page-loading { color: var(--color-muted); font-style: italic; }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" aria-label="Toggle dark mode" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="theme-icon"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <header class="topnav">
+    <a href="/" class="logo">⏱ dateandtime.live</a>
+    <nav>
+      <a href="/world-time/">World</a>
+      <a href="/world-time/cm/">Cameroon</a>
+      <a href="/time-zones/zone/africa/douala/">Africa/Douala</a>
+      <a href="/holidays/cm/">Holidays</a>
+      <a href="/meeting/?with=douala">Meeting</a>
+    </nav>
+    <div>
+      <span class="pill" style="background: var(--color-primary-soft); color: var(--color-primary); font-size: 0.75rem; padding: 0.25rem 0.625rem; border-radius: 9999px;">🇨🇲 CM</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="crumbs">
+      <a href="/world-time/">World time</a>
+      <span class="sep">›</span>
+      <a href="/world-time/cm/">Cameroon</a>
+      <span class="sep">›</span><a href="/world-time/cm/05/">05</a>
+      <span class="sep">›</span>
+      <span class="current">Douala</span>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pre-title">Current local time in</div>
+        <h1><span class="name">Douala</span>, <span style="font-size: 0.6em; color: var(--color-muted);">05</span></h1>
+        <p class="lede">Live local time, time zone, weather, and history for Douala — a city in Cameroon with 1.34M people.</p>
+        <div class="hero-meta">
+          <span>📍 4.0483°N, 9.7043°E</span>
+          <span>👥 1.34M</span>
+          <span>🌎 Africa/Douala</span>
+          <span>📅 Wednesday, July 22, 2026</span>
+        </div>
+      </div>
+      <div class="hero-clock">
+        <div class="clock-row">
+          <span class="clock-time" id="clockTime">5:58:17<span class="ms">.00</span><span class="ampm">AM</span></span>
+        </div>
+        <div class="clock-date" id="clockDate">Wednesday, July 22, 2026</div>
+        <div class="clock-tz">
+          <span class="live-dot"></span>
+          <span class="pill">CET</span>
+          <span class="pill">+01:00</span>
+          <span class="meta" id="tzMeta">Africa/Douala</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick info pill bar -->
+    <section class="pillbar">
+      <div class="pillbar-row">
+    <span class="pill"><span class="icon">🌅</span><span class="value">6:00 AM</span><span class="label">sunrise</span></span>
+    <span class="pill"><span class="icon">🌇</span><span class="value">6:00 PM</span><span class="label">sunset</span></span>
+    <span class="pill"><span class="icon">📏</span><span class="value">12h 0m</span><span class="label">daylight</span></span>
+    <span class="pill"><span class="icon">👥</span><span class="value">1.34M</span><span class="label">pop</span></span>
+    <span class="pill"><span class="icon">📍</span><span class="value">4.05°, 9.70°</span><span class="label">coords</span></span>
+  </div>
+    </section>
+
+    <!-- Section 02: TAD-style color blocks -->
+    <div class="section-head">
+      <h2><span class="num">02</span> · Time, zone, and environment</h2>
+      <a class="more" href="/world-time/city/douala/time/">All time details →</a>
+    </div>
+    <section class="info-blocks">
+    <div class="info-block time">
+      <div class="icon">🕐</div>
+      <div class="label">Current time</div>
+      <div class="value" data-tz="Africa/Douala">5:58:17 AM<br>CET · Wednesday</div>
+    </div>
+    <div class="info-block zone">
+      <div class="icon">🕒</div>
+      <div class="label">Time zone</div>
+      <div class="value">Africa/Douala<br>+01:00 hours from UTC</div>
+    </div>
+    <div class="info-block dst">
+      <div class="icon">▶</div>
+      <div class="label">DST started</div>
+      <div class="value">Mar 8, 2026<br>Forward 1 hour</div>
+    </div>
+    <div class="info-block dst">
+      <div class="icon">⏸</div>
+      <div class="label">DST ends</div>
+      <div class="value">Nov 1, 2026<br>Back 1 hour</div>
+    </div>
+    <div class="info-block time">
+      <div class="icon">🌐</div>
+      <div class="label">Time in other cities</div>
+      <div class="value">New York: −?<br>London: +? · Tokyo: +?</div>
+    </div>
+    <div class="info-block weather">
+      <div class="icon">⛅</div>
+      <div class="label">Weather</div>
+      <div class="value" data-weather="2232593">Loading weather…<br>via Open-Meteo</div>
+    </div>
+    <div class="info-block sun">
+      <div class="icon">🌅</div>
+      <div class="label">Sunrise</div>
+      <div class="value">6:00 AM<br>↑ East</div>
+    </div>
+    <div class="info-block sun">
+      <div class="icon">🌇</div>
+      <div class="label">Sunset</div>
+      <div class="value">6:00 PM<br>↓ West</div>
+    </div>
+  </section>
+
+    <!-- Section 03: Tampa in numbers -->
+    <div class="section-head">
+      <h2><span class="num">03</span> · Douala in numbers</h2>
+      <a class="more" href="/world-time/city/douala/facts/">More facts →</a>
+    </div>
+    <section class="stats-inline">
+    <div class="stat-cell"><div class="value">1.34M</div><div class="label">Population</div></div>
+    <div class="stat-cell"><div class="value">—</div><div class="label">Elevation</div></div>
+    <div class="stat-cell"><div class="value">PPLA</div><div class="label">Feature</div></div>
+    <div class="stat-cell"><div class="value">—</div><div class="label">Capital</div></div>
+    <div class="stat-cell"><div class="value">05</div><div class="label">Region</div></div>
+    <div class="stat-cell"><div class="value">CM</div><div class="label">Country</div></div>
+  </section>
+
+    <!-- Section 04: OTD -->
+    <div class="section-head">
+      <h2><span class="num">04</span> · On this day (July 22)</h2>
+      <a class="more" href="/onthisday/by-date/7-22/">All events →</a>
+    </div>
+    <section class="data-list">
+    <div class="data-row"><div class="date">—</div><div><div class="name">No events on file for today</div><div class="meta">Check back tomorrow for new historical content</div></div><div class="when">—</div></div>
+  </section>
+
+    <!-- Section 05: 7-day weather -->
+    <div class="section-head">
+      <h2><span class="num">05</span> · 7-day weather in Douala</h2>
+      <a class="more" href="/world-time/city/douala/weather/">Full forecast →</a>
+    </div>
+    <section>
+    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">
+      
+          <div class="weather-day" style="border: 2px solid var(--color-primary);">
+            <div class="day">Today</div>
+            <div class="icon">🌦</div>
+            <div class="hi">81°</div>
+            <div class="lo">76°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Thu</div>
+            <div class="icon">🌧</div>
+            <div class="hi">82°</div>
+            <div class="lo">76°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Fri</div>
+            <div class="icon">🌦</div>
+            <div class="hi">85°</div>
+            <div class="lo">76°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Sat</div>
+            <div class="icon">🌦</div>
+            <div class="hi">85°</div>
+            <div class="lo">74°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Sun</div>
+            <div class="icon">🌦</div>
+            <div class="hi">83°</div>
+            <div class="lo">77°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Mon</div>
+            <div class="icon">🌦</div>
+            <div class="hi">78°</div>
+            <div class="lo">74°</div>
+          </div>
+        
+          <div class="weather-day">
+            <div class="day">Tue</div>
+            <div class="icon">🌧</div>
+            <div class="hi">81°</div>
+            <div class="lo">71°</div>
+          </div>
+        
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
+      <span>💧 95% humidity</span>
+      <span>💨 4 mph wind</span>
+      <span>🌡 185°F feels like</span>
+      <span>🕵 UV 7.25</span>
+      <span>📏 1011.4 hPa</span>
+    </div>
+    <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
+  </section>
+
+    <!-- Section 06: Holidays -->
+    <div class="section-head">
+      <h2><span class="num">06</span> · Upcoming Cameroon holidays</h2>
+      <a class="more" href="/holidays/cm/">All 2026 →</a>
+    </div>
+    <section class="data-list">
+      <div class="data-row">
+        <div class="date">Aug 15</div>
+        <div><div class="name">Assumption Day</div><div class="meta">Public holiday</div></div>
+        <div class="when">24d</div>
+      </div>
+    
+      <div class="data-row">
+        <div class="date">Dec 25</div>
+        <div><div class="name">Christmas Day</div><div class="meta">Public holiday</div></div>
+        <div class="when">156d</div>
+      </div>
+    </section>
+
+    <!-- Section 07: Cities near -->
+    <div class="section-head">
+      <h2><span class="num">07</span> · Cities near Douala</h2>
+      <a class="more" href="/world-time/cm/05/">All nearby →</a>
+    </div>
+    <section>
+    <div class="nearby-grid">
+      
+        <a href="/world-time/city/bafoussam/" class="nearby-card">
+          <div class="name">Bafoussam</div>
+          <div class="meta">178 km · 08 · CM</div>
+          <div class="time" data-tz="Africa/Douala">6:58:18<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/yaounde/" class="nearby-card">
+          <div class="name">Yaoundé</div>
+          <div class="meta">202 km · 11 · CM</div>
+          <div class="time" data-tz="Africa/Douala">6:58:18<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/bamenda/" class="nearby-card">
+          <div class="name">Bamenda</div>
+          <div class="meta">218 km · 07 · CM</div>
+          <div class="time" data-tz="Africa/Douala">6:58:18<span class="ampm">AM</span></div>
+        </a>
+      
+        <a href="/world-time/city/maroua/" class="nearby-card">
+          <div class="name">Maroua</div>
+          <div class="meta">888 km · 12 · CM</div>
+          <div class="time" data-tz="Africa/Douala">6:58:18<span class="ampm">AM</span></div>
+        </a>
+      
+    </div>
+  </section>
+
+    <!-- Section 08: Climate year-round -->
+    <div class="section-head">
+      <h2><span class="num">08</span> · Douala climate year-round</h2>
+      <a class="more" href="/world-time/city/douala/climate/">Full climate →</a>
+    </div>
+    <section>
+    <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; align-items: end; height: 140px; margin: 0.5rem 0 0;">
+      
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">86°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 90.9090909090909%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Jan</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">68°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">86°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 91.81818181818183%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Feb</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">68°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">86°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 92.72727272727272%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Mar</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">68°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">87°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 95.45454545454545%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Apr</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">69°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">87°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 97.27272727272727%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">May</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">69°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">88°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 99.09090909090908%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Jun</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">70°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">88°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 100%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Jul</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">70°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">88°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 99.09090909090908%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Aug</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">70°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">87°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 98.18181818181819%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Sep</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">69°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">87°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 95.45454545454545%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Oct</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">69°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">87°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 93.63636363636364%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Nov</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">69°</div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">86°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: 91.81818181818183%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">Dec</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">68°</div>
+          </div>
+        
+    </div>
+    <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--color-foreground-soft);">
+      Climate: <strong>tropical</strong> · avg high 87°F · avg low 69°F
+    </p>
+  </section>
+
+    <!-- Section 09: More to explore -->
+    <div class="section-head">
+      <h2><span class="num">09</span> · More to explore</h2>
+    </div>
+    <section class="explore-grid">
+      <a href="/world-time/cm/" class="explore-link"><span class="label">🇨🇲 Cameroon</span>All Cameroon cities</a>
+      <a href="/world-time/cm/05/" class="explore-link"><span class="label">05</span>All 05 cities</a>
+      <a href="/time-zones/zone/africa/douala/" class="explore-link"><span class="label">🕒 Africa/Douala</span>Time zone hub</a>
+      <a href="/holidays/cm/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
+      <a href="/meeting/?with=douala" class="explore-link"><span class="label">📅 Meeting</span>Plan with Douala</a>
+    </section>
+
+    <footer>
+      <div class="footer-cols">
+        <div>
+          <div class="logo" style="margin-bottom: 0.5rem;">⏱ dateandtime.live</div>
+          <p style="font-size: 0.875rem; color: var(--color-muted);">Live time, time zone, weather, and calendar for every city on Earth. 33,945 cities, 408 time zones, 242 countries.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Douala</h4>
+          <a href="/world-time/city/douala/">Overview</a>
+          <a href="/world-time/city/douala/sunrise/">Sun & Moon</a>
+          <a href="/world-time/city/douala/holidays/">Holidays</a>
+          <a href="/world-time/city/douala/people/">People</a>
+          <a href="/world-time/city/douala/weather/">Weather</a>
+        </div>
+        <div class="footer-col">
+          <h4>Cameroon</h4>
+          <a href="/world-time/cm/">All Cameroon cities</a>
+          <a href="/holidays/cm/">Cameroon holidays</a>
+          <a href="/time-zones/zone/africa/douala/">Africa/Douala</a>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <a href="/meeting/?with=douala">Meeting planner</a>
+          <a href="/converter/?from=douala">Time converter</a>
+          <a href="/distance/?from=douala">Distance</a>
+          <a href="/event-time/?at=douala">Event time</a>
+        </div>
+        <div class="footer-col">
+          <h4>Top cities</h4>
+          <a href="/world-time/city/new-york/">New York</a>
+          <a href="/world-time/city/london/">London</a>
+          <a href="/world-time/city/tokyo/">Tokyo</a>
+          <a href="/world-time/city/sydney/">Sydney</a>
+          <a href="/world-time/city/dubai/">Dubai</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 dateandtime.live · Douala, 05</span>
+        <span>Wikipedia-derived content licensed CC BY-SA 4.0</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Live clock updates (60fps via requestAnimationFrame)
+    const TZ = "Africa/Douala";
+    const CITY_NAME = "Douala";
+    const USE_24 = localStorage.getItem('tdp-fmt') === '24';
+
+    function updateClock() {
+      const el = document.getElementById('clockTime');
+      const dateEl = document.getElementById('clockDate');
+      if (!el) return;
+      const now = new Date();
+      const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: !USE_24, timeZone: TZ };
+      const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: TZ };
+      const timeStr = now.toLocaleTimeString('en-US', timeOpts);
+      const dateStr = now.toLocaleDateString('en-US', dateOpts);
+      // Split AM/PM into span
+      if (USE_24) {
+        el.innerHTML = timeStr.replace(/^(\d{2}:\d{2}:\d{2})/, '$1') + '<span class="ms">.' + String(Math.floor(now.getMilliseconds()/10)).padStart(2,'0') + '</span>';
+      } else {
+        const m = timeStr.match(/^(\d{1,2}:\d{2}:\d{2})\s?(AM|PM)$/i);
+        if (m) el.innerHTML = m[1] + '<span class="ms">.' + String(Math.floor(now.getMilliseconds()/10)).padStart(2,'0') + '</span><span class="ampm">' + m[2] + '</span>';
+        else el.textContent = timeStr;
+      }
+      if (dateEl) dateEl.textContent = dateStr;
+      requestAnimationFrame(updateClock);
+    }
+    updateClock();
+
+    // Theme icon
+    function updateThemeIcon() {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      const icon = document.getElementById('theme-icon');
+      if (!icon) return;
+      icon.innerHTML = isDark
+        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+        : '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>';
+    }
+    updateThemeIcon();
+    document.querySelector('.theme-toggle').addEventListener('click', () => setTimeout(updateThemeIcon, 50));
+  </script>
+</body>
+</html>

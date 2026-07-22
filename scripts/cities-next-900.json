@@ -1,0 +1,4502 @@
+[
+  {
+    "id": 1796236,
+    "slug": "shanghai",
+    "code": "cn"
+  },
+  {
+    "id": 1816670,
+    "slug": "beijing",
+    "code": "cn"
+  },
+  {
+    "id": 1795565,
+    "slug": "shenzhen",
+    "code": "cn"
+  },
+  {
+    "id": 1809858,
+    "slug": "guangzhou",
+    "code": "cn"
+  },
+  {
+    "id": 2314302,
+    "slug": "kinshasa",
+    "code": "cd"
+  },
+  {
+    "id": 745044,
+    "slug": "istanbul",
+    "code": "tr"
+  },
+  {
+    "id": 2332459,
+    "slug": "lagos",
+    "code": "ng"
+  },
+  {
+    "id": 1566083,
+    "slug": "ho-chi-minh-city",
+    "code": "vn"
+  },
+  {
+    "id": 1815286,
+    "slug": "chengdu",
+    "code": "cn"
+  },
+  {
+    "id": 1172451,
+    "slug": "lahore",
+    "code": "pk"
+  },
+  {
+    "id": 3530597,
+    "slug": "mexico-city",
+    "code": "mx"
+  },
+  {
+    "id": 1174872,
+    "slug": "karachi",
+    "code": "pk"
+  },
+  {
+    "id": 1792947,
+    "slug": "tianjin",
+    "code": "cn"
+  },
+  {
+    "id": 1273294,
+    "slug": "delhi",
+    "code": "in"
+  },
+  {
+    "id": 1791247,
+    "slug": "wuhan",
+    "code": "cn"
+  },
+  {
+    "id": 524901,
+    "slug": "moscow",
+    "code": "ru"
+  },
+  {
+    "id": 1185241,
+    "slug": "dhaka",
+    "code": "bd"
+  },
+  {
+    "id": 1835848,
+    "slug": "seoul",
+    "code": "kr"
+  },
+  {
+    "id": 1812545,
+    "slug": "dongguan",
+    "code": "cn"
+  },
+  {
+    "id": 360630,
+    "slug": "cairo",
+    "code": "eg"
+  },
+  {
+    "id": 1790630,
+    "slug": "xi-an",
+    "code": "cn"
+  },
+  {
+    "id": 993800,
+    "slug": "johannesburg",
+    "code": "za"
+  },
+  {
+    "id": 1799962,
+    "slug": "nanjing",
+    "code": "cn"
+  },
+  {
+    "id": 1808926,
+    "slug": "hangzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1811103,
+    "slug": "foshan",
+    "code": "cn"
+  },
+  {
+    "id": 1642911,
+    "slug": "jakarta",
+    "code": "id"
+  },
+  {
+    "id": 1277333,
+    "slug": "bengaluru",
+    "code": "in"
+  },
+  {
+    "id": 1581130,
+    "slug": "hanoi",
+    "code": "vn"
+  },
+  {
+    "id": 1668341,
+    "slug": "taipei",
+    "code": "tw"
+  },
+  {
+    "id": 3936456,
+    "slug": "lima",
+    "code": "pe"
+  },
+  {
+    "id": 3688689,
+    "slug": "bogota",
+    "code": "co"
+  },
+  {
+    "id": 1814906,
+    "slug": "chongqing",
+    "code": "cn"
+  },
+  {
+    "id": 1819729,
+    "slug": "hong-kong",
+    "code": "hk"
+  },
+  {
+    "id": 98182,
+    "slug": "baghdad",
+    "code": "iq"
+  },
+  {
+    "id": 1790842,
+    "slug": "wuzhong",
+    "code": "cn"
+  },
+  {
+    "id": 1797929,
+    "slug": "qingdao",
+    "code": "cn"
+  },
+  {
+    "id": 112931,
+    "slug": "tehran",
+    "code": "ir"
+  },
+  {
+    "id": 2034937,
+    "slug": "shenyang",
+    "code": "cn"
+  },
+  {
+    "id": 1269843,
+    "slug": "hyderabad",
+    "code": "in"
+  },
+  {
+    "id": 3451190,
+    "slug": "rio-de-janeiro",
+    "code": "br"
+  },
+  {
+    "id": 1886760,
+    "slug": "suzhou",
+    "code": "cn"
+  },
+  {
+    "id": 11072148,
+    "slug": "puxi",
+    "code": "cn"
+  },
+  {
+    "id": 1279233,
+    "slug": "ahmedabad",
+    "code": "in"
+  },
+  {
+    "id": 2293538,
+    "slug": "abidjan",
+    "code": "ci"
+  },
+  {
+    "id": 1798524,
+    "slug": "pudong",
+    "code": "cn"
+  },
+  {
+    "id": 2158177,
+    "slug": "melbourne",
+    "code": "au"
+  },
+  {
+    "id": 160263,
+    "slug": "dar-es-salaam",
+    "code": "tz"
+  },
+  {
+    "id": 498817,
+    "slug": "saint-petersburg",
+    "code": "ru"
+  },
+  {
+    "id": 361058,
+    "slug": "alexandria",
+    "code": "eg"
+  },
+  {
+    "id": 2037013,
+    "slug": "harbin",
+    "code": "cn"
+  },
+  {
+    "id": 1609350,
+    "slug": "bangkok",
+    "code": "th"
+  },
+  {
+    "id": 1808722,
+    "slug": "hefei",
+    "code": "cn"
+  },
+  {
+    "id": 1814087,
+    "slug": "dalian",
+    "code": "cn"
+  },
+  {
+    "id": 2335204,
+    "slug": "kano",
+    "code": "ng"
+  },
+  {
+    "id": 3871336,
+    "slug": "santiago",
+    "code": "cl"
+  },
+  {
+    "id": 3369157,
+    "slug": "cape-town",
+    "code": "za"
+  },
+  {
+    "id": 1168197,
+    "slug": "peshawar",
+    "code": "pk"
+  },
+  {
+    "id": 2038180,
+    "slug": "changchun",
+    "code": "cn"
+  },
+  {
+    "id": 105343,
+    "slug": "jeddah",
+    "code": "sa"
+  },
+  {
+    "id": 1264527,
+    "slug": "chennai",
+    "code": "in"
+  },
+  {
+    "id": 1275004,
+    "slug": "kolkata",
+    "code": "in"
+  },
+  {
+    "id": 1790645,
+    "slug": "xiamen",
+    "code": "cn"
+  },
+  {
+    "id": 1255364,
+    "slug": "surat",
+    "code": "in"
+  },
+  {
+    "id": 1298824,
+    "slug": "yangon",
+    "code": "mm"
+  },
+  {
+    "id": 13308620,
+    "slug": "bao-an",
+    "code": "cn"
+  },
+  {
+    "id": 1138958,
+    "slug": "kabul",
+    "code": "af"
+  },
+  {
+    "id": 184745,
+    "slug": "nairobi",
+    "code": "ke"
+  },
+  {
+    "id": 1790923,
+    "slug": "wuxi",
+    "code": "cn"
+  },
+  {
+    "id": 360995,
+    "slug": "giza",
+    "code": "eg"
+  },
+  {
+    "id": 1805753,
+    "slug": "jinan",
+    "code": "cn"
+  },
+  {
+    "id": 1793511,
+    "slug": "taiyuan",
+    "code": "cn"
+  },
+  {
+    "id": 1784658,
+    "slug": "zhengzhou",
+    "code": "cn"
+  },
+  {
+    "id": 2460596,
+    "slug": "bamako",
+    "code": "ml"
+  },
+  {
+    "id": 108410,
+    "slug": "riyadh",
+    "code": "sa"
+  },
+  {
+    "id": 12908892,
+    "slug": "new-taipei-city",
+    "code": "tw"
+  },
+  {
+    "id": 12747063,
+    "slug": "new-territories",
+    "code": "hk"
+  },
+  {
+    "id": 1795270,
+    "slug": "shijiazhuang",
+    "code": "cn"
+  },
+  {
+    "id": 1205733,
+    "slug": "chattogram",
+    "code": "bd"
+  },
+  {
+    "id": 344979,
+    "slug": "addis-ababa",
+    "code": "et"
+  },
+  {
+    "id": 1804651,
+    "slug": "kunming",
+    "code": "cn"
+  },
+  {
+    "id": 6986104,
+    "slug": "zhongshan",
+    "code": "cn"
+  },
+  {
+    "id": 1799869,
+    "slug": "nanning",
+    "code": "cn"
+  },
+  {
+    "id": 1795940,
+    "slug": "shantou",
+    "code": "cn"
+  },
+  {
+    "id": 1179400,
+    "slug": "faisalabad",
+    "code": "pk"
+  },
+  {
+    "id": 1848354,
+    "slug": "yokohama",
+    "code": "jp"
+  },
+  {
+    "id": 1810821,
+    "slug": "fuzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1799397,
+    "slug": "ningbo",
+    "code": "cn"
+  },
+  {
+    "id": 2553604,
+    "slug": "casablanca",
+    "code": "ma"
+  },
+  {
+    "id": 2339354,
+    "slug": "ibadan",
+    "code": "ng"
+  },
+  {
+    "id": 1798425,
+    "slug": "puyang",
+    "code": "cn"
+  },
+  {
+    "id": 323786,
+    "slug": "ankara",
+    "code": "tr"
+  },
+  {
+    "id": 1794903,
+    "slug": "shiyan",
+    "code": "cn"
+  },
+  {
+    "id": 2950159,
+    "slug": "berlin",
+    "code": "de"
+  },
+  {
+    "id": 1793346,
+    "slug": "tangshan",
+    "code": "cn"
+  },
+  {
+    "id": 1166993,
+    "slug": "rawalpindi",
+    "code": "pk"
+  },
+  {
+    "id": 13512505,
+    "slug": "lueliang",
+    "code": "cn"
+  },
+  {
+    "id": 1007311,
+    "slug": "durban",
+    "code": "za"
+  },
+  {
+    "id": 1815456,
+    "slug": "changzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1838524,
+    "slug": "busan",
+    "code": "kr"
+  },
+  {
+    "id": 3117735,
+    "slug": "madrid",
+    "code": "es"
+  },
+  {
+    "id": 1871859,
+    "slug": "pyongyang",
+    "code": "kp"
+  },
+  {
+    "id": 1785286,
+    "slug": "zibo",
+    "code": "cn"
+  },
+  {
+    "id": 1259229,
+    "slug": "pune",
+    "code": "in"
+  },
+  {
+    "id": 750269,
+    "slug": "bursa",
+    "code": "tr"
+  },
+  {
+    "id": 1815577,
+    "slug": "changsha",
+    "code": "cn"
+  },
+  {
+    "id": 1692192,
+    "slug": "quezon-city",
+    "code": "ph"
+  },
+  {
+    "id": 1269515,
+    "slug": "jaipur",
+    "code": "in"
+  },
+  {
+    "id": 1809461,
+    "slug": "guiyang",
+    "code": "cn"
+  },
+  {
+    "id": 1529102,
+    "slug": "ueruemqi",
+    "code": "cn"
+  },
+  {
+    "id": 1625822,
+    "slug": "surabaya",
+    "code": "id"
+  },
+  {
+    "id": 1843564,
+    "slug": "incheon",
+    "code": "kr"
+  },
+  {
+    "id": 1804430,
+    "slug": "lanzhou",
+    "code": "cn"
+  },
+  {
+    "id": 3646738,
+    "slug": "caracas",
+    "code": "ve"
+  },
+  {
+    "id": 703448,
+    "slug": "kyiv",
+    "code": "ua"
+  },
+  {
+    "id": 311046,
+    "slug": "izmir",
+    "code": "tr"
+  },
+  {
+    "id": 1806776,
+    "slug": "huizhou",
+    "code": "cn"
+  },
+  {
+    "id": 3435910,
+    "slug": "buenos-aires",
+    "code": "ar"
+  },
+  {
+    "id": 1809078,
+    "slug": "haikou",
+    "code": "cn"
+  },
+  {
+    "id": 1668399,
+    "slug": "taichung",
+    "code": "tw"
+  },
+  {
+    "id": 1267995,
+    "slug": "kanpur",
+    "code": "in"
+  },
+  {
+    "id": 6167865,
+    "slug": "toronto",
+    "code": "ca"
+  },
+  {
+    "id": 3652462,
+    "slug": "quito",
+    "code": "ec"
+  },
+  {
+    "id": 2174003,
+    "slug": "brisbane",
+    "code": "au"
+  },
+  {
+    "id": 2240449,
+    "slug": "luanda",
+    "code": "ao"
+  },
+  {
+    "id": 1853909,
+    "slug": "osaka",
+    "code": "jp"
+  },
+  {
+    "id": 1803318,
+    "slug": "linyi",
+    "code": "cn"
+  },
+  {
+    "id": 1816971,
+    "slug": "baoding",
+    "code": "cn"
+  },
+  {
+    "id": 1673820,
+    "slug": "kaohsiung",
+    "code": "tw"
+  },
+  {
+    "id": 5110302,
+    "slug": "brooklyn",
+    "code": "us"
+  },
+  {
+    "id": 3657509,
+    "slug": "guayaquil",
+    "code": "ec"
+  },
+  {
+    "id": 3470127,
+    "slug": "belo-horizonte",
+    "code": "br"
+  },
+  {
+    "id": 1800480,
+    "slug": "minhang",
+    "code": "cn"
+  },
+  {
+    "id": 11995100,
+    "slug": "bazhong",
+    "code": "cn"
+  },
+  {
+    "id": 3450554,
+    "slug": "salvador",
+    "code": "br"
+  },
+  {
+    "id": 2352778,
+    "slug": "abuja",
+    "code": "ng"
+  },
+  {
+    "id": 1200109,
+    "slug": "gazipur",
+    "code": "bd"
+  },
+  {
+    "id": 4887398,
+    "slug": "chicago",
+    "code": "us"
+  },
+  {
+    "id": 1791388,
+    "slug": "wenzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1649378,
+    "slug": "bekasi",
+    "code": "id"
+  },
+  {
+    "id": 2253354,
+    "slug": "dakar",
+    "code": "sn"
+  },
+  {
+    "id": 1581298,
+    "slug": "haiphong",
+    "code": "vn"
+  },
+  {
+    "id": 1785725,
+    "slug": "yunfu",
+    "code": "cn"
+  },
+  {
+    "id": 6619347,
+    "slug": "navi-mumbai",
+    "code": "in"
+  },
+  {
+    "id": 53654,
+    "slug": "mogadishu",
+    "code": "so"
+  },
+  {
+    "id": 2298890,
+    "slug": "kumasi",
+    "code": "gh"
+  },
+  {
+    "id": 1650357,
+    "slug": "bandung",
+    "code": "id"
+  },
+  {
+    "id": 1177662,
+    "slug": "gujranwala",
+    "code": "pk"
+  },
+  {
+    "id": 1797873,
+    "slug": "huai-an",
+    "code": "cn"
+  },
+  {
+    "id": 1214520,
+    "slug": "medan",
+    "code": "id"
+  },
+  {
+    "id": 1264733,
+    "slug": "lucknow",
+    "code": "in"
+  },
+  {
+    "id": 2357048,
+    "slug": "ouagadougou",
+    "code": "bf"
+  },
+  {
+    "id": 1262180,
+    "slug": "nagpur",
+    "code": "in"
+  },
+  {
+    "id": 3399415,
+    "slug": "fortaleza",
+    "code": "br"
+  },
+  {
+    "id": 3687925,
+    "slug": "cali",
+    "code": "co"
+  },
+  {
+    "id": 2063523,
+    "slug": "perth",
+    "code": "au"
+  },
+  {
+    "id": 1835329,
+    "slug": "daegu",
+    "code": "kr"
+  },
+  {
+    "id": 2507480,
+    "slug": "algiers",
+    "code": "dz"
+  },
+  {
+    "id": 1800163,
+    "slug": "nanchang",
+    "code": "cn"
+  },
+  {
+    "id": 587084,
+    "slug": "baku",
+    "code": "az"
+  },
+  {
+    "id": 2036892,
+    "slug": "hohhot",
+    "code": "cn"
+  },
+  {
+    "id": 1856057,
+    "slug": "nagoya",
+    "code": "jp"
+  },
+  {
+    "id": 3169070,
+    "slug": "rome",
+    "code": "it"
+  },
+  {
+    "id": 5133273,
+    "slug": "queens",
+    "code": "us"
+  },
+  {
+    "id": 4699066,
+    "slug": "houston",
+    "code": "us"
+  },
+  {
+    "id": 124665,
+    "slug": "mashhad",
+    "code": "ir"
+  },
+  {
+    "id": 1795855,
+    "slug": "shaoxing",
+    "code": "cn"
+  },
+  {
+    "id": 1799722,
+    "slug": "nantong",
+    "code": "cn"
+  },
+  {
+    "id": 1816917,
+    "slug": "baoshan",
+    "code": "cn"
+  },
+  {
+    "id": 1819609,
+    "slug": "kowloon",
+    "code": "hk"
+  },
+  {
+    "id": 1787093,
+    "slug": "yantai",
+    "code": "cn"
+  },
+  {
+    "id": 314830,
+    "slug": "gaziantep",
+    "code": "tr"
+  },
+  {
+    "id": 922704,
+    "slug": "lubumbashi",
+    "code": "cd"
+  },
+  {
+    "id": 3663517,
+    "slug": "manaus",
+    "code": "br"
+  },
+  {
+    "id": 909137,
+    "slug": "lusaka",
+    "code": "zm"
+  },
+  {
+    "id": 3469058,
+    "slug": "brasilia",
+    "code": "br"
+  },
+  {
+    "id": 1790437,
+    "slug": "zhuhai",
+    "code": "cn"
+  },
+  {
+    "id": 3492908,
+    "slug": "santo-domingo",
+    "code": "do"
+  },
+  {
+    "id": 2365267,
+    "slug": "lome",
+    "code": "tg"
+  },
+  {
+    "id": 1169825,
+    "slug": "multan",
+    "code": "pk"
+  },
+  {
+    "id": 3553478,
+    "slug": "havana",
+    "code": "cu"
+  },
+  {
+    "id": 1645524,
+    "slug": "depok",
+    "code": "id"
+  },
+  {
+    "id": 2038432,
+    "slug": "baotou",
+    "code": "cn"
+  },
+  {
+    "id": 1273865,
+    "slug": "coimbatore",
+    "code": "in"
+  },
+  {
+    "id": 12359313,
+    "slug": "qingyang",
+    "code": "cn"
+  },
+  {
+    "id": 2324774,
+    "slug": "port-harcourt",
+    "code": "ng"
+  },
+  {
+    "id": 964137,
+    "slug": "pretoria",
+    "code": "za"
+  },
+  {
+    "id": 3860259,
+    "slug": "cordoba",
+    "code": "ar"
+  },
+  {
+    "id": 209228,
+    "slug": "mbuji-mayi",
+    "code": "cd"
+  },
+  {
+    "id": 170063,
+    "slug": "aleppo",
+    "code": "sy"
+  },
+  {
+    "id": 1785623,
+    "slug": "kunshan",
+    "code": "cn"
+  },
+  {
+    "id": 99071,
+    "slug": "al-mawsil-al-jadidah",
+    "code": "iq"
+  },
+  {
+    "id": 1791681,
+    "slug": "weifang",
+    "code": "cn"
+  },
+  {
+    "id": 1783621,
+    "slug": "zunyi",
+    "code": "cn"
+  },
+  {
+    "id": 388349,
+    "slug": "al-basrah-al-qadimah",
+    "code": "iq"
+  },
+  {
+    "id": 3911925,
+    "slug": "la-paz",
+    "code": "bo"
+  },
+  {
+    "id": 10859300,
+    "slug": "lianyungang",
+    "code": "cn"
+  },
+  {
+    "id": 3674962,
+    "slug": "medellin",
+    "code": "co"
+  },
+  {
+    "id": 1269743,
+    "slug": "indore",
+    "code": "in"
+  },
+  {
+    "id": 2260535,
+    "slug": "brazzaville",
+    "code": "cg"
+  },
+  {
+    "id": 1512569,
+    "slug": "tashkent",
+    "code": "uz"
+  },
+  {
+    "id": 1810638,
+    "slug": "ganzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1526384,
+    "slug": "almaty",
+    "code": "kz"
+  },
+  {
+    "id": 379252,
+    "slug": "khartoum",
+    "code": "sd"
+  },
+  {
+    "id": 2911298,
+    "slug": "hamburg",
+    "code": "de"
+  },
+  {
+    "id": 2128295,
+    "slug": "sapporo",
+    "code": "jp"
+  },
+  {
+    "id": 1794035,
+    "slug": "songjiang",
+    "code": "cn"
+  },
+  {
+    "id": 2306104,
+    "slug": "accra",
+    "code": "gh"
+  },
+  {
+    "id": 3464975,
+    "slug": "curitiba",
+    "code": "br"
+  },
+  {
+    "id": 8347664,
+    "slug": "ordos",
+    "code": "cn"
+  },
+  {
+    "id": 71137,
+    "slug": "sanaa",
+    "code": "ye"
+  },
+  {
+    "id": 2422465,
+    "slug": "conakry",
+    "code": "gn"
+  },
+  {
+    "id": 1625084,
+    "slug": "tangerang",
+    "code": "id"
+  },
+  {
+    "id": 3981609,
+    "slug": "tijuana",
+    "code": "mx"
+  },
+  {
+    "id": 1176734,
+    "slug": "hyderabad",
+    "code": "pk"
+  },
+  {
+    "id": 276781,
+    "slug": "beirut",
+    "code": "lb"
+  },
+  {
+    "id": 1797121,
+    "slug": "jieyang",
+    "code": "cn"
+  },
+  {
+    "id": 2036502,
+    "slug": "jilin",
+    "code": "cn"
+  },
+  {
+    "id": 1806508,
+    "slug": "jiading",
+    "code": "cn"
+  },
+  {
+    "id": 683506,
+    "slug": "bucharest",
+    "code": "ro"
+  },
+  {
+    "id": 2422488,
+    "slug": "camayenne",
+    "code": "gn"
+  },
+  {
+    "id": 195272,
+    "slug": "kakamega",
+    "code": "ke"
+  },
+  {
+    "id": 1796134,
+    "slug": "shangqiu",
+    "code": "cn"
+  },
+  {
+    "id": 1800146,
+    "slug": "nanchong",
+    "code": "cn"
+  },
+  {
+    "id": 1668355,
+    "slug": "tainan",
+    "code": "tw"
+  },
+  {
+    "id": 2037799,
+    "slug": "datong",
+    "code": "cn"
+  },
+  {
+    "id": 2335727,
+    "slug": "kaduna",
+    "code": "ng"
+  },
+  {
+    "id": 365137,
+    "slug": "omdurman",
+    "code": "sd"
+  },
+  {
+    "id": 1715348,
+    "slug": "davao",
+    "code": "ph"
+  },
+  {
+    "id": 1254661,
+    "slug": "thane",
+    "code": "in"
+  },
+  {
+    "id": 3526683,
+    "slug": "iztapalapa",
+    "code": "mx"
+  },
+  {
+    "id": 316541,
+    "slug": "diyarbakir",
+    "code": "tr"
+  },
+  {
+    "id": 3904906,
+    "slug": "santa-cruz-de-la-sierra",
+    "code": "bo"
+  },
+  {
+    "id": 1253573,
+    "slug": "vadodara",
+    "code": "in"
+  },
+  {
+    "id": 325363,
+    "slug": "adana",
+    "code": "tr"
+  },
+  {
+    "id": 1799629,
+    "slug": "nanyang",
+    "code": "cn"
+  },
+  {
+    "id": 292968,
+    "slug": "abu-dhabi",
+    "code": "ae"
+  },
+  {
+    "id": 1633070,
+    "slug": "palembang",
+    "code": "id"
+  },
+  {
+    "id": 292672,
+    "slug": "sharjah",
+    "code": "ae"
+  },
+  {
+    "id": 1275841,
+    "slug": "bhopal",
+    "code": "in"
+  },
+  {
+    "id": 1806299,
+    "slug": "jiangmen",
+    "code": "cn"
+  },
+  {
+    "id": 2347283,
+    "slug": "benin-city",
+    "code": "ng"
+  },
+  {
+    "id": 1815251,
+    "slug": "jiangyin",
+    "code": "cn"
+  },
+  {
+    "id": 1810845,
+    "slug": "fuyang",
+    "code": "cn"
+  },
+  {
+    "id": 6077243,
+    "slug": "montreal",
+    "code": "ca"
+  },
+  {
+    "id": 11838258,
+    "slug": "bayan-nur",
+    "code": "cn"
+  },
+  {
+    "id": 3633009,
+    "slug": "maracaibo",
+    "code": "ve"
+  },
+  {
+    "id": 1815395,
+    "slug": "chaozhou",
+    "code": "cn"
+  },
+  {
+    "id": 625144,
+    "slug": "minsk",
+    "code": "by"
+  },
+  {
+    "id": 3054643,
+    "slug": "budapest",
+    "code": "hu"
+  },
+  {
+    "id": 1797945,
+    "slug": "qingyuan",
+    "code": "cn"
+  },
+  {
+    "id": 1793724,
+    "slug": "tai-an",
+    "code": "cn"
+  },
+  {
+    "id": 1258393,
+    "slug": "rasapudipalem",
+    "code": "in"
+  },
+  {
+    "id": 7626690,
+    "slug": "pimpri-chinchwad",
+    "code": "in"
+  },
+  {
+    "id": 1720151,
+    "slug": "caloocan",
+    "code": "ph"
+  },
+  {
+    "id": 756135,
+    "slug": "warsaw",
+    "code": "pl"
+  },
+  {
+    "id": 953781,
+    "slug": "soweto",
+    "code": "za"
+  },
+  {
+    "id": 1627896,
+    "slug": "semarang",
+    "code": "id"
+  },
+  {
+    "id": 3521081,
+    "slug": "puebla",
+    "code": "mx"
+  },
+  {
+    "id": 2761369,
+    "slug": "vienna",
+    "code": "at"
+  },
+  {
+    "id": 3128760,
+    "slug": "barcelona",
+    "code": "es"
+  },
+  {
+    "id": 1260086,
+    "slug": "patna",
+    "code": "in"
+  },
+  {
+    "id": 99072,
+    "slug": "mosul",
+    "code": "iq"
+  },
+  {
+    "id": 12165956,
+    "slug": "kallakurichi",
+    "code": "in"
+  },
+  {
+    "id": 232422,
+    "slug": "kampala",
+    "code": "ug"
+  },
+  {
+    "id": 1788852,
+    "slug": "xining",
+    "code": "cn"
+  },
+  {
+    "id": 7283386,
+    "slug": "changshu",
+    "code": "cn"
+  },
+  {
+    "id": 1807681,
+    "slug": "huainan",
+    "code": "cn"
+  },
+  {
+    "id": 2538475,
+    "slug": "rabat",
+    "code": "ma"
+  },
+  {
+    "id": 3390760,
+    "slug": "recife",
+    "code": "br"
+  },
+  {
+    "id": 5308655,
+    "slug": "phoenix",
+    "code": "us"
+  },
+  {
+    "id": 1793743,
+    "slug": "suzhou",
+    "code": "cn"
+  },
+  {
+    "id": 3529612,
+    "slug": "ecatepec-de-morelos",
+    "code": "mx"
+  },
+  {
+    "id": 1802206,
+    "slug": "lu-an",
+    "code": "cn"
+  },
+  {
+    "id": 3625549,
+    "slug": "valencia",
+    "code": "ve"
+  },
+  {
+    "id": 1264728,
+    "slug": "ludhiana",
+    "code": "in"
+  },
+  {
+    "id": 1787746,
+    "slug": "yancheng",
+    "code": "cn"
+  },
+  {
+    "id": 1496747,
+    "slug": "novosibirsk",
+    "code": "ru"
+  },
+  {
+    "id": 95446,
+    "slug": "erbil",
+    "code": "iq"
+  },
+  {
+    "id": 1863967,
+    "slug": "fukuoka",
+    "code": "jp"
+  },
+  {
+    "id": 1793505,
+    "slug": "taizhou",
+    "code": "cn"
+  },
+  {
+    "id": 2037860,
+    "slug": "daqing",
+    "code": "cn"
+  },
+  {
+    "id": 1701668,
+    "slug": "manila",
+    "code": "ph"
+  },
+  {
+    "id": 1791236,
+    "slug": "wuhu",
+    "code": "cn"
+  },
+  {
+    "id": 3991164,
+    "slug": "santiago-de-queretaro",
+    "code": "mx"
+  },
+  {
+    "id": 1813325,
+    "slug": "dazhou",
+    "code": "cn"
+  },
+  {
+    "id": 1787227,
+    "slug": "yangzhou",
+    "code": "cn"
+  },
+  {
+    "id": 3998655,
+    "slug": "leon-de-los-aldama",
+    "code": "mx"
+  },
+  {
+    "id": 104515,
+    "slug": "makkah",
+    "code": "sa"
+  },
+  {
+    "id": 4560349,
+    "slug": "philadelphia",
+    "code": "us"
+  },
+  {
+    "id": 1821306,
+    "slug": "phnom-penh",
+    "code": "kh"
+  },
+  {
+    "id": 1809498,
+    "slug": "guilin",
+    "code": "cn"
+  },
+  {
+    "id": 170654,
+    "slug": "damascus",
+    "code": "sy"
+  },
+  {
+    "id": 1167528,
+    "slug": "quetta",
+    "code": "pk"
+  },
+  {
+    "id": 1784853,
+    "slug": "zhaoqing",
+    "code": "cn"
+  },
+  {
+    "id": 2326016,
+    "slug": "onitsha",
+    "code": "ng"
+  },
+  {
+    "id": 1800627,
+    "slug": "mianyang",
+    "code": "cn"
+  },
+  {
+    "id": 2193733,
+    "slug": "auckland",
+    "code": "nz"
+  },
+  {
+    "id": 418863,
+    "slug": "isfahan",
+    "code": "ir"
+  },
+  {
+    "id": 12358576,
+    "slug": "wanzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1526273,
+    "slug": "astana",
+    "code": "kz"
+  },
+  {
+    "id": 890299,
+    "slug": "harare",
+    "code": "zw"
+  },
+  {
+    "id": 2274895,
+    "slug": "monrovia",
+    "code": "lr"
+  },
+  {
+    "id": 1798449,
+    "slug": "putian",
+    "code": "cn"
+  },
+  {
+    "id": 1859642,
+    "slug": "kawasaki",
+    "code": "jp"
+  },
+  {
+    "id": 3462377,
+    "slug": "goiania",
+    "code": "br"
+  },
+  {
+    "id": 4726206,
+    "slug": "san-antonio",
+    "code": "us"
+  },
+  {
+    "id": 1859171,
+    "slug": "kobe",
+    "code": "jp"
+  },
+  {
+    "id": 2673730,
+    "slug": "stockholm",
+    "code": "se"
+  },
+  {
+    "id": 4013708,
+    "slug": "ciudad-juarez",
+    "code": "mx"
+  },
+  {
+    "id": 1586203,
+    "slug": "can-tho",
+    "code": "vn"
+  },
+  {
+    "id": 2867714,
+    "slug": "munich",
+    "code": "de"
+  },
+  {
+    "id": 1336135,
+    "slug": "khulna",
+    "code": "bd"
+  },
+  {
+    "id": 3405870,
+    "slug": "belem",
+    "code": "br"
+  },
+  {
+    "id": 1486209,
+    "slug": "yekaterinburg",
+    "code": "ru"
+  },
+  {
+    "id": 3452925,
+    "slug": "porto-alegre",
+    "code": "br"
+  },
+  {
+    "id": 1786657,
+    "slug": "yinchuan",
+    "code": "cn"
+  },
+  {
+    "id": 5125771,
+    "slug": "manhattan",
+    "code": "us"
+  },
+  {
+    "id": 1261731,
+    "slug": "nashik",
+    "code": "in"
+  },
+  {
+    "id": 8400694,
+    "slug": "taizhou",
+    "code": "cn"
+  },
+  {
+    "id": 3439389,
+    "slug": "asuncion",
+    "code": "py"
+  },
+  {
+    "id": 1814870,
+    "slug": "yiwu",
+    "code": "cn"
+  },
+  {
+    "id": 3979770,
+    "slug": "zapopan",
+    "code": "mx"
+  },
+  {
+    "id": 1622786,
+    "slug": "makassar",
+    "code": "id"
+  },
+  {
+    "id": 2078025,
+    "slug": "adelaide",
+    "code": "au"
+  },
+  {
+    "id": 1797353,
+    "slug": "quanzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1264521,
+    "slug": "madurai",
+    "code": "in"
+  },
+  {
+    "id": 1805528,
+    "slug": "jinhua",
+    "code": "cn"
+  },
+  {
+    "id": 1857910,
+    "slug": "kyoto",
+    "code": "jp"
+  },
+  {
+    "id": 1806602,
+    "slug": "cixi",
+    "code": "cn"
+  },
+  {
+    "id": 1791121,
+    "slug": "changde",
+    "code": "cn"
+  },
+  {
+    "id": 1735161,
+    "slug": "kuala-lumpur",
+    "code": "my"
+  },
+  {
+    "id": 308464,
+    "slug": "kayseri",
+    "code": "tr"
+  },
+  {
+    "id": 1804879,
+    "slug": "kaifeng",
+    "code": "cn"
+  },
+  {
+    "id": 2038632,
+    "slug": "anshan",
+    "code": "cn"
+  },
+  {
+    "id": 128747,
+    "slug": "karaj",
+    "code": "ir"
+  },
+  {
+    "id": 1283240,
+    "slug": "kathmandu",
+    "code": "np"
+  },
+  {
+    "id": 1835235,
+    "slug": "daejeon",
+    "code": "kr"
+  },
+  {
+    "id": 10942359,
+    "slug": "baoji",
+    "code": "cn"
+  },
+  {
+    "id": 1793771,
+    "slug": "suqian",
+    "code": "cn"
+  },
+  {
+    "id": 1803300,
+    "slug": "liuzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1254361,
+    "slug": "tirunelveli",
+    "code": "in"
+  },
+  {
+    "id": 306571,
+    "slug": "konya",
+    "code": "tr"
+  },
+  {
+    "id": 1787331,
+    "slug": "zhangjiagang",
+    "code": "cn"
+  },
+  {
+    "id": 1279259,
+    "slug": "agra",
+    "code": "in"
+  },
+  {
+    "id": 8581443,
+    "slug": "south-tangerang",
+    "code": "id"
+  },
+  {
+    "id": 113646,
+    "slug": "tabriz",
+    "code": "ir"
+  },
+  {
+    "id": 706483,
+    "slug": "kharkiv",
+    "code": "ua"
+  },
+  {
+    "id": 1797658,
+    "slug": "jinjiang",
+    "code": "cn"
+  },
+  {
+    "id": 1271951,
+    "slug": "faridabad",
+    "code": "in"
+  },
+  {
+    "id": 1816234,
+    "slug": "bozhou",
+    "code": "cn"
+  },
+  {
+    "id": 1797318,
+    "slug": "qujing",
+    "code": "cn"
+  },
+  {
+    "id": 5391811,
+    "slug": "san-diego",
+    "code": "us"
+  },
+  {
+    "id": 1841811,
+    "slug": "gwangju",
+    "code": "kr"
+  },
+  {
+    "id": 1784990,
+    "slug": "zhanjiang",
+    "code": "cn"
+  },
+  {
+    "id": 2037355,
+    "slug": "fushun",
+    "code": "cn"
+  },
+  {
+    "id": 1258847,
+    "slug": "rajkot",
+    "code": "in"
+  },
+  {
+    "id": 1801792,
+    "slug": "luoyang",
+    "code": "cn"
+  },
+  {
+    "id": 4005539,
+    "slug": "guadalajara",
+    "code": "mx"
+  },
+  {
+    "id": 5110266,
+    "slug": "the-bronx",
+    "code": "us"
+  },
+  {
+    "id": 1580240,
+    "slug": "hue",
+    "code": "vn"
+  },
+  {
+    "id": 1802875,
+    "slug": "guankou",
+    "code": "cn"
+  },
+  {
+    "id": 3173435,
+    "slug": "milan",
+    "code": "it"
+  },
+  {
+    "id": 1262111,
+    "slug": "najafgarh",
+    "code": "in"
+  },
+  {
+    "id": 2427123,
+    "slug": "n-djamena",
+    "code": "td"
+  },
+  {
+    "id": 1808963,
+    "slug": "handan",
+    "code": "cn"
+  },
+  {
+    "id": 1183460,
+    "slug": "bannu",
+    "code": "pk"
+  },
+  {
+    "id": 1786764,
+    "slug": "yichang",
+    "code": "cn"
+  },
+  {
+    "id": 1070940,
+    "slug": "antananarivo",
+    "code": "mg"
+  },
+  {
+    "id": 1808198,
+    "slug": "heze",
+    "code": "cn"
+  },
+  {
+    "id": 2293521,
+    "slug": "abobo",
+    "code": "ci"
+  },
+  {
+    "id": 1269300,
+    "slug": "jamshedpur",
+    "code": "in"
+  },
+  {
+    "id": 2232593,
+    "slug": "douala",
+    "code": "cm"
+  },
+  {
+    "id": 323777,
+    "slug": "antalya",
+    "code": "tr"
+  },
+  {
+    "id": 99532,
+    "slug": "basrah",
+    "code": "iq"
+  },
+  {
+    "id": 4684888,
+    "slug": "dallas",
+    "code": "us"
+  },
+  {
+    "id": 6940394,
+    "slug": "saitama",
+    "code": "jp"
+  },
+  {
+    "id": 1270926,
+    "slug": "gorakhpur",
+    "code": "in"
+  },
+  {
+    "id": 2440485,
+    "slug": "niamey",
+    "code": "ne"
+  },
+  {
+    "id": 8533133,
+    "slug": "liupanshui",
+    "code": "cn"
+  },
+  {
+    "id": 1684308,
+    "slug": "taguig",
+    "code": "ph"
+  },
+  {
+    "id": 1801180,
+    "slug": "maoming",
+    "code": "cn"
+  },
+  {
+    "id": 5913490,
+    "slug": "calgary",
+    "code": "ca"
+  },
+  {
+    "id": 2210247,
+    "slug": "tripoli",
+    "code": "ly"
+  },
+  {
+    "id": 109223,
+    "slug": "madinah",
+    "code": "sa"
+  },
+  {
+    "id": 2220957,
+    "slug": "yaounde",
+    "code": "cm"
+  },
+  {
+    "id": 6295587,
+    "slug": "batam",
+    "code": "id"
+  },
+  {
+    "id": 1797551,
+    "slug": "qinzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1801934,
+    "slug": "luohe",
+    "code": "cn"
+  },
+  {
+    "id": 1790587,
+    "slug": "xiangyang",
+    "code": "cn"
+  },
+  {
+    "id": 1806408,
+    "slug": "yangjiang",
+    "code": "cn"
+  },
+  {
+    "id": 1786760,
+    "slug": "yixing",
+    "code": "cn"
+  },
+  {
+    "id": 1259652,
+    "slug": "pimpri",
+    "code": "in"
+  },
+  {
+    "id": 1583992,
+    "slug": "da-nang",
+    "code": "vn"
+  },
+  {
+    "id": 250441,
+    "slug": "amman",
+    "code": "jo"
+  },
+  {
+    "id": 1723510,
+    "slug": "budta",
+    "code": "ph"
+  },
+  {
+    "id": 792680,
+    "slug": "belgrade",
+    "code": "rs"
+  },
+  {
+    "id": 1587923,
+    "slug": "bien-hoa",
+    "code": "vn"
+  },
+  {
+    "id": 1797798,
+    "slug": "qingpu",
+    "code": "cn"
+  },
+  {
+    "id": 3441575,
+    "slug": "montevideo",
+    "code": "uy"
+  },
+  {
+    "id": 1788046,
+    "slug": "xuchang",
+    "code": "cn"
+  },
+  {
+    "id": 1268295,
+    "slug": "kalyan",
+    "code": "in"
+  },
+  {
+    "id": 1783745,
+    "slug": "zigong",
+    "code": "cn"
+  },
+  {
+    "id": 520555,
+    "slug": "nizhniy-novgorod",
+    "code": "ru"
+  },
+  {
+    "id": 1642548,
+    "slug": "jepara",
+    "code": "id"
+  },
+  {
+    "id": 1040652,
+    "slug": "maputo",
+    "code": "mz"
+  },
+  {
+    "id": 10630003,
+    "slug": "xuzhou",
+    "code": "cn"
+  },
+  {
+    "id": 110336,
+    "slug": "dammam",
+    "code": "sa"
+  },
+  {
+    "id": 268743,
+    "slug": "ra-s-bayrut",
+    "code": "lb"
+  },
+  {
+    "id": 1799491,
+    "slug": "neijiang",
+    "code": "cn"
+  },
+  {
+    "id": 115019,
+    "slug": "shiraz",
+    "code": "ir"
+  },
+  {
+    "id": 1808316,
+    "slug": "heshan",
+    "code": "cn"
+  },
+  {
+    "id": 1272423,
+    "slug": "dombivali",
+    "code": "in"
+  },
+  {
+    "id": 214481,
+    "slug": "kananga",
+    "code": "cd"
+  },
+  {
+    "id": 551487,
+    "slug": "kazan",
+    "code": "ru"
+  },
+  {
+    "id": 1805518,
+    "slug": "jining",
+    "code": "cn"
+  },
+  {
+    "id": 3648522,
+    "slug": "barquisimeto",
+    "code": "ve"
+  },
+  {
+    "id": 349076,
+    "slug": "shubra-al-khaymah",
+    "code": "eg"
+  },
+  {
+    "id": 1798439,
+    "slug": "putuo",
+    "code": "cn"
+  },
+  {
+    "id": 3718426,
+    "slug": "port-au-prince",
+    "code": "ht"
+  },
+  {
+    "id": 1835553,
+    "slug": "suwon",
+    "code": "kr"
+  },
+  {
+    "id": 1788534,
+    "slug": "xinyang",
+    "code": "cn"
+  },
+  {
+    "id": 1803834,
+    "slug": "liaocheng",
+    "code": "cn"
+  },
+  {
+    "id": 10942283,
+    "slug": "jinzhong",
+    "code": "cn"
+  },
+  {
+    "id": 3946083,
+    "slug": "callao",
+    "code": "pe"
+  },
+  {
+    "id": 1263214,
+    "slug": "meerut",
+    "code": "in"
+  },
+  {
+    "id": 1253133,
+    "slug": "virar",
+    "code": "in"
+  },
+  {
+    "id": 1261162,
+    "slug": "nowrangapur",
+    "code": "in"
+  },
+  {
+    "id": 94824,
+    "slug": "karbala",
+    "code": "iq"
+  },
+  {
+    "id": 1808956,
+    "slug": "changzhi",
+    "code": "cn"
+  },
+  {
+    "id": 1792892,
+    "slug": "tianshui",
+    "code": "cn"
+  },
+  {
+    "id": 7802746,
+    "slug": "sadr-city",
+    "code": "iq"
+  },
+  {
+    "id": 1787375,
+    "slug": "yangpu",
+    "code": "cn"
+  },
+  {
+    "id": 186301,
+    "slug": "mombasa",
+    "code": "ke"
+  },
+  {
+    "id": 1311874,
+    "slug": "mandalay",
+    "code": "mm"
+  },
+  {
+    "id": 1255634,
+    "slug": "srinagar",
+    "code": "in"
+  },
+  {
+    "id": 3689147,
+    "slug": "barranquilla",
+    "code": "co"
+  },
+  {
+    "id": 1508291,
+    "slug": "chelyabinsk",
+    "code": "ru"
+  },
+  {
+    "id": 3523349,
+    "slug": "merida",
+    "code": "mx"
+  },
+  {
+    "id": 1862415,
+    "slug": "hiroshima",
+    "code": "jp"
+  },
+  {
+    "id": 1518980,
+    "slug": "shymkent",
+    "code": "kz"
+  },
+  {
+    "id": 3492914,
+    "slug": "santiago-de-los-caballeros",
+    "code": "do"
+  },
+  {
+    "id": 1791636,
+    "slug": "weinan",
+    "code": "cn"
+  },
+  {
+    "id": 1271308,
+    "slug": "ghaziabad",
+    "code": "in"
+  },
+  {
+    "id": 1039854,
+    "slug": "matola",
+    "code": "mz"
+  },
+  {
+    "id": 1272979,
+    "slug": "dhanbad",
+    "code": "in"
+  },
+  {
+    "id": 3947322,
+    "slug": "arequipa",
+    "code": "pe"
+  },
+  {
+    "id": 12747064,
+    "slug": "hong-kong-island",
+    "code": "hk"
+  },
+  {
+    "id": 2548885,
+    "slug": "fes",
+    "code": "ma"
+  },
+  {
+    "id": 3514674,
+    "slug": "gustavo-adolfo-madero",
+    "code": "mx"
+  },
+  {
+    "id": 2377450,
+    "slug": "nouakchott",
+    "code": "mr"
+  },
+  {
+    "id": 212730,
+    "slug": "kisangani",
+    "code": "cd"
+  },
+  {
+    "id": 1805953,
+    "slug": "jiaxing",
+    "code": "cn"
+  },
+  {
+    "id": 1278149,
+    "slug": "aurangabad",
+    "code": "in"
+  },
+  {
+    "id": 1784285,
+    "slug": "zhongwei",
+    "code": "cn"
+  },
+  {
+    "id": 1496153,
+    "slug": "omsk",
+    "code": "ru"
+  },
+  {
+    "id": 2246678,
+    "slug": "pikine",
+    "code": "sn"
+  },
+  {
+    "id": 3461786,
+    "slug": "guarulhos",
+    "code": "br"
+  },
+  {
+    "id": 1631761,
+    "slug": "pekanbaru",
+    "code": "id"
+  },
+  {
+    "id": 10794003,
+    "slug": "panjin",
+    "code": "cn"
+  },
+  {
+    "id": 1624917,
+    "slug": "bandar-lampung",
+    "code": "id"
+  },
+  {
+    "id": 3067696,
+    "slug": "prague",
+    "code": "cz"
+  },
+  {
+    "id": 1253405,
+    "slug": "varanasi",
+    "code": "in"
+  },
+  {
+    "id": 1805179,
+    "slug": "jiujiang",
+    "code": "cn"
+  },
+  {
+    "id": 499099,
+    "slug": "samara",
+    "code": "ru"
+  },
+  {
+    "id": 2353151,
+    "slug": "aba",
+    "code": "ng"
+  },
+  {
+    "id": 1278710,
+    "slug": "amritsar",
+    "code": "in"
+  },
+  {
+    "id": 2655603,
+    "slug": "birmingham",
+    "code": "gb"
+  },
+  {
+    "id": 2618425,
+    "slug": "copenhagen",
+    "code": "dk"
+  },
+  {
+    "id": 727011,
+    "slug": "sofia",
+    "code": "bg"
+  },
+  {
+    "id": 1785294,
+    "slug": "anyang",
+    "code": "cn"
+  },
+  {
+    "id": 616052,
+    "slug": "yerevan",
+    "code": "am"
+  },
+  {
+    "id": 13405906,
+    "slug": "luohu-district",
+    "code": "cn"
+  },
+  {
+    "id": 1253184,
+    "slug": "vijayawada",
+    "code": "in"
+  },
+  {
+    "id": 13608002,
+    "slug": "fengxiang",
+    "code": "cn"
+  },
+  {
+    "id": 1816373,
+    "slug": "bijie",
+    "code": "cn"
+  },
+  {
+    "id": 3995465,
+    "slug": "monterrey",
+    "code": "mx"
+  },
+  {
+    "id": 202061,
+    "slug": "kigali",
+    "code": "rw"
+  },
+  {
+    "id": 501175,
+    "slug": "rostov-on-don",
+    "code": "ru"
+  },
+  {
+    "id": 1783763,
+    "slug": "zhuzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1978681,
+    "slug": "malingao",
+    "code": "ph"
+  },
+  {
+    "id": 2244322,
+    "slug": "touba",
+    "code": "sn"
+  },
+  {
+    "id": 479561,
+    "slug": "ufa",
+    "code": "ru"
+  },
+  {
+    "id": 1258526,
+    "slug": "ranchi",
+    "code": "in"
+  },
+  {
+    "id": 1787858,
+    "slug": "shangrao",
+    "code": "cn"
+  },
+  {
+    "id": 927967,
+    "slug": "lilongwe",
+    "code": "mw"
+  },
+  {
+    "id": 1807700,
+    "slug": "huaibei",
+    "code": "cn"
+  },
+  {
+    "id": 2331447,
+    "slug": "maiduguri",
+    "code": "ng"
+  },
+  {
+    "id": 1787957,
+    "slug": "xuhui",
+    "code": "cn"
+  },
+  {
+    "id": 1800818,
+    "slug": "meishan",
+    "code": "cn"
+  },
+  {
+    "id": 152224,
+    "slug": "mwanza",
+    "code": "tz"
+  },
+  {
+    "id": 1833747,
+    "slug": "ulsan",
+    "code": "kr"
+  },
+  {
+    "id": 2111149,
+    "slug": "sendai",
+    "code": "jp"
+  },
+  {
+    "id": 1502026,
+    "slug": "krasnoyarsk",
+    "code": "ru"
+  },
+  {
+    "id": 1810820,
+    "slug": "fuzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1809532,
+    "slug": "guigang",
+    "code": "cn"
+  },
+  {
+    "id": 3143244,
+    "slug": "oslo",
+    "code": "no"
+  },
+  {
+    "id": 1269633,
+    "slug": "jabalpur",
+    "code": "in"
+  },
+  {
+    "id": 2337639,
+    "slug": "ilorin",
+    "code": "ng"
+  },
+  {
+    "id": 415189,
+    "slug": "aden",
+    "code": "ye"
+  },
+  {
+    "id": 1648473,
+    "slug": "bogor",
+    "code": "id"
+  },
+  {
+    "id": 3530589,
+    "slug": "ciudad-nezahualcoyotl",
+    "code": "mx"
+  },
+  {
+    "id": 1808370,
+    "slug": "hengyang",
+    "code": "cn"
+  },
+  {
+    "id": 1278994,
+    "slug": "prayagraj",
+    "code": "in"
+  },
+  {
+    "id": 3691175,
+    "slug": "trujillo",
+    "code": "pe"
+  },
+  {
+    "id": 1253102,
+    "slug": "visakhapatnam",
+    "code": "in"
+  },
+  {
+    "id": 1842485,
+    "slug": "goyang-si",
+    "code": "kr"
+  },
+  {
+    "id": 1785781,
+    "slug": "yulin",
+    "code": "cn"
+  },
+  {
+    "id": 1268865,
+    "slug": "jodhpur",
+    "code": "in"
+  },
+  {
+    "id": 1270583,
+    "slug": "gwalior",
+    "code": "in"
+  },
+  {
+    "id": 1805540,
+    "slug": "jingzhou",
+    "code": "cn"
+  },
+  {
+    "id": 964420,
+    "slug": "gqeberha",
+    "code": "za"
+  },
+  {
+    "id": 611717,
+    "slug": "tbilisi",
+    "code": "ge"
+  },
+  {
+    "id": 472045,
+    "slug": "voronezh",
+    "code": "ru"
+  },
+  {
+    "id": 1788572,
+    "slug": "xinxiang",
+    "code": "cn"
+  },
+  {
+    "id": 1786746,
+    "slug": "yichun",
+    "code": "cn"
+  },
+  {
+    "id": 2322911,
+    "slug": "sokoto",
+    "code": "ng"
+  },
+  {
+    "id": 2335953,
+    "slug": "jos",
+    "code": "ng"
+  },
+  {
+    "id": 2530335,
+    "slug": "tangier",
+    "code": "ma"
+  },
+  {
+    "id": 1254745,
+    "slug": "teni",
+    "code": "in"
+  },
+  {
+    "id": 1790353,
+    "slug": "xianyang",
+    "code": "cn"
+  },
+  {
+    "id": 3996069,
+    "slug": "mexicali",
+    "code": "mx"
+  },
+  {
+    "id": 2255414,
+    "slug": "pointe-noire",
+    "code": "cg"
+  },
+  {
+    "id": 3395981,
+    "slug": "maceio",
+    "code": "br"
+  },
+  {
+    "id": 3467865,
+    "slug": "campinas",
+    "code": "br"
+  },
+  {
+    "id": 1796556,
+    "slug": "sanya",
+    "code": "cn"
+  },
+  {
+    "id": 1185188,
+    "slug": "rangpur",
+    "code": "bd"
+  },
+  {
+    "id": 94787,
+    "slug": "kirkuk",
+    "code": "iq"
+  },
+  {
+    "id": 162183,
+    "slug": "ashgabat",
+    "code": "tm"
+  },
+  {
+    "id": 1795874,
+    "slug": "shaoguan",
+    "code": "cn"
+  },
+  {
+    "id": 1270396,
+    "slug": "howrah",
+    "code": "in"
+  },
+  {
+    "id": 1258980,
+    "slug": "raipur",
+    "code": "in"
+  },
+  {
+    "id": 1846326,
+    "slug": "changwon",
+    "code": "kr"
+  },
+  {
+    "id": 1802276,
+    "slug": "longyan",
+    "code": "cn"
+  },
+  {
+    "id": 2886242,
+    "slug": "koeln",
+    "code": "de"
+  },
+  {
+    "id": 2964574,
+    "slug": "dublin",
+    "code": "ie"
+  },
+  {
+    "id": 1254388,
+    "slug": "tiruchirappalli",
+    "code": "in"
+  },
+  {
+    "id": 1786217,
+    "slug": "yongzhou",
+    "code": "cn"
+  },
+  {
+    "id": 2800866,
+    "slug": "brussels",
+    "code": "be"
+  },
+  {
+    "id": 1679432,
+    "slug": "zamboanga",
+    "code": "ph"
+  },
+  {
+    "id": 6094817,
+    "slug": "ottawa",
+    "code": "ca"
+  },
+  {
+    "id": 1806535,
+    "slug": "huzhou",
+    "code": "cn"
+  },
+  {
+    "id": 472757,
+    "slug": "volgograd",
+    "code": "ru"
+  },
+  {
+    "id": 379251,
+    "slug": "khartoum-north",
+    "code": "sd"
+  },
+  {
+    "id": 5946768,
+    "slug": "edmonton",
+    "code": "ca"
+  },
+  {
+    "id": 698740,
+    "slug": "odesa",
+    "code": "ua"
+  },
+  {
+    "id": 1803936,
+    "slug": "wuwei",
+    "code": "cn"
+  },
+  {
+    "id": 4160021,
+    "slug": "jacksonville",
+    "code": "us"
+  },
+  {
+    "id": 4691930,
+    "slug": "fort-worth",
+    "code": "us"
+  },
+  {
+    "id": 1808857,
+    "slug": "hanzhong",
+    "code": "cn"
+  },
+  {
+    "id": 7576887,
+    "slug": "hezhou",
+    "code": "cn"
+  },
+  {
+    "id": 3046446,
+    "slug": "pest",
+    "code": "hu"
+  },
+  {
+    "id": 1266049,
+    "slug": "kota",
+    "code": "in"
+  },
+  {
+    "id": 6943660,
+    "slug": "shivaji-nagar",
+    "code": "in"
+  },
+  {
+    "id": 7602670,
+    "slug": "zhu-cheng-city",
+    "code": "cn"
+  },
+  {
+    "id": 1812101,
+    "slug": "dongying",
+    "code": "cn"
+  },
+  {
+    "id": 1801640,
+    "slug": "luzhou",
+    "code": "cn"
+  },
+  {
+    "id": 5392171,
+    "slug": "san-jose",
+    "code": "us"
+  },
+  {
+    "id": 1256436,
+    "slug": "sholapur",
+    "code": "in"
+  },
+  {
+    "id": 2542997,
+    "slug": "marrakesh",
+    "code": "ma"
+  },
+  {
+    "id": 3598132,
+    "slug": "guatemala-city",
+    "code": "gt"
+  },
+  {
+    "id": 1800779,
+    "slug": "meizhou",
+    "code": "cn"
+  },
+  {
+    "id": 1927639,
+    "slug": "yueyang",
+    "code": "cn"
+  },
+  {
+    "id": 1804591,
+    "slug": "laiwu",
+    "code": "cn"
+  },
+  {
+    "id": 2038300,
+    "slug": "benxi",
+    "code": "cn"
+  },
+  {
+    "id": 747323,
+    "slug": "esenyurt",
+    "code": "tr"
+  },
+  {
+    "id": 511196,
+    "slug": "perm",
+    "code": "ru"
+  },
+  {
+    "id": 2317765,
+    "slug": "zaria",
+    "code": "ng"
+  },
+  {
+    "id": 7033318,
+    "slug": "kennedy",
+    "code": "co"
+  },
+  {
+    "id": 2113015,
+    "slug": "chiba",
+    "code": "jp"
+  },
+  {
+    "id": 1798827,
+    "slug": "pingdingshan",
+    "code": "cn"
+  },
+  {
+    "id": 3645528,
+    "slug": "ciudad-guayana",
+    "code": "ve"
+  },
+  {
+    "id": 1166000,
+    "slug": "sargodha",
+    "code": "pk"
+  },
+  {
+    "id": 4671654,
+    "slug": "austin",
+    "code": "us"
+  },
+  {
+    "id": 3617763,
+    "slug": "managua",
+    "code": "ni"
+  },
+  {
+    "id": 1816440,
+    "slug": "bengbu",
+    "code": "cn"
+  },
+  {
+    "id": 2537763,
+    "slug": "sale",
+    "code": "ma"
+  },
+  {
+    "id": 281184,
+    "slug": "jerusalem",
+    "code": "il"
+  },
+  {
+    "id": 1274746,
+    "slug": "chandigarh",
+    "code": "in"
+  },
+  {
+    "id": 709930,
+    "slug": "dnipro",
+    "code": "ua"
+  },
+  {
+    "id": 1717512,
+    "slug": "cebu-city",
+    "code": "ph"
+  },
+  {
+    "id": 1796823,
+    "slug": "sanhe",
+    "code": "cn"
+  },
+  {
+    "id": 1254348,
+    "slug": "tiruppur",
+    "code": "in"
+  },
+  {
+    "id": 1271476,
+    "slug": "guwahati",
+    "code": "in"
+  },
+  {
+    "id": 1790492,
+    "slug": "xiangtan",
+    "code": "cn"
+  },
+  {
+    "id": 1803567,
+    "slug": "linfen",
+    "code": "cn"
+  },
+  {
+    "id": 1931681,
+    "slug": "victoria",
+    "code": "hk"
+  },
+  {
+    "id": 1784642,
+    "slug": "zhenjiang",
+    "code": "cn"
+  },
+  {
+    "id": 2343279,
+    "slug": "enugu",
+    "code": "ng"
+  },
+  {
+    "id": 3838583,
+    "slug": "rosario",
+    "code": "ar"
+  },
+  {
+    "id": 101760,
+    "slug": "sultanah",
+    "code": "sa"
+  },
+  {
+    "id": 2036662,
+    "slug": "huludao",
+    "code": "cn"
+  },
+  {
+    "id": 1269920,
+    "slug": "hubballi",
+    "code": "in"
+  },
+  {
+    "id": 1633419,
+    "slug": "padang",
+    "code": "id"
+  },
+  {
+    "id": 1859307,
+    "slug": "kitakyushu",
+    "code": "jp"
+  },
+  {
+    "id": 70225,
+    "slug": "taiz",
+    "code": "ye"
+  },
+  {
+    "id": 11790342,
+    "slug": "setagaya",
+    "code": "jp"
+  },
+  {
+    "id": 3489854,
+    "slug": "kingston",
+    "code": "jm"
+  },
+  {
+    "id": 1805701,
+    "slug": "jing-an",
+    "code": "cn"
+  },
+  {
+    "id": 1281673,
+    "slug": "baoshan",
+    "code": "cn"
+  },
+  {
+    "id": 1797063,
+    "slug": "rui-an",
+    "code": "cn"
+  },
+  {
+    "id": 4014338,
+    "slug": "chihuahua",
+    "code": "mx"
+  },
+  {
+    "id": 6611854,
+    "slug": "nay-pyi-taw",
+    "code": "mm"
+  },
+  {
+    "id": 315202,
+    "slug": "eskisehir",
+    "code": "tr"
+  },
+  {
+    "id": 1262321,
+    "slug": "mysuru",
+    "code": "in"
+  },
+  {
+    "id": 1257629,
+    "slug": "salem",
+    "code": "in"
+  },
+  {
+    "id": 3388368,
+    "slug": "sao-luis",
+    "code": "br"
+  },
+  {
+    "id": 1897000,
+    "slug": "seongnam-si",
+    "code": "kr"
+  },
+  {
+    "id": 3687238,
+    "slug": "cartagena",
+    "code": "co"
+  },
+  {
+    "id": 1730501,
+    "slug": "antipolo",
+    "code": "ph"
+  },
+  {
+    "id": 4509177,
+    "slug": "columbus",
+    "code": "us"
+  },
+  {
+    "id": 1164909,
+    "slug": "sialkot",
+    "code": "pk"
+  },
+  {
+    "id": 4460243,
+    "slug": "charlotte",
+    "code": "us"
+  },
+  {
+    "id": 1804609,
+    "slug": "laibin",
+    "code": "cn"
+  },
+  {
+    "id": 2319133,
+    "slug": "warri",
+    "code": "ng"
+  },
+  {
+    "id": 3172394,
+    "slug": "naples",
+    "code": "it"
+  },
+  {
+    "id": 1790254,
+    "slug": "xiaogan",
+    "code": "cn"
+  },
+  {
+    "id": 3467747,
+    "slug": "campo-grande",
+    "code": "br"
+  },
+  {
+    "id": 1783683,
+    "slug": "ziyang",
+    "code": "cn"
+  },
+  {
+    "id": 2362344,
+    "slug": "bobo-dioulasso",
+    "code": "bf"
+  },
+  {
+    "id": 1183880,
+    "slug": "bahawalpur",
+    "code": "pk"
+  },
+  {
+    "id": 1797264,
+    "slug": "quzhou",
+    "code": "cn"
+  },
+  {
+    "id": 931755,
+    "slug": "blantyre",
+    "code": "mw"
+  },
+  {
+    "id": 709717,
+    "slug": "donetsk",
+    "code": "ua"
+  },
+  {
+    "id": 100077,
+    "slug": "abu-ghurayb",
+    "code": "iq"
+  },
+  {
+    "id": 119208,
+    "slug": "qom",
+    "code": "ir"
+  },
+  {
+    "id": 1528675,
+    "slug": "bishkek",
+    "code": "kg"
+  },
+  {
+    "id": 1785453,
+    "slug": "zaozhuang",
+    "code": "cn"
+  },
+  {
+    "id": 542420,
+    "slug": "krasnodar",
+    "code": "ru"
+  },
+  {
+    "id": 3394023,
+    "slug": "natal",
+    "code": "br"
+  },
+  {
+    "id": 1798654,
+    "slug": "pingxiang",
+    "code": "cn"
+  },
+  {
+    "id": 1636722,
+    "slug": "malang",
+    "code": "id"
+  },
+  {
+    "id": 3531673,
+    "slug": "cancun",
+    "code": "mx"
+  },
+  {
+    "id": 4259418,
+    "slug": "indianapolis",
+    "code": "us"
+  },
+  {
+    "id": 1270642,
+    "slug": "gurugram",
+    "code": "in"
+  },
+  {
+    "id": 1275817,
+    "slug": "bhubaneswar",
+    "code": "in"
+  },
+  {
+    "id": 1886762,
+    "slug": "zhoushan",
+    "code": "cn"
+  },
+  {
+    "id": 2035265,
+    "slug": "qiqihar",
+    "code": "cn"
+  },
+  {
+    "id": 8307074,
+    "slug": "mulenvos",
+    "code": "ao"
+  },
+  {
+    "id": 98463,
+    "slug": "sulaymaniyah",
+    "code": "iq"
+  },
+  {
+    "id": 2995469,
+    "slug": "marseille",
+    "code": "fr"
+  },
+  {
+    "id": 1802940,
+    "slug": "puning",
+    "code": "cn"
+  },
+  {
+    "id": 1275901,
+    "slug": "bhiwandi",
+    "code": "in"
+  },
+  {
+    "id": 954013,
+    "slug": "soshanguve",
+    "code": "za"
+  },
+  {
+    "id": 3386496,
+    "slug": "teresina",
+    "code": "br"
+  },
+  {
+    "id": 1789065,
+    "slug": "ankang",
+    "code": "cn"
+  },
+  {
+    "id": 1268782,
+    "slug": "jalandhar",
+    "code": "in"
+  },
+  {
+    "id": 2747891,
+    "slug": "rotterdam",
+    "code": "nl"
+  },
+  {
+    "id": 1804540,
+    "slug": "langfang",
+    "code": "cn"
+  },
+  {
+    "id": 2236500,
+    "slug": "viana",
+    "code": "ao"
+  },
+  {
+    "id": 1805987,
+    "slug": "jiaozuo",
+    "code": "cn"
+  },
+  {
+    "id": 1629001,
+    "slug": "samarinda",
+    "code": "id"
+  },
+  {
+    "id": 12069922,
+    "slug": "rohini",
+    "code": "in"
+  },
+  {
+    "id": 1791748,
+    "slug": "wanxian",
+    "code": "cn"
+  },
+  {
+    "id": 1799194,
+    "slug": "guang-an",
+    "code": "cn"
+  },
+  {
+    "id": 1732752,
+    "slug": "johor-bahru",
+    "code": "my"
+  },
+  {
+    "id": 1184370,
+    "slug": "arifwala",
+    "code": "pk"
+  },
+  {
+    "id": 7290466,
+    "slug": "pasig-city",
+    "code": "ph"
+  },
+  {
+    "id": 1845604,
+    "slug": "cheongju-si",
+    "code": "kr"
+  },
+  {
+    "id": 12501153,
+    "slug": "kanayannur",
+    "code": "in"
+  },
+  {
+    "id": 3600949,
+    "slug": "tegucigalpa",
+    "code": "hn"
+  },
+  {
+    "id": 1838716,
+    "slug": "bucheon-si",
+    "code": "kr"
+  },
+  {
+    "id": 1566166,
+    "slug": "thanh-hoa",
+    "code": "vn"
+  },
+  {
+    "id": 3165524,
+    "slug": "turin",
+    "code": "it"
+  },
+  {
+    "id": 292913,
+    "slug": "al-ain-city",
+    "code": "ae"
+  },
+  {
+    "id": 2399697,
+    "slug": "libreville",
+    "code": "ga"
+  },
+  {
+    "id": 498677,
+    "slug": "saratov",
+    "code": "ru"
+  },
+  {
+    "id": 2028462,
+    "slug": "ulan-bator",
+    "code": "mn"
+  },
+  {
+    "id": 1791673,
+    "slug": "weihai",
+    "code": "cn"
+  },
+  {
+    "id": 1821940,
+    "slug": "takeo",
+    "code": "kh"
+  },
+  {
+    "id": 3919968,
+    "slug": "cochabamba",
+    "code": "bo"
+  },
+  {
+    "id": 144448,
+    "slug": "ahvaz",
+    "code": "ir"
+  },
+  {
+    "id": 1651944,
+    "slug": "vientiane",
+    "code": "la"
+  },
+  {
+    "id": 1785412,
+    "slug": "zhabei",
+    "code": "cn"
+  },
+  {
+    "id": 1788508,
+    "slug": "xinyu",
+    "code": "cn"
+  },
+  {
+    "id": 965301,
+    "slug": "pietermaritzburg",
+    "code": "za"
+  },
+  {
+    "id": 1786770,
+    "slug": "yibin",
+    "code": "cn"
+  },
+  {
+    "id": 3522790,
+    "slug": "naucalpan-de-juarez",
+    "code": "mx"
+  },
+  {
+    "id": 1771023,
+    "slug": "kampung-baru-subang",
+    "code": "my"
+  },
+  {
+    "id": 2290956,
+    "slug": "bouake",
+    "code": "ci"
+  },
+  {
+    "id": 1793703,
+    "slug": "taicang",
+    "code": "cn"
+  },
+  {
+    "id": 5391959,
+    "slug": "san-francisco",
+    "code": "us"
+  },
+  {
+    "id": 1853195,
+    "slug": "sakai",
+    "code": "jp"
+  },
+  {
+    "id": 2509954,
+    "slug": "valencia",
+    "code": "es"
+  },
+  {
+    "id": 3456160,
+    "slug": "nova-iguacu",
+    "code": "br"
+  },
+  {
+    "id": 13608000,
+    "slug": "jinshan",
+    "code": "cn"
+  },
+  {
+    "id": 1815059,
+    "slug": "chenzhou",
+    "code": "cn"
+  },
+  {
+    "id": 3464374,
+    "slug": "duque-de-caxias",
+    "code": "br"
+  },
+  {
+    "id": 3397277,
+    "slug": "joao-pessoa",
+    "code": "br"
+  },
+  {
+    "id": 217831,
+    "slug": "bukavu",
+    "code": "cd"
+  },
+  {
+    "id": 3094802,
+    "slug": "krakow",
+    "code": "pl"
+  },
+  {
+    "id": 3648559,
+    "slug": "barcelona",
+    "code": "ve"
+  },
+  {
+    "id": 2389853,
+    "slug": "bangui",
+    "code": "cf"
+  },
+  {
+    "id": 4004898,
+    "slug": "hermosillo",
+    "code": "mx"
+  },
+  {
+    "id": 1276014,
+    "slug": "bhayandar",
+    "code": "in"
+  },
+  {
+    "id": 4012176,
+    "slug": "culiacan",
+    "code": "mx"
+  },
+  {
+    "id": 1735158,
+    "slug": "petaling-jaya",
+    "code": "my"
+  },
+  {
+    "id": 1817993,
+    "slug": "anqing",
+    "code": "cn"
+  },
+  {
+    "id": 2485926,
+    "slug": "oran",
+    "code": "dz"
+  },
+  {
+    "id": 2409306,
+    "slug": "freetown",
+    "code": "sl"
+  },
+  {
+    "id": 3601782,
+    "slug": "san-pedro-sula",
+    "code": "hn"
+  },
+  {
+    "id": 1261809,
+    "slug": "narela",
+    "code": "in"
+  },
+  {
+    "id": 1788927,
+    "slug": "xingtai",
+    "code": "cn"
+  },
+  {
+    "id": 1855431,
+    "slug": "niigata",
+    "code": "jp"
+  },
+  {
+    "id": 287286,
+    "slug": "muscat",
+    "code": "om"
+  },
+  {
+    "id": 250090,
+    "slug": "zarqa",
+    "code": "jo"
+  },
+  {
+    "id": 6955677,
+    "slug": "cankaya",
+    "code": "tr"
+  },
+  {
+    "id": 742394,
+    "slug": "kuecuekcekmece",
+    "code": "tr"
+  },
+  {
+    "id": 1863289,
+    "slug": "hamamatsu",
+    "code": "jp"
+  },
+  {
+    "id": 922773,
+    "slug": "kolwezi",
+    "code": "cd"
+  },
+  {
+    "id": 1562798,
+    "slug": "vinh",
+    "code": "vn"
+  },
+  {
+    "id": 1254163,
+    "slug": "thiruvananthapuram",
+    "code": "in"
+  },
+  {
+    "id": 1784841,
+    "slug": "zhaotong",
+    "code": "cn"
+  },
+  {
+    "id": 6929460,
+    "slug": "panzhihua",
+    "code": "cn"
+  },
+  {
+    "id": 1814757,
+    "slug": "chuzhou",
+    "code": "cn"
+  },
+  {
+    "id": 5809844,
+    "slug": "seattle",
+    "code": "us"
+  },
+  {
+    "id": 358619,
+    "slug": "port-said",
+    "code": "eg"
+  },
+  {
+    "id": 3685533,
+    "slug": "cucuta",
+    "code": "co"
+  },
+  {
+    "id": 169577,
+    "slug": "homs",
+    "code": "sy"
+  },
+  {
+    "id": 1788081,
+    "slug": "xuancheng",
+    "code": "cn"
+  },
+  {
+    "id": 74477,
+    "slug": "ibb",
+    "code": "ye"
+  },
+  {
+    "id": 1624647,
+    "slug": "tasikmalaya",
+    "code": "id"
+  },
+  {
+    "id": 1033356,
+    "slug": "nampula",
+    "code": "mz"
+  },
+  {
+    "id": 1817720,
+    "slug": "shangyu",
+    "code": "cn"
+  },
+  {
+    "id": 425378,
+    "slug": "bujumbura",
+    "code": "bi"
+  },
+  {
+    "id": 1488754,
+    "slug": "tyumen",
+    "code": "ru"
+  },
+  {
+    "id": 315368,
+    "slug": "erzurum",
+    "code": "tr"
+  },
+  {
+    "id": 1817968,
+    "slug": "anshun",
+    "code": "cn"
+  },
+  {
+    "id": 160196,
+    "slug": "dodoma",
+    "code": "tz"
+  },
+  {
+    "id": 1185128,
+    "slug": "rajshahi",
+    "code": "bd"
+  },
+  {
+    "id": 1180281,
+    "slug": "dera-ismail-khan",
+    "code": "pk"
+  },
+  {
+    "id": 1790840,
+    "slug": "wuzhou",
+    "code": "cn"
+  },
+  {
+    "id": 1734634,
+    "slug": "ipoh",
+    "code": "my"
+  },
+  {
+    "id": 1797595,
+    "slug": "qinhuangdao",
+    "code": "cn"
+  },
+  {
+    "id": 88319,
+    "slug": "benghazi",
+    "code": "ly"
+  },
+  {
+    "id": 1279017,
+    "slug": "aligarh",
+    "code": "in"
+  },
+  {
+    "id": 1816920,
+    "slug": "shaoyang",
+    "code": "cn"
+  },
+  {
+    "id": 304922,
+    "slug": "malatya",
+    "code": "tr"
+  },
+  {
+    "id": 6183235,
+    "slug": "winnipeg",
+    "code": "ca"
+  },
+  {
+    "id": 8469289,
+    "slug": "ota",
+    "code": "jp"
+  },
+  {
+    "id": 1514588,
+    "slug": "andijon",
+    "code": "uz"
+  },
+  {
+    "id": 1277013,
+    "slug": "bareilly",
+    "code": "in"
+  },
+  {
+    "id": 107304,
+    "slug": "buraydah",
+    "code": "sa"
+  },
+  {
+    "id": 3449344,
+    "slug": "sao-bernardo-do-campo",
+    "code": "br"
+  },
+  {
+    "id": 2036986,
+    "slug": "hegang",
+    "code": "cn"
+  },
+  {
+    "id": 3995402,
+    "slug": "morelia",
+    "code": "mx"
+  },
+  {
+    "id": 456172,
+    "slug": "riga",
+    "code": "lv"
+  },
+  {
+    "id": 2759794,
+    "slug": "amsterdam",
+    "code": "nl"
+  },
+  {
+    "id": 1721080,
+    "slug": "cagayan-de-oro",
+    "code": "ph"
+  },
+  {
+    "id": 1801620,
+    "slug": "ma-anshan",
+    "code": "cn"
+  },
+  {
+    "id": 1732903,
+    "slug": "shah-alam",
+    "code": "my"
+  },
+  {
+    "id": 751324,
+    "slug": "bagcilar",
+    "code": "tr"
+  },
+  {
+    "id": 12324556,
+    "slug": "shizuishan",
+    "code": "cn"
+  },
+  {
+    "id": 1858421,
+    "slug": "kumamoto",
+    "code": "jp"
+  },
+  {
+    "id": 2325200,
+    "slug": "oyo",
+    "code": "ng"
+  },
+  {
+    "id": 1627549,
+    "slug": "serang",
+    "code": "id"
+  },
+  {
+    "id": 3981254,
+    "slug": "torreon",
+    "code": "mx"
+  },
+  {
+    "id": 1812961,
+    "slug": "deyang",
+    "code": "cn"
+  },
+  {
+    "id": 2352947,
+    "slug": "abeokuta",
+    "code": "ng"
+  },
+  {
+    "id": 79415,
+    "slug": "al-hudaydah",
+    "code": "ye"
+  },
+  {
+    "id": 1787351,
+    "slug": "yangquan",
+    "code": "cn"
+  },
+  {
+    "id": 2350841,
+    "slug": "akure",
+    "code": "ng"
+  },
+  {
+    "id": 3448636,
+    "slug": "sao-jose-dos-campos",
+    "code": "br"
+  },
+  {
+    "id": 5419384,
+    "slug": "denver",
+    "code": "us"
+  },
+  {
+    "id": 3455775,
+    "slug": "osasco",
+    "code": "br"
+  },
+  {
+    "id": 7758790,
+    "slug": "kikolo",
+    "code": "ao"
+  },
+  {
+    "id": 2239888,
+    "slug": "maianga",
+    "code": "ao"
+  },
+  {
+    "id": 3514663,
+    "slug": "alvaro-obregon",
+    "code": "mx"
+  },
+  {
+    "id": 1865689,
+    "slug": "aihara",
+    "code": "jp"
+  },
+  {
+    "id": 1004866,
+    "slug": "evaton",
+    "code": "za"
+  },
+  {
+    "id": 1680102,
+    "slug": "valenzuela",
+    "code": "ph"
+  },
+  {
+    "id": 1169607,
+    "slug": "muzaffarabad",
+    "code": "pk"
+  },
+  {
+    "id": 1854383,
+    "slug": "okayama",
+    "code": "jp"
+  },
+  {
+    "id": 3985606,
+    "slug": "san-luis-potosi",
+    "code": "mx"
+  },
+  {
+    "id": 4019233,
+    "slug": "aguascalientes",
+    "code": "mx"
+  },
+  {
+    "id": 1713022,
+    "slug": "general-santos",
+    "code": "ph"
+  },
+  {
+    "id": 1783873,
+    "slug": "zhumadian",
+    "code": "cn"
+  },
+  {
+    "id": 1262801,
+    "slug": "moradabad",
+    "code": "in"
+  },
+  {
+    "id": 11611609,
+    "slug": "sagamihara",
+    "code": "jp"
+  },
+  {
+    "id": 6075357,
+    "slug": "mississauga",
+    "code": "ca"
+  },
+  {
+    "id": 702550,
+    "slug": "lviv",
+    "code": "ua"
+  },
+  {
+    "id": 1513157,
+    "slug": "namangan",
+    "code": "uz"
+  },
+  {
+    "id": 3451328,
+    "slug": "ribeirao-preto",
+    "code": "br"
+  },
+  {
+    "id": 687700,
+    "slug": "zaporizhzhya",
+    "code": "ua"
+  },
+  {
+    "id": 148730,
+    "slug": "zanzibar",
+    "code": "tz"
+  },
+  {
+    "id": 3988086,
+    "slug": "saltillo",
+    "code": "mx"
+  },
+  {
+    "id": 173576,
+    "slug": "latakia",
+    "code": "sy"
+  },
+  {
+    "id": 8504423,
+    "slug": "subang-jaya",
+    "code": "my"
+  },
+  {
+    "id": 1252948,
+    "slug": "warangal",
+    "code": "in"
+  },
+  {
+    "id": 1694781,
+    "slug": "paranaque-city",
+    "code": "ph"
+  },
+  {
+    "id": 482283,
+    "slug": "tolyatti",
+    "code": "ru"
+  },
+  {
+    "id": 7874116,
+    "slug": "santo-domingo-oeste",
+    "code": "do"
+  },
+  {
+    "id": 1183105,
+    "slug": "battagram",
+    "code": "pk"
+  },
+  {
+    "id": 1272866,
+    "slug": "dharavi",
+    "code": "in"
+  },
+  {
+    "id": 8601412,
+    "slug": "santo-domingo-este",
+    "code": "do"
+  },
+  {
+    "id": 359796,
+    "slug": "suez",
+    "code": "eg"
+  },
+  {
+    "id": 1815463,
+    "slug": "changzhi",
+    "code": "cn"
+  },
+  {
+    "id": 2561668,
+    "slug": "agadir",
+    "code": "ma"
+  },
+  {
+    "id": 11071717,
+    "slug": "edogawe",
+    "code": "jp"
+  },
+  {
+    "id": 3191281,
+    "slug": "sarajevo",
+    "code": "ba"
+  },
+  {
+    "id": 1650527,
+    "slug": "balikpapan",
+    "code": "id"
+  },
+  {
+    "id": 10987897,
+    "slug": "adachi",
+    "code": "jp"
+  },
+  {
+    "id": 1815611,
+    "slug": "changning",
+    "code": "cn"
+  },
+  {
+    "id": 2347470,
+    "slug": "bauchi",
+    "code": "ng"
+  },
+  {
+    "id": 1851717,
+    "slug": "shizuoka",
+    "code": "jp"
+  },
+  {
+    "id": 2464470,
+    "slug": "tunis",
+    "code": "tn"
+  },
+  {
+    "id": 2033196,
+    "slug": "zhangjiakou",
+    "code": "cn"
+  },
+  {
+    "id": 4140963,
+    "slug": "washington",
+    "code": "us"
+  },
+  {
+    "id": 4644585,
+    "slug": "nashville",
+    "code": "us"
+  },
+  {
+    "id": 2037346,
+    "slug": "fuxin",
+    "code": "cn"
+  },
+  {
+    "id": 107968,
+    "slug": "ta-if",
+    "code": "sa"
+  },
+  {
+    "id": 1796989,
+    "slug": "changsha",
+    "code": "cn"
+  },
+  {
+    "id": 1807234,
+    "slug": "huangshi",
+    "code": "cn"
+  },
+  {
+    "id": 2036113,
+    "slug": "liaoyang",
+    "code": "cn"
+  },
+  {
+    "id": 8740157,
+    "slug": "hlaingthaya",
+    "code": "mm"
+  },
+  {
+    "id": 1052373,
+    "slug": "beira",
+    "code": "mz"
+  },
+  {
+    "id": 1808090,
+    "slug": "hongkou",
+    "code": "cn"
+  },
+  {
+    "id": 3447399,
+    "slug": "sorocaba",
+    "code": "br"
+  },
+  {
+    "id": 3104324,
+    "slug": "zaragoza",
+    "code": "es"
+  },
+  {
+    "id": 2510911,
+    "slug": "sevilla",
+    "code": "es"
+  },
+  {
+    "id": 1816269,
+    "slug": "baise",
+    "code": "cn"
+  },
+  {
+    "id": 1630789,
+    "slug": "pontianak",
+    "code": "id"
+  },
+  {
+    "id": 1626801,
+    "slug": "situbondo",
+    "code": "id"
+  },
+  {
+    "id": 2351943,
+    "slug": "agege",
+    "code": "ng"
+  },
+  {
+    "id": 1816336,
+    "slug": "binzhou",
+    "code": "cn"
+  },
+  {
+    "id": 4544349,
+    "slug": "oklahoma-city",
+    "code": "us"
+  },
+  {
+    "id": 1785738,
+    "slug": "yuncheng",
+    "code": "cn"
+  },
+  {
+    "id": 1812955,
+    "slug": "dezhou",
+    "code": "cn"
+  },
+  {
+    "id": 1221874,
+    "slug": "dushanbe",
+    "code": "tj"
+  },
+  {
+    "id": 2394819,
+    "slug": "cotonou",
+    "code": "bj"
+  },
+  {
+    "id": 5520993,
+    "slug": "el-paso",
+    "code": "us"
+  },
+  {
+    "id": 1270927,
+    "slug": "gorakhpur",
+    "code": "in"
+  },
+  {
+    "id": 4005492,
+    "slug": "guadalupe",
+    "code": "mx"
+  },
+  {
+    "id": 3081368,
+    "slug": "wroclaw",
+    "code": "pl"
+  },
+  {
+    "id": 1645528,
+    "slug": "denpasar",
+    "code": "id"
+  },
+  {
+    "id": 1270668,
+    "slug": "guntur",
+    "code": "in"
+  },
+  {
+    "id": 2334802,
+    "slug": "katsina",
+    "code": "ng"
+  },
+  {
+    "id": 1796669,
+    "slug": "sanmenxia",
+    "code": "cn"
+  },
+  {
+    "id": 6642286,
+    "slug": "e-zhou",
+    "code": "cn"
+  },
+  {
+    "id": 353225,
+    "slug": "madinat-an-nasr",
+    "code": "eg"
+  },
+  {
+    "id": 2591957,
+    "slug": "camama",
+    "code": "ao"
+  },
+  {
+    "id": 101628,
+    "slug": "tabuk",
+    "code": "sa"
+  },
+  {
+    "id": 911148,
+    "slug": "kitwe",
+    "code": "zm"
+  },
+  {
+    "id": 894701,
+    "slug": "bulawayo",
+    "code": "zw"
+  },
+  {
+    "id": 2035715,
+    "slug": "mudanjiang",
+    "code": "cn"
+  },
+  {
+    "id": 3471872,
+    "slug": "aracaju",
+    "code": "br"
+  },
+  {
+    "id": 264371,
+    "slug": "athens",
+    "code": "gr"
+  },
+  {
+    "id": 3186886,
+    "slug": "zagreb",
+    "code": "hr"
+  },
+  {
+    "id": 1804153,
+    "slug": "leshan",
+    "code": "cn"
+  },
+  {
+    "id": 3449701,
+    "slug": "santo-andre",
+    "code": "br"
+  },
+  {
+    "id": 6173331,
+    "slug": "vancouver",
+    "code": "ca"
+  },
+  {
+    "id": 9072919,
+    "slug": "rizhao",
+    "code": "cn"
+  },
+  {
+    "id": 658225,
+    "slug": "helsinki",
+    "code": "fi"
+  },
+  {
+    "id": 1845759,
+    "slug": "cheonan",
+    "code": "kr"
+  },
+  {
+    "id": 3533462,
+    "slug": "acapulco-de-juarez",
+    "code": "mx"
+  },
+  {
+    "id": 1650213,
+    "slug": "banjarmasin",
+    "code": "id"
+  },
+  {
+    "id": 1259425,
+    "slug": "puducherry",
+    "code": "in"
+  },
+  {
+    "id": 1793900,
+    "slug": "suining",
+    "code": "cn"
+  },
+  {
+    "id": 5907364,
+    "slug": "brampton",
+    "code": "ca"
+  },
+  {
+    "id": 2591953,
+    "slug": "golfe",
+    "code": "ao"
+  },
+  {
+    "id": 9181182,
+    "slug": "puyang",
+    "code": "cn"
+  },
+  {
+    "id": 3667905,
+    "slug": "soacha",
+    "code": "co"
+  },
+  {
+    "id": 4930956,
+    "slug": "boston",
+    "code": "us"
+  },
+  {
+    "id": 3515431,
+    "slug": "tlalnepantla",
+    "code": "mx"
+  },
+  {
+    "id": 10581114,
+    "slug": "jajmau",
+    "code": "in"
+  },
+  {
+    "id": 5746545,
+    "slug": "portland",
+    "code": "us"
+  },
+  {
+    "id": 2242906,
+    "slug": "calumbo",
+    "code": "ao"
+  },
+  {
+    "id": 3981461,
+    "slug": "tlaquepaque",
+    "code": "mx"
+  },
+  {
+    "id": 2925533,
+    "slug": "frankfurt-am-main",
+    "code": "de"
+  },
+  {
+    "id": 1821274,
+    "slug": "macau",
+    "code": "mo"
+  },
+  {
+    "id": 2523920,
+    "slug": "palermo",
+    "code": "it"
+  },
+  {
+    "id": 554840,
+    "slug": "izhevsk",
+    "code": "ru"
+  },
+  {
+    "id": 1248991,
+    "slug": "colombo",
+    "code": "lk"
+  },
+  {
+    "id": 3778045,
+    "slug": "maturin",
+    "code": "ve"
+  },
+  {
+    "id": 1278718,
+    "slug": "amravati",
+    "code": "in"
+  },
+  {
+    "id": 4990729,
+    "slug": "detroit",
+    "code": "us"
+  },
+  {
+    "id": 2325590,
+    "slug": "osogbo",
+    "code": "ng"
+  },
+  {
+    "id": 1863905,
+    "slug": "honcho",
+    "code": "jp"
+  },
+  {
+    "id": 1275665,
+    "slug": "bikaner",
+    "code": "in"
+  },
+  {
+    "id": 6317344,
+    "slug": "jaboatao-dos-guararapes",
+    "code": "br"
+  },
+  {
+    "id": 13631351,
+    "slug": "hoji-ya-henda",
+    "code": "ao"
+  },
+  {
+    "id": 5506956,
+    "slug": "las-vegas",
+    "code": "us"
+  },
+  {
+    "id": 4645421,
+    "slug": "new-south-memphis",
+    "code": "us"
+  },
+  {
+    "id": 1843847,
+    "slug": "hwaseong-si",
+    "code": "kr"
+  },
+  {
+    "id": 2165087,
+    "slug": "gold-coast",
+    "code": "au"
+  },
+  {
+    "id": 3093133,
+    "slug": "lodz",
+    "code": "pl"
+  },
+  {
+    "id": 1845457,
+    "slug": "jeonju",
+    "code": "kr"
+  },
+  {
+    "id": 13608003,
+    "slug": "chongming",
+    "code": "cn"
+  },
+  {
+    "id": 285839,
+    "slug": "al-ahmadi",
+    "code": "kw"
+  },
+  {
+    "id": 3658666,
+    "slug": "cuenca",
+    "code": "ec"
+  },
+  {
+    "id": 618426,
+    "slug": "chisinau",
+    "code": "md"
+  },
+  {
+    "id": 922741,
+    "slug": "likasi",
+    "code": "cd"
+  },
+  {
+    "id": 1642858,
+    "slug": "jambi-city",
+    "code": "id"
+  },
+  {
+    "id": 1808770,
+    "slug": "hebi",
+    "code": "cn"
+  },
+  {
+    "id": 1185186,
+    "slug": "comilla",
+    "code": "bd"
+  },
+  {
+    "id": 204953,
+    "slug": "tshikapa",
+    "code": "cd"
+  },
+  {
+    "id": 1180942,
+    "slug": "chunian",
+    "code": "pk"
+  },
+  {
+    "id": 1273874,
+    "slug": "kochi",
+    "code": "in"
+  },
+  {
+    "id": 4641239,
+    "slug": "memphis",
+    "code": "us"
+  },
+  {
+    "id": 1805611,
+    "slug": "jingmen",
+    "code": "cn"
+  },
+  {
+    "id": 1510853,
+    "slug": "barnaul",
+    "code": "ru"
+  }
+]
