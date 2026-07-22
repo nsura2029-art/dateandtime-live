@@ -22,7 +22,7 @@ const CACHE_HEADERS = {
   'Access-Control-Allow-Origin': '*'
 };
 
-const CITIES_TO_CHECK_LIMIT = 1000;
+const CITIES_TO_CHECK_LIMIT = parseInt(process.env.CITIES_LIMIT || '1100', 10);
 const BATCH_SIZE = 20;  // Cities per Worker invocation (avoids timeout)
 
 /**
