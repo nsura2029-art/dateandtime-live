@@ -354,15 +354,7 @@
     .subtitle { color: var(--color-muted); font-size: clamp(0.95rem, 1.5vw, 1.1rem); margin: 0.5rem auto 0.5rem; max-width: 42rem; line-height: 1.5; }
     .subtitle strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace; font-size: 1.05em; }
     .greeting-seo { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 0.5rem; }
-    .clock-block { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 2.5rem auto 0.75rem; max-width: 1100px; flex-wrap: wrap; }
-    .clock-side { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; }
-    .clock-side .format-toggle { margin: 0; }
-    .clock-side .pills { display: flex; flex-wrap: wrap; gap: 0.5rem; max-width: 280px; }
-    @media (max-width: 768px) {
-      .clock-block { flex-direction: column; gap: 1rem; }
-      .clock-side { align-items: center; width: 100%; }
-      .clock-side .pills { justify-content: center; max-width: none; }
-    }
+    .clock-block { margin: 2.5rem auto 0.75rem; max-width: 720px; }
 
     /* ===== Stats lead (3-line pill format, used above clock + in Time tools) ===== */
     .stats-lead {
@@ -474,7 +466,7 @@
     .seg-period { width: var(--period-width); height: calc(var(--small-digit-width) * 1.82); margin: 0 0 clamp(4px, 0.6vw, 7px); padding: 0; border: 0; background: transparent; color: var(--color-period-fg); font-family: "Courier New", ui-monospace, monospace; font-size: clamp(0.9rem, 1.6vw, 1.35rem); font-weight: 800; letter-spacing: 0.15em; line-height: 1; white-space: nowrap; align-self: end; justify-self: start; display: flex; align-items: center; justify-content: flex-start; }
     .seg-period.is-hidden { display: none; }
 
-    .format-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); border: 1px solid var(--color-border); border-radius: 9999px; margin: 0; backdrop-filter: blur(8px); }
+    .format-toggle { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: var(--color-period-bg); border: 1px solid var(--color-border); border-radius: 9999px; margin: 0.75rem auto 0; backdrop-filter: blur(8px); }
     .format-toggle button { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.85rem; border-radius: 9999px; font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-muted); transition: all 200ms ease; }
     .format-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
@@ -848,21 +840,21 @@
     <!-- ============================================== -->
     <section class="section section--clock">
       <div class="container">
+        <!-- 4 main pills — moved ABOVE the clock per user request -->
+        <div class="pills" id="home-pills">
+          <a href="/holidays/" class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Today's holiday: A public or religious holiday for this country today. Banks, government offices, and many shops will be closed. Plan calls, deliveries, and meetings accordingly."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/holidays/" class="pill pill-green is-hidden pill-tip" id="next-holiday-pill" tabindex="0" data-tip="Next holiday: The next upcoming public or religious holiday for this country. Click to see all holidays in the calendar."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="next-holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/onthisday/" class="pill pill-rose is-hidden pill-tip" id="onthisday-pill" tabindex="0" data-tip="On this day: A historical event, famous birthday, or cultural milestone that happened on today's date. Click to see more."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="onthisday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/time-zones/working-hours/" class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/time-zones/in/" class="pill pill-orange pill-tip" id="sun-pill" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span>Sunrise · Sunset <span style="opacity:0.5">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+          <a href="/time-zones/dst/" class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
+        </div>
+
         <div class="clock-block">
           <div class="mono-clock" id="monoClock" aria-label="Live current time" title="Live local time · updates every frame. Use the 12h/24h toggle below to change the format.">--:--:--.--</div>
-          <div class="clock-side">
-            <div class="format-toggle" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
-              <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
-              <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
-            </div>
-            <div class="pills" id="home-pills">
-              <a href="/holidays/" class="pill pill-purple is-hidden pill-tip" id="holiday-pill" tabindex="0" data-tip="Today's holiday: A public or religious holiday for this country today. Banks, government offices, and many shops will be closed. Plan calls, deliveries, and meetings accordingly."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span><span id="holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
-              <a href="/holidays/" class="pill pill-green is-hidden pill-tip" id="next-holiday-pill" tabindex="0" data-tip="Next holiday: The next upcoming public or religious holiday for this country. Click to see all holidays in the calendar."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="next-holiday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
-              <a href="/onthisday/" class="pill pill-rose is-hidden pill-tip" id="onthisday-pill" tabindex="0" data-tip="On this day: A historical event, famous birthday, or cultural milestone that happened on today's date. Click to see more."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="onthisday-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
-              <a href="/time-zones/working-hours/" class="pill pill-purple pill-tip" tabindex="0" data-tip="Working hours: Is it currently a workday in this city right now? Useful for knowing when to call, message, or expect a reply. Most businesses are open Mon–Fri, 9 AM – 6 PM."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="off-hours-pill">—</span><span class="pill-help" aria-hidden="true">?</span></a>
-              <a href="/time-zones/in/" class="pill pill-orange pill-tip" id="sun-pill" tabindex="0" data-tip="Daylight hours: Today's sunrise and sunset times in this city. Helpful for outdoor plans, photography, golden hour, and adjusting to the local day-night cycle when traveling."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span>Sunrise · Sunset <span style="opacity:0.5">—</span><span class="pill-help" aria-hidden="true">?</span></a>
-              <a href="/time-zones/dst/" class="pill pill-blue pill-tip" id="dst-pill" tabindex="0" data-tip="Daylight Saving Time: This city moves its clocks forward 1 hour in summer and back in winter. Right now it's the offset shown. Watch this around the DST change dates if you're scheduling meetings or calls."><span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span><span id="dst-pill-text">—</span><span class="pill-help" aria-hidden="true">?</span></a>
-            </div>
+          <div class="format-toggle" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
+            <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
+            <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
           </div>
         </div>
 
