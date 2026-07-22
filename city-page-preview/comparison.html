@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>City Page Templates — 3 Designs · Date and Time</title>
+  <title>City Page Templates — 4 Designs · Date and Time</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -15,14 +15,15 @@
     h2 { font-size: 1.5rem; font-weight: 800; margin-top: 3rem; margin-bottom: 1rem; }
     h3 { font-size: 1.125rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; }
     p { margin-bottom: 0.5rem; }
-    .container { max-width: 1600px; margin: 0 auto; }
+    .container { max-width: 1700px; margin: 0 auto; }
     .meta { color: #756f66; font-size: 0.875rem; }
     .intro { max-width: 50rem; margin: 1rem 0 3rem; }
     .grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
       margin-top: 1.5rem;
     }
-    @media (max-width: 1200px) { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
     .card {
       background: white; border: 1px solid #e5e1d6; border-radius: 1rem;
       padding: 1.5rem; display: flex; flex-direction: column;
@@ -71,17 +72,19 @@
 </head>
 <body>
   <div class="container">
-    <h1>City Page Templates — 3 Designs for 2030</h1>
+    <h1>City Page Templates — 4 Designs for 2030</h1>
     <p class="meta">Light + dark mode · Live time · Tampa, FL demo</p>
     <p class="intro">
-      Three distinct design directions for <code>/world-time/city/{slug}/</code>.
+      Four distinct design directions for <code>/world-time/city/{slug}/</code>.
       Each is a fully self-contained HTML file with inline CSS + JS.
-      All three share the same internal link graph, the same JSON-LD
-      structure, and the same live-time update pattern. Pick the design
-      that best matches your audience and brand.
+      All share the same internal link graph, the same JSON-LD
+      structure, and the same live-time update pattern.
+      <strong>Template D</strong> is the recommended default — it follows timeanddate.com's
+      data-density pattern but redesigned for 2030, follows our design system
+      (no card aesthetic), includes 17 sections + 2 ad slots, and is SEO-optimized.
     </p>
 
-    <h2>The 3 templates</h2>
+    <h2>The 4 templates</h2>
     <div class="grid">
       <div class="card">
         <div class="card-header">
@@ -106,7 +109,6 @@
         </ul>
         <div class="card-actions">
           <a href="A-editorial-bento.html" class="btn">Open →</a>
-          <a href="A-editorial-bento.html" target="_blank" class="btn secondary">New tab</a>
         </div>
         <iframe src="A-editorial-bento.html" class="card-iframe" loading="lazy"></iframe>
       </div>
@@ -114,7 +116,7 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <h3>B · Live Dashboard <span class="winner">Recommended</span></h3>
+            <h3>B · Live Dashboard</h3>
             <p class="meta">Command center · 12-col grid · Real-time data</p>
           </div>
           <span class="card-tag">B</span>
@@ -135,7 +137,6 @@
         </ul>
         <div class="card-actions">
           <a href="B-live-dashboard.html" class="btn">Open →</a>
-          <a href="B-live-dashboard.html" target="_blank" class="btn secondary">New tab</a>
         </div>
         <iframe src="B-live-dashboard.html" class="card-iframe" loading="lazy"></iframe>
       </div>
@@ -163,9 +164,42 @@
         </ul>
         <div class="card-actions">
           <a href="C-story-hero.html" class="btn">Open →</a>
-          <a href="C-story-hero.html" target="_blank" class="btn secondary">New tab</a>
         </div>
         <iframe src="C-story-hero.html" class="card-iframe" loading="lazy"></iframe>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>D · Data Hub <span class="winner">Recommended</span></h3>
+            <p class="meta">TAD-inspired · 17 sections · No cards · Light + dark</p>
+          </div>
+          <span class="card-tag" style="background: #c44536; color: white;">D</span>
+        </div>
+        <div class="swatches">
+          <div class="swatch" style="background: #fce8e1;"></div>
+          <div class="swatch" style="background: #fef3c7;"></div>
+          <div class="swatch" style="background: #dbeafe;"></div>
+          <div class="swatch" style="background: #d1fae5;"></div>
+        </div>
+        <ul class="features">
+          <li>8 TAD-style color-coded info blocks</li>
+          <li>10 horizontal quick-info pills</li>
+          <li>17 SEO sections + 2 ad slots</li>
+          <li>Editorial people (4 portraits)</li>
+          <li>Day-arc SVG visualization</li>
+          <li>Light + dark via CSS variables</li>
+          <li>Inline time-difference table (8 cities)</li>
+          <li>12-month climate bar chart</li>
+          <li>7-day weather forecast</li>
+          <li>People Tampa gave the world (from C)</li>
+          <li>Day-in-the-life timeline (from C)</li>
+          <li>Holidays + OTD + Airports lists</li>
+        </ul>
+        <div class="card-actions">
+          <a href="D-data-hub.html" class="btn">Open →</a>
+        </div>
+        <iframe src="D-data-hub.html" class="card-iframe" loading="lazy"></iframe>
       </div>
     </div>
 
@@ -177,44 +211,59 @@
           <th>A: Bento</th>
           <th>B: Dashboard</th>
           <th>C: Story</th>
+          <th>D: Data Hub ⭐</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Tone</td><td>Modern editorial</td><td>Command center</td><td>Magazine feature</td></tr>
-        <tr><td>Layout</td><td>Bento grid</td><td>12-col dashboard</td><td>Long-form article</td></tr>
-        <tr><td>Hero</td><td>Split photo + clock</td><td>Gradient panel</td><td>Full-bleed photo</td></tr>
-        <tr><td>Density</td><td>Medium</td><td>High</td><td>Low (storytelling)</td></tr>
-        <tr><td>Best for</td><td>Discovery</td><td>Planning</td><td>Reading</td></tr>
-        <tr><td>Colors</td><td>Warm pastels</td><td>Indigo on white</td><td>Cream + warm earth</td></tr>
-        <tr><td>Typography</td><td>Inter + serif + mono</td><td>Inter + mono</td><td>Inter + serif + mono</td></tr>
-        <tr><td>Time display</td><td>HH:MM:SS</td><td>HH:MM:SS.cs (ms)</td><td>HH:MM:SS</td></tr>
-        <tr><td>Charts</td><td>Sun arc (SVG)</td><td>24h temp + 12-mo climate</td><td>Timeline (text)</td></tr>
-        <tr><td>People</td><td>3 cards</td><td>5 rows</td><td>4 portraits</td></tr>
-        <tr><td>Holidays</td><td>5 rows</td><td>6 rows</td><td>Mentioned in timeline</td></tr>
-        <tr><td>Interactivity</td><td>Geolocation, time</td><td>Tab bar, hover, live chart</td><td>Smooth scroll</td></tr>
-        <tr><td>JSON-LD ready</td><td>✅</td><td>✅</td><td>✅</td></tr>
-        <tr><td>Light + dark</td><td>✅</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Tone</td><td>Modern editorial</td><td>Command center</td><td>Magazine feature</td><td>Functional/clear (TAD)</td></tr>
+        <tr><td>Layout</td><td>Bento grid</td><td>12-col dashboard</td><td>Long-form article</td><td>Linear sections (TAD)</td></tr>
+        <tr><td>Hero</td><td>Split photo + clock</td><td>Gradient panel</td><td>Full-bleed photo</td><td>Editorial 2-col</td></tr>
+        <tr><td>Card style</td><td>Yes (bento)</td><td>Yes (panels)</td><td>No (article)</td><td>No (inline blocks)</td></tr>
+        <tr><td>Density</td><td>Medium</td><td>High</td><td>Low</td><td>High (TAD-density)</td></tr>
+        <tr><td>Best for</td><td>Discovery</td><td>Planning</td><td>Reading</td><td>Information lookup</td></tr>
+        <tr><td>Colors</td><td>Warm pastels</td><td>Indigo on white</td><td>Cream + warm earth</td><td>Color-coded tints</td></tr>
+        <tr><td>Time display</td><td>HH:MM:SS</td><td>HH:MM:SS.cs</td><td>HH:MM:SS</td><td>HH:MM:SS.cs AM/PM</td></tr>
+        <tr><td>Charts</td><td>Sun arc</td><td>24h temp + 12-mo</td><td>Timeline</td><td>Sun arc + 12-mo climate</td></tr>
+        <tr><td>People</td><td>3 cards</td><td>5 rows</td><td>4 portraits</td><td>4 editorial portraits</td></tr>
+        <tr><td>Holidays</td><td>5 rows</td><td>6 rows</td><td>Mentioned</td><td>6 rows (full list)</td></tr>
+        <tr><td>Ad slots</td><td>1</td><td>0</td><td>0</td><td>2 (728×90)</td></tr>
+        <tr><td>SEO sections</td><td>~12</td><td>~10</td><td>~7</td><td><strong>17</strong></td></tr>
+        <tr><td>JSON-LD ready</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Light + dark</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+        <tr><td>File size</td><td>26 KB</td><td>26 KB</td><td>23 KB</td><td>54 KB</td></tr>
       </tbody>
     </table>
 
     <h2>Recommended rollout</h2>
     <ol style="margin-left: 1.5rem; line-height: 1.8;">
-      <li><strong>Ship A (Bento) first</strong> — best balance, fastest to render, most accessible</li>
-      <li><strong>A/B test B (Dashboard)</strong> on returning users — power users might prefer</li>
-      <li><strong>C (Story) for top 100 cities only</strong> — long-form is hard to scale, but it's the SEO moat</li>
+      <li><strong>Ship D (Data Hub) as the default</strong> — TAD-density without the card aesthetic, best for SEO + ads, follows design system + light/dark</li>
+      <li><strong>A (Bento) for A/B testing</strong> on top 1,000 cities — see if users prefer bento over linear</li>
+      <li><strong>B (Dashboard) for power-user landing</strong> (tool-heavy users returning often)</li>
+      <li><strong>C (Story) for top 100 cities only</strong> — long-form SEO moat where Wikipedia-style content matters most</li>
     </ol>
+
+    <h2>Why D is the recommended default</h2>
+    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+      <li><strong>Data density</strong> — users on timeanddate.com come to GET DATA. TAD layout is proven for that. 8 color-coded info blocks, 10 quick-info pills, 17 sections.</li>
+      <li><strong>No card aesthetic</strong> — follows site design system (rows, lists, grids) instead of bento cards. Color-coded tints instead of card backgrounds.</li>
+      <li><strong>SEO-optimized</strong> — 17 H2 sections means Google has 17 ranked targets per page. Long-form internal link grid in footer.</li>
+      <li><strong>Ad-friendly</strong> — 2 explicit ad slots (728×90 leaderboards) between sections. Natural break points at end of section 5 (time diff) and end of section 10 (holidays).</li>
+      <li><strong>Light + dark via CSS variables</strong> — same as other templates, with warm rust primary that feels less cold than TAD's blue.</li>
+      <li><strong>Editorial people from C</strong> — reuses the "People Tampa gave the world" portrait grid that gives emotional weight.</li>
+      <li><strong>Day-arc from A</strong> — keeps the sun visualization (one of the best visual hooks for time data).</li>
+    </ul>
 
     <h2>How to preview</h2>
     <ul style="margin-left: 1.5rem; line-height: 1.8;">
       <li>Click the sun/moon icon (top-right) to toggle dark mode</li>
-      <li>The clock updates in real time (60fps)</li>
+      <li>The clock updates in real time (60fps via requestAnimationFrame)</li>
       <li>Click any city card / link to test navigation</li>
-      <li>Browser permission for "location" enables "distance from you" in Template A</li>
+      <li>Resize the window to see responsive breakpoints</li>
     </ul>
 
     <p class="meta" style="margin-top: 3rem; text-align: center;">
-      All 3 templates are <strong>self-contained single-file HTML</strong>.
-      No build step. No dependencies. ~25KB each. Drop into the site when ready.
+      All 4 templates are <strong>self-contained single-file HTML</strong>.
+      No build step. No dependencies. Drop into the site when ready.
     </p>
   </div>
 </body>

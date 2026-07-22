@@ -1,0 +1,1072 @@
+<!--
+  TEMPLATE D: Data Hub (TAD-inspired, 2030)
+  Inspired by timeanddate.com's color-coded info blocks but redesigned for 2030
+  - NO bento card aesthetic
+  - Color-coded inline info blocks (like TAD)
+  - Editorial People section from Template C
+  - Many sections for SEO + 2 ad slots
+  - Light + dark mode via CSS variables
+  - Single-file HTML, no dependencies
+  - Tampa, FL as demo content
+
+  Sections (20+):
+    1. Top nav + theme toggle
+    2. Hero (editorial with live time)
+    3. Quick info pill bar (8 pills, horizontal scroll)
+    4. Color-coded info blocks (8 blocks like TAD)
+    5. Day arc visualization
+    6. Tampa in numbers (6 stat tiles inline)
+    7. Time difference (6 cities)
+    8. [Ad slot 1]
+    9. A day in the life (timeline)
+   10. 7-day weather forecast
+   11. Sun & Moon details
+   12. Climate year-round (12 bars)
+   13. Tampa in context (geography + fun facts)
+   14. People Tampa gave the world (editorial portraits, from C)
+   15. On this day (5 events)
+   16. Holidays 2026 (10 holidays)
+   17. [Ad slot 2]
+   18. Famous for (tags)
+   19. Nearby cities (5 cities)
+   20. Travel & airports (3 airports)
+   21. Tools (4 tools)
+   22. More to explore (link grid)
+   23. Footer (huge internal link grid + legal)
+-->
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tampa, Florida — Current Time, Time Zone, Weather &amp; People · Date and Time</title>
+  <meta name="description" content="Tampa, Florida: live local time (EDT, UTC-4), 7-day weather, sunrise & sunset, holidays, famous people, climate, and time difference from every major city. Updated every second." />
+  <link rel="canonical" href="https://dateandtime.live/world-time/city/tampa/" />
+
+  <style>
+    /* ============================================================
+       Design tokens — light + dark mode
+       ============================================================ */
+    :root {
+      --color-bg: #ffffff;
+      --color-bg-soft: #f8f9fb;
+      --color-bg-elev: #ffffff;
+      --color-foreground: #0a1929;
+      --color-foreground-soft: #2c3e50;
+      --color-muted: #5a6878;
+      --color-muted-soft: #95a3b3;
+      --color-border: #e3e7ec;
+      --color-border-soft: #eef1f4;
+      --color-primary: #c44536;        /* warm rust */
+      --color-primary-soft: #fdf1ee;
+      --color-accent: #2c5d63;          /* ocean teal */
+      --color-link: #1a5490;            /* deep blue */
+
+      /* TAD-style color-coded data block backgrounds (pastel tints) */
+      --blk-time-bg: #fce8e1;     --blk-time-fg: #c44536;       /* warm coral */
+      --blk-zone-bg: #fef3e6;     --blk-zone-fg: #d97706;       /* amber */
+      --blk-sun-bg: #fef9c3;      --blk-sun-fg: #ca8a04;        /* sunshine */
+      --blk-moon-bg: #ede9fe;     --blk-moon-fg: #7c3aed;      /* lavender */
+      --blk-tide-bg: #cffafe;     --blk-tide-fg: #0e7490;       /* aqua */
+      --blk-weather-bg: #dbeafe;   --blk-weather-fg: #1d4ed8;    /* sky */
+      --blk-air-bg: #d1fae5;      --blk-air-fg: #047857;        /* mint */
+      --blk-pop-bg: #fce7f3;      --blk-pop-fg: #be185d;        /* rose */
+      --blk-dst-bg: #fef3c7;      --blk-dst-fg: #92400e;        /* gold */
+
+      /* Layout */
+      --container: 1280px;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    }
+    [data-theme="dark"] {
+      --color-bg: #0a1929;
+      --color-bg-soft: #102438;
+      --color-bg-elev: #142d44;
+      --color-foreground: #f0f4f8;
+      --color-foreground-soft: #c8d4e0;
+      --color-muted: #95a3b3;
+      --color-muted-soft: #5a6878;
+      --color-border: #1d3552;
+      --color-border-soft: #14283d;
+      --color-primary: #e87664;
+      --color-primary-soft: #2c1a16;
+      --color-accent: #5e9ba3;
+      --color-link: #6ba4d6;
+
+      --blk-time-bg: #3a1d18;     --blk-time-fg: #e87664;
+      --blk-zone-bg: #3a2a18;     --blk-zone-fg: #fbbf24;
+      --blk-sun-bg: #3a3214;      --blk-sun-fg: #fde047;
+      --blk-moon-bg: #1f1a36;     --blk-moon-fg: #c4b5fd;
+      --blk-tide-bg: #0e2e36;     --blk-tide-fg: #67e8f9;
+      --blk-weather-bg: #1a2a44;   --blk-weather-fg: #93c5fd;
+      --blk-air-bg: #0e2e22;      --blk-air-fg: #6ee7b7;
+      --blk-pop-bg: #2e1a26;      --blk-pop-fg: #f9a8d4;
+      --blk-dst-bg: #2e2410;      --blk-dst-fg: #fde047;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-foreground);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--color-link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 1.5rem; }
+    h1, h2, h3, h4 { font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+    h1 { font-size: clamp(1.875rem, 3.5vw, 2.5rem); }
+    h2 { font-size: clamp(1.25rem, 2vw, 1.5rem); margin: 2.5rem 0 1rem; }
+    h3 { font-size: 1.0625rem; margin: 1.5rem 0 0.5rem; }
+    p { color: var(--color-foreground-soft); }
+    .serif { font-family: var(--font-serif); }
+
+    /* ============================================================
+       Theme toggle
+       ============================================================ */
+    .theme-toggle {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      width: 2.5rem; height: 2.5rem; border-radius: 0.5rem;
+      background: var(--color-bg-elev); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .theme-toggle svg { width: 1.125rem; height: 1.125rem; color: var(--color-foreground); }
+
+    /* ============================================================
+       Top nav
+       ============================================================ */
+    .topnav {
+      padding: 0.875rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--color-border-soft);
+      background: var(--color-bg);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topnav .logo { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--color-foreground); }
+    .topnav nav { display: flex; gap: 1rem; font-size: 0.875rem; }
+    .topnav nav a { color: var(--color-muted); }
+    .topnav nav a:hover { color: var(--color-foreground); text-decoration: none; }
+    .topnav-right { display: flex; align-items: center; gap: 0.5rem; }
+
+    /* ============================================================
+       Breadcrumb
+       ============================================================ */
+    .crumbs {
+      padding: 0.75rem 0;
+      font-size: 0.8125rem; color: var(--color-muted);
+      display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;
+    }
+    .crumbs a { color: var(--color-muted); }
+    .crumbs a:hover { color: var(--color-link); }
+    .crumbs .sep { opacity: 0.4; }
+    .crumbs .current { color: var(--color-foreground); font-weight: 600; }
+
+    /* ============================================================
+       Hero (editorial with live time)
+       ============================================================ */
+    .hero {
+      padding: 1.5rem 0 2rem;
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem;
+      align-items: end;
+    }
+    @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } }
+
+    .hero-left .pre-title {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    .hero-left h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 3.75rem);
+      line-height: 1.05;
+      margin-bottom: 0.75rem;
+    }
+    .hero-left h1 .name { color: var(--color-primary); }
+    .hero-left .lede {
+      font-size: 1.0625rem; line-height: 1.6; color: var(--color-foreground-soft);
+      max-width: 32rem;
+    }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: 1.25rem;
+      margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);
+    }
+    .hero-meta .item { display: flex; align-items: center; gap: 0.375rem; }
+
+    .hero-clock {
+      background: var(--color-bg-soft);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      border: 1px solid var(--color-border-soft);
+    }
+    .clock-row { display: flex; align-items: baseline; gap: 0.5rem; }
+    .clock-time {
+      font-family: var(--font-mono);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700; line-height: 1; letter-spacing: -0.025em;
+      color: var(--color-foreground);
+    }
+    .clock-time .ampm { font-size: 0.35em; opacity: 0.55; font-weight: 500; margin-left: 0.4em; }
+    .clock-time .ms { font-size: 0.4em; opacity: 0.4; font-weight: 500; }
+    .clock-date { font-size: 0.9375rem; color: var(--color-foreground-soft); margin-top: 0.5rem; }
+    .clock-tz {
+      display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .clock-tz .pill {
+      padding: 0.25rem 0.625rem; border-radius: 9999px;
+      background: var(--color-primary-soft); color: var(--color-primary);
+      font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600;
+    }
+    .clock-tz .meta { font-size: 0.8125rem; color: var(--color-muted); }
+    .clock-tz .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.3);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } }
+
+    /* ============================================================
+       Quick info pill bar (8 horizontal pills)
+       ============================================================ */
+    .pillbar {
+      padding: 0.5rem 0 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .pillbar-row {
+      display: flex; gap: 0.5rem; min-width: min-content;
+    }
+    .pillbar .pill {
+      flex-shrink: 0;
+      padding: 0.625rem 1rem;
+      border-radius: 9999px;
+      background: var(--color-bg-soft);
+      border: 1px solid var(--color-border-soft);
+      font-size: 0.875rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      white-space: nowrap;
+    }
+    .pillbar .pill .icon { font-size: 1rem; }
+    .pillbar .pill .value { font-weight: 700; color: var(--color-foreground); }
+    .pillbar .pill .label { color: var(--color-muted); font-size: 0.8125rem; }
+
+    /* ============================================================
+       Section header (consistent)
+       ============================================================ */
+    .section-head {
+      display: flex; align-items: end; justify-content: space-between;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.625rem;
+      border-bottom: 2px solid var(--color-foreground);
+    }
+    .section-head .num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem; font-weight: 700; color: var(--color-muted);
+      letter-spacing: 0.05em;
+    }
+    .section-head h2 {
+      margin: 0; padding: 0; border: none;
+      font-size: 1.25rem; font-weight: 800;
+    }
+    .section-head .more {
+      font-size: 0.8125rem; color: var(--color-link);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       TAD-style color-coded info blocks (no card aesthetic)
+       ============================================================ */
+    .info-blocks {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 0.5rem;
+    }
+    @media (max-width: 1000px) { .info-blocks { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 600px) { .info-blocks { grid-template-columns: repeat(2, 1fr); } }
+    .info-block {
+      padding: 1.25rem 0.875rem;
+      text-align: center;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      min-height: 140px;
+    }
+    .info-block .icon { font-size: 2rem; line-height: 1; }
+    .info-block .label {
+      font-size: 0.875rem; font-weight: 700; color: var(--blk-fg);
+    }
+    .info-block .value {
+      font-size: 0.75rem; color: var(--color-muted);
+      line-height: 1.4;
+    }
+    .info-block.time { background: var(--blk-time-bg); --blk-fg: var(--blk-time-fg); }
+    .info-block.zone { background: var(--blk-zone-bg); --blk-fg: var(--blk-zone-fg); }
+    .info-block.sun { background: var(--blk-sun-bg); --blk-fg: var(--blk-sun-fg); }
+    .info-block.moon { background: var(--blk-moon-bg); --blk-fg: var(--blk-moon-fg); }
+    .info-block.tide { background: var(--blk-tide-bg); --blk-fg: var(--blk-tide-fg); }
+    .info-block.weather { background: var(--blk-weather-bg); --blk-fg: var(--blk-weather-fg); }
+    .info-block.air { background: var(--blk-air-bg); --blk-fg: var(--blk-air-fg); }
+    .info-block.pop { background: var(--blk-pop-bg); --blk-fg: var(--blk-pop-fg); }
+    .info-block.dst { background: var(--blk-dst-bg); --blk-fg: var(--blk-dst-fg); }
+
+    /* ============================================================
+       Day arc visual
+       ============================================================ */
+    .arc-card {
+      padding: 1.5rem;
+      background: var(--color-bg-soft);
+      border-radius: 0.5rem;
+    }
+    .arc-visual { width: 100%; height: 160px; }
+    .arc-stats {
+      display: flex; justify-content: space-around; margin-top: 1rem;
+      text-align: center;
+    }
+    .arc-stats .stat { font-family: var(--font-mono); font-weight: 700; }
+    .arc-stats .label { font-size: 0.75rem; color: var(--color-muted); }
+
+    /* ============================================================
+       Stats inline (Tampa in numbers)
+       ============================================================ */
+    .stats-inline {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 1rem; padding: 1rem 0;
+    }
+    @media (max-width: 800px) { .stats-inline { grid-template-columns: repeat(3, 1fr); } }
+    .stat-cell { text-align: center; }
+    .stat-cell .value {
+      font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700;
+      color: var(--color-foreground);
+    }
+    .stat-cell .label {
+      font-size: 0.75rem; color: var(--color-muted);
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+
+    /* ============================================================
+       Time difference (6 cities side-by-side)
+       ============================================================ */
+    .diff-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .diff-table th, .diff-table td {
+      padding: 0.625rem 0.75rem; text-align: left;
+      border-bottom: 1px solid var(--color-border-soft);
+      font-size: 0.9375rem;
+    }
+    .diff-table th {
+      font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--color-muted); font-weight: 600;
+    }
+    .diff-table .city { font-weight: 600; }
+    .diff-table .time { font-family: var(--font-mono); }
+    .diff-table .diff { font-family: var(--font-mono); color: var(--color-primary); font-weight: 600; text-align: right; }
+
+    /* ============================================================
+       Ad slot
+       ============================================================ */
+    .ad-slot {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: var(--color-bg-soft);
+      border: 1px dashed var(--color-border);
+      border-radius: 0.5rem;
+      text-align: center;
+      color: var(--color-muted-soft);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .ad-slot .ad-label {
+      display: block; margin-bottom: 0.5rem;
+      color: var(--color-muted-soft);
+    }
+    .ad-slot .ad-content {
+      min-height: 100px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ad-slot .placeholder {
+      color: var(--color-muted); font-size: 0.875rem;
+    }
+
+    /* ============================================================
+       Day-in-the-life timeline (from C)
+       ============================================================ */
+    .timeline {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem 1rem;
+      padding: 1rem 0;
+    }
+    .timeline .t-time {
+      font-family: var(--font-mono);
+      font-size: 0.875rem; font-weight: 700; color: var(--color-primary);
+      padding: 0.5rem 0.75rem;
+      background: var(--color-primary-soft);
+      border-radius: 0.5rem;
+      text-align: center;
+      min-width: 5rem;
+    }
+    .timeline .t-content h3 {
+      font-family: var(--font-serif);
+      font-size: 1.0625rem; font-weight: 700; margin: 0 0 0.25rem;
+    }
+    .timeline .t-content p { font-size: 0.9375rem; }
+
+    /* ============================================================
+       Weather forecast
+       ============================================================ */
+    .weather-row {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;
+    }
+    @media (max-width: 800px) { .weather-row { grid-template-columns: repeat(4, 1fr); } }
+    .weather-day {
+      padding: 1rem 0.5rem;
+      text-align: center;
+      background: var(--color-bg-soft);
+      border-radius: 0.5rem;
+    }
+    .weather-day .day { font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .weather-day .icon { font-size: 1.875rem; line-height: 1; margin: 0.375rem 0; }
+    .weather-day .hi { font-family: var(--font-mono); font-weight: 700; color: var(--color-foreground); }
+    .weather-day .lo { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-muted); }
+
+    /* ============================================================
+       People section (editorial, from Template C)
+       ============================================================ */
+    .people-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+    }
+    @media (max-width: 900px) { .people-grid { grid-template-columns: repeat(2, 1fr); } }
+    .person {
+      text-align: center;
+    }
+    .person .photo {
+      aspect-ratio: 3 / 4;
+      border-radius: 0.5rem; overflow: hidden;
+      background: var(--color-bg-soft);
+      margin-bottom: 0.75rem;
+    }
+    .person .photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.1); }
+    .person .name { font-family: var(--font-serif); font-size: 1.0625rem; font-weight: 700; }
+    .person .years { font-size: 0.8125rem; color: var(--color-muted); margin-top: 0.25rem; }
+    .person .bio { font-size: 0.8125rem; color: var(--color-foreground-soft); margin-top: 0.5rem; line-height: 1.5; }
+
+    /* ============================================================
+       Lists (OTD, holidays, airports, etc.)
+       ============================================================ */
+    .data-list { padding: 0.5rem 0; }
+    .data-row {
+      display: grid;
+      grid-template-columns: 6rem 1fr auto;
+      gap: 1rem; align-items: center;
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--color-border-soft);
+    }
+    .data-row:last-child { border-bottom: none; }
+    .data-row .date {
+      font-family: var(--font-mono); font-size: 0.8125rem;
+      color: var(--color-muted);
+    }
+    .data-row .name { font-weight: 600; }
+    .data-row .meta { font-size: 0.8125rem; color: var(--color-muted); margin-top: 0.125rem; }
+    .data-row .when {
+      font-family: var(--font-mono); font-size: 0.8125rem;
+      color: var(--color-primary); font-weight: 600;
+    }
+
+    /* ============================================================
+       Climate chart
+       ============================================================ */
+    .climate-bars {
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px;
+      height: 120px; align-items: end;
+      padding: 0 0 1.5rem 0;
+    }
+    .climate-bar {
+      background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-accent) 100%);
+      border-radius: 3px 3px 0 0;
+      position: relative;
+      opacity: 0.85;
+    }
+    .climate-bar .month {
+      position: absolute; bottom: -1.125rem; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6875rem; color: var(--color-muted);
+    }
+
+    /* ============================================================
+       Nearby cities
+       ============================================================ */
+    .nearby-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;
+    }
+    @media (max-width: 700px) { .nearby-grid { grid-template-columns: repeat(2, 1fr); } }
+    .nearby-card {
+      padding: 0.875rem;
+      background: var(--color-bg-soft);
+      border-radius: 0.5rem;
+      display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    .nearby-card .name { font-weight: 600; color: var(--color-foreground); }
+    .nearby-card .meta { font-size: 0.8125rem; color: var(--color-muted); }
+    .nearby-card .time { font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-primary); }
+
+    /* ============================================================
+       Tools grid
+       ============================================================ */
+    .tools-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
+    }
+    @media (max-width: 700px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } }
+    .tool-link {
+      padding: 1rem;
+      background: var(--color-bg-soft);
+      border-radius: 0.5rem;
+      text-align: center;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-foreground);
+    }
+    .tool-link:hover { background: var(--color-primary-soft); text-decoration: none; }
+    .tool-link .icon { font-size: 1.5rem; display: block; margin-bottom: 0.375rem; }
+
+    /* ============================================================
+       "Explore more" link grid
+       ============================================================ */
+    .explore-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem;
+    }
+    @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    .explore-link {
+      padding: 0.75rem;
+      border: 1px solid var(--color-border-soft);
+      border-radius: 0.5rem;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-foreground-soft);
+    }
+    .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
+    .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
+
+    /* ============================================================
+       Footer
+       ============================================================ */
+    footer {
+      margin-top: 4rem;
+      padding: 2.5rem 0 1.5rem;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-bg-soft);
+    }
+    .footer-cols {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 800px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
+    .footer-col h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); margin-bottom: 0.75rem; font-weight: 700; }
+    .footer-col a { display: block; padding: 0.2rem 0; font-size: 0.8125rem; color: var(--color-foreground-soft); }
+    .footer-col a:hover { color: var(--color-link); text-decoration: none; }
+    .footer-bottom { padding-top: 1.5rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.75rem; color: var(--color-muted); }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" aria-label="Toggle dark mode" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="theme-icon"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <!-- ===== Top nav ===== -->
+  <header class="topnav">
+    <a href="/" class="logo">⏱ dateandtime.live</a>
+    <nav>
+      <a href="/world-time/">World</a>
+      <a href="/world-time/usa/">USA</a>
+      <a href="/world-time/city/tampa/sunrise/">Sun & Moon</a>
+      <a href="/world-time/city/tampa/holidays/">Holidays</a>
+      <a href="/meeting/?with=tampa">Meeting</a>
+    </nav>
+    <div class="topnav-right">
+      <span class="pill" style="background: var(--color-primary-soft); color: var(--color-primary); font-size: 0.75rem; padding: 0.25rem 0.625rem; border-radius: 9999px;">🇺🇸 EN</span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ===== Breadcrumb ===== -->
+    <div class="crumbs">
+      <a href="/world-time/">World time</a>
+      <span class="sep">›</span>
+      <a href="/world-time/usa/">USA</a>
+      <span class="sep">›</span>
+      <a href="/world-time/usa/florida/">Florida</a>
+      <span class="sep">›</span>
+      <span class="current">Tampa</span>
+    </div>
+
+    <!-- ===== SECTION 1: Hero ===== -->
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pre-title">Current local time in</div>
+        <h1><span class="name">Tampa</span>, Florida</h1>
+        <p class="lede">A Gulf-coast city of half a million, where Cuban sandwiches, NFL football, and afternoon thunderstorms set the rhythm of every day.</p>
+        <div class="hero-meta">
+          <span class="item">📍 27.95°N · 82.46°W</span>
+          <span class="item">👥 414,547</span>
+          <span class="item">🌎 America/New_York</span>
+          <span class="item">📅 Tuesday, July 21, 2026</span>
+        </div>
+      </div>
+      <div class="hero-clock">
+        <div class="clock-row">
+          <span class="clock-time" id="clockTime">14:23:45<span class="ms">.45</span><span class="ampm">PM</span></span>
+        </div>
+        <div class="clock-date">Tuesday, July 21, 2026 · in 1h 36m it will be 3:00pm</div>
+        <div class="clock-tz">
+          <span class="live-dot"></span>
+          <span class="pill">EDT</span>
+          <span class="pill">UTC-04:00</span>
+          <span class="meta">DST active · ends in 102 days (Nov 1, 2026)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Quick info pill bar (8 horizontal pills) ===== -->
+    <section class="pillbar">
+      <div class="pillbar-row">
+        <span class="pill"><span class="icon">☀️</span><span class="value">87°F</span><span class="label">now</span></span>
+        <span class="pill"><span class="icon">🌅</span><span class="value">5:42am</span><span class="label">sunrise</span></span>
+        <span class="pill"><span class="icon">🌇</span><span class="value">8:23pm</span><span class="label">sunset</span></span>
+        <span class="pill"><span class="icon">🌙</span><span class="value">75%</span><span class="label">waxing</span></span>
+        <span class="pill"><span class="icon">💧</span><span class="value">64%</span><span class="label">humidity</span></span>
+        <span class="pill"><span class="icon">💨</span><span class="value">6 mph</span><span class="label">SE wind</span></span>
+        <span class="pill"><span class="icon">👁</span><span class="value">10 mi</span><span class="label">visibility</span></span>
+        <span class="pill"><span class="icon">📏</span><span class="value">14h 41m</span><span class="label">daylight</span></span>
+        <span class="pill"><span class="icon">🌡</span><span class="value">UV 9</span><span class="label">very high</span></span>
+        <span class="pill"><span class="icon">🌫</span><span class="value">30.02"</span><span class="label">pressure</span></span>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 2: TAD-style color-coded info blocks ===== -->
+    <div class="section-head">
+      <h2><span class="num">02</span> · Time, zone, and environment</h2>
+      <a class="more" href="/world-time/city/tampa/time/">All time details →</a>
+    </div>
+    <section class="info-blocks">
+      <div class="info-block time">
+        <div class="icon">🕐</div>
+        <div class="label">Current time</div>
+        <div class="value">2:23:45 PM<br>EDT · Tuesday</div>
+      </div>
+      <div class="info-block zone">
+        <div class="icon">🕒</div>
+        <div class="label">Time zone</div>
+        <div class="value">EDT (Eastern Daylight Time)<br>UTC/GMT -4 hours</div>
+      </div>
+      <div class="info-block dst">
+        <div class="icon">▶</div>
+        <div class="label">DST started</div>
+        <div class="value">Mar 8, 2026<br>Forward 1 hour</div>
+      </div>
+      <div class="info-block dst">
+        <div class="icon">⏸</div>
+        <div class="label">DST ends</div>
+        <div class="value">Nov 1, 2026<br>Back 1 hour</div>
+      </div>
+      <div class="info-block time">
+        <div class="icon">🌐</div>
+        <div class="label">Time in other cities</div>
+        <div class="value">New York: same<br>London: +5h · Tokyo: +13h</div>
+      </div>
+      <div class="info-block weather">
+        <div class="icon">⛅</div>
+        <div class="label">Weather</div>
+        <div class="value">87 °F · Passing clouds<br>Feels like 92° · 64% humidity</div>
+      </div>
+      <div class="info-block sun">
+        <div class="icon">🌅</div>
+        <div class="label">Sunrise</div>
+        <div class="value">5:42 am<br>↑ 86° East</div>
+      </div>
+      <div class="info-block sun">
+        <div class="icon">🌇</div>
+        <div class="label">Sunset</div>
+        <div class="value">8:23 pm<br>↓ 274° West</div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 3: Day arc ===== -->
+    <div class="section-head">
+      <h2><span class="num">03</span> · Sun and day length</h2>
+      <a class="more" href="/world-time/city/tampa/sunrise/">Sun details →</a>
+    </div>
+    <section class="arc-card">
+      <svg viewBox="0 0 400 160" class="arc-visual" preserveAspectRatio="xMidYMid meet">
+        <!-- Horizon line -->
+        <line x1="20" y1="140" x2="380" y2="140" stroke="var(--color-muted-soft)" stroke-width="0.5" />
+        <!-- Arc -->
+        <path d="M 30 140 Q 200 0 370 140" stroke="var(--color-muted)" stroke-width="1" fill="none" stroke-dasharray="3,3" />
+        <!-- Sun (current position ~62% through day) -->
+        <circle cx="280" cy="56" r="12" fill="var(--color-primary)" />
+        <!-- Twilight zones -->
+        <path d="M 20 140 A 50 50 0 0 1 65 95" fill="#dbeafe" opacity="0.5" />
+        <path d="M 335 95 A 50 50 0 0 1 380 140" fill="#dbeafe" opacity="0.5" />
+        <!-- Labels -->
+        <text x="30" y="156" font-size="9" fill="var(--color-muted)">5:42 am</text>
+        <text x="370" y="156" font-size="9" fill="var(--color-muted)" text-anchor="end">8:23 pm</text>
+        <text x="200" y="22" font-size="10" fill="var(--color-muted)" text-anchor="middle">Solar noon 1:32 pm · Day length 14h 41m</text>
+      </svg>
+      <div class="arc-stats">
+        <div><div class="stat">5:42 am</div><div class="label">Sunrise</div></div>
+        <div><div class="stat">1:32 pm</div><div class="label">Solar noon</div></div>
+        <div><div class="stat">8:23 pm</div><div class="label">Sunset</div></div>
+        <div><div class="stat">14h 41m</div><div class="label">Day length</div></div>
+        <div><div class="stat">+1m 40s</div><div class="label">vs yesterday</div></div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 4: Tampa in numbers ===== -->
+    <div class="section-head">
+      <h2><span class="num">04</span> · Tampa in numbers</h2>
+      <a class="more" href="/world-time/city/tampa/">More facts →</a>
+    </div>
+    <section class="stats-inline">
+      <div class="stat-cell"><div class="value">414,547</div><div class="label">Population</div></div>
+      <div class="stat-cell"><div class="value">175.4 mi²</div><div class="label">Area</div></div>
+      <div class="stat-cell"><div class="value">2,365/mi²</div><div class="label">Density</div></div>
+      <div class="stat-cell"><div class="value">15 ft</div><div class="label">Elevation</div></div>
+      <div class="stat-cell"><div class="value">#53</div><div class="label">US city rank</div></div>
+      <div class="stat-cell"><div class="value">57 °F</div><div class="label">Annual avg</div></div>
+    </section>
+
+    <!-- ===== SECTION 5: Time difference ===== -->
+    <div class="section-head">
+      <h2><span class="num">05</span> · Time difference from Tampa</h2>
+      <a class="more" href="/converter/?from=tampa">Converter →</a>
+    </div>
+    <table class="diff-table">
+      <thead>
+        <tr><th>City</th><th>Local time</th><th class="diff">Difference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="city">New York, USA</td><td class="time">2:23 PM EDT</td><td class="diff">same</td></tr>
+        <tr><td class="city">Los Angeles, USA</td><td class="time">11:23 AM PDT</td><td class="diff">−3h</td></tr>
+        <tr><td class="city">London, UK</td><td class="time">7:23 PM BST</td><td class="diff">+5h</td></tr>
+        <tr><td class="city">Paris, France</td><td class="time">8:23 PM CEST</td><td class="diff">+6h</td></tr>
+        <tr><td class="city">Tokyo, Japan</td><td class="time">3:24 AM JST</td><td class="diff">+13h</td></tr>
+        <tr><td class="city">Sydney, Australia</td><td class="time">4:24 AM AEST</td><td class="diff">+14h</td></tr>
+        <tr><td class="city">Dubai, UAE</td><td class="time">10:23 PM GST</td><td class="diff">+8h</td></tr>
+        <tr><td class="city">Mumbai, India</td><td class="time">11:53 PM IST</td><td class="diff">+9.5h</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ===== AD SLOT 1 ===== -->
+    <div class="ad-slot">
+      <span class="ad-label">Advertisement</span>
+      <div class="ad-content"><span class="placeholder">Ad slot — 728×90 leaderboard / responsive</span></div>
+    </div>
+
+    <!-- ===== SECTION 6: Day in the life ===== -->
+    <div class="section-head">
+      <h2><span class="num">06</span> · A Tuesday in Tampa, July 21, 2026</h2>
+    </div>
+    <section class="timeline">
+      <div class="t-time">05:42<br><span style="font-size: 0.625rem; color: var(--color-muted);">sunrise</span></div>
+      <div class="t-content"><h3>The day starts with a run along Bayshore</h3><p>Sun crests the bay at 5:42am, 86° E. Runners log their 4th mile under pink-and-orange skies. Temperature: 76°F, humidity 89%.</p></div>
+
+      <div class="t-time">07:30</div>
+      <div class="t-content"><h3>Cafecito at the window</h3><p>The first cafecito — a shot of espresso cut with raw sugar — is a Tampa birthright. 4,200 cafes serve it by 9am.</p></div>
+
+      <div class="t-time">12:34</div>
+      <div class="t-content"><h3>Cuban sandwich at the Columbia</h3><p>Sliced ham, slow-roasted pork, Swiss, pickles, mustard, salami on pressed Cuban bread. Tampa's "official" sandwich since 1905.</p></div>
+
+      <div class="t-time">17:30</div>
+      <div class="t-content"><h3>Afternoon thunder</h3><p>July is Tampa's rainiest month. Today's 70% chance of thunderstorms kicks in at 17:30, peaks at 19:00, clears by 21:00.</p></div>
+
+      <div class="t-time">20:23<br><span style="font-size: 0.625rem; color: var(--color-muted);">sunset</span></div>
+      <div class="t-content"><h3>Sunset over Tampa Bay</h3><p>14h 41m after the sunrise, the sun sets 274° W. The bay turns the colour of a Florida orange. The pier clinks with beer bottles. The night begins.</p></div>
+    </section>
+
+    <!-- ===== SECTION 7: 7-day weather ===== -->
+    <div class="section-head">
+      <h2><span class="num">07</span> · 7-day weather forecast</h2>
+      <a class="more" href="/world-time/city/tampa/weather/">Full forecast →</a>
+    </div>
+    <section class="weather-row">
+      <div class="weather-day"><div class="day">Tue</div><div class="icon">🌤</div><div class="hi">87°</div><div class="lo">75°</div></div>
+      <div class="weather-day"><div class="day">Wed</div><div class="icon">⛈</div><div class="hi">89°</div><div class="lo">76°</div></div>
+      <div class="weather-day"><div class="day">Thu</div><div class="icon">⛈</div><div class="hi">88°</div><div class="lo">75°</div></div>
+      <div class="weather-day"><div class="day">Fri</div><div class="icon">🌤</div><div class="hi">91°</div><div class="lo">77°</div></div>
+      <div class="weather-day"><div class="day">Sat</div><div class="icon">☀️</div><div class="hi">93°</div><div class="lo">78°</div></div>
+      <div class="weather-day"><div class="day">Sun</div><div class="icon">🌤</div><div class="hi">92°</div><div class="lo">77°</div></div>
+      <div class="weather-day"><div class="day">Mon</div><div class="icon">⛈</div><div class="hi">89°</div><div class="lo">76°</div></div>
+    </section>
+
+    <!-- ===== SECTION 8: People Tampa gave the world (editorial, from C) ===== -->
+    <div class="section-head">
+      <h2><span class="num">08</span> · People Tampa gave the world</h2>
+      <a class="more" href="/world-time/city/tampa/people/">See all 8 →</a>
+    </div>
+    <section class="people-grid">
+      <a href="/person/ernest-hemingway/" class="person">
+        <div class="photo"><img src="https://images.unsplash.com/photo-1531251445707-1f000e1e87d0?w=400&q=80" alt="Ernest Hemingway" /></div>
+        <div class="name">Ernest Hemingway</div>
+        <div class="years">1899 — 1961</div>
+        <div class="bio">Spent 1930s fishing the Gulf Stream. <em>To Have and Have Not</em> partly set in Tampa.</div>
+      </a>
+      <a href="/person/stephen-carlton/" class="person">
+        <div class="photo"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" alt="Stephen Carlton" /></div>
+        <div class="name">Stephen Carlton</div>
+        <div class="years">b. 1976</div>
+        <div class="bio">Baseball pitcher. Tampa-born, Tampa-raised. All-Star 2010.</div>
+      </a>
+      <a href="/person/jillian-michaels/" class="person">
+        <div class="photo"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" alt="Jillian Michaels" /></div>
+        <div class="name">Jillian Michaels</div>
+        <div class="years">b. 1974</div>
+        <div class="bio">Fitness trainer, author. <em>Losing It</em> made her a household name.</div>
+      </a>
+      <a href="/person/robert-tarjan/" class="person">
+        <div class="photo"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80" alt="Robert Tarjan" /></div>
+        <div class="name">Robert Tarjan</div>
+        <div class="years">b. 1948</div>
+        <div class="bio">Computer scientist. Co-invented splay trees. Turing Award, 1986.</div>
+      </a>
+    </section>
+
+    <!-- ===== SECTION 9: On this day ===== -->
+    <div class="section-head">
+      <h2><span class="num">09</span> · On this day (July 22)</h2>
+      <a class="more" href="/onthisday/by-date/7-22/">All events →</a>
+    </div>
+    <section class="data-list">
+      <div class="data-row">
+        <div class="date">1933</div>
+        <div><div class="name">Wiley Post flies solo around the world</div><div class="meta">First solo flight around the world completed · US</div></div>
+        <div class="when">Event</div>
+      </div>
+      <div class="data-row">
+        <div class="date">1963</div>
+        <div><div class="name">The Beatles play their last live concert (in San Francisco)</div><div class="meta">Their last paid live concert before going to the studio · US</div></div>
+        <div class="when">Music</div>
+      </div>
+      <div class="data-row">
+        <div class="date">1882</div>
+        <div><div class="name">Death of President Garfield</div><div class="meta">20th President of the United States, died after being shot · US</div></div>
+        <div class="when">Death</div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 10: Holidays 2026 ===== -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Upcoming US holidays</h2>
+      <a class="more" href="/world-time/city/tampa/holidays/">All 2026 →</a>
+    </div>
+    <section class="data-list">
+      <div class="data-row"><div class="date">Sep 7</div><div><div class="name">Labour Day</div><div class="meta">Federal public holiday · 1st Monday of September</div></div><div class="when">47 days</div></div>
+      <div class="data-row"><div class="date">Oct 12</div><div><div class="name">Columbus Day</div><div class="meta">Federal holiday · 2nd Monday of October</div></div><div class="when">82 days</div></div>
+      <div class="data-row"><div class="date">Oct 12</div><div><div class="name">Indigenous Peoples' Day</div><div class="meta">Observance · recognized by 14 states</div></div><div class="when">82 days</div></div>
+      <div class="data-row"><div class="date">Nov 11</div><div><div class="name">Veterans Day</div><div class="meta">Federal holiday · honors military veterans</div></div><div class="when">112 days</div></div>
+      <div class="data-row"><div class="date">Nov 26</div><div><div class="name">Thanksgiving Day</div><div class="meta">Federal holiday · 4th Thursday of November</div></div><div class="when">127 days</div></div>
+      <div class="data-row"><div class="date">Dec 25</div><div><div class="name">Christmas Day</div><div class="meta">Federal holiday · Christian celebration</div></div><div class="when">156 days</div></div>
+    </section>
+
+    <!-- ===== AD SLOT 2 ===== -->
+    <div class="ad-slot">
+      <span class="ad-label">Advertisement</span>
+      <div class="ad-content"><span class="placeholder">Ad slot — 728×90 leaderboard / responsive</span></div>
+    </div>
+
+    <!-- ===== SECTION 11: Climate year-round ===== -->
+    <div class="section-head">
+      <h2><span class="num">11</span> · Year-round climate</h2>
+      <a class="more" href="/world-time/city/tampa/climate/">Full climate →</a>
+    </div>
+    <section>
+      <div class="climate-bars">
+        <div class="climate-bar" style="height: 60%;"><div class="month">J</div></div>
+        <div class="climate-bar" style="height: 65%;"><div class="month">F</div></div>
+        <div class="climate-bar" style="height: 70%;"><div class="month">M</div></div>
+        <div class="climate-bar" style="height: 78%;"><div class="month">A</div></div>
+        <div class="climate-bar" style="height: 88%;"><div class="month">M</div></div>
+        <div class="climate-bar" style="height: 92%;"><div class="month">J</div></div>
+        <div class="climate-bar" style="height: 95%;"><div class="month">J</div></div>
+        <div class="climate-bar" style="height: 94%;"><div class="month">A</div></div>
+        <div class="climate-bar" style="height: 90%;"><div class="month">S</div></div>
+        <div class="climate-bar" style="height: 82%;"><div class="month">O</div></div>
+        <div class="climate-bar" style="height: 72%;"><div class="month">N</div></div>
+        <div class="climate-bar" style="height: 63%;"><div class="month">D</div></div>
+      </div>
+      <p style="margin-top: 2rem; font-size: 0.875rem;">Avg high: 89°F · Avg low: 50°F · 50" rain/year · no snow. Hottest: July (95°F avg high) · Coldest: January (60°F avg high).</p>
+    </section>
+
+    <!-- ===== SECTION 12: Tampa in context (geography + fun) ===== -->
+    <div class="section-head">
+      <h2><span class="num">12</span> · Tampa in context</h2>
+    </div>
+    <section>
+      <p>Tampa sits on the western shore of <a href="/world-time/city/tampa/">Tampa Bay</a>, a large natural harbor opening to the Gulf of Mexico. It's the third-largest city in Florida after Jacksonville and Miami, and the largest city on the Gulf Coast of Florida. The Tampa Bay metropolitan area is home to over 3.2 million people across Hillsborough, Pinellas, Pasco, and Hernando counties.</p>
+      <p style="margin-top: 0.75rem;">Founded as a military fort in 1824, Tampa grew wealthy on cigars and cattle before reinventing itself as a tech and finance hub. The city's Cuban-influenced Ybor City neighborhood was once called "the Cigar Capital of the World". Today, Tampa is home to the NFL's Buccaneers, MLB's Rays, and NHL's Lightning, all playing within a few miles of each other in the downtown waterfront district.</p>
+    </section>
+
+    <!-- ===== SECTION 13: Famous for ===== -->
+    <div class="section-head">
+      <h2><span class="num">13</span> · Tampa is famous for</h2>
+    </div>
+    <section>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0;">
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🏟️ Buccaneers (NFL)</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">⚾ Rays (MLB)</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🏒 Lightning (NHL)</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🌴 Cuban sandwich</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🎢 Busch Gardens</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🏛️ Ybor City</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🌊 Tampa Bay</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">☕ Cuban coffee</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🎭 Gasparilla</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🏖️ St. Pete Beach</span>
+        <span class="pill" style="background: var(--color-bg-soft); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem;">🦈 Florida aquarium</span>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 14: Nearby cities ===== -->
+    <div class="section-head">
+      <h2><span class="num">14</span> · Cities near Tampa</h2>
+      <a class="more" href="/world-time/usa/florida/">All Florida cities →</a>
+    </div>
+    <section class="nearby-grid">
+      <a href="/world-time/city/st-petersburg-fl/" class="nearby-card"><div class="name">St. Petersburg, FL</div><div class="meta">30 km W · same tz</div><div class="time">2:23 PM EDT</div></a>
+      <a href="/world-time/city/clearwater-fl/" class="nearby-card"><div class="name">Clearwater, FL</div><div class="meta">32 km W · same tz</div><div class="time">2:23 PM EDT</div></a>
+      <a href="/world-time/city/lakeland-fl/" class="nearby-card"><div class="name">Lakeland, FL</div><div class="meta">51 km E · same tz</div><div class="time">2:23 PM EDT</div></a>
+      <a href="/world-time/city/bradenton-fl/" class="nearby-card"><div class="name">Bradenton, FL</div><div class="meta">54 km S · same tz</div><div class="time">2:23 PM EDT</div></a>
+      <a href="/world-time/city/orlando/" class="nearby-card"><div class="name">Orlando, FL</div><div class="meta">134 km NE · same tz</div><div class="time">2:23 PM EDT</div></a>
+      <a href="/world-time/city/sarasota-fl/" class="nearby-card"><div class="name">Sarasota, FL</div><div class="meta">70 km S · same tz</div><div class="time">2:23 PM EDT</div></a>
+    </section>
+
+    <!-- ===== SECTION 15: Travel & airports ===== -->
+    <div class="section-head">
+      <h2><span class="num">15</span> · Airports near Tampa</h2>
+      <a class="more" href="/world-time/city/tampa/airports/">All airports →</a>
+    </div>
+    <section class="data-list">
+      <div class="data-row">
+        <div class="date">5 mi W</div>
+        <div><div class="name">TPA · Tampa International Airport</div><div class="meta">Large airport · IATA: TPA · ICAO: KTPA</div></div>
+        <div class="when">Domestic + Intl</div>
+      </div>
+      <div class="data-row">
+        <div class="date">39 mi S</div>
+        <div><div class="name">SRQ · Sarasota-Bradenton International</div><div class="meta">Medium airport · IATA: SRQ · ICAO: KSRQ</div></div>
+        <div class="when">Domestic</div>
+      </div>
+      <div class="data-row">
+        <div class="date">78 mi ENE</div>
+        <div><div class="name">MCO · Orlando International</div><div class="meta">Large airport · IATA: MCO · ICAO: KMCO</div></div>
+        <div class="when">Domestic + Intl</div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 16: Tools ===== -->
+    <div class="section-head">
+      <h2><span class="num">16</span> · Tools for Tampa</h2>
+    </div>
+    <section class="tools-grid">
+      <a href="/meeting/?with=tampa" class="tool-link"><span class="icon">📅</span>Meeting planner</a>
+      <a href="/converter/?from=tampa" class="tool-link"><span class="icon">🔄</span>Time converter</a>
+      <a href="/distance/?from=tampa" class="tool-link"><span class="icon">📏</span>Distance</a>
+      <a href="/event-time/?at=tampa" class="tool-link"><span class="icon">⏰</span>Event time</a>
+    </section>
+
+    <!-- ===== SECTION 17: More to explore ===== -->
+    <div class="section-head">
+      <h2><span class="num">17</span> · More to explore</h2>
+    </div>
+    <section class="explore-grid">
+      <a href="/world-time/usa/" class="explore-link"><span class="label">🇺🇸 USA</span>All 5,000+ US cities</a>
+      <a href="/world-time/usa/florida/" class="explore-link"><span class="label">🌴 Florida</span>All FL cities</a>
+      <a href="/time-zones/zone/america-new-york/" class="explore-link"><span class="label">🕒 Eastern</span>America/New_York tz</a>
+      <a href="/world-time/city/tampa/sunrise/" class="explore-link"><span class="label">☀️ Sunrise</span>Sun & Moon</a>
+      <a href="/world-time/city/tampa/holidays/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
+    </section>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+      <div class="footer-cols">
+        <div>
+          <div class="logo" style="margin-bottom: 0.5rem;">⏱ dateandtime.live</div>
+          <p style="font-size: 0.875rem; color: var(--color-muted);">Live time, time zone, weather, and calendar for every city on Earth. 33,945 cities, 408 time zones, 242 countries.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tampa</h4>
+          <a href="/world-time/city/tampa/sunrise/">Sun & Moon</a>
+          <a href="/world-time/city/tampa/holidays/">Holidays</a>
+          <a href="/world-time/city/tampa/people/">People</a>
+          <a href="/world-time/city/tampa/weather/">Weather</a>
+          <a href="/world-time/city/tampa/climate/">Climate</a>
+        </div>
+        <div class="footer-col">
+          <h4>USA</h4>
+          <a href="/world-time/usa/">All US cities</a>
+          <a href="/world-time/usa/florida/">Florida cities</a>
+          <a href="/holidays/us/">US holidays</a>
+          <a href="/time-zones/zone/america-new-york/">Eastern tz</a>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <a href="/meeting/?with=tampa">Meeting planner</a>
+          <a href="/converter/?from=tampa">Time converter</a>
+          <a href="/distance/?from=tampa">Distance</a>
+          <a href="/event-time/?at=tampa">Event time</a>
+        </div>
+        <div class="footer-col">
+          <h4>Top cities</h4>
+          <a href="/world-time/city/new-york/">New York</a>
+          <a href="/world-time/city/los-angeles/">Los Angeles</a>
+          <a href="/world-time/city/london/">London</a>
+          <a href="/world-time/city/tokyo/">Tokyo</a>
+          <a href="/world-time/city/sydney/">Sydney</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Date and Time · Tampa, Florida</span>
+        <span>Wikipedia-derived content licensed CC BY-SA 4.0</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Live clock
+    function updateClock() {
+      const el = document.getElementById('clockTime');
+      if (!el) return;
+      const d = new Date();
+      const use24 = localStorage.getItem('tdp-fmt') === '24';
+      let h = d.getHours();
+      const m = String(d.getMinutes()).padStart(2, '0');
+      const s = String(d.getSeconds()).padStart(2, '0');
+      const ms = String(Math.floor(d.getMilliseconds() / 10)).padStart(2, '0');
+      if (use24) {
+        el.innerHTML = `${String(h).padStart(2,'0')}:${m}:${s}<span class="ms">.${ms}</span>`;
+      } else {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+        el.innerHTML = `${h12}:${m}:${s}<span class="ms">.${ms}</span><span class="ampm">${ampm}</span>`;
+      }
+      requestAnimationFrame(updateClock);
+    }
+    updateClock();
+
+    // Theme icon
+    function updateThemeIcon() {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      const icon = document.getElementById('theme-icon');
+      icon.innerHTML = isDark
+        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+        : '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>';
+    }
+    updateThemeIcon();
+    document.querySelector('.theme-toggle').addEventListener('click', () => setTimeout(updateThemeIcon, 50));
+  </script>
+</body>
+</html>

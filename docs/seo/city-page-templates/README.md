@@ -1,10 +1,11 @@
 # City Page Templates — 2030 Design
 
-> Last updated: 2026-07-21
-> 3 design directions for `/world-time/city/{slug}/`
+> Last updated: 2026-07-22
+> 4 design directions for `/world-time/city/{slug}/`
+> **Template D (Data Hub) is the recommended default** — TAD-inspired data density without the card aesthetic.
 
-These are 3 distinct design systems for the city page. Each has its own
-personality, use case, and design language. All 3 share:
+These are 4 distinct design systems for the city page. Each has its own
+personality, use case, and design language. All 4 share:
 - Light + dark mode (CSS variables, auto-switching)
 - Live time updates (client-side, 60fps)
 - 12h/24h format toggle (localStorage)
@@ -15,7 +16,60 @@ personality, use case, and design language. All 3 share:
 
 ---
 
-## The 3 templates
+## The 4 templates
+
+### Template D: Data Hub ⭐ RECOMMENDED
+
+**File:** `D-data-hub.html`
+
+**Personality:** TAD-inspired functional density, 2030 design language, **no card aesthetic**. Color-coded info blocks (warm pastels), inline pills, linear section flow.
+
+**Layout:**
+- Top: nav + theme toggle
+- Hero: 2-col — left editorial headline + meta, right live clock card
+- Quick info pill bar (10 horizontal pills, scrollable)
+- Section 02: **8 TAD-style color-coded info blocks** (Current time, Time zone, DST started, DST ends, Other cities, Weather, Sunrise, Sunset)
+- Section 03: Sun arc visualization + 5 stat row (sunrise, solar noon, sunset, day length, vs yesterday)
+- Section 04: "Tampa in numbers" (6 stat cells inline: pop, area, density, elevation, rank, annual avg)
+- Section 05: Time difference table (8 cities)
+- **[Ad slot 1 — 728×90 leaderboard]**
+- Section 06: "A Tuesday in Tampa" timeline (5 events: sunrise, coffee, lunch, storm, sunset)
+- Section 07: 7-day weather forecast
+- Section 08: "People Tampa gave the world" (4 editorial portraits, from Template C)
+- Section 09: On this day (3 events)
+- Section 10: Upcoming US holidays (6 events)
+- **[Ad slot 2 — 728×90 leaderboard]**
+- Section 11: Year-round climate (12 bar chart)
+- Section 12: "Tampa in context" (long-form paragraph)
+- Section 13: "Tampa is famous for" (11 pill tags)
+- Section 14: Cities near Tampa (6 nearby)
+- Section 15: Airports near Tampa (3 rows)
+- Section 16: Tools grid (4 tools)
+- Section 17: "More to explore" link grid (5 sub-pages)
+- Footer: 5-col link grid + legal
+
+**Best for:** Information lookup, SEO density, ad revenue, users who came to GET DATA.
+
+**Design tokens:**
+- Warm rust primary (`#c44536`)
+- Color-coded tints (no card backgrounds): time (coral), zone (amber), sun (yellow), moon (lavender), tide (aqua), weather (sky), air (mint), pop (rose), DST (gold)
+- Inter sans + Source Serif 4 + JetBrains Mono
+- 1280px max-width, no card aesthetic
+
+**Distinct features:**
+- 17 SEO sections (each with its own H2)
+- 2 ad slots (728×90 leaderboards, natural break points)
+- TAD-style color-coded info blocks (the proven pattern for time data)
+- No card aesthetic — uses rows, lists, inline blocks, grids
+- 10 horizontal quick-info pills (scrollable, mobile-friendly)
+- Light + dark via CSS variables with warm rust accents
+- Reuses the editorial People grid from Template C
+- Reuses the day-in-the-life timeline from Template C
+- 12-month climate bar chart (custom CSS, not a chart library)
+
+---
+
+## The 4 templates
 
 ### Template A: Editorial Bento
 
@@ -128,24 +182,25 @@ personality, use case, and design language. All 3 share:
 
 ## Comparison matrix
 
-| Feature | A: Bento | B: Dashboard | C: Story |
-|---|---|---|---|
-| **Tone** | Modern editorial | Command center | Magazine feature |
-| **Layout** | Bento grid | 12-col dashboard | Long-form article |
-| **Hero** | Split photo + clock | Gradient panel with thumb | Full-bleed photo |
-| **Density** | Medium | High | Low (storytelling) |
-| **Best for** | Discovery | Planning | Reading |
-| **Colors** | Warm pastels | Indigo on white | Cream + warm earth |
-| **Typography** | Inter + serif + mono | Inter + mono | Inter + serif (heavy) + mono |
-| **Time display** | "14:23:45" (HH:MM:SS) | "14:23:45.45" (with ms) | "14:23:45" (HH:MM:SS) |
-| **Charts** | Sun arc (SVG) | 24h temp + 12-month climate | Timeline (text) |
-| **Comparison** | Distance from user | 6 cities side-by-side | None (in lead text) |
-| **Photo** | 1 (hero) | 1 (city thumb) | 2 (hero + Ybor City) |
-| **People** | 3 cards | 5 rows | 4 portraits |
-| **Holidays** | 5 rows | 6 rows | Mentioned in timeline |
-| **Interactivity** | Geolocation, time | Tab bar, hover, live bar chart | Smooth scroll |
-| **JSON-LD ready** | ✅ | ✅ | ✅ |
-| **Light + dark** | ✅ | ✅ | ✅ |
+| Feature | A: Bento | B: Dashboard | C: Story | D: Data Hub ⭐ |
+|---|---|---|---|---|
+| **Tone** | Modern editorial | Command center | Magazine feature | Functional/clear (TAD) |
+| **Layout** | Bento grid | 12-col dashboard | Long-form article | Linear sections (TAD) |
+| **Hero** | Split photo + clock | Gradient panel with thumb | Full-bleed photo | Editorial 2-col |
+| **Card style** | Yes (bento) | Yes (panels) | No (article) | **No (inline blocks)** |
+| **Density** | Medium | High | Low | High (TAD-density) |
+| **Best for** | Discovery | Planning | Reading | Information lookup |
+| **Colors** | Warm pastels | Indigo on white | Cream + warm earth | Color-coded tints |
+| **Typography** | Inter + serif + mono | Inter + mono | Inter + serif (heavy) + mono | Inter + serif + mono |
+| **Time display** | "14:23:45" (HH:MM:SS) | "14:23:45.45" (with ms) | "14:23:45" (HH:MM:SS) | "14:23:45.45 PM" (with ms + ampm) |
+| **Charts** | Sun arc (SVG) | 24h temp + 12-month climate | Timeline (text) | Sun arc + 12-mo climate |
+| **People** | 3 cards | 5 rows | 4 portraits | 4 editorial portraits |
+| **Holidays** | 5 rows | 6 rows | Mentioned in timeline | 6 rows (full list) |
+| **Ad slots** | 1 | 0 | 0 | **2** |
+| **SEO sections** | ~12 | ~10 | ~7 | **17** |
+| **JSON-LD ready** | ✅ | ✅ | ✅ | ✅ |
+| **Light + dark** | ✅ | ✅ | ✅ | ✅ |
+| **File size** | 26 KB | 26 KB | 23 KB | 54 KB |
 
 ---
 
@@ -169,11 +224,19 @@ Every template links to the same internal entities:
 
 ## How to pick
 
+**Use Template D (Data Hub)** ⭐ if:
+- You want timeanddate.com density without the 2003 feel
+- Your users come to LOOK UP DATA, not read a story
+- You want maximum SEO + ad density
+- You want a design that follows your existing design system (no card aesthetic)
+- Light + dark mode is required
+
 **Use Template A (Bento)** if:
 - Most users will browse once and leave
 - You want to maximize "discover" of sub-pages
 - Your audience is general public
 - You want a balance of dense + beautiful
+- Card aesthetic fits your brand
 
 **Use Template B (Dashboard)** if:
 - Most users are power users (planners, remote teams)
@@ -192,11 +255,12 @@ Every template links to the same internal entities:
 
 ## Recommended rollout
 
-1. **Ship A (Bento) first** — best balance, fastest to render, most accessible
-2. **A/B test B (Dashboard) on returning users** — power users might prefer
-3. **C (Story) for top 100 cities only** — long-form is hard to scale, but it's the SEO moat for category-killer pages
+1. **Ship D (Data Hub) as the default** — best for SEO + ads + data lookup
+2. **A (Bento) for A/B testing** on top 1,000 cities — see if users prefer bento over linear
+3. **B (Dashboard) for power-user landing** (tool-heavy users returning often)
+4. **C (Story) for top 100 cities only** — long-form SEO moat where Wikipedia-style content matters most
 
-All 3 share the same `index.html` host and the same JSON-LD structure.
+All 4 share the same `index.html` host and the same JSON-LD structure.
 
 ---
 
