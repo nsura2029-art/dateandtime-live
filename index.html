@@ -470,8 +470,11 @@
     .format-toggle button { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.85rem; border-radius: 9999px; font-family: ui-monospace, monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-muted); transition: all 200ms ease; }
     .format-toggle button[aria-pressed="true"] { background: var(--color-button-primary); color: white; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent); }
 
-    .day-date { display: inline-flex; align-items: center; gap: 0.4rem; font-size: clamp(0.85rem, 1.3vw, 0.95rem); font-weight: 700; margin: 0.5rem 0 0.25rem; }
+    .day-date { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.85rem, 1.3vw, 0.95rem); font-weight: 700; margin: 0.5rem 0 0.25rem; }
     .day-date-icon { width: 0.95rem; height: 0.95rem; color: var(--color-primary); flex-shrink: 0; }
+    .day-date-divider { display: inline-block; width: 1px; height: 1rem; background: var(--color-border); margin: 0 0.25rem; opacity: 0.6; }
+    .format-toggle--inline { margin: 0; padding: 0.15rem; }
+    .format-toggle--inline button { padding: 0.25rem 0.65rem; font-size: 0.625rem; }
     .timezone { font-size: clamp(0.75rem, 1.1vw, 0.85rem); color: var(--color-muted); margin: 0 0 0.5rem; }
     .timezone strong { color: var(--color-foreground); font-weight: 700; font-family: ui-monospace, monospace; }
     .sync-row { display: inline-flex; align-items: center; gap: 0.5rem; font-size: clamp(0.8125rem, 1.2vw, 0.9rem); color: var(--color-foreground); margin: 0 0 1rem; }
@@ -844,6 +847,11 @@
         <div class="day-date">
           <svg class="day-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           <span id="day-date-text" class="day-date-text">—</span>
+          <span class="day-date-divider" aria-hidden="true"></span>
+          <div class="format-toggle format-toggle--inline" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
+            <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
+            <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
+          </div>
         </div>
         <div class="timezone"><span id="tz-abbr">—</span> · Coordinated Universal Time Offset: <strong id="tz-offset">UTC</strong></div>
 
@@ -868,11 +876,7 @@
         </div>
 
         <div class="clock-block">
-          <div class="mono-clock" id="monoClock" aria-label="Live current time" title="Live local time · updates every frame. Use the 12h/24h toggle below to change the format.">--:--:--.--</div>
-          <div class="format-toggle" role="group" aria-label="Time format" title="Switch between 12-hour (with AM/PM) and 24-hour clock format">
-            <button id="format-12" type="button" aria-pressed="false" title="12-hour clock with AM/PM (e.g. 2:23:45.45 PM)">12h</button>
-            <button id="format-24" type="button" aria-pressed="true" title="24-hour military time (e.g. 14:23:45.45)">24h</button>
-          </div>
+          <div class="mono-clock" id="monoClock" aria-label="Live current time" title="Live local time · updates every frame.">--:--:--.--</div>
         </div>
 
         </div>
@@ -880,7 +884,20 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- SECTION 3: SEARCH & POPULAR CITIES — add cities to your rail -->
+    <!-- SECTION 3: FAVORITE CITIES (moved up below clock) -->
+    <!-- ============================================== -->
+    <section class="section section--favorites">
+      <div class="container">
+        <p class="section-eyebrow">Your world clock</p>
+        <h2 class="section-title">Favorite cities</h2>
+        <p class="section-subtitle">Click any city to update the big clock + pills. The first one (⌂) is your home and stays put.</p>
+
+        <p class="rail-label is-hidden">Favorite cities</p>
+        <div class="rail" id="rail"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SEARCH & POPULAR CITIES (moved down below favorites) -->
     <!-- ============================================== -->
     <section class="section section--search">
       <div class="container">
@@ -902,19 +919,6 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- SECTION 4: FAVORITE CITIES RAIL (moved up after search) -->
-    <!-- ============================================== -->
-    <section class="section section--favorites">
-      <div class="container">
-        <p class="section-eyebrow">Your world clock</p>
-        <h2 class="section-title">Favorite cities</h2>
-        <p class="section-subtitle">Click any city to update the big clock + pills. The first one (⌂) is your home and stays put.</p>
-
-        <p class="rail-label is-hidden">Favorite cities</p>
-        <div class="rail" id="rail"></div>
-      </div>
-    </section>
-
     <!-- ============================================== -->
     <!-- SECTION 4b: TODAY ON EARTH (moved below favorites, Tier 1) -->
     <!-- ============================================== -->
