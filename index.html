@@ -208,9 +208,10 @@
     .section { padding: clamp(2rem, 5vw, 3.5rem) 0; text-align: center; position: relative; }
     .section + .section { margin-top: 0; }
     .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(0.75rem, 2vw, 1.25rem); }
-    .section--clock { padding: clamp(0.75rem, 2vw, 1.25rem) 0 clamp(1.5rem, 4vw, 2.5rem); background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--clock { padding: clamp(0.75rem, 2vw, 1.25rem) 0 clamp(0.5rem, 1.5vw, 0.75rem); background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
     .section--search { padding: clamp(2rem, 5vw, 3rem) 0; }
-    .section--favorites { padding: clamp(1rem, 3vw, 1.5rem) 0 clamp(2rem, 5vw, 3rem); background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--favorites { padding: clamp(0.5rem, 1.5vw, 0.75rem) 0 clamp(1.5rem, 4vw, 2.5rem); background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--favorites .container { max-width: 100%; padding-left: clamp(0.75rem, 2vw, 1.5rem); padding-right: clamp(0.75rem, 2vw, 1.5rem); }
     .section--explore { padding: clamp(2rem, 5vw, 3rem) 0; }
     .explore-grid {
       display: grid;
@@ -577,9 +578,10 @@
     .city-card .home-badge-icon { font-size: 0.75rem; line-height: 1; }
     /* Responsive grid: 2 cols on mobile, 3 on tablet, 4 on desktop.
        Left-to-right alignment is automatic with CSS Grid. */
-    .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; padding: 0.5rem 0.25rem 1rem; }
-    @media (min-width: 600px) { .rail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (min-width: 1024px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; padding: 0.5rem 0.5rem 1rem; width: 100%; }
+    @media (min-width: 480px) { .rail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 768px) { .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (min-width: 1100px) { .rail { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
     .rail::-webkit-scrollbar { display: none; }
     .city-card { padding: 1.125rem 1.25rem; transition: opacity 200ms ease, transform 120ms ease, box-shadow 120ms ease; text-align: center; min-width: 0; }
     .city-head { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.75rem; position: relative; }
@@ -593,8 +595,10 @@
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
     .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--color-foreground); }
-    .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.4rem; text-align: center; }
-    .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
+    .city-meta { margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.6875rem; color: var(--color-foreground-soft); }
+    .city-meta .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0; }
+    .city-meta .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0; display: inline-flex; align-items: center; gap: 0.2rem; }
+    .city-meta-sep { color: var(--color-muted-soft); opacity: 0.5; }
     .city-day { font-weight: 600; }
     .city-day-sep { color: var(--color-muted-soft); }
     .city-hours-diff { font-family: ui-monospace, monospace; font-weight: 700; color: var(--color-foreground); padding: 0.05rem 0.35rem; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-foreground) 8%, transparent); }
@@ -1519,9 +1523,12 @@
             ${!isHome ? `<button class="city-remove" data-idx="${i}" aria-label="Remove ${c.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
           </div>
           <div class="city-time" data-tz="${c.tz}">--:--:--.--</div>
-          <div class="city-tz">${escapeHtml(c.tz || "")}</div>
-          <div class="city-day-diff" data-tz="${c.tz}" data-home-tz="${home ? home.tz : ''}">
-            <span class="city-day">—</span><span class="city-day-sep">, </span><span class="city-hours-diff">—</span>
+          <div class="city-meta">
+            <span class="city-tz">${escapeHtml(c.tz || "")}</span>
+            <span class="city-meta-sep" aria-hidden="true">·</span>
+            <span class="city-day-diff" data-tz="${c.tz}" data-home-tz="${home ? home.tz : ''}">
+              <span class="city-day">—</span><span class="city-day-sep">, </span><span class="city-hours-diff">—</span>
+            </span>
           </div>
         `;
         card.dataset.cityId = c.id || c.geoname_id || "";
