@@ -610,7 +610,8 @@
     .city-remove { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-muted-soft); border-radius: 9999px; }
     .city-remove:hover { color: #f97316; }
     .city-remove svg { width: 0.7rem; height: 0.7rem; }
-    .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: 0.02em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--color-foreground); }
+    .city-time { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace; font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 800; letter-spacing: 0.01em; text-align: center; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .city-time .ampm { font-size: 0.65em; font-weight: 700; opacity: 0.7; margin-left: 0.15em; }
     .city-meta { margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.6875rem; color: var(--color-foreground-soft); }
     .city-meta .city-tz { font-family: ui-monospace, monospace; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0; }
     .city-meta .city-day-diff { font-size: 0.6875rem; color: var(--color-foreground-soft); margin-top: 0; display: inline-flex; align-items: center; gap: 0.2rem; }
@@ -1467,9 +1468,20 @@
       try {
         const now = d || new Date();
         const cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
+        // Respects the global 12h/24h toggle (state.use24Hour).
+        // 24h: HH:MM:SS.cs  /  12h: h:MM:SS.cs <span class="ampm">AM/PM</span>
         const p = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(now);
         const g = t => p.find(x => x.type === t)?.value || "00";
-        return `${g("hour")}:${g("minute")}:${g("second")}.${cs}`;
+        let h = parseInt(g("hour"), 10);
+        const m = g("minute");
+        const s = g("second");
+        if (state.use24Hour) {
+          return `${g("hour")}:${m}:${s}.${cs}`;
+        } else {
+          const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+          const ampm = h >= 12 ? "PM" : "AM";
+          return `${h12}:${m}:${s}.${cs} <span class="ampm">${ampm}</span>`;
+        }
       } catch (e) { return "--:--:--.--"; }
     }
     function tzAbbr(tz) { try { const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date()); return p.find(x => x.type === "timeZoneName")?.value || tz; } catch (e) { return tz; } }
@@ -1900,7 +1912,17 @@
             timeZoneName: "short"
           }).formatToParts(now).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
           const date = `${parts.year}-${parts.month}-${parts.day}`;
-          const time = `${parts.hour}:${parts.minute}:${parts.second}`;
+          // Respect the 12h/24h toggle (state.use24Hour).
+          // 24h: HH:MM:SS  /  12h: h:MM:SS AM/PM
+          let time;
+          if (state.use24Hour) {
+            time = `${parts.hour}:${parts.minute}:${parts.second}`;
+          } else {
+            let h = parseInt(parts.hour, 10);
+            const ampm = h >= 12 ? "PM" : "AM";
+            const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+            time = `${h12}:${parts.minute}:${parts.second} ${ampm}`;
+          }
           const offset = computeOffset(tz, now);
           const dayOfWeek = new Date(parts.year, parseInt(parts.month, 10) - 1, parseInt(parts.day, 10)).getDay();
           const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -2383,7 +2405,7 @@
       else if (home?.country) regionParts.push(home.country);
       const cityRegion = document.getElementById("current-city-region");
       if (cityRegion) cityRegion.textContent = regionParts.join(", ");
-      document.querySelectorAll(".city-time[data-tz]").forEach(el => { el.textContent = timeIn(el.dataset.tz, now); });
+      document.querySelectorAll(".city-time[data-tz]").forEach(el => { el.innerHTML = timeIn(el.dataset.tz, now); });
       if (home) document.getElementById("off-hours-pill").textContent = getOffHoursForTz(tz, now);
       updateCityDayDiffs(now);
       requestAnimationFrame(updateClock);
