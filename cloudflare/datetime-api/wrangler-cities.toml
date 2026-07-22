@@ -1,0 +1,26 @@
+name = "city-cron"
+main = "cron-cities.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 binding (for city data)
+[[d1_databases]]
+binding = "OTD_DB"
+database_name = "timeandtimepro-dev"
+database_id = "ea1ef5ff-7132-40f4-b952-fff27621580c"
+
+# KV namespace for tracking city build state
+# Create with: wrangler kv:namespace create CITY_BUILDS
+# Then put the id here
+[[kv_namespaces]]
+binding = "CITY_BUILDS"
+id = "46c07adb1de34bc790b81984607d69d9"
+
+# Cron triggers
+# - Weekly Sunday 04:00 UTC: scan for stale city pages
+# - Yearly Dec 1 05:00 UTC: full rebuild for holiday year transition
+# (Removed from deploy — schedule via Cloudflare dashboard if needed)
+
+# Optional webhook for triggering the Node.js build script
+# [vars]
+# WEBHOOK_URL = "https://your-build-webhook.example.com/build"

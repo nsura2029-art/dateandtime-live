@@ -97,6 +97,46 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+/**
+ * Lat/lon-based climate estimate (used when D1 climate data isn't loaded).
+ * Simplified model:
+ *  - baseline avg high temp = 28 - 0.4 * |lat - 20| (rough temperature gradient)
+ *  - tropical (|lat| < 23.5): less seasonal variation
+ *  - temperate (23.5-45): moderate seasonal swing
+ *  - polar (|lat| > 60): high seasonal swing
+ *  - northern hemisphere: peak in July, trough in January
+ *  - southern hemisphere: opposite
+ *  - returns 12 months of avg_high_c
+ */
+function estimateClimate(lat) {
+  const absLat = Math.abs(lat);
+  const isNorth = lat >= 0;
+  const isTropical = absLat < 23.5;
+  const isPolar = absLat > 60;
+
+  // Peak avg high in summer
+  const peakHigh = isTropical ? 31 : isPolar ? 8 : 28 - 0.4 * Math.max(0, absLat - 20);
+  const winterHigh = isTropical ? 30 : isPolar ? -20 : peakHigh - 12 - 0.3 * (absLat - 20);
+  const amplitude = (peakHigh - winterHigh) / 2;
+
+  // Day of year for peak (July 15 = day 196 for north, January 15 for south)
+  const peakDay = isNorth ? 196 : 15;
+
+  return Array.from({ length: 12 }, (_, i) => {
+    const monthStartDay = i * 30 + 15; // mid-month
+    const daysFromPeak = Math.abs(monthStartDay - peakDay);
+    const seasonal = Math.min(1, daysFromPeak / 180);
+    const avgHighC = (peakHigh + winterHigh) / 2 + amplitude * Math.cos((monthStartDay - peakDay) * Math.PI / 180);
+    return {
+      month: i + 1,
+      avg_high_c: Math.round(avgHighC * 10) / 10,
+      avg_low_c: Math.round((avgHighC - 10) * 10) / 10,
+      avg_mean_c: Math.round((avgHighC - 5) * 10) / 10,
+      climate_class: isTropical ? 'tropical' : isPolar ? 'polar' : 'temperate'
+    };
+  });
+}
+
 async function fetchAll(city) {
   console.log(`\n→ Fetching data for ${city.slug} (id ${city.id})...`);
 
@@ -127,8 +167,17 @@ async function fetchAll(city) {
     dstData = await fetchJson(`${API}/api/v1/dst/upcoming?tz=${encodeURIComponent(c.timezone)}`);
   } catch (e) { /* DST endpoint may not work */ }
 
-  // 7. Climate (for chart heights)
-  const climateData = await fetchJson(`${API}/api/v1/cities/${c.id}/climate`);
+  // 7. Climate (for chart heights) — old fetch
+  let climateData;
+  try {
+    const climateResp = await fetchJson(`${API}/api/v1/cities/${c.id}/climate`);
+    climateData = climateResp.data || climateResp;
+  } catch (e) { climateData = null; }
+
+  // If no climate data, compute a lat/lon-based estimate
+  if (!climateData || !climateData.climate || climateData.climate.length === 0) {
+    climateData = { climate: estimateClimate(c.latitude) };
+  }
 
   // 8. 7-day weather forecast (Open-Meteo, no API key needed)
   // https://open-meteo.com/ (CC BY 4.0)
@@ -167,7 +216,7 @@ async function fetchAll(city) {
     nearby: nearbyCities,
     sun: sunData.data || sunData,
     dst: dstData ? (dstData.data || dstData) : null,
-    climate: climateData.data || climateData
+    climate: climateData
   };
 }
 
@@ -360,6 +409,35 @@ function renderTemplate(d) {
       `).join('')}
     </div>
   ` : '<p style="color: var(--color-muted);">No nearby cities in our database.</p>';
+
+  // Climate chart (12-month bars) — convert to Fahrenheit
+  const climateList = (climate && climate.climate) || [];
+  const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const climateMax = climateList.length > 0 ? Math.max(...climateList.map(m => m.avg_high_c || 0)) : 30;
+  const climateMin = climateList.length > 0 ? Math.min(...climateList.map(m => m.avg_low_c || 0)) : 0;
+  const climateRange = Math.max(1, climateMax - climateMin);
+  const climateHtml = climateList.length > 0 ? `
+    <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; align-items: end; height: 140px; margin: 0.5rem 0 0;">
+      ${climateList.map(m => {
+        const hiF = Math.round((m.avg_high_c || 0) * 9/5 + 32);
+        const loF = Math.round((m.avg_low_c || 0) * 9/5 + 32);
+        const heightPct = Math.max(15, ((m.avg_high_c || 0) - climateMin) / climateRange * 100);
+        return `
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; height: 100%;">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-foreground); font-weight: 700;">${hiF}°</div>
+            <div style="flex: 1; width: 100%; display: flex; align-items: end;">
+              <div style="width: 100%; height: ${heightPct}%; background: linear-gradient(180deg, #f59e0b 0%, #c44536 100%); border-radius: 3px 3px 0 0; min-height: 4px;"></div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--color-muted);">${MONTHS_SHORT[m.month - 1]}</div>
+            <div style="font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-muted-soft);">${loF}°</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--color-foreground-soft);">
+      Climate: <strong>${climateList[0]?.climate_class || 'temperate'}</strong> · avg high ${Math.round(climateList.reduce((s,m) => s + (m.avg_high_c || 0), 0) / climateList.length * 9/5 + 32)}°F · avg low ${Math.round(climateList.reduce((s,m) => s + (m.avg_low_c || 0), 0) / climateList.length * 9/5 + 32)}°F
+    </p>
+  ` : '<p style="color: var(--color-muted);">Climate data unavailable.</p>';
 
   return `<!doctype html>
 <html lang="en" data-theme="light">
@@ -627,9 +705,16 @@ function renderTemplate(d) {
     </div>
     <section>${nearbyHtml}</section>
 
-    <!-- Section 08: More to explore -->
+    <!-- Section 08: Climate year-round -->
     <div class="section-head">
-      <h2><span class="num">08</span> · More to explore</h2>
+      <h2><span class="num">08</span> · ${c.name} climate year-round</h2>
+      <a class="more" href="/world-time/city/${d.city.slug}/climate/">Full climate →</a>
+    </div>
+    <section>${climateHtml}</section>
+
+    <!-- Section 09: More to explore -->
+    <div class="section-head">
+      <h2><span class="num">09</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/${c.countryCode.toLowerCase()}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>

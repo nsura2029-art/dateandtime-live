@@ -27,8 +27,9 @@ import { handle as eventRoutes } from './routes/event.js';
 import { handle as timeMultiRoutes } from './routes/time-multi.js';
 import { handle as otdRoutes } from './routes/otd.js';
 import { handle as yearRoutes } from './routes/year.js';
+import { handle as citiesRoutes } from './routes/cities.js';
 
-const ROUTE_MODULES = [personRoutes, eventRoutes, timeMultiRoutes, yearRoutes, otdRoutes];
+const ROUTE_MODULES = [personRoutes, eventRoutes, timeMultiRoutes, yearRoutes, otdRoutes, citiesRoutes];
 
 // ============================================================================
 // CORS preflight
