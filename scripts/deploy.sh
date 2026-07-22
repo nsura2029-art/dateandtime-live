@@ -33,7 +33,8 @@ if [ "$TARGET" = "prod" ]; then
 fi
 
 API_NODE_MODULES="cloudflare/datetime-api/node_modules"
-BACKUP_DIR=".deploy-backup"
+GIT_DIR=".git"
+BACKUP_DIR="/tmp/deploy-backup-$$"
 
 # Stash the api worker's node_modules
 if [ -d "$API_NODE_MODULES" ]; then
@@ -42,13 +43,24 @@ if [ -d "$API_NODE_MODULES" ]; then
   mv "$API_NODE_MODULES" "$BACKUP_DIR/api_node_modules"
 fi
 
+# Stash .git (wrangler 4 doesn't honor exclude field)
+if [ -d "$GIT_DIR" ]; then
+  echo "→ Stashing $GIT_DIR aside (wrangler 4 doesn't honor exclude)..."
+  mkdir -p "$BACKUP_DIR"
+  mv "$GIT_DIR" "$BACKUP_DIR/git"
+fi
+
 # Restore on exit
 trap '
   if [ -d "$BACKUP_DIR/api_node_modules" ]; then
     echo "→ Restoring $API_NODE_MODULES..."
     mv "$BACKUP_DIR/api_node_modules" "$API_NODE_MODULES"
-    rmdir "$BACKUP_DIR" 2>/dev/null || true
   fi
+  if [ -d "$BACKUP_DIR/git" ]; then
+    echo "→ Restoring $GIT_DIR..."
+    mv "$BACKUP_DIR/git" "$GIT_DIR"
+  fi
+  rm -rf "$BACKUP_DIR"
 ' EXIT
 
 # Deploy
