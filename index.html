@@ -210,7 +210,7 @@
     .section--hero { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
     .section--clock { padding: clamp(1.5rem, 4vw, 2.5rem) 0; background: color-mix(in srgb, var(--color-background-soft) 60%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
     .section--search { padding: clamp(2rem, 5vw, 3rem) 0; }
-    .section--favorites { padding: clamp(2rem, 5vw, 3rem) 0; background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
+    .section--favorites { padding: clamp(1rem, 3vw, 1.5rem) 0 clamp(2rem, 5vw, 3rem); background: color-mix(in srgb, var(--color-background-soft) 40%, transparent); border-top: 1px solid var(--color-border-soft); border-bottom: 1px solid var(--color-border-soft); }
     .section--explore { padding: clamp(2rem, 5vw, 3rem) 0; }
     .explore-grid {
       display: grid;
@@ -888,10 +888,6 @@
     <!-- ============================================== -->
     <section class="section section--favorites">
       <div class="container">
-        <p class="section-eyebrow">Your world clock</p>
-        <h2 class="section-title">Favorite cities</h2>
-        <p class="section-subtitle">Click any city to update the big clock + pills. The first one (⌂) is your home and stays put.</p>
-
         <p class="rail-label is-hidden">Favorite cities</p>
         <div class="rail" id="rail"></div>
       </div>
