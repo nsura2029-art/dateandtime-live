@@ -1,0 +1,627 @@
+<!--
+  TEMPLATE B: Live Dashboard
+  2030 city page — real-time command center, all info at a glance
+  Inspired by Linear / Vercel / Figma dashboards
+
+  Light + dark mode (auto-switching via [data-theme="dark"] on <html>)
+-->
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tampa, Florida — Live Dashboard · Date and Time</title>
+  <meta name="description" content="Real-time dashboard for Tampa, Florida: time, time zone, weather, sun, moon, holidays, and people — all live." />
+  <link rel="canonical" href="https://dateandtime.live/world-time/city/tampa/" />
+
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-bg-soft: #f4f4f5;
+      --color-bg-elev: #ffffff;
+      --color-foreground: #0a0a0a;
+      --color-foreground-soft: #27272a;
+      --color-muted: #71717a;
+      --color-muted-soft: #a1a1aa;
+      --color-border: rgba(0, 0, 0, 0.08);
+      --color-border-soft: rgba(0, 0, 0, 0.04);
+      --color-primary: #4f46e5;
+      --color-primary-soft: #e0e7ff;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+      --radius-sm: 0.375rem;
+      --radius-md: 0.625rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    }
+    [data-theme="dark"] {
+      --color-bg: #0a0a0a;
+      --color-bg-soft: #18181b;
+      --color-bg-elev: #1f1f23;
+      --color-foreground: #fafafa;
+      --color-foreground-soft: #d4d4d8;
+      --color-muted: #a1a1aa;
+      --color-muted-soft: #71717a;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-border-soft: rgba(255, 255, 255, 0.04);
+      --color-primary: #818cf8;
+      --color-primary-soft: #1e1b4b;
+      --color-success: #34d399;
+      --color-warning: #fbbf24;
+      --color-danger: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-foreground);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== Theme toggle ===== */
+    .theme-toggle {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      width: 2.5rem; height: 2.5rem; border-radius: 0.5rem;
+      background: var(--color-bg-elev); border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .theme-toggle svg { width: 1.125rem; height: 1.125rem; }
+
+    /* ===== Top bar ===== */
+    .topbar {
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.5rem;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg-elev);
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 1.5rem; }
+    .topbar-logo { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; }
+    .topbar-breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-muted); }
+    .topbar-breadcrumb a { color: var(--color-muted); }
+    .topbar-breadcrumb a:hover { color: var(--color-foreground); text-decoration: none; }
+    .topbar-breadcrumb .current { color: var(--color-foreground); font-weight: 600; }
+    .topbar-breadcrumb .sep { color: var(--color-muted-soft); }
+    .topbar-right { display: flex; align-items: center; gap: 0.5rem; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 0 8px rgba(16,185,129,0); } }
+    .status-text { font-size: 0.75rem; color: var(--color-muted); }
+    .topbar-search {
+      width: 16rem; padding: 0.4rem 0.75rem; border-radius: 0.5rem;
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      font-size: 0.875rem; color: var(--color-foreground);
+    }
+
+    /* ===== Container ===== */
+    .container { max-width: 1440px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ===== Page header ===== */
+    .page-header { padding: 1.5rem 0 0.5rem; }
+    .page-header h1 {
+      font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.1;
+    }
+    .page-header .meta {
+      display: flex; align-items: center; gap: 1rem;
+      margin-top: 0.5rem; font-size: 0.875rem; color: var(--color-muted);
+      flex-wrap: wrap;
+    }
+    .page-header .meta-item { display: flex; align-items: center; gap: 0.375rem; }
+
+    /* ===== Tab bar ===== */
+    .tabbar {
+      display: flex; align-items: center; gap: 0.25rem;
+      padding: 0.75rem 0; border-bottom: 1px solid var(--color-border);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+    .tab {
+      padding: 0.5rem 0.875rem; border-radius: 0.5rem;
+      font-size: 0.875rem; font-weight: 600;
+      color: var(--color-muted);
+      white-space: nowrap;
+      cursor: pointer; border: none; background: none;
+    }
+    .tab:hover { color: var(--color-foreground); background: var(--color-bg-soft); }
+    .tab.active { background: var(--color-primary-soft); color: var(--color-primary); }
+
+    /* ===== Main grid — 12 columns ===== */
+    .main-grid {
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem;
+      padding-bottom: 2rem;
+    }
+    @media (max-width: 1000px) { .main-grid { grid-template-columns: repeat(6, 1fr); } }
+    @media (max-width: 600px) { .main-grid { grid-template-columns: 1fr; } }
+
+    /* ===== Panel base ===== */
+    .panel {
+      background: var(--color-bg-elev);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      transition: border-color 200ms ease;
+    }
+    .panel:hover { border-color: var(--color-primary); }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--color-muted);
+    }
+    .panel-link {
+      font-size: 0.75rem; color: var(--color-primary);
+      font-weight: 600;
+    }
+    .panel-spark { width: 100%; height: 32px; }
+
+    /* ===== Panel sizes ===== */
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-7 { grid-column: span 7; }
+    .col-8 { grid-column: span 8; }
+    .col-9 { grid-column: span 9; }
+    .col-12 { grid-column: span 12; }
+    @media (max-width: 1000px) {
+      .col-3, .col-4, .col-5, .col-6 { grid-column: span 3; }
+      .col-7, .col-8, .col-9 { grid-column: span 6; }
+    }
+    @media (max-width: 600px) {
+      .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9 { grid-column: span 1; }
+    }
+
+    /* ===== Hero clock panel (large) ===== */
+    .panel-clock {
+      grid-column: span 8; min-height: 280px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #7c3aed 100%);
+      color: white;
+      border: none;
+    }
+    .panel-clock .panel-title { color: rgba(255,255,255,0.7); }
+    .panel-clock .clock-row {
+      display: flex; align-items: baseline; gap: 0.75rem; margin-top: 1rem;
+    }
+    .panel-clock .clock-time {
+      font-family: var(--font-mono);
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 700; line-height: 1; letter-spacing: -0.03em;
+    }
+    .panel-clock .clock-time .ampm { font-size: 0.35em; opacity: 0.7; font-weight: 500; margin-left: 0.3em; }
+    .panel-clock .clock-time .ms { font-size: 0.45em; opacity: 0.5; font-weight: 400; }
+    .panel-clock .clock-date { font-size: 1.125rem; opacity: 0.9; margin-top: 0.5rem; }
+    .panel-clock .clock-tz {
+      display: flex; gap: 0.75rem; align-items: center; margin-top: 1rem;
+      font-size: 0.875rem; opacity: 0.85;
+      flex-wrap: wrap;
+    }
+    .panel-clock .clock-tz .tz-pill {
+      padding: 0.25rem 0.625rem; border-radius: 9999px;
+      background: rgba(255,255,255,0.18); backdrop-filter: blur(8px);
+      font-family: var(--font-mono); font-weight: 600;
+    }
+    .panel-clock .city-thumb {
+      position: absolute; right: 1.5rem; top: 1.25rem;
+      width: 64px; height: 64px; border-radius: 12px;
+      overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .panel-clock .city-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .panel-clock { position: relative; }
+
+    /* ===== Quick stats (4 KPI cards) ===== */
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .kpi {
+      padding: 1rem; border-radius: var(--radius-md);
+      background: var(--color-bg-soft);
+    }
+    .kpi .kpi-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--color-muted);
+    }
+    .kpi .kpi-value {
+      font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700;
+      margin-top: 0.25rem; line-height: 1;
+    }
+    .kpi .kpi-sub { font-size: 0.7rem; color: var(--color-muted); margin-top: 0.25rem; }
+
+    /* ===== Compare-to-home panel ===== */
+    .compare-row {
+      display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0;
+      border-bottom: 1px solid var(--color-border-soft);
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-row .city { font-weight: 600; flex: 1; }
+    .compare-row .time { font-family: var(--font-mono); color: var(--color-muted); }
+    .compare-row .diff { font-family: var(--font-mono); color: var(--color-primary); font-weight: 600; min-width: 3.5rem; text-align: right; }
+
+    /* ===== Mini bar chart (for climate) ===== */
+    .mini-bar {
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px;
+      height: 80px; align-items: end;
+    }
+    .mini-bar .bar {
+      background: linear-gradient(180deg, var(--color-primary) 0%, transparent 100%);
+      border-radius: 4px 4px 0 0;
+      position: relative;
+    }
+    .mini-bar .bar::after {
+      content: attr(data-label);
+      position: absolute; bottom: -1.25rem; left: 50%;
+      transform: translateX(-50%); font-size: 0.625rem; color: var(--color-muted);
+    }
+    .mini-bar-labels { height: 1.25rem; }
+
+    /* ===== Footer link strip ===== */
+    .link-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
+      padding: 1.5rem 0; border-top: 1px solid var(--color-border-soft);
+      margin-top: 1rem;
+    }
+    .link-strip a {
+      padding: 0.75rem 1rem; border-radius: 0.5rem;
+      background: var(--color-bg-elev); border: 1px solid var(--color-border-soft);
+      font-size: 0.8125rem; font-weight: 600;
+      text-align: center;
+    }
+    .link-strip a:hover { background: var(--color-bg-soft); text-decoration: none; }
+    @media (max-width: 700px) { .link-strip { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ===== Footer ===== */
+    footer { padding: 1.5rem 0 2rem; border-top: 1px solid var(--color-border-soft); margin-top: 1rem; font-size: 0.75rem; color: var(--color-muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" aria-label="Toggle dark mode" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <!-- ===== Top bar (sticky) ===== -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="/" class="topbar-logo">⏱ dateandtime.live</a>
+      <nav class="topbar-breadcrumb">
+        <a href="/world-time/">World</a>
+        <span class="sep">/</span>
+        <a href="/world-time/usa/">USA</a>
+        <span class="sep">/</span>
+        <a href="/world-time/usa/florida/">FL</a>
+        <span class="sep">/</span>
+        <span class="current">Tampa</span>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <span class="status-dot"></span>
+      <span class="status-text">Live</span>
+      <input class="topbar-search" placeholder="Switch city…" />
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- ===== Page header ===== -->
+    <div class="page-header">
+      <h1>Tampa, Florida</h1>
+      <div class="meta">
+        <span class="meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          27.95°N 82.46°W
+        </span>
+        <span class="meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          America/New_York
+        </span>
+        <span class="meta-item">👥 414,547 people</span>
+        <span class="meta-item">🌎 53rd largest US city</span>
+      </div>
+    </div>
+
+    <!-- ===== Tab bar ===== -->
+    <nav class="tabbar">
+      <button class="tab active">Time / General</button>
+      <button class="tab">Weather</button>
+      <button class="tab">Sun & Moon</button>
+      <button class="tab">Holidays</button>
+      <button class="tab">People</button>
+      <button class="tab">Climate</button>
+      <button class="tab">Airports</button>
+    </nav>
+
+    <!-- ===== Main dashboard grid ===== -->
+    <section class="main-grid">
+      <!-- HERO CLOCK (8 cols) -->
+      <div class="panel panel-clock">
+        <div class="panel-header">
+          <div class="panel-title">Current local time</div>
+          <a class="panel-link" style="color: rgba(255,255,255,0.9);" href="/world-time/city/tampa/time/">Details →</a>
+        </div>
+        <div class="city-thumb">
+          <img src="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=120&q=80" alt="Tampa" />
+        </div>
+        <div class="clock-row">
+          <span class="clock-time" id="clockTime">14:23:45<span class="ms">.45</span><span class="ampm">PM</span></span>
+        </div>
+        <div class="clock-date">Tuesday, July 21, 2026 · In 1 hour 26 minutes it will be Wed 12:00am here</div>
+        <div class="clock-tz">
+          <span class="tz-pill">EDT</span>
+          <span class="tz-pill">UTC-04:00</span>
+          <span>DST active · ends in 102 days (Nov 1, 2026)</span>
+        </div>
+      </div>
+
+      <!-- 4 KPI mini-cards (4 cols) -->
+      <div class="panel col-4">
+        <div class="panel-header">
+          <div class="panel-title">Quick stats</div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-label">Sunrise</div>
+            <div class="kpi-value">5:42</div>
+            <div class="kpi-sub">am · 86° E</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Sunset</div>
+            <div class="kpi-value">8:23</div>
+            <div class="kpi-sub">pm · 274° W</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Day</div>
+            <div class="kpi-value">14:41</div>
+            <div class="kpi-sub">h · +1m 40s</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Moon</div>
+            <div class="kpi-value">75%</div>
+            <div class="kpi-sub">Waxing gibbous</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compare to your home (5 cols) -->
+      <div class="panel col-5">
+        <div class="panel-header">
+          <div class="panel-title">Time difference from Tampa</div>
+          <a class="panel-link" href="/converter/?from=tampa">More →</a>
+        </div>
+        <div class="compare-row">
+          <span class="city">New York</span>
+          <span class="time">14:23 EDT</span>
+          <span class="diff">same</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">London</span>
+          <span class="time">19:23 BST</span>
+          <span class="diff">+5h</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Paris</span>
+          <span class="time">20:23 CEST</span>
+          <span class="diff">+6h</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Tokyo</span>
+          <span class="time">03:24 JST</span>
+          <span class="diff">+13h</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Sydney</span>
+          <span class="time">04:24 AEST</span>
+          <span class="diff">+14h</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Los Angeles</span>
+          <span class="time">11:23 PDT</span>
+          <span class="diff">−3h</span>
+        </div>
+      </div>
+
+      <!-- 24h temperature forecast (7 cols) -->
+      <div class="panel col-7">
+        <div class="panel-header">
+          <div class="panel-title">24-hour temperature (°F)</div>
+          <a class="panel-link" href="/world-time/city/tampa/weather/">Full forecast →</a>
+        </div>
+        <div style="display: flex; align-items: end; gap: 4px; height: 120px; padding: 0.5rem 0;">
+          <!-- 24 bars, varying heights -->
+          <script>
+            document.write(
+              Array.from({length: 24}, (_, i) => {
+                const h = 40 + Math.sin((i - 6) * Math.PI / 12) * 40 + Math.random() * 10;
+                const temp = Math.round(70 + Math.sin((i - 6) * Math.PI / 12) * 12);
+                return `<div style="flex: 1; height: ${h}%; background: linear-gradient(180deg, var(--color-primary) 0%, transparent 100%); border-radius: 3px 3px 0 0; position: relative;" title="${temp}°F">
+                  <span style="position: absolute; top: -1rem; left: 50%; transform: translateX(-50%); font-size: 0.625rem; color: var(--color-muted);">${i % 6 === 0 ? temp : ''}</span>
+                </div>`;
+              }).join('')
+            );
+          </script>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.5rem;">
+          <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span>
+        </div>
+      </div>
+
+      <!-- Climate 12-month avg (5 cols) -->
+      <div class="panel col-5">
+        <div class="panel-header">
+          <div class="panel-title">Annual climate (avg high °F)</div>
+          <a class="panel-link" href="/world-time/city/tampa/climate/">Details →</a>
+        </div>
+        <div class="mini-bar">
+          <div class="bar" style="height: 60%;" data-label="J"></div>
+          <div class="bar" style="height: 65%;" data-label="F"></div>
+          <div class="bar" style="height: 70%;" data-label="M"></div>
+          <div class="bar" style="height: 78%;" data-label="A"></div>
+          <div class="bar" style="height: 88%;" data-label="M"></div>
+          <div class="bar" style="height: 92%;" data-label="J"></div>
+          <div class="bar" style="height: 95%;" data-label="J"></div>
+          <div class="bar" style="height: 94%;" data-label="A"></div>
+          <div class="bar" style="height: 90%;" data-label="S"></div>
+          <div class="bar" style="height: 82%;" data-label="O"></div>
+          <div class="bar" style="height: 72%;" data-label="N"></div>
+          <div class="bar" style="height: 63%;" data-label="D"></div>
+        </div>
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; font-size: 0.75rem; color: var(--color-muted);">
+          <span>Avg high: 89°F</span>
+          <span>Avg low: 50°F</span>
+          <span>Rain: 50"/yr</span>
+        </div>
+      </div>
+
+      <!-- Upcoming holidays (7 cols) -->
+      <div class="panel col-7">
+        <div class="panel-header">
+          <div class="panel-title">Upcoming US holidays</div>
+          <a class="panel-link" href="/world-time/city/tampa/holidays/">All 2026 →</a>
+        </div>
+        <div class="compare-row">
+          <span class="city">Sep 7 · Labour Day</span>
+          <span class="time">public holiday</span>
+          <span class="diff">47d</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Oct 12 · Columbus Day</span>
+          <span class="time">public holiday</span>
+          <span class="diff">82d</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Oct 12 · Indigenous Peoples' Day</span>
+          <span class="time">observance</span>
+          <span class="diff">82d</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Nov 11 · Veterans Day</span>
+          <span class="time">public holiday</span>
+          <span class="diff">112d</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Nov 26 · Thanksgiving Day</span>
+          <span class="time">public holiday</span>
+          <span class="diff">127d</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Dec 25 · Christmas Day</span>
+          <span class="time">public holiday</span>
+          <span class="diff">156d</span>
+        </div>
+      </div>
+
+      <!-- Famous people (5 cols) -->
+      <div class="panel col-5">
+        <div class="panel-header">
+          <div class="panel-title">Famous people from Tampa</div>
+          <a class="panel-link" href="/world-time/city/tampa/people/">See all 8 →</a>
+        </div>
+        <div class="compare-row">
+          <span class="city">Stephen Carlton</span>
+          <span class="time">baseball · b. 1976</span>
+          <span class="diff">TPA</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Jillian Michaels</span>
+          <span class="time">fitness · b. 1974</span>
+          <span class="diff">TPA</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Robert Tarjan</span>
+          <span class="time">CS · b. 1948</span>
+          <span class="diff">TPA</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Damon Stoudamire</span>
+          <span class="time">basketball · b. 1973</span>
+          <span class="diff">TPA</span>
+        </div>
+        <div class="compare-row">
+          <span class="city">Brittany Lincicome</span>
+          <span class="time">golf · b. 1985</span>
+          <span class="diff">TPA</span>
+        </div>
+      </div>
+
+      <!-- Airports (12 cols) -->
+      <div class="panel col-12">
+        <div class="panel-header">
+          <div class="panel-title">Airports near Tampa</div>
+          <a class="panel-link" href="/world-time/city/tampa/airports/">All airports →</a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+          <div class="kpi">
+            <div class="kpi-label">TPA · Tampa International</div>
+            <div class="kpi-value" style="font-size: 1.125rem;">5 mi W</div>
+            <div class="kpi-sub">Large airport · IATA: TPA · ICAO: KTPA</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">SRQ · Sarasota-Bradenton</div>
+            <div class="kpi-value" style="font-size: 1.125rem;">39 mi S</div>
+            <div class="kpi-sub">Medium airport · IATA: SRQ</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">MCO · Orlando International</div>
+            <div class="kpi-value" style="font-size: 1.125rem;">78 mi ENE</div>
+            <div class="kpi-sub">Large airport · IATA: MCO</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Sub-page link strip ===== -->
+    <div class="link-strip">
+      <a href="/world-time/city/tampa/sunrise/">☀️ Sunrise & Moon</a>
+      <a href="/world-time/city/tampa/holidays/">🎉 Holidays</a>
+      <a href="/world-time/city/tampa/people/">👤 Famous people</a>
+      <a href="/world-time/city/tampa/climate/">🌡️ Climate</a>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+      <span>© 2026 Date and Time · Tampa, Florida · Updated every second</span>
+      <span>Wikipedia-derived content licensed CC BY-SA 4.0</span>
+    </footer>
+  </div>
+
+  <script>
+    // Live clock
+    function updateClock() {
+      const el = document.getElementById('clockTime');
+      if (!el) return;
+      const d = new Date();
+      const use24 = localStorage.getItem('tdp-fmt') === '24';
+      let h = d.getHours();
+      const m = String(d.getMinutes()).padStart(2, '0');
+      const s = String(d.getSeconds()).padStart(2, '0');
+      const ms = String(Math.floor(d.getMilliseconds() / 10)).padStart(2, '0');
+      if (use24) {
+        el.innerHTML = `${String(h).padStart(2,'0')}:${m}:${s}<span class="ms">.${ms}</span>`;
+      } else {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+        el.innerHTML = `${h12}:${m}:${s}<span class="ms">.${ms}</span><span class="ampm">${ampm}</span>`;
+      }
+      requestAnimationFrame(updateClock);
+    }
+    updateClock();
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', e => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
