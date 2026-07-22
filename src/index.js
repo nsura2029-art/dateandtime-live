@@ -435,13 +435,13 @@ export default {
     // CF Pages' env.ASSETS.fetch returns 307 to clean URL; we follow internally.
     const cityPreviewMatch = url.pathname.match(/^\/city-page-preview\/[^/]+\.html$/);
     if (cityPreviewMatch) {
-      const cleanPath = url.pathname.replace(/\.html$/, "");
-      const r = await env.ASSETS.fetch(cleanPath, { method: request.method, headers: request.headers });
+      const cleanUrl = new URL(url.pathname.replace(/\.html$/, "/"), request.url).toString();
+      const r = await env.ASSETS.fetch(cleanUrl);
       if (r.ok) {
         const body = await r.text();
         return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
       }
-      return r;
+      return new Response("Asset not found: " + r.status, { status: 500 });
     }
 
     // Get the asset (HTML or other) from the [assets] binding.
