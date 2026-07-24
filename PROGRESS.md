@@ -1,6 +1,6 @@
 # dateandtime.live — Project Progress
 
-> Last updated: 2026-07-22
+> Last updated: 2026-07-24
 > Tracking all work shipped to dev. Each entry has date, what shipped, files changed, and how to test.
 
 ## Live URLs
@@ -350,14 +350,96 @@ npx wrangler d1 execute timeandtimepro-dev --command="..." --remote
 ## Git State (last 10 commits on develop)
 
 ```
+8616f83 fix(design-system): align .nav-link font-weight to 600 across all pages
+5533fbb feat(globe): align /globe with shared site shell (additive only)
+6aecaf9 feat(home): align /home backup page with shared site shell
+cdd5afc feat(shell): strengthen site-shell.css as canonical design system
+e026c7c fix(city): slug disambiguation for SEO + PROGRESS.md tracking file
 063891e feat(cron): CITIES_TO_CHECK_LIMIT configurable via env (default 1100)
 33a22ea feat(city): scale to 1011 city pages with parallel build
 030b897 feat(cron): chunk scan to 20-city batches + add /scan-batch and /scan-all
 6a4119e fix(city): attach slug to city object for URL building in template
 0986e14 fix(deploy): stash .git outside workspace to avoid 25MB asset limit
-456cd69 feat(city): 3 fresh features — nearby API, climate chart, cron worker
-1409631 feat(city): 111 city pages + live weather (Open-Meteo) + cities-near
-f2f32f0 feat(city): pre-rendered static city pages for top 10
-d7ac840 feat(design): 3 city page templates (Bento / Dashboard / Story) for 2030
-963cea4 feat(city): Template D — TAD-inspired Data Hub
 ```
+
+---
+
+## 2026-07-24 — Design system consistency across all pages
+
+**Goal:** the design system (header, light/dark themes, breadcrumb, footer, correct font size + weight) is now consistent across every user-facing page. No section was deleted on any page.
+
+### What changed
+
+**Phase 1 — `src/site-shell.css` promoted to the canonical design system** (300 insertions, 22 deletions)
+- Documented the file with a table of contents at the top
+- Added the full token set: `--fs-*` type scale, `--fw-*` weight scale, `--sp-*` spacing, `--r-*` radii, `--ease-*` easings, `--dur-*` durations
+- Added `color-scheme: light/dark` to `:root` and `[data-theme="dark"]` so form controls + native scrollbars flip too
+- Added the page-texture, glow, on-segment, off-segment tokens (light + dark) that the landing uses
+- Added the full pill palette (purple, orange, green) for both themes
+- Moved the brand button styles (`.btn`, `.btn-primary`, `.btn-ghost`, `.btn-secondary`, `.btn-sm`, `.btn-lg`) into the shared file so they no longer need to be re-declared per page
+- Added shared `.pill` base + variants
+- Added `:focus-visible` accessibility ring and theme-aware scrollbar
+- Updated the nav link, logo, breadcrumb, footer, mobile nav, and page title to explicitly use the design tokens (font size + weight)
+
+**Phase 2 — `home/index.html` aligned to the shared shell** (76 insertions, 20 deletions, additive only)
+- Added `<body class="shell-page">`
+- Added `<link rel="stylesheet" href="/src/site-shell.css" />`
+- Updated the brand text `TimeAndDatePro` → `dateandtime.live` (matches the actual brand)
+- Switched the theme toggle from `id="theme-light"` / `id="theme-dark"` to `data-theme-btn="light"` / `data-theme-btn="dark"` (so `site-shell.js` can manage it and migrate the legacy `tdp-theme` localStorage key)
+- Added the mobile nav (hamburger + slide-out panel + backdrop) — `/home` previously had no mobile nav
+- Added the breadcrumb `Home` above the main content
+- Added the shared site-footer (additive — `/home` previously had no footer at all)
+- Added `<script src="/src/site-shell.js" defer></script>`
+- Removed the duplicate inline theme JS (now handled by `site-shell.js`)
+- **All existing sections preserved**: hero, clock, pills, search, rail, popular cities, ad slot, current city, feedback panel
+
+**Phase 3 — `globe/index.html` aligned to the shared shell** (40 insertions, 1 deletion, additive only)
+- Added `<body class="shell-page">`
+- Added `<link rel="stylesheet" href="/src/site-shell.css" />`
+- Added the breadcrumb `Home / 3D Globe`
+- Added the shared site-footer (additive — `/globe` previously had no footer at all)
+- Added `<script src="/src/site-shell.js" defer></script>`
+- Updated the `<title>` from `3D Globe · TimeAndDatePro` to `3D Globe · dateandtime.live`
+- **All 3D globe content preserved** (globe stage, layout, sidebar, cities list, render loop, all untouched)
+
+**Phase 4 — `index.html` (the active landing) verified and refined**
+- Added `<body class="shell-page">` (the landing was already using the shared CSS/JS but the body class was missing)
+- Updated the page-level `.nav-link` font-weight from `700` to `600` to match the shared design system
+- Updated the comment header from `TimeAndDatePro` → `dateandtime.live`
+- **All landing content preserved** (hero, clock, pills, search, rail, popular cities, ad slot, current city, feedback panel)
+
+**Phase 5 — `home/index.html` and `globe/index.html` page-level `.nav-link` aligned**
+- Updated page-level `.nav-link` font-weight from `700` to `600` to match the shared design system
+
+### Pages that already used the shared system and were NOT changed
+- `onthisday/index.html` — already on the shared system
+- `holidays/index.html` — already on the shared system
+- `about/index.html` — already on the shared system
+- `privacy/index.html` — already on the shared system
+- `terms/index.html` — already on the shared system
+- `editorial-policy/index.html` — already on the shared system
+
+### Pages intentionally NOT changed
+- `design-system/index.html` — the design system reference page itself; it intentionally has the alternate `NotebookLM` tokens (deep purple + orange LED) and a custom `TimeAndDatePro` brand to document the design system. Not user-facing.
+- `prototypes/A-rail.html`, `B-tabs.html`, `C-inline-list.html` — dev-only prototype mockups, not deployed.
+
+### Verification matrix (post-change)
+
+| Page | shell-page | site-shell.css | site-shell.js | data-theme-btn | site-header | site-footer | breadcrumb | mobile nav | nav-link weight |
+|---|---|---|---|---|---|---|---|---|---|
+| `/` (landing) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | n/a (homepage) | ✓ | 600 |
+| `/home/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 |
+| `/onthisday/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 (shared) |
+| `/holidays/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 (shared) |
+| `/globe/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 |
+| `/about/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 (shared) |
+| `/privacy/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 (shared) |
+| `/terms/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 (shared) |
+| `/editorial-policy/` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 600 (shared) |
+
+### Files changed
+- `src/site-shell.css` (300+, 22-)
+- `home/index.html` (76+, 20-)
+- `globe/index.html` (40+, 1-)
+- `index.html` (1+, 1-)
+- `PROGRESS.md` (this entry)
