@@ -1,10 +1,32 @@
 /* =====================================================
-   dateandtime.live — Shared site shell (header + footer + breadcrumbs)
-   Used by all non-landing pages. The landing page (index.html)
-   has its own richer header but the design tokens match.
+   dateandtime.live — Shared site shell + Design System
+   -----------------------------------------------------
+   Single source of truth for the visual language.
+
+   Sections in this file:
+     1. Design tokens (colors, type scale, weights, spacing, radii, easings, durations)
+     2. Base / body / container
+     3. Site header (sticky, blur backdrop, logo, nav, theme toggle)
+     4. Nav dropdowns (World time, Timezone, etc.)
+     5. Mobile nav (hamburger + slide-out panel)
+     6. Breadcrumbs
+     7. Site footer (shared)
+     8. Brand buttons (.btn / .btn-primary / .btn-ghost / .btn-sm)
+     9. Page title block
+     10. Ad slots (reserved AdSense placements)
+     11. Responsive overrides
+
+   Every page on dateandtime.live imports this file. Pages may add
+   page-specific styles AFTER this loads, but they must reuse the
+   tokens here (no new colors, fonts, or weights without an update
+   to this file first).
    ===================================================== */
 
+/* =====================================================
+   1. DESIGN TOKENS — Light mode
+   ===================================================== */
 :root {
+  /* Brand & surface */
   --color-primary: #5b4aaf;
   --color-primary-fg: #ffffff;
   --color-foreground: #49445f;
@@ -15,13 +37,104 @@
   --color-border-soft: rgba(92, 74, 175, 0.08);
   --color-background: #ffffff;
   --color-background-soft: #faf8ff;
+  --color-card-bg: #ffffff;
+  --color-period-bg: rgba(92, 74, 175, 0.06);
+  --color-card-border: var(--color-border);
+  --color-card-shadow: 0 4px 18px rgba(91, 74, 175, 0.10);
+
+  /* Gradients */
   --color-logo-gradient: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
   --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
-  --color-period-bg: rgba(92, 74, 175, 0.06);
-  --color-card-bg: #ffffff;
+  --color-nav-underline: linear-gradient(90deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
+
+  /* Page texture (light) */
+  --color-page-texture:
+    radial-gradient(circle at 12% 18%, rgba(255, 216, 170, 0.92), transparent 27%),
+    radial-gradient(circle at 83% 15%, rgba(197, 220, 255, 0.95), transparent 31%),
+    radial-gradient(circle at 75% 82%, rgba(221, 202, 255, 0.92), transparent 28%),
+    radial-gradient(circle at 24% 82%, rgba(202, 242, 229, 0.78), transparent 30%),
+    linear-gradient(135deg, #fff8ef 0%, #f4f3ff 46%, #edf7ff 100%);
+
+  /* Segment display (used by the live clock hero on the landing) */
+  --color-glow: drop-shadow(0 5px 8px rgba(91, 77, 145, 0.10));
+  --color-on-segment: #47435f;
+  --color-off-segment: transparent;
+  --color-off-segment-opacity: 0;
+
+  /* Pills (status / category tags) */
+  --color-pill-purple-bg: rgba(91, 74, 175, 0.10);
+  --color-pill-purple-fg: #5b4aaf;
+  --color-pill-purple-bd: rgba(91, 74, 175, 0.30);
+  --color-pill-orange-bg: rgba(249, 115, 22, 0.10);
+  --color-pill-orange-fg: #c2410c;
+  --color-pill-orange-bd: rgba(249, 115, 22, 0.30);
+  --color-pill-green-bg: rgba(16, 185, 129, 0.10);
+  --color-pill-green-fg: #047857;
+  --color-pill-green-bd: rgba(16, 185, 129, 0.32);
+  --color-pill-border: var(--color-border);
+
+  /* Ad placeholders */
+  --color-ad-bg: color-mix(in srgb, var(--color-background) 70%, var(--color-background-soft));
+  --color-ad-fg: var(--color-muted-soft);
+  --color-ad-border: var(--color-border-soft);
+
+  /* Type scale (rem-based; 1rem = 16px) */
+  --fs-xs: 0.6875rem;   /* 11px */
+  --fs-sm: 0.8125rem;   /* 13px */
+  --fs-md: 0.875rem;    /* 14px */
+  --fs-base: 0.9375rem; /* 15px */
+  --fs-lg: 1.0625rem;   /* 17px */
+  --fs-xl: 1.25rem;     /* 20px */
+  --fs-2xl: 1.5rem;     /* 24px */
+  --fs-3xl: 2rem;       /* 32px */
+  --fs-4xl: 2.75rem;    /* 44px */
+
+  /* Font weights (Inter supports 300–800) */
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* Spacing scale (4px base) */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 9999px;
+
+  /* Easings & durations (transitions) */
+  --ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-emphasis: cubic-bezier(0.83, 0, 0.17, 1);
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 360ms;
+  --dur-x-slow: 540ms;
+
+  /* Layout */
   --shell-header-h: 64px;
+  --shell-container-max: 1240px;
+
+  color-scheme: light;
 }
 
+/* =====================================================
+   1b. DESIGN TOKENS — Dark mode (auto-flips via [data-theme="dark"])
+   ===================================================== */
 [data-theme="dark"] {
   --color-primary: #a78bfa;
   --color-primary-fg: #0f0a1f;
@@ -33,10 +146,43 @@
   --color-border-soft: rgba(167, 139, 250, 0.10);
   --color-background: #0f0820;
   --color-background-soft: #16092e;
+  --color-card-bg: #1a0e2e;
+  --color-period-bg: rgba(167, 139, 250, 0.08);
+  --color-card-border: var(--color-border);
+  --color-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.32);
+
   --color-logo-gradient: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
   --color-button-primary: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
-  --color-period-bg: rgba(167, 139, 250, 0.08);
-  --color-card-bg: #1a0e2e;
+  --color-nav-underline: linear-gradient(90deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
+
+  --color-page-texture:
+    radial-gradient(circle at 18% 22%, rgba(139, 92, 246, 0.30), transparent 30%),
+    radial-gradient(circle at 82% 18%, rgba(99, 102, 241, 0.20), transparent 28%),
+    radial-gradient(circle at 75% 80%, rgba(168, 85, 247, 0.22), transparent 30%),
+    radial-gradient(circle at 22% 78%, rgba(59, 130, 246, 0.15), transparent 28%),
+    linear-gradient(160deg, #0f0820 0%, #1f0a3e 50%, #0a0418 100%);
+
+  --color-glow: drop-shadow(0 0 12px rgba(249, 115, 22, 0.25));
+  --color-on-segment: #f97316;
+  --color-off-segment: transparent;
+  --color-off-segment-opacity: 0;
+
+  --color-pill-purple-bg: rgba(167, 139, 250, 0.18);
+  --color-pill-purple-fg: #c4b5fd;
+  --color-pill-purple-bd: rgba(167, 139, 250, 0.40);
+  --color-pill-orange-bg: rgba(249, 115, 22, 0.16);
+  --color-pill-orange-fg: #fdba74;
+  --color-pill-orange-bd: rgba(249, 115, 22, 0.35);
+  --color-pill-green-bg: rgba(16, 185, 129, 0.16);
+  --color-pill-green-fg: #6ee7b7;
+  --color-pill-green-bd: rgba(16, 185, 129, 0.35);
+  --color-pill-border: var(--color-border);
+
+  --color-ad-bg: rgba(15, 8, 32, 0.55);
+  --color-ad-fg: var(--color-muted-soft);
+  --color-ad-border: var(--color-border-soft);
+
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -47,11 +193,15 @@ body.shell-page {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--fs-base);          /* 15px */
+  font-weight: var(--fw-regular);     /* 400 */
   line-height: 1.55;
   transition: background-color 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.container { max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
+.container { max-width: var(--shell-container-max, 1240px); margin: 0 auto; padding: 0 1.25rem; }
 
 /* ===== Site header ===== */
 .site-header {
@@ -122,8 +272,8 @@ body.shell-page {
 }
 
 .logo-text {
-  font-size: 1.0625rem;
-  font-weight: 800;
+  font-size: var(--fs-lg);          /* 17px */
+  font-weight: var(--fw-extrabold); /* 800 */
   letter-spacing: -0.02em;
   display: inline-flex;
   align-items: baseline;
@@ -150,8 +300,9 @@ body.shell-page {
   border-radius: 9999px;
   color: var(--color-muted);
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: var(--fs-md);          /* 14px */
+  font-weight: var(--fw-semibold);  /* 600 */
+  letter-spacing: -0.005em;
   transition: color 150ms ease, background-color 150ms ease;
 }
 
@@ -354,7 +505,8 @@ body.shell-page {
 .breadcrumbs {
   padding: 0.7rem 0;
   border-bottom: 1px solid var(--color-border-soft);
-  font-size: 0.8125rem;
+  font-size: var(--fs-sm);          /* 13px */
+  font-weight: var(--fw-regular);   /* 400 */
   color: var(--color-muted);
   background: color-mix(in srgb, var(--color-background-soft) 35%, transparent);
   position: relative;
@@ -393,7 +545,7 @@ body.shell-page {
 .breadcrumbs a {
   color: var(--color-muted);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: var(--fw-medium);    /* 500 */
   padding: 2px 6px;
   border-radius: 5px;
   transition: color 120ms ease, background 120ms ease;
@@ -406,7 +558,7 @@ body.shell-page {
 
 .breadcrumbs [aria-current="page"] {
   color: var(--color-foreground);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);  /* 600 */
   padding: 2px 6px;
 }
 
@@ -416,7 +568,8 @@ body.shell-page {
   padding: 2.5rem 1.5rem 2rem;
   border-top: 1px solid var(--color-border-soft);
   background: color-mix(in srgb, var(--color-background-soft) 30%, transparent);
-  font-size: 0.8125rem;
+  font-size: var(--fs-sm);          /* 13px */
+  font-weight: var(--fw-regular);   /* 400 */
   color: var(--color-muted);
 }
 
@@ -433,7 +586,7 @@ body.shell-page {
 .site-footer-nav a {
   color: var(--color-muted);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);  /* 600 */
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 }
@@ -468,20 +621,23 @@ body.shell-page {
 
 .page-title {
   font-size: clamp(1.75rem, 4vw, 2.25rem);
-  font-weight: 800;
+  font-weight: var(--fw-extrabold); /* 800 */
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem;
   color: var(--color-foreground);
+  line-height: 1.15;
 }
 
 .page-meta {
-  font-size: 0.875rem;
+  font-size: var(--fs-md);          /* 14px */
+  font-weight: var(--fw-regular);
   color: var(--color-muted);
   margin: 0;
 }
 
 .page-subtitle {
-  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+  font-size: clamp(var(--fs-base), 1.5vw, var(--fs-lg));
+  font-weight: var(--fw-regular);
   color: var(--color-muted);
   margin: 0.5rem 0 0;
   line-height: 1.5;
@@ -631,8 +787,8 @@ body.shell-page {
   align-items: center;
   gap: 0.5rem;
   padding: 0.875rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--fs-base);        /* 15px */
+  font-weight: var(--fw-semibold);  /* 600 */
   color: var(--color-foreground);
   text-decoration: none;
   border-radius: 10px;
@@ -782,4 +938,126 @@ body.has-mobile-nav-open {
   font-weight: 600;
   color: var(--color-primary);
   white-space: nowrap;
+}
+
+/* =====================================================
+   12. SHARED BRAND BUTTONS
+   Used by the landing, /home, /globe (and any future page
+   that needs a primary CTA in the header). Pages that need
+   an additional button set can extend these — but the four
+   base variants below are the canonical ones.
+   ===================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  font-family: inherit;
+  font-size: 0.875rem;          /* --fs-md */
+  font-weight: 700;             /* --fw-bold */
+  text-decoration: none;
+  border: 1px solid transparent;
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 9999px;        /* --r-pill */
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+.btn-primary {
+  color: var(--color-primary-fg);
+  background-image: var(--color-button-primary);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-ghost {
+  color: var(--color-foreground);
+  background: transparent;
+}
+.btn-ghost:hover { color: var(--color-primary); }
+.btn-secondary {
+  color: var(--color-foreground);
+  background: var(--color-background);
+  border-color: var(--color-border);
+}
+.btn-secondary:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  color: var(--color-primary);
+}
+.btn-sm {
+  height: 34px;
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;        /* --fs-sm */
+}
+.btn-lg {
+  height: 48px;
+  padding: 0 1.5rem;
+  font-size: 0.9375rem;        /* --fs-base */
+}
+
+/* =====================================================
+   13. SHARED PILL CHIPS (.pill — base; variants in each page)
+   ===================================================== */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px;        /* --r-pill */
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+}
+.pill-purple {
+  background: var(--color-pill-purple-bg);
+  border-color: var(--color-pill-purple-bd);
+  color: var(--color-pill-purple-fg);
+}
+.pill-orange {
+  background: var(--color-pill-orange-bg);
+  border-color: var(--color-pill-orange-bd);
+  color: var(--color-pill-orange-fg);
+}
+.pill-green {
+  background: var(--color-pill-green-bg);
+  border-color: var(--color-pill-green-bd);
+  color: var(--color-pill-green-fg);
+}
+
+/* =====================================================
+   14. FOCUS RING (accessibility — applies to all interactive
+   elements via :focus-visible so it only shows on keyboard nav)
+   ===================================================== */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.btn:focus-visible,
+.theme-toggle button:focus-visible,
+.nav-toggle:focus-visible,
+.nav-link:focus-visible {
+  outline-offset: 3px;
+}
+
+/* =====================================================
+   15. SCROLLBAR (subtle, theme-aware)
+   ===================================================== */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-muted) 30%, transparent);
+  border-radius: 5px;
+  border: 2px solid var(--color-background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-muted) 50%, transparent);
 }
