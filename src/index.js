@@ -22,9 +22,9 @@ let citiesCache = { at: 0, data: null };
 const CITIES_TTL_MS = 5 * 60 * 1000;
 
 // Slug to country mapping for 301 redirects from the legacy /world-time/city/{slug}/
-// path to the canonical /world-time/{country}/{slug}/. Generated at build time
+// path to the canonical /world-time/{country-name-slug}/{slug}/. Generated at build time
 // from scripts/build-city-pages.js (911 entries, compact string).
-// Format: "slug,country|slug,country|..." - parsed at runtime to avoid
+// Format: "slug,cca2|slug,cca2|..." - parsed at runtime to avoid
 // wrangler build errors on a large JS object literal.
 import { SLUG_DATA } from './slug-data.js';
 const SLUG_TO_COUNTRY = (() => {
@@ -32,6 +32,22 @@ const SLUG_TO_COUNTRY = (() => {
   for (const pair of SLUG_DATA.split('|')) {
     const i = pair.indexOf(',');
     if (i > 0) m[pair.slice(0, i)] = pair.slice(i + 1);
+  }
+  return m;
+})();
+
+// cca2 -> country-name-slug mapping (e.g. "US" -> "united-states") for the
+// second URL hop: /world-time/{cca2}/{slug}/ -> /world-time/{country-name}/{slug}/.
+// Auto-generated from /api/v1/countries (242 entries, compact string).
+// Format: "CC,slug|CC,slug|..." - parsed at runtime.
+import { CC2_COUNTRY_SLUG } from './cc2-country-slug.js';
+const CCA2_TO_COUNTRY_SLUG = (() => {
+  const m = {};
+  if (CC2_COUNTRY_SLUG && typeof CC2_COUNTRY_SLUG === 'string') {
+    for (const pair of CC2_COUNTRY_SLUG.split('|')) {
+      const i = pair.indexOf(',');
+      if (i > 0) m[pair.slice(0, i).toUpperCase()] = pair.slice(i + 1);
+    }
   }
   return m;
 })();
@@ -459,18 +475,37 @@ export default {
     }
 
     // City pages: /world-time/city/{slug}/...
-    // (LEGACY path — migrated to /world-time/{country}/{slug}/ on 2026-07-24.)
+    // (LEGACY path v1 — migrated to /world-time/{country-name-slug}/{slug}/.)
     //
     // We issue a 301 redirect to the canonical new path. For the 911 pre-built
-    // cities, SLUG_TO_COUNTRY has the mapping. For unknown slugs (the 33K we
-    // haven't pre-built yet), the redirect lands on a 404 in the new path.
+    // cities, SLUG_TO_COUNTRY has the slug -> cca2 mapping. For unknown slugs
+    // (the 33K we haven't pre-built yet), the redirect lands on a 404 in the
+    // new path.
     const legacyCityMatch = url.pathname.match(/^\/world-time\/city\/([^/]+)(\/.*)?\/?$/);
     if (legacyCityMatch) {
       const slug = legacyCityMatch[1];
       const tail = legacyCityMatch[2] || '/';
       const cca2 = SLUG_TO_COUNTRY[slug];
       if (cca2) {
-        const newPath = `/world-time/${cca2}/${slug}${tail === '/' ? '/' : tail}`;
+        // SLUG_TO_COUNTRY keys are lowercase ("us", "gb", ...), but the
+        // CCA2_TO_COUNTRY_SLUG map is built with uppercase keys for
+        // human-friendly comparison. Look up both forms.
+        const countrySlug = CCA2_TO_COUNTRY_SLUG[cca2.toUpperCase()] || CCA2_TO_COUNTRY_SLUG[cca2] || cca2;
+        // If the request has a sub-page tail (e.g. /time/, /facts/, /weather/)
+        // and the canonical new path doesn't have those sub-page files, the
+        // chain would end in a 404. The new city pages are single-file with all
+        // sections inline, so we redirect sub-page requests to the parent city
+        // page (with a 301) and let the page's own in-page navigation handle
+        // the section anchor.
+        const cleanTail = tail && tail !== '/' && tail !== '' ? tail : '/';
+        // Whitelist of legacy sub-page tails that we know were never built as
+        // separate files. Any other tail would 404 anyway, so we normalize
+        // them to the parent page.
+        const subPageTails = ['/time/', '/time', '/facts/', '/facts', '/weather/', '/weather', '/map/', '/map'];
+        const isSubPage = subPageTails.includes(cleanTail);
+        const newPath = isSubPage
+          ? `/world-time/${countrySlug}/${slug}/`
+          : `/world-time/${countrySlug}/${slug}${cleanTail === '/' ? '/' : cleanTail}`;
         return new Response(null, { status: 301, headers: { Location: newPath } });
       }
       // Unknown slug: fall through and try the legacy asset (so we don't 404
@@ -483,6 +518,29 @@ export default {
         return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
       }
       return new Response("City page not found: " + slug, { status: 404 });
+    }
+
+    // City pages: /world-time/{cca2}/{slug}/...
+    // (LEGACY path v2 — migrated to /world-time/{country-name-slug}/{slug}/ on
+    // 2026-07-25.) The new path uses the human-readable country name (e.g.
+    // "united-states") instead of the cca2 code ("us").
+    const cca2CityMatch = url.pathname.match(/^\/world-time\/([a-z]{2})\/([^/]+)(\/.*)?\/?$/i);
+    if (cca2CityMatch) {
+      const cca2 = cca2CityMatch[1].toUpperCase();
+      const slug = cca2CityMatch[2];
+      const tail = cca2CityMatch[3] || '/';
+      const countrySlug = CCA2_TO_COUNTRY_SLUG[cca2];
+      if (countrySlug) {
+        // Same sub-page tail handling as legacyCityMatch above.
+        const cleanTail = tail && tail !== '/' && tail !== '' ? tail : '/';
+        const subPageTails = ['/time/', '/time', '/facts/', '/facts', '/weather/', '/weather', '/map/', '/map'];
+        const isSubPage = subPageTails.includes(cleanTail);
+        const newPath = isSubPage
+          ? `/world-time/${countrySlug}/${slug}/`
+          : `/world-time/${countrySlug}/${slug}${cleanTail === '/' ? '/' : cleanTail}`;
+        return new Response(null, { status: 301, headers: { Location: newPath } });
+      }
+      // Unknown cca2: fall through to ASSETS
     }
 
     // Get the asset (HTML or other) from the [assets] binding.

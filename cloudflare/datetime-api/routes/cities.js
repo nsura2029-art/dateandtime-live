@@ -255,6 +255,33 @@ async function handleCityClimate(env, idStr) {
 // /api/v1/cities/popular
 // =============================================================================
 
+// cca2 -> country-name-slug mapping for the canonical /world-time/{slug}/{slug}/
+// path. Loaded once at module init from the prod /api/v1/countries endpoint.
+// Falls back to the cca2 itself if the country record isn't found (defensive).
+let COUNTRY_SLUG_MAP = null;
+async function loadCountrySlugMap() {
+  if (COUNTRY_SLUG_MAP) return COUNTRY_SLUG_MAP;
+  try {
+    const r = await fetch('https://api.dateandtime.live/api/v1/countries?limit=300', {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!r.ok) throw new Error('countries upstream ' + r.status);
+    const j = await r.json();
+    const list = (j.data && j.data.countries) || [];
+    const map = {};
+    for (const c of list) {
+      if (!c || !c.cca2) continue;
+      map[c.cca2.toUpperCase()] = slugify(c.name) || c.cca2.toLowerCase();
+    }
+    COUNTRY_SLUG_MAP = map;
+    return map;
+  } catch (e) {
+    console.warn('cities/popular: country slug map failed, falling back to cca2', e.message);
+    COUNTRY_SLUG_MAP = {};
+    return COUNTRY_SLUG_MAP;
+  }
+}
+
 /**
  * Build the regional-indicator flag emoji for a 2-letter country code.
  * "US" → 🇺🇸, "GB" → 🇬🇧, "JP" → 🇯🇵
@@ -404,12 +431,17 @@ async function handleCitiesPopular(request) {
   const sort = (url.searchParams.get('sort') || 'population').toLowerCase();
 
   try {
-    const { cities, countries } = await getPopularData();
+    const [popularData, countrySlugMap] = await Promise.all([
+      getPopularData(),
+      loadCountrySlugMap()
+    ]);
+    const { cities, countries } = popularData;
 
     // Enrich + filter
     let enriched = cities.map(c => {
       const cca2 = (c.countryCode || '').toUpperCase();
       const countryInfo = countries[cca2] || null;
+      const countrySlug = countrySlugMap[cca2] || cca2.toLowerCase();
       return {
         id: c.id,
         name: c.name,
@@ -417,6 +449,7 @@ async function handleCitiesPopular(request) {
         slug: c.slug || null, // may be null if not in our 911 pre-built list
         countryCode: cca2,
         countryName: c.countryName || (countryInfo && countryInfo.name) || null,
+        countrySlug, // new: for the /world-time/{country-name}/{city}/ path
         continent: countryInfo ? countryInfo.continent : null,
         stateCode: c.stateCode || null,
         latitude: c.latitude,
@@ -427,7 +460,9 @@ async function handleCitiesPopular(request) {
         featureCode: c.featureCode,
         aliases: c.aliases || [],
         flagEmoji: flagEmojiFor(cca2),
-        path: cityPathFor(cca2, c.slug, c.asciiName || c.name)
+        // Canonical path: /world-time/{country-name-slug}/{city-slug}/
+        // Falls back to /world-time/{cca2}/{city-slug}/ if the slug map is missing
+        path: cityPathFor(countrySlug, c.slug, c.asciiName || c.name)
       };
     });
 

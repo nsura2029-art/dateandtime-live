@@ -1,20 +1,33 @@
 #!/usr/bin/env node
 /* Generate static city pages using Template D (Data Hub)
- * URL: /world-time/{country}/{slug}/
- * Pattern: Home / World Time / {Country} / {City}
+ * URL: /world-time/{country-name-slug}/{city-slug}/
+ * Pattern: Home / World Time / {Country Name} / {City}
  *
  * Inputs: list of cities (id + slug)
  * Fetches: city data, holidays, OTD, climate, people
  * Renders: Template D with all data injected
- * Output: world-time/{country}/{slug}/index.html
+ * Output: world-time/{country-name-slug}/{city-slug}/index.html
  *
- * Backward-compat: the OLD /world-time/city/{slug}/ pages are kept on disk
- * and the Worker (src/index.js) issues a 301 redirect to the new path. This
- * is additive — no section deleted from any page.
+ * Backward-compat: the OLD /world-time/city/{slug}/ and /world-time/{cca2}/{slug}/
+ * pages are kept on disk and the Worker (src/index.js) issues a 301 redirect
+ * to the new path. This is additive — no section deleted from any page.
  */
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+
+// Country name slugs: cca2 -> 'united-states', 'united-kingdom', etc.
+// Loaded from scripts/cc2-country-slug.json (242 entries, auto-generated from
+// /api/v1/countries). Falls back to cca2 lowercase if missing.
+const CC2_TO_COUNTRY_SLUG = (() => {
+  try {
+    const raw = fs.readFileSync(path.join(__dirname, 'cc2-country-slug.json'), 'utf-8');
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn('cc2-country-slug.json missing, falling back to cca2 only');
+    return {};
+  }
+})();
 
 const API = process.env.API || 'https://dev.api.dateandtime.live';
 // Use prod for city data (has all 33,945 cities, dev D1 only has 190)
@@ -191,6 +204,9 @@ async function fetchAll(city) {
   c.timezone = c.timezone || c.tz;
   c.isCapital = c.isCapital || !!c.is_capital;
   c.slug = city.slug;  // attach our disambiguated slug for URL building
+  // Attach the human-readable country-name slug for the canonical URL
+  // (e.g. "United States" -> "united-states"). Falls back to cca2 lowercase.
+  c.countrySlug = CC2_TO_COUNTRY_SLUG[(c.countryCode || '').toUpperCase()] || (c.countryCode || 'us').toLowerCase();
 
   // 2. Time in city
   const timeData = await fetchJson(`${API}/api/v1/time/now?tz=${encodeURIComponent(c.timezone)}`);
@@ -249,7 +265,12 @@ async function fetchAll(city) {
     }
     nearbyCities = candidates
       .filter(x => x.id !== c.id)
-      .map(x => ({ ...x, distanceKm: haversineKm(c.latitude, c.longitude, x.latitude, x.longitude) }))
+      .map(x => ({
+        ...x,
+        distanceKm: haversineKm(c.latitude, c.longitude, x.latitude, x.longitude),
+        // Add countrySlug to each nearby city for URL building
+        countrySlug: CC2_TO_COUNTRY_SLUG[(x.countryCode || '').toUpperCase()] || (x.countryCode || 'us').toLowerCase()
+      }))
       .sort((a, b) => a.distanceKm - b.distanceKm)
       .slice(0, 6);
   } catch (e) { console.warn('nearby fetch failed:', e.message); }
@@ -448,7 +469,7 @@ function renderTemplate(d) {
   const nearbyHtml = (nearby && nearby.length > 0) ? `
     <div class="nearby-grid">
       ${nearby.map(n => `
-        <a href="/world-time/${(n.countryCode || n.country || 'us').toLowerCase()}/${n.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}/" class="nearby-card">
+        <a href="/world-time/${n.countrySlug}/${n.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}/" class="nearby-card">
           <div class="name">${n.name}</div>
           <div class="meta">${Math.round(n.distanceKm)} km ${n.stateCode ? `· ${n.stateCode}` : ''} · ${n.countryCode}</div>
           <div class="time" data-tz="${n.timezone}">${fmtTime(new Date().toLocaleString('en-US', { timeZone: n.timezone }), false).split(' ')[0]}<span class="ampm">${fmtTime(new Date().toLocaleString('en-US', { timeZone: n.timezone }), false).split(' ')[1]}</span></div>
@@ -493,7 +514,7 @@ function renderTemplate(d) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${fullName} — Current Time, Time Zone, Weather & People · dateandtime.live</title>
   <meta name="description" content="${c.name}: live local time (${offsetAbbr}, ${offsetStr}), 7-day weather, sunrise & sunset, holidays, famous people, climate, and time difference from every major city. Updated every second." />
-  <link rel="canonical" href="https://dateandtime.live/world-time/${(c.countryCode || c.country || 'us').toLowerCase()}/${c.slug || d.city.slug || ''}/" />
+  <link rel="canonical" href="https://dateandtime.live/world-time/${c.countrySlug}/${c.slug || d.city.slug || ''}/" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -658,9 +679,9 @@ function renderTemplate(d) {
     <a href="/" class="logo">⏱ dateandtime.live</a>
     <nav>
       <a href="/world-time/">World</a>
-      <a href="/world-time/${c.countryCode.toLowerCase()}/">${c.countryName}</a>
+      <a href="/world-time/${c.countrySlug}/">${c.countryName}</a>
       <a href="/time-zones/zone/${c.timezone.toLowerCase()}/">${c.timezone}</a>
-      <a href="/holidays/${c.countryCode.toLowerCase()}/">Holidays</a>
+      <a href="/holidays/${c.countrySlug}/">Holidays</a>
       <a href="/meeting/?with=${d.city.slug}">Meeting</a>
     </nav>
     <div>
@@ -672,8 +693,8 @@ function renderTemplate(d) {
     <div class="crumbs">
       <a href="/world-time/">World time</a>
       <span class="sep">›</span>
-      <a href="/world-time/${c.countryCode.toLowerCase()}/">${c.countryName}</a>
-      ${c.stateCode ? `<span class="sep">›</span><a href="/world-time/${c.countryCode.toLowerCase()}/${c.stateCode.toLowerCase()}/">${c.stateCode}</a>` : ''}
+      <a href="/world-time/${c.countrySlug}/">${c.countryName}</a>
+      ${c.stateCode ? `<span class="sep">›</span><a href="/world-time/${c.countrySlug}/${c.stateCode.toLowerCase()}/">${c.stateCode}</a>` : ''}
       <span class="sep">›</span>
       <span class="current">${c.name}</span>
     </div>
@@ -713,14 +734,14 @@ function renderTemplate(d) {
     <!-- Section 02: TAD-style color blocks -->
     <div class="section-head">
       <h2><span class="num">02</span> · Time, zone, and environment</h2>
-      <a class="more" href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/time/">All time details →</a>
+      <a class="more" href="/world-time/${d.city.countrySlug}/${d.city.slug}/time/">All time details →</a>
     </div>
     <section class="info-blocks">${blocksHtml}</section>
 
     <!-- Section 03: Tampa in numbers -->
     <div class="section-head">
       <h2><span class="num">03</span> · ${c.name} in numbers</h2>
-      <a class="more" href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/facts/">More facts →</a>
+      <a class="more" href="/world-time/${d.city.countrySlug}/${d.city.slug}/facts/">More facts →</a>
     </div>
     <section class="stats-inline">${statsHtml}</section>
 
@@ -734,28 +755,28 @@ function renderTemplate(d) {
     <!-- Section 05: 7-day weather -->
     <div class="section-head">
       <h2><span class="num">05</span> · 7-day weather in ${c.name}</h2>
-      <a class="more" href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/weather/">Full forecast →</a>
+      <a class="more" href="/world-time/${d.city.countrySlug}/${d.city.slug}/weather/">Full forecast →</a>
     </div>
     <section>${weatherHtml}</section>
 
     <!-- Section 06: Holidays -->
     <div class="section-head">
       <h2><span class="num">06</span> · Upcoming ${c.countryName} holidays</h2>
-      <a class="more" href="/holidays/${c.countryCode.toLowerCase()}/">All 2026 →</a>
+      <a class="more" href="/holidays/${c.countrySlug}/">All 2026 →</a>
     </div>
     <section class="data-list">${holidaysHtml}</section>
 
     <!-- Section 07: Cities near -->
     <div class="section-head">
       <h2><span class="num">07</span> · Cities near ${c.name}</h2>
-      <a class="more" href="/world-time/${c.countryCode.toLowerCase()}/${(c.stateCode||'').toLowerCase()}/">All nearby →</a>
+      <a class="more" href="/world-time/${c.countrySlug}/${(c.stateCode||'').toLowerCase()}/">All nearby →</a>
     </div>
     <section>${nearbyHtml}</section>
 
     <!-- Section 08: Climate year-round -->
     <div class="section-head">
       <h2><span class="num">08</span> · ${c.name} climate year-round</h2>
-      <a class="more" href="/world-time/${(d.city.countryCode || c.countryCode || c.country || 'us').toLowerCase()}/${d.city.slug || c.slug || ''}/climate/">Full climate →</a>
+      <a class="more" href="/world-time/${(d.city.countrySlug || c.countrySlug)}/${d.city.slug || c.slug || ''}/climate/">Full climate →</a>
     </div>
     <section>${climateHtml}</section>
 
@@ -764,10 +785,10 @@ function renderTemplate(d) {
       <h2><span class="num">09</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
-      <a href="/world-time/${c.countryCode.toLowerCase()}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>
-      ${c.stateCode ? `<a href="/world-time/${c.countryCode.toLowerCase()}/${c.stateCode.toLowerCase()}/" class="explore-link"><span class="label">${c.stateCode}</span>All ${c.stateCode} cities</a>` : ''}
+      <a href="/world-time/${c.countrySlug}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>
+      ${c.stateCode ? `<a href="/world-time/${c.countrySlug}/${c.stateCode.toLowerCase()}/" class="explore-link"><span class="label">${c.stateCode}</span>All ${c.stateCode} cities</a>` : ''}
       <a href="/time-zones/zone/${c.timezone.toLowerCase()}/" class="explore-link"><span class="label">🕒 ${c.timezone}</span>Time zone hub</a>
-      <a href="/holidays/${c.countryCode.toLowerCase()}/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
+      <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=${d.city.slug}" class="explore-link"><span class="label">📅 Meeting</span>Plan with ${c.name}</a>
     </section>
 
@@ -779,16 +800,16 @@ function renderTemplate(d) {
         </div>
         <div class="footer-col">
           <h4>${c.name}</h4>
-          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/">Overview</a>
-          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/sunrise/">Sun & Moon</a>
-          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/holidays/">Holidays</a>
-          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/people/">People</a>
-          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/weather/">Weather</a>
+          <a href="/world-time/${d.city.countrySlug}/${d.city.slug}/">Overview</a>
+          <a href="/world-time/${d.city.countrySlug}/${d.city.slug}/sunrise/">Sun & Moon</a>
+          <a href="/world-time/${d.city.countrySlug}/${d.city.slug}/holidays/">Holidays</a>
+          <a href="/world-time/${d.city.countrySlug}/${d.city.slug}/people/">People</a>
+          <a href="/world-time/${d.city.countrySlug}/${d.city.slug}/weather/">Weather</a>
         </div>
         <div class="footer-col">
           <h4>${c.countryName}</h4>
-          <a href="/world-time/${c.countryCode.toLowerCase()}/">All ${c.countryName} cities</a>
-          <a href="/holidays/${c.countryCode.toLowerCase()}/">${c.countryName} holidays</a>
+          <a href="/world-time/${c.countrySlug}/">All ${c.countryName} cities</a>
+          <a href="/holidays/${c.countrySlug}/">${c.countryName} holidays</a>
           <a href="/time-zones/zone/${c.timezone.toLowerCase()}/">${c.timezone}</a>
         </div>
         <div class="footer-col">
@@ -861,10 +882,10 @@ function renderTemplate(d) {
 async function buildCity(city) {
   try {
     const data = await fetchAll(city);
-    // Need the country code to know where to write the new path.
-    // It's not in the build script's city list, so we read it from the data.
-    const cca2 = (data && data.city && (data.city.countryCode || data.city.country)) || city.code || 'us';
-    const countrySlug = String(cca2).toLowerCase();
+    // Resolve the country path: prefer the human-readable name slug
+    // (e.g. "united-states") over the cca2 ("us"). Falls back to cca2.
+    const cca2 = ((data && data.city && (data.city.countryCode || data.city.country)) || city.code || 'us').toUpperCase();
+    const countrySlug = CC2_TO_COUNTRY_SLUG[cca2] || cca2.toLowerCase();
     const html = renderTemplate(data);
     const outDir = path.join(process.cwd(), 'world-time', countrySlug, city.slug);
     fs.mkdirSync(outDir, { recursive: true });
