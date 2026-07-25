@@ -462,6 +462,25 @@
   flex: 1;
   text-align: left;
 }
+/* State name badge on city cards (only on country pages, not state pages) */
+.wt-card-state {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--color-foreground-muted, #6b6781);
+  background: var(--color-card-bg-alt, rgba(92, 74, 175, 0.08));
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+[data-theme="dark"] .wt-card-state {
+  color: #a8a3c2;
+  background: rgba(120, 102, 212, 0.18);
+}
 
 /* Green live dot with pulse — same as home page */
 .wt-live-pulse {
@@ -928,8 +947,26 @@
   pointer-events: none;
 }
 .wt-state-tile-img-wrap.wt-img-failed {
-  /* When the image fails to load, show a subtle pattern + the state code. */
+  /* When the image fails to load, show a stylized gradient with a big
+     state code overlay. Looks intentional, not broken. */
   background: linear-gradient(135deg, #7866d4 0%, #5b4aaf 100%);
+  position: relative;
+}
+.wt-state-tile-img-wrap.wt-img-failed::before {
+  content: attr(data-state-code);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.05em;
+  z-index: 1;
+  pointer-events: none;
+}
+.wt-state-tile-img-wrap.wt-img-failed .wt-state-tile-img {
+  display: none;
 }
 .wt-state-tile-tz {
   position: absolute;

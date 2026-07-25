@@ -332,7 +332,9 @@
       // Some /api/v1/cities responses include a "total" that doesn't reflect
       // the server-side minPopulation filter. When the filter is on AND the
       // build script pre-baked a __CITY_TOTAL, trust that one instead.
-      if (state.country && (window.__MIN_POPULATION || 0) > 0 && window.__CITY_TOTAL) {
+      // Only applies to country pages — state pages must use the actual
+      // filtered count (DC has 2 cities, not 1,246).
+      if (state.country && !state.stateCode && (window.__MIN_POPULATION || 0) > 0 && window.__CITY_TOTAL) {
         state.total = window.__CITY_TOTAL;
       }
 
@@ -538,7 +540,7 @@
       const image = m.image || slug; // falls back to slug-based filename
       return `
         <a href="/world-time/${window.__COUNTRY_SLUG}/state/${slug}/" class="wt-state-tile" data-tz="${tz}">
-          <div class="wt-state-tile-img-wrap">
+          <div class="wt-state-tile-img-wrap" data-state-code="${escapeHtml(s.code)}">
             <img class="wt-state-tile-img" src="/assets/states/${image}.webp" alt="${escapeHtml(s.name)}" loading="lazy" width="400" height="225" decoding="async" onerror="this.onerror=null;this.classList.add('wt-img-failed');this.parentElement.classList.add('wt-img-failed')" />
             <span class="wt-state-tile-tz" title="Time zone">${escapeHtml(m.tzLabel || '')}</span>
           </div>
@@ -640,6 +642,23 @@
     const flagEmoji = c.flagEmoji || "";
     const flagUrl = cca2 ? `https://flagcdn.com/w40/${cca2}.png` : "";
     const path = buildCityPath(c);
+    // Show the state name on city cards (only on country pages, not state
+    // pages where the state is already in the URL). Looks up the friendly
+    // state name from window.__STATES (set by the build script).
+    let stateNameHtml = "";
+    if (state.country && !state.stateCode) {
+      const sc = c.stateCode || c.state_code;
+      if (sc) {
+        const meta = window.__STATE_META || {};
+        const stateMeta = meta[sc];
+        if (stateMeta) {
+          stateNameHtml = `<span class="wt-card-state">${escapeHtml(stateMeta.name || sc)}</span>`;
+        } else {
+          // Fallback: 2-letter state code
+          stateNameHtml = `<span class="wt-card-state">${escapeHtml(sc)}</span>`;
+        }
+      }
+    }
     return `
       <article class="wt-card" data-tz="${c.timezone || ""}" data-id="${c.id}" data-path="${path}">
         <a class="wt-card-link" href="${path}" aria-label="Open ${safeName} time zone page">
@@ -647,6 +666,7 @@
           <div class="wt-card-head">
             <span class="wt-live-pulse" aria-hidden="true"></span>
             <span class="wt-card-name">${safeName}</span>
+            ${stateNameHtml}
           </div>
           <div class="wt-card-time" data-clock-tz="${c.timezone || ""}">--:--:--.--</div>
           <div class="wt-card-meta">
@@ -877,8 +897,17 @@
       if (!r.ok) throw new Error("popular upstream " + r.status);
       const j = await r.json();
       const data = j.data || {};
-      const list = data.cities || [];
-      state.total = data.total != null ? data.total : list.length;
+      let list = data.cities || [];
+      // Apply the same client-side state filter that fetchPage() uses —
+      // without this, ?p=N URLs leak the unfiltered country-wide list.
+      if (state.stateCode) {
+        const sc = state.stateCode;
+        list = list.filter(c => (c.stateCode || c.state_code) === sc);
+      }
+      state.total = state.stateCode ? list.length : (data.total != null ? data.total : list.length);
+      if (state.country && !state.stateCode && (window.__MIN_POPULATION || 0) > 0 && window.__CITY_TOTAL) {
+        state.total = window.__CITY_TOTAL;
+      }
       if (append) {
         const seen = new Set(state.cities.map(c => c.id));
         for (const c of list) if (!seen.has(c.id)) state.cities.push(c);

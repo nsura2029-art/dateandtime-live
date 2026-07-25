@@ -363,7 +363,7 @@ function buildPage({ cca2, countryName, countrySlug, stateCode, stateSlug, state
               <option value="popular">Popular</option>
               <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="state">By state</option>
+              ${!stateCode ? '<option value="state">By state</option>' : ''}
             </select>
           </label>
         </div>
