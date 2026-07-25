@@ -465,6 +465,7 @@ async function handleCitiesPopular(request) {
   const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
   const continent = (url.searchParams.get('continent') || '').toUpperCase();
   const country = (url.searchParams.get('country') || '').toUpperCase();
+  const stateCode = (url.searchParams.get('state') || '').trim();
   const isCapital = url.searchParams.get('isCapital') === '1';
   const sort = (url.searchParams.get('sort') || 'population').toLowerCase();
   // Search query — matches city name, ascii name, or country name (case-insensitive)
@@ -513,6 +514,7 @@ async function handleCitiesPopular(request) {
 
     if (continent) enriched = enriched.filter(c => c.continent === continent);
     if (country) enriched = enriched.filter(c => c.countryCode === country);
+    if (stateCode) enriched = enriched.filter(c => c.stateCode === stateCode);
     if (isCapital) enriched = enriched.filter(c => c.isCapital);
     if (region) enriched = enriched.filter(c => getSubregionSlug(c.unSubregion) === region);
     if (q) {
@@ -551,7 +553,7 @@ async function handleCitiesPopular(request) {
         total: enriched.length,
         has_more: offset + sliced.length < enriched.length,
         total_unfiltered: cities.length,
-        filters: { continent: continent || null, country: country || null, region: region || null, q: q || null, isCapital },
+        filters: { continent: continent || null, country: country || null, state: stateCode || null, region: region || null, q: q || null, isCapital },
         sort
       },
       meta: {

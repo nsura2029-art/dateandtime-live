@@ -837,6 +837,14 @@ function renderTemplate(d) {
         <li><a href="/">Home</a></li>
         <li><a href="/world-time/">World time</a></li>
         <li><a href="/world-time/${c.countrySlug}/">${c.countryName}</a></li>
+        ${(() => {
+          const stateName = STATE_NAME_LOOKUP[`${c.countryCode}|${c.stateCode}`];
+          if (stateName) {
+            const stateSlug = stateName.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            return `<li><a href="/world-time/${c.countrySlug}/${stateSlug}/">${stateName}</a></li>`;
+          }
+          return '';
+        })()}
         <li><span aria-current="page">${c.name}</span></li>
       </ol>
     </div>
@@ -930,7 +938,14 @@ function renderTemplate(d) {
     </div>
     <section class="explore-grid">
       <a href="/world-time/${c.countrySlug}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>
-      ${c.stateCode ? `<a href="/world-time/${c.countrySlug}/${c.stateCode.toLowerCase()}/" class="explore-link"><span class="label">${c.stateName && c.stateName !== c.stateCode ? c.stateName : c.stateCode}</span>All ${c.stateName && c.stateName !== c.stateCode ? c.stateName : c.stateCode} cities</a>` : ''}
+      ${(() => {
+        const stateName = STATE_NAME_LOOKUP[`${c.countryCode}|${c.stateCode}`];
+        if (stateName) {
+          const stateSlug = stateName.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+          return `<a href="/world-time/${c.countrySlug}/${stateSlug}/" class="explore-link"><span class="label">${stateName}</span>All ${stateName} cities</a>`;
+        }
+        return '';
+      })()}
       <a href="/time-zones/zone/${c.timezone.toLowerCase()}/" class="explore-link"><span class="label">🕒 ${c.timezone}</span>Time zone hub</a>
       <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=${d.city.slug}" class="explore-link"><span class="label">📅 Meeting</span>Plan with ${c.name}</a>

@@ -26,8 +26,8 @@
   "use strict";
 
   const API_BASE = "https://datetime-api-dev.nsura2029.workers.dev";
-  const INITIAL_VISIBLE = 8;   // page 1
-  const PAGE_STEP = 15;        // each subsequent page
+  const INITIAL_VISIBLE = (typeof window !== 'undefined' && window.__PAGE_INITIAL) || 50;  // page 1
+  const PAGE_STEP = (typeof window !== 'undefined' && window.__PAGE_STEP) || 50;        // each subsequent page
   const SEARCH_DEBOUNCE_MS = 250;
 
   // =============== Inline SVG icons (24×24, single path, currentColor) ===============
@@ -132,6 +132,8 @@
     sort: "popular",
     q: "",
     page: 1,
+    country: null,        // ISO 3166-1 alpha-2 (set on country/state pages)
+    stateCode: null,      // admin1 code (set on state pages)
     cities: [],          // accumulated across Load more clicks
     total: 0,            // API's reported total (for current filter set)
     loading: false,
@@ -230,6 +232,8 @@
     const params = new URLSearchParams();
     if (cont && cont.api) params.set("continent", cont.api);
     if (state.region) params.set("region", state.region);
+    if (state.country) params.set("country", state.country);
+    if (state.stateCode) params.set("state", state.stateCode);
     if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
     if (state.q) params.set("q", state.q);
     // Pagination: page 1 → INITIAL_VISIBLE; page N>1 → PAGE_STEP starting after the accumulated count
@@ -248,6 +252,8 @@
     const params = new URLSearchParams();
     if (cont && cont.api) params.set("continent", cont.api);
     if (state.region) params.set("region", state.region);
+    if (state.country) params.set("country", state.country);
+    if (state.stateCode) params.set("state", state.stateCode);
     if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
     if (state.q) params.set("q", state.q);
     const offset = p === 1 ? 0 : (INITIAL_VISIBLE + (p - 2) * PAGE_STEP);
@@ -396,6 +402,15 @@
       }
     }
 
+    // Per-page init (set by the country/state page builder)
+    if (window.__COUNTRY_CCA2) state.country = window.__COUNTRY_CCA2;
+    if (window.__STATE_CODE) state.stateCode = window.__STATE_CODE;
+    // URL params take precedence
+    const countryParam = params.get("country");
+    if (countryParam) state.country = countryParam.toUpperCase();
+    const stateParam = params.get("state");
+    if (stateParam) state.stateCode = stateParam;
+
     const sort = params.get("sort") || "popular";
     if (SORTS.find(s => s.code === sort)) state.sort = sort;
 
@@ -420,6 +435,21 @@
     host.querySelectorAll(".wt-pill").forEach(btn => {
       btn.addEventListener("click", () => setContinent(btn.dataset.continent));
     });
+  }
+
+  // Renders the "Browse {Country} by state" tile grid on the country page.
+  // Pulls state list from window.__STATES (set by the build script).
+  function renderStateGrid() {
+    const host = el("wt-state-grid");
+    if (!host) return;
+    const states = window.__STATES || [];
+    if (!states.length) {
+      host.innerHTML = `<p class="wt-empty">No states available.</p>`;
+      return;
+    }
+    host.innerHTML = states.map(s => {
+      return `<a href="/world-time/${window.__COUNTRY_SLUG}/${s.slug}/" class="wt-state-tile">${s.name}</a>`;
+    }).join("");
   }
 
   function renderRegionPills() {
@@ -632,6 +662,7 @@
 
     renderContinentPills();
     renderRegionPills();
+    renderStateGrid();
     wireSearch();
     wireSort();
     wireLoadMore();
