@@ -51,6 +51,28 @@
   - `/world-time/city/london/` 301 → `/world-time/gb/london/`
   - `/world-time/us/tampa/` 200 (43KB, all 8 sections + new internal links)
 
+### Phase 2b — URL migration v2: `/world-time/{cca2}/{slug}/` → `/world-time/{country-name-slug}/{slug}/`
+
+- **911 city pages regenerated** at the new path: `world-time/{country-name-slug}/{slug}/index.html`
+  (e.g. `/world-time/united-states/tampa/`, `/world-time/united-kingdom/london/`, `/world-time/china/beijing/`)
+  - Old `/world-time/city/{slug}/` and `/world-time/{cca2}/{slug}/` files deleted from the repo (the Worker 301 handlers stay)
+- **Country-name slug map** (`scripts/cc2-country-slug.json` + `src/cc2-country-slug.js`):
+  - 242-entry compact `CC,slug|...` string (3.5KB), parsed at module init
+  - `US` → `united-states`, `GB` → `united-kingdom`, `CN` → `china`, etc.
+  - Same compact-string trick used to dodge wrangler 4.x's JS-object-literal parse failures
+- **Worker redirects** (`src/index.js`):
+  - `CCA2_TO_COUNTRY_SLUG` map (242 entries, uppercase keys)
+  - `legacyCityMatch` (was: city→cca2) now goes **directly** to the country-name path, not via the cca2 path. Single 301 hop from `/world-time/city/{slug}/` to `/world-time/{country-name}/{slug}/`
+  - New `cca2CityMatch` handler: `/world-time/{cca2}/{slug}/` → 301 → `/world-time/{country-name}/{slug}/`
+  - **Sub-page tail handling**: `/world-time/city/{slug}/time/`, `/facts/`, `/weather/`, `/map/` are all normalized to the parent city page (since the new build is single-file with all sections inline). e.g. `/world-time/city/tampa/weather/` 301 → `/world-time/united-states/tampa/`
+- **API** (`/api/v1/cities/popular`): `path` field now uses country-name slug (e.g. `/world-time/china/beijing/` not `/world-time/cn/beijing/`)
+- **Verified live (single hop):**
+  - `/world-time/city/tampa/` 301 → `/world-time/united-states/tampa/` 200
+  - `/world-time/city/london/` 301 → `/world-time/united-kingdom/london/` 200
+  - `/world-time/us/tampa/` 301 → `/world-time/united-states/tampa/` 200
+  - `/world-time/city/tampa/weather/` 301 → `/world-time/united-states/tampa/` 200
+  - `/world-time/gb/london/` 301 → `/world-time/united-kingdom/london/` 200
+
 ### Phase 3 — New `/world-time/` hub (hybrid design)
 
 - **Section 1: Featured live clocks** (kept from v1) — 12 cities, 1Hz updates
@@ -97,7 +119,7 @@
 
 ### Open follow-ups (not done in this batch)
 
-- Sub-pages (`/world-time/{country}/{slug}/time/`, `/facts/`, `/weather/`, etc.) — not migrated yet, would 404 at the new path. Follow-up: build the sub-pages or move them to query strings.
+- Sub-page URL tails (`/time/`, `/facts/`, `/weather/`, `/map/`) — the Worker now 301s them to the parent city page so the chain doesn't end in 404, but the URLs are not first-class pages. If/when SEO data shows that users want the per-section deep links, build them out as separate files.
 - Scale city page coverage from 911 to all 33,945 (would need KV or R2 storage for the assets; current deploy is already ~73MB at the new path).
 - The 7-city continent filter could be expanded with sub-region pills (Caribbean, Central America, etc.).
 
