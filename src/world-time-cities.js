@@ -247,16 +247,19 @@
     // per country, sorted by population). /popular only has 35 US cities in
     // its curated top-1000 set, which is too few for country pages.
     if (state.country) {
-      // Per-country minPopulation (set by the build script via window.__MIN_POPULATION).
-      // US uses 40,000 to cover all 51 states; small countries use 0.
-      const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
-      if (minPop > 0) params.set("minPopulation", String(minPop));
-      // For state pages, we fetch a bigger set (1000) and filter client-side
-      // by state — the /cities endpoint's server-side state filter is broken.
-      // For country pages, we fetch INITIAL_VISIBLE and paginate via offset.
+      // For state pages: don't use minPopulation (the /cities endpoint only
+      // applies it on the first page — offset > 0 ignores the filter, so we'd
+      // miss the smaller-population cities in the state). We fetch all US
+      // cities across multiple pages and filter by state + minPop client-side.
       if (state.stateCode) {
         params.set("limit", "1000");
+        // No minPopulation param — we filter client-side after multi-page fetch.
       } else {
+        // Per-country minPopulation (set by the build script via window.__MIN_POPULATION).
+        // US uses 40,000 to cover all 51 states; small countries use 0.
+        const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
+        if (minPop > 0) params.set("minPopulation", String(minPop));
+        // Country page: paginate via offset.
         const offset = state.page === 1 ? 0 : (INITIAL_VISIBLE + (state.page - 2) * PAGE_STEP);
         const limit = state.page === 1 ? INITIAL_VISIBLE : PAGE_STEP;
         params.set("offset", String(offset));
@@ -284,11 +287,11 @@
     if (state.region) params.set("region", state.region);
     if (state.country) params.set("country", state.country);
     if (state.country) {
-      const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
-      if (minPop > 0) params.set("minPopulation", String(minPop));
       if (state.stateCode) {
         params.set("limit", "1000");
       } else {
+        const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
+        if (minPop > 0) params.set("minPopulation", String(minPop));
         const offset = p === 1 ? 0 : (INITIAL_VISIBLE + (p - 2) * PAGE_STEP);
         const limit = p === 1 ? INITIAL_VISIBLE : PAGE_STEP;
         params.set("offset", String(offset));
@@ -305,6 +308,35 @@
     return `${API_BASE}/api/v1/cities/popular?${params}`;
   }
 
+  // Fetch all US cities across multiple pages (the /api/v1/cities endpoint
+  // is capped at 1,000 per call). Used on state pages so we can find every
+  // city in the state, not just the top 1,000 globally.
+  // Returns a flat deduped array of cities.
+  async function fetchAllCountryCities(signal) {
+    const cca2 = state.country;
+    if (!cca2) return [];
+    const all = [];
+    const seen = new Set();
+    const PAGE = 1000;
+    for (let offset = 0; offset < 4000; offset += PAGE) {
+      const url = `${API_BASE}/api/v1/cities?country=${encodeURIComponent(cca2)}&limit=${PAGE}&offset=${offset}`;
+      const r = await fetch(url, { signal, headers: { "Accept": "application/json" } });
+      if (!r.ok) break;
+      const j = await r.json();
+      const cities = (j.data && j.data.cities) || [];
+      if (!cities.length) break;
+      for (const c of cities) {
+        if (!seen.has(c.id)) {
+          seen.add(c.id);
+          all.push(c);
+        }
+      }
+      // If we got less than a full page, we're done.
+      if (cities.length < PAGE) break;
+    }
+    return all;
+  }
+
   async function fetchPage({ append = false } = {}) {
     if (state.aborter) {
       try { state.aborter.abort(); } catch (e) {}
@@ -314,21 +346,31 @@
     setLoadingUI(true);
 
     try {
-      const r = await fetch(buildApiUrl(), {
-        signal: state.aborter.signal,
-        headers: { "Accept": "application/json" }
-      });
-      if (!r.ok) throw new Error("popular upstream " + r.status);
-      const j = await r.json();
-      const data = j.data || {};
-      let list = data.cities || [];
-      // Client-side state filter: the /cities endpoint's state filter is
-      // broken, so we filter here for state pages.
-      if (state.stateCode) {
+      let list = [];
+      if (state.stateCode && state.country) {
+        // State pages: fetch all US cities across multiple pages, then filter
+        // by state + minPop client-side. The /cities endpoint's 1,000-result
+        // cap would otherwise hide medium-population cities in the state
+        // (e.g. AR has 10 cities with pop >= 40K but only 8 are in the
+        // top-1,000 globally).
+        const all = await fetchAllCountryCities(state.aborter.signal);
         const sc = state.stateCode;
-        list = list.filter(c => (c.stateCode || c.state_code) === sc);
+        list = all.filter(c => (c.stateCode || c.state_code) === sc);
+        const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
+        if (minPop > 0) {
+          list = list.filter(c => (c.population || 0) >= minPop);
+        }
+      } else {
+        const r = await fetch(buildApiUrl(), {
+          signal: state.aborter.signal,
+          headers: { "Accept": "application/json" }
+        });
+        if (!r.ok) throw new Error("popular upstream " + r.status);
+        const j = await r.json();
+        const data = j.data || {};
+        list = data.cities || [];
       }
-      state.total = state.stateCode ? list.length : (data.total != null ? data.total : list.length);
+      state.total = state.stateCode ? list.length : (data?.total != null ? data.total : list.length);
       // Some /api/v1/cities responses include a "total" that doesn't reflect
       // the server-side minPopulation filter. When the filter is on AND the
       // build script pre-baked a __CITY_TOTAL, trust that one instead.
@@ -890,21 +932,27 @@
     state.loading = true;
     setLoadingUI(true);
     try {
-      const r = await fetch(buildApiUrlForPage(p), {
-        signal: state.aborter.signal,
-        headers: { "Accept": "application/json" }
-      });
-      if (!r.ok) throw new Error("popular upstream " + r.status);
-      const j = await r.json();
-      const data = j.data || {};
-      let list = data.cities || [];
-      // Apply the same client-side state filter that fetchPage() uses —
-      // without this, ?p=N URLs leak the unfiltered country-wide list.
-      if (state.stateCode) {
+      let list = [];
+      if (state.stateCode && state.country) {
+        // Same multi-page fetch as fetchPage for state pages.
+        const all = await fetchAllCountryCities(state.aborter.signal);
         const sc = state.stateCode;
-        list = list.filter(c => (c.stateCode || c.state_code) === sc);
+        list = all.filter(c => (c.stateCode || c.state_code) === sc);
+        const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
+        if (minPop > 0) {
+          list = list.filter(c => (c.population || 0) >= minPop);
+        }
+      } else {
+        const r = await fetch(buildApiUrlForPage(p), {
+          signal: state.aborter.signal,
+          headers: { "Accept": "application/json" }
+        });
+        if (!r.ok) throw new Error("popular upstream " + r.status);
+        const j = await r.json();
+        const data = j.data || {};
+        list = data.cities || [];
       }
-      state.total = state.stateCode ? list.length : (data.total != null ? data.total : list.length);
+      state.total = state.stateCode ? list.length : (data?.total != null ? data.total : list.length);
       if (state.country && !state.stateCode && (window.__MIN_POPULATION || 0) > 0 && window.__CITY_TOTAL) {
         state.total = window.__CITY_TOTAL;
       }
