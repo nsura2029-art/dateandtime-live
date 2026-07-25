@@ -452,9 +452,10 @@
     return `
       <article class="wt-card" data-tz="${c.timezone || ""}" data-id="${c.id}" data-path="${path}">
         <a class="wt-card-link" href="${path}" aria-label="Open ${safeName} time zone page">
+          ${flag ? `<span class="wt-card-flag" aria-hidden="true">${flag}</span>` : ""}
           <div class="wt-card-head">
             <span class="wt-live-pulse" aria-hidden="true"></span>
-            <span class="wt-card-name">${flag ? `<span class="wt-card-flag">${flag}</span>` : ""}${safeName}</span>
+            <span class="wt-card-name">${safeName}</span>
           </div>
           <div class="wt-card-time" data-clock-tz="${c.timezone || ""}">--:--:--.--</div>
           <div class="wt-card-meta">

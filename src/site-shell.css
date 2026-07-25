@@ -20,6 +20,7 @@
   --color-period-bg: rgba(92, 74, 175, 0.06);
   --color-card-bg: #ffffff;
   --shell-header-h: 64px;
+  --container: 1240px;
 }
 
 [data-theme="dark"] {
@@ -51,7 +52,7 @@ body.shell-page {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-.container { max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
+.container { max-width: var(--container, 1240px); margin: 0 auto; padding: 0 1.25rem; }
 
 /* ===== Site header ===== */
 .site-header {
@@ -420,7 +421,7 @@ body.shell-page {
   color: var(--color-muted);
 }
 
-.site-footer-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+.site-footer-inner { max-width: var(--container, 1240px); margin: 0 auto; text-align: center; }
 
 .site-footer-nav {
   display: flex;
@@ -682,7 +683,7 @@ body.has-mobile-nav-open {
 
 /* ===== Shared page footer (used on all non-landing pages) ===== */
 .page-footer { margin-top: 3rem; padding: 2rem 1.5rem; border-top: 1px solid var(--color-border-soft); background: color-mix(in srgb, var(--color-bg) 60%, transparent); font-size: 0.8125rem; color: var(--color-muted); }
-.page-footer-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+.page-footer-inner { max-width: var(--container, 1240px); margin: 0 auto; text-align: center; }
 .page-footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem 1rem; margin-bottom: 0.75rem; }
 .page-footer-nav a { color: var(--color-muted); text-decoration: none; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 4px; }
 .page-footer-nav a:hover { color: var(--color-foreground); background: color-mix(in srgb, var(--color-primary) 8%, transparent); }
