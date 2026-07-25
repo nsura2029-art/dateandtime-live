@@ -504,6 +504,7 @@ async function handleCitiesPopular(request) {
         featureCode: c.featureCode,
         aliases: c.aliases || [],
         flagEmoji: flagEmojiFor(cca2),
+        flagImageUrl: cca2 ? `https://flagcdn.com/w40/${cca2.toLowerCase()}.png` : null,
         // Canonical path: /world-time/{country-name-slug}/{city-slug}/
         // Falls back to /world-time/{cca2}/{city-slug}/ if the slug map is missing
         path: cityPathFor(countrySlug, c.slug, c.asciiName || c.name)

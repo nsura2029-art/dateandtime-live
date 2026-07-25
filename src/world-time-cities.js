@@ -447,12 +447,14 @@
     const safeName = escapeHtml(c.name);
     const safeCountry = escapeHtml(c.countryName || "");
     const safeTz = escapeHtml(c.timezone || "");
-    const flag = c.flagEmoji || "";
+    const cca2 = (c.countryCode || "").toLowerCase();
+    const flagEmoji = c.flagEmoji || "";
+    const flagUrl = cca2 ? `https://flagcdn.com/w40/${cca2}.png` : "";
     const path = c.path || "#";
     return `
       <article class="wt-card" data-tz="${c.timezone || ""}" data-id="${c.id}" data-path="${path}">
         <a class="wt-card-link" href="${path}" aria-label="Open ${safeName} time zone page">
-          ${flag ? `<span class="wt-card-flag" aria-hidden="true">${flag}</span>` : ""}
+          ${flagUrl ? `<img class="wt-card-flag" src="${flagUrl}" alt="${flagEmoji || safeCountry}" loading="lazy" width="30" height="20" decoding="async" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentText('afterend','${flagEmoji}')" />` : ""}
           <div class="wt-card-head">
             <span class="wt-live-pulse" aria-hidden="true"></span>
             <span class="wt-card-name">${safeName}</span>
