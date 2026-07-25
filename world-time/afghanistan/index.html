@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "AF";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Afghanistan";
   window.__COUNTRY_SLUG = "afghanistan";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"28","name":"Zabul","slug":"zabul"},{"code":"26","name":"Takhar","slug":"takhar"},{"code":"32","name":"Samangan","slug":"samangan"},{"code":"40","name":"Parwan","slug":"parwan"},{"code":"29","name":"Paktika","slug":"paktika"},{"code":"36","name":"Paktia","slug":"paktia"},{"code":"18","name":"Nangarhar","slug":"nangarhar"},{"code":"17","name":"Logar","slug":"logar"},{"code":"35","name":"Laghman","slug":"laghman"},{"code":"34","name":"Kunar","slug":"kunar"},{"code":"14","name":"Kapisa","slug":"kapisa"},{"code":"23","name":"Kandahar","slug":"kandahar"},{"code":"13","name":"Kabul","slug":"kabul"},{"code":"31","name":"Jowzjan","slug":"jowzjan"},{"code":"11","name":"Herat","slug":"herat"},{"code":"10","name":"Helmand","slug":"helmand"},{"code":"08","name":"Ghazni","slug":"ghazni"},{"code":"07","name":"Faryab","slug":"faryab"},{"code":"06","name":"Farah","slug":"farah"},{"code":"05","name":"Bamyan","slug":"bamyan"},{"code":"30","name":"Balkh","slug":"balkh"},{"code":"03","name":"Baghlan","slug":"baghlan"},{"code":"02","name":"Badghis","slug":"badghis"},{"code":"01","name":"Badakhshan","slug":"badakhshan"},{"code":"38","name":"Nuristan","slug":"nuristan"},{"code":"41","name":"Daykundi","slug":"daykundi"},{"code":"42","name":"Panjshir","slug":"panjshir"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "KN";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Saint Kitts and Nevis";
   window.__COUNTRY_SLUG = "saint-kitts-and-nevis";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"15","name":"Trinity Palmetto Point","slug":"trinity-palmetto-point"},{"code":"13","name":"Middle Island","slug":"middle-island"},{"code":"12","name":"Saint Thomas Lowland","slug":"saint-thomas-lowland"},{"code":"11","name":"Saint Peter Basseterre","slug":"saint-peter-basseterre"},{"code":"10","name":"Saint Paul Charlestown","slug":"saint-paul-charlestown"},{"code":"09","name":"Saint Paul Capesterre","slug":"saint-paul-capesterre"},{"code":"08","name":"Saint Mary Cayon","slug":"saint-mary-cayon"},{"code":"07","name":"Saint John Figtree","slug":"saint-john-figtree"},{"code":"06","name":"Saint John Capesterre","slug":"saint-john-capesterre"},{"code":"05","name":"Saint James Windwa","slug":"saint-james-windwa"},{"code":"04","name":"Saint George Gingerland","slug":"saint-george-gingerland"},{"code":"03","name":"Saint George Basseterre","slug":"saint-george-basseterre"},{"code":"02","name":"Saint Anne Sandy Point","slug":"saint-anne-sandy-point"},{"code":"01","name":"Christ Church Nichola Town","slug":"christ-church-nichola-town"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

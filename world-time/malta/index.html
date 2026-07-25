@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "MT";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Malta";
   window.__COUNTRY_SLUG = "malta";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"01","name":"Attard","slug":"attard"},{"code":"02","name":"Balzan","slug":"balzan"},{"code":"03","name":"Il-Birgu","slug":"il-birgu"},{"code":"04","name":"Birkirkara","slug":"birkirkara"},{"code":"05","name":"Birżebbuġa","slug":"birzebbuga"},{"code":"06","name":"Bormla","slug":"bormla"},{"code":"07","name":"Dingli","slug":"dingli"},{"code":"08","name":"Il-Fgura","slug":"il-fgura"},{"code":"09","name":"Floriana","slug":"floriana"},{"code":"10","name":"Il-Fontana","slug":"il-fontana"},{"code":"11","name":"Ghajnsielem","slug":"ghajnsielem"},{"code":"12","name":"L-Għarb","slug":"l-g-arb"},{"code":"13","name":"Ħal Għargħur","slug":"al-g-arg-ur"},{"code":"14","name":"L-Għasri","slug":"l-g-asri"},{"code":"15","name":"Ħal Għaxaq","slug":"al-g-axaq"},{"code":"16","name":"Il-Gudja","slug":"il-gudja"},{"code":"17","name":"Il-Gżira","slug":"il-gzira"},{"code":"18","name":"Il-Ħamrun","slug":"il-amrun"},{"code":"19","name":"L-Iklin","slug":"l-iklin"},{"code":"20","name":"L-Imdina","slug":"l-imdina"},{"code":"21","name":"L-Imġarr","slug":"l-imgarr"},{"code":"22","name":"L-Imqabba","slug":"l-imqabba"},{"code":"23","name":"L-Imsida","slug":"l-imsida"},{"code":"24","name":"Mtarfa","slug":"mtarfa"},{"code":"25","name":"Senglea","slug":"senglea"},{"code":"26","name":"Il-Kalkara","slug":"il-kalkara"},{"code":"27","name":"Ta’ Kerċem","slug":"ta-kercem"},{"code":"28","name":"Kirkop","slug":"kirkop"},{"code":"29","name":"Lija","slug":"lija"},{"code":"30","name":"Luqa","slug":"luqa"},{"code":"31","name":"Il-Marsa","slug":"il-marsa"},{"code":"32","name":"Marsaskala","slug":"marsaskala"},{"code":"33","name":"Marsaxlokk","slug":"marsaxlokk"},{"code":"34","name":"Il-Mellieħa","slug":"il-mellie-a"},{"code":"35","name":"Il-Mosta","slug":"il-mosta"},{"code":"36","name":"Il-Munxar","slug":"il-munxar"},{"code":"37","name":"In-Nadur","slug":"in-nadur"},{"code":"38","name":"In-Naxxar","slug":"in-naxxar"},{"code":"39","name":"Paola","slug":"paola"},{"code":"40","name":"Pembroke","slug":"pembroke"},{"code":"41","name":"Tal-Pietà","slug":"tal-pieta"},{"code":"42","name":"Il-Qala","slug":"il-qala"},{"code":"43","name":"Qormi","slug":"qormi"},{"code":"44","name":"Il-Qrendi","slug":"il-qrendi"},{"code":"45","name":"Ir-Rabat","slug":"ir-rabat"},{"code":"46","name":"Victoria","slug":"victoria"},{"code":"47","name":"Safi","slug":"safi"},{"code":"48","name":"Saint John","slug":"saint-john"},{"code":"49","name":"Saint Julian","slug":"saint-julian"},{"code":"50","name":"Saint Lawrence","slug":"saint-lawrence"},{"code":"51","name":"Saint Lucia","slug":"saint-lucia"},{"code":"52","name":"Saint Paul’s Bay","slug":"saint-paul-s-bay"},{"code":"53","name":"Saint Venera","slug":"saint-venera"},{"code":"54","name":"Sannat","slug":"sannat"},{"code":"55","name":"Is-Siġġiewi","slug":"is-siggiewi"},{"code":"56","name":"Tas-Sliema","slug":"tas-sliema"},{"code":"57","name":"Is-Swieqi","slug":"is-swieqi"},{"code":"58","name":"Tarxien","slug":"tarxien"},{"code":"59","name":"Ta’ Xbiex","slug":"ta-xbiex"},{"code":"61","name":"Ix-Xagħra","slug":"ix-xag-ra"},{"code":"62","name":"Ix-Xewkija","slug":"ix-xewkija"},{"code":"63","name":"Ix-Xgħajra","slug":"ix-xg-ajra"},{"code":"64","name":"Ħaż-Żabbar","slug":"az-zabbar"},{"code":"65","name":"Ħaż-Żebbuġ","slug":"az-zebbug"},{"code":"66","name":"Iż-Żebbuġ","slug":"iz-zebbug"},{"code":"67","name":"Iż-Żejtun","slug":"iz-zejtun"},{"code":"68","name":"Iż-Żurrieq","slug":"iz-zurrieq"},{"code":"60","name":"Valletta","slug":"valletta"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

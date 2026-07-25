@@ -26,6 +26,22 @@
 const fs = require('fs');
 const path = require('path');
 
+// Load US state metadata (used to bake the real per-state city count into
+// the state page hero, e.g. "26 Washington cities" instead of a placeholder).
+let STATE_META = {};
+try {
+  // state-meta.js exports a `const STATE_META = { ... };` literal.
+  // Eval it in a sandboxed context to extract the object.
+  const src = fs.readFileSync(path.join(__dirname, 'state-meta.js'), 'utf8');
+  const m = src.match(/const\s+STATE_META\s*=\s*(\{[\s\S]*?\});/);
+  if (m) {
+    STATE_META = (new Function(`return (${m[1]});`))();
+  }
+} catch (e) {
+  // Non-fatal: state pages will fall back to a placeholder city count.
+  console.warn('Could not load state-meta.js:', e.message);
+}
+
 // ============================================================================
 // Lookups
 // ============================================================================
@@ -123,12 +139,48 @@ function countryName(cca2) {
 // Page config (set per page by the build script)
 // ============================================================================
 
+// Per-country minPopulation (set on the country page; affects the city list).
+// This is intentionally per-country because small countries (Liechtenstein,
+// Vatican, etc.) have zero 40K+ cities. US is the only country using 40,000
+// for now — all 51 states have at least one 40K+ city, ensuring every state
+// appears in the city grid. Other countries default to 0 (no filter).
+// See docs/strategy/city-population-thresholds.md for the rationale.
+const MIN_POPULATION = {
+  US: 40000,   // 1,246 cities across 51 states
+};
+function minPopulationFor(cca2) {
+  return MIN_POPULATION[cca2] || 0;
+}
+
+// Per-country pre-baked city total. Used by the JS to show the right
+// count when the API doesn't return a filtered total. Currently only US
+// (40K+ threshold = 1,246 cities).
+const CITY_TOTAL = {
+  US: 1246,
+};
+function cityTotalFor(cca2) {
+  return CITY_TOTAL[cca2] || 0;
+}
+
 function autoInitScript(cca2, stateCode, stateSlug, stateName, countryName, countrySlug, states) {
+  // For US country page, also include the STATE_META lookup so the rich
+  // state cards (with image, timezone, capital, live clock) can render.
+  let metaScript = '';
+  if (cca2 === 'US' && !stateCode) {
+    try {
+      const metaSrc = fs.readFileSync(path.join(__dirname, 'state-meta.js'), 'utf8');
+      metaScript = `<script>${metaSrc}\nwindow.__STATE_META = STATE_META;</script>`;
+    } catch (e) {
+      console.warn('Could not load state-meta.js:', e.message);
+    }
+  }
   return `
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = ${minPopulationFor(cca2)};
+  window.__CITY_TOTAL    = ${cityTotalFor(cca2)};
   window.__COUNTRY_CCA2 = ${JSON.stringify(cca2)};
   window.__STATE_CODE   = ${JSON.stringify(stateCode)};
   window.__COUNTRY_NAME = ${JSON.stringify(countryName)};
@@ -136,7 +188,8 @@ function autoInitScript(cca2, stateCode, stateSlug, stateName, countryName, coun
   window.__STATE_SLUG   = ${JSON.stringify(stateSlug)};
   window.__STATE_NAME   = ${JSON.stringify(stateName)};
   window.__STATES       = ${JSON.stringify(states || [])};
-</script>`;
+</script>
+${metaScript}`;
 }
 
 // ============================================================================
@@ -308,8 +361,9 @@ function buildPage({ cca2, countryName, countrySlug, stateCode, stateSlug, state
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -417,9 +471,11 @@ function main() {
 
   // For the city count, we need to query the API. As a quick estimate, we
   // use a hardcoded count for top countries and ~30 for the rest.
-  // In production, this should query /api/v1/cities/popular?country=XX
+  // For US we use the 40,000+ population threshold (matches what's in the
+  // city list): 1,246 cities across 51 states.
+  // In production, this should query /api/v1/cities?country=XX&minPopulation=XX
   const KNOWN_COUNTS = {
-    US: 35, CN: 142, IN: 39, ID: 13, BR: 12, PK: 11, MX: 10, JP: 10, TR: 10,
+    US: 1246, CN: 142, IN: 39, ID: 13, BR: 12, PK: 11, MX: 10, JP: 10, TR: 10,
     NG: 8, KR: 7, VN: 7, RU: 6, IQ: 6, IR: 6, DE: 7, GB: 5, FR: 4, IT: 4,
     CA: 4, AU: 6, NZ: 1
   };
@@ -452,10 +508,18 @@ function main() {
     for (const s of states) {
       const stateDir = path.join(countryDir, 'state', s.slug);
       fs.mkdirSync(stateDir, { recursive: true });
+      // Use the same minPopulation threshold as the country page so the
+      // city count matches what users see in the grid.
+      let sc = cca2 === 'US' ? (STATE_META[s.code] || {}).cityCount : null;
+      if (sc == null) {
+        // Fallback: small countries default to all-cities, no filter.
+        // For now use the raw count from the states lookup if available.
+        sc = s.cityCount || 10;
+      }
       const stateHtml = buildPage({
         cca2, countryName: cName, countrySlug,
         stateCode: s.code, stateSlug: s.slug, stateName: s.name,
-        cityCount: '~10', stateCount: states.length
+        cityCount: sc, stateCount: states.length
       });
       fs.writeFileSync(path.join(stateDir, 'index.html'), stateHtml);
       totalStates++;

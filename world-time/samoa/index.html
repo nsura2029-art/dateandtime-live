@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "WS";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Samoa";
   window.__COUNTRY_SLUG = "samoa";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"11","name":"Vaisigano","slug":"vaisigano"},{"code":"06","name":"Va'a-o-Fonoti","slug":"va-a-o-fonoti"},{"code":"10","name":"Tuamasaga","slug":"tuamasaga"},{"code":"09","name":"Satupa'itea","slug":"satupa-itea"},{"code":"08","name":"Palauli","slug":"palauli"},{"code":"07","name":"Gaga'ifomauga","slug":"gaga-ifomauga"},{"code":"05","name":"Gaga'emauga","slug":"gaga-emauga"},{"code":"04","name":"Fa'asaleleaga","slug":"fa-asaleleaga"},{"code":"03","name":"Atua","slug":"atua"},{"code":"02","name":"Aiga-i-le-Tai","slug":"aiga-i-le-tai"},{"code":"01","name":"A'ana","slug":"a-ana"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

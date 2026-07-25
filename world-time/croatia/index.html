@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "HR";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Croatia";
   window.__COUNTRY_SLUG = "croatia";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"01","name":"Bjelovar-Bilogora","slug":"bjelovar-bilogora"},{"code":"02","name":"Brod-Posavina","slug":"brod-posavina"},{"code":"03","name":"Dubrovnik-Neretva","slug":"dubrovnik-neretva"},{"code":"04","name":"Istria","slug":"istria"},{"code":"05","name":"Karlovac","slug":"karlovac"},{"code":"06","name":"Koprivnica-Križevci","slug":"koprivnica-krizevci"},{"code":"07","name":"Krapina-Zagorje","slug":"krapina-zagorje"},{"code":"08","name":"Lika-Senj","slug":"lika-senj"},{"code":"09","name":"Međimurje","slug":"me-imurje"},{"code":"10","name":"County of Osijek-Baranja","slug":"county-of-osijek-baranja"},{"code":"11","name":"Požega-Slavonia","slug":"pozega-slavonia"},{"code":"12","name":"Primorje-Gorski Kotar","slug":"primorje-gorski-kotar"},{"code":"13","name":"Šibenik-Knin","slug":"sibenik-knin"},{"code":"14","name":"Sisak-Moslavina","slug":"sisak-moslavina"},{"code":"15","name":"Split-Dalmatia","slug":"split-dalmatia"},{"code":"16","name":"Varaždin","slug":"varazdin"},{"code":"18","name":"Vukovar-Srijem","slug":"vukovar-srijem"},{"code":"19","name":"Zadar","slug":"zadar"},{"code":"20","name":"Zagreb County","slug":"zagreb-county"},{"code":"21","name":"Zagreb","slug":"zagreb"},{"code":"17","name":"Virovitica-Podravina","slug":"virovitica-podravina"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

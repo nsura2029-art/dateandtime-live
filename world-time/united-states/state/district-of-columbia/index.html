@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>District of Columbia, United States — Current Time &amp; Cities | dateandtime.live</title>
-  <meta name="description" content="Live current time in District of Columbia, United States. ~10 cities. Real-time updates, weather, holidays, and more." />
+  <meta name="description" content="Live current time in District of Columbia, United States. 2 cities. Real-time updates, weather, holidays, and more." />
   <meta name="theme-color" content="#5b4aaf" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/world-time/united-states/district-of-columbia/" />
@@ -19,7 +19,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "District of Columbia, United States — Current Time &amp; Cities | dateandtime.live",
-    "description": "Live current time in District of Columbia, United States. ~10 cities. Real-time updates, weather, holidays, and more.",
+    "description": "Live current time in District of Columbia, United States. 2 cities. Real-time updates, weather, holidays, and more.",
     "url": "https://dateandtime.live/world-time/united-states/district-of-columbia/"
   }
   </script>
@@ -92,7 +92,7 @@
   <section class="tz-hero">
     <div class="container">
       <h1>District of Columbia, United States</h1>
-      <p class="tz-subtitle">Live time in <strong>~10 District of Columbia cities</strong>. Real-time updates every second.</p>
+      <p class="tz-subtitle">Live time in <strong>2 District of Columbia cities</strong>. Real-time updates every second.</p>
     </div>
   </section>
 
@@ -115,8 +115,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -196,8 +197,10 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 40000;
+  window.__CITY_TOTAL    = 1246;
   window.__COUNTRY_CCA2 = "US";
   window.__STATE_CODE   = "DC";
   window.__COUNTRY_NAME = "United States";
@@ -206,6 +209,7 @@
   window.__STATE_NAME   = "District of Columbia";
   window.__STATES       = [];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

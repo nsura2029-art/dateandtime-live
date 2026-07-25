@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>United States — Current Time &amp; All Cities | dateandtime.live</title>
-  <meta name="description" content="Live current time in United States. 35 cities across 51 states. Real-time updates every second." />
+  <meta name="description" content="Live current time in United States. 1246 cities across 51 states. Real-time updates every second." />
   <meta name="theme-color" content="#5b4aaf" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/world-time/united-states/" />
@@ -19,7 +19,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "United States — Current Time &amp; All Cities | dateandtime.live",
-    "description": "Live current time in United States. 35 cities across 51 states. Real-time updates every second.",
+    "description": "Live current time in United States. 1246 cities across 51 states. Real-time updates every second.",
     "url": "https://dateandtime.live/world-time/united-states/"
   }
   </script>
@@ -91,7 +91,7 @@
   <section class="tz-hero">
     <div class="container">
       <h1>United States</h1>
-      <p class="tz-subtitle">Live time in <strong>35 United States cities</strong> across <strong>51 states</strong>. Real-time updates every second.</p>
+      <p class="tz-subtitle">Live time in <strong>1246 United States cities</strong> across <strong>51 states</strong>. Real-time updates every second.</p>
     </div>
   </section>
 
@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -204,8 +205,10 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 40000;
+  window.__CITY_TOTAL    = 1246;
   window.__COUNTRY_CCA2 = "US";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "United States";
@@ -214,6 +217,421 @@
   window.__STATE_NAME   = null;
   window.__STATES       = [{"code":"AR","name":"Arkansas","slug":"arkansas"},{"code":"DC","name":"District of Columbia","slug":"district-of-columbia"},{"code":"DE","name":"Delaware","slug":"delaware"},{"code":"FL","name":"Florida","slug":"florida"},{"code":"GA","name":"Georgia","slug":"georgia"},{"code":"KS","name":"Kansas","slug":"kansas"},{"code":"LA","name":"Louisiana","slug":"louisiana"},{"code":"MD","name":"Maryland","slug":"maryland"},{"code":"MO","name":"Missouri","slug":"missouri"},{"code":"MS","name":"Mississippi","slug":"mississippi"},{"code":"NC","name":"North Carolina","slug":"north-carolina"},{"code":"OK","name":"Oklahoma","slug":"oklahoma"},{"code":"SC","name":"South Carolina","slug":"south-carolina"},{"code":"TN","name":"Tennessee","slug":"tennessee"},{"code":"TX","name":"Texas","slug":"texas"},{"code":"WV","name":"West Virginia","slug":"west-virginia"},{"code":"AL","name":"Alabama","slug":"alabama"},{"code":"CT","name":"Connecticut","slug":"connecticut"},{"code":"IA","name":"Iowa","slug":"iowa"},{"code":"IL","name":"Illinois","slug":"illinois"},{"code":"IN","name":"Indiana","slug":"indiana"},{"code":"ME","name":"Maine","slug":"maine"},{"code":"MI","name":"Michigan","slug":"michigan"},{"code":"MN","name":"Minnesota","slug":"minnesota"},{"code":"NE","name":"Nebraska","slug":"nebraska"},{"code":"NH","name":"New Hampshire","slug":"new-hampshire"},{"code":"NJ","name":"New Jersey","slug":"new-jersey"},{"code":"NY","name":"New York","slug":"new-york"},{"code":"OH","name":"Ohio","slug":"ohio"},{"code":"RI","name":"Rhode Island","slug":"rhode-island"},{"code":"VT","name":"Vermont","slug":"vermont"},{"code":"WI","name":"Wisconsin","slug":"wisconsin"},{"code":"CA","name":"California","slug":"california"},{"code":"CO","name":"Colorado","slug":"colorado"},{"code":"NM","name":"New Mexico","slug":"new-mexico"},{"code":"NV","name":"Nevada","slug":"nevada"},{"code":"UT","name":"Utah","slug":"utah"},{"code":"AZ","name":"Arizona","slug":"arizona"},{"code":"ID","name":"Idaho","slug":"idaho"},{"code":"MT","name":"Montana","slug":"montana"},{"code":"ND","name":"North Dakota","slug":"north-dakota"},{"code":"OR","name":"Oregon","slug":"oregon"},{"code":"SD","name":"South Dakota","slug":"south-dakota"},{"code":"WA","name":"Washington","slug":"washington"},{"code":"WY","name":"Wyoming","slug":"wyoming"},{"code":"HI","name":"Hawaii","slug":"hawaii"},{"code":"AK","name":"Alaska","slug":"alaska"},{"code":"KY","name":"Kentucky","slug":"kentucky"},{"code":"MA","name":"Massachusetts","slug":"massachusetts"},{"code":"PA","name":"Pennsylvania","slug":"pennsylvania"},{"code":"VA","name":"Virginia","slug":"virginia"}];
 </script>
+<script>// State metadata for rich state cards. Pop/city counts use the same
+// 40,000 population threshold as the country page.
+// Generated by scripts/build-state-meta.js (2026-07-25).
+const STATE_META = {
+  "AK": {
+    capital: "Juneau",
+    capitalPopulation: 31555,
+    timezone: "America/Juneau",
+    tzLabel: "Alaska Time \u00b7 UTC\u22129",
+    cityCount: 1,
+    population: 289600,
+  },
+  "AL": {
+    capital: "Montgomery",
+    capitalPopulation: 195287,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 11,
+    population: 1259176,
+  },
+  "AR": {
+    capital: "Little Rock",
+    capitalPopulation: 202591,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 10,
+    population: 809295,
+  },
+  "AZ": {
+    capital: "Phoenix",
+    capitalPopulation: 1650070,
+    timezone: "America/Phoenix",
+    tzLabel: "Mountain Time \u00b7 UTC\u22127 (no DST)",
+    cityCount: 33,
+    population: 5959061,
+  },
+  "CA": {
+    capital: "Sacramento",
+    capitalPopulation: 524943,
+    timezone: "America/Los_Angeles",
+    tzLabel: "Pacific Time \u00b7 UTC\u22128",
+    cityCount: 249,
+    population: 31113339,
+  },
+  "CO": {
+    capital: "Denver",
+    capitalPopulation: 729019,
+    timezone: "America/Denver",
+    tzLabel: "Mountain Time \u00b7 UTC\u22127",
+    cityCount: 22,
+    population: 3305281,
+  },
+  "CT": {
+    capital: "Hartford",
+    capitalPopulation: 121054,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 24,
+    population: 1829356,
+  },
+  "DC": {
+    capital: "Washington",
+    capitalPopulation: 689545,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 2,
+    population: 742105,
+  },
+  "DE": {
+    capital: "Dover",
+    capitalPopulation: 39403,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 1,
+    population: 70898,
+  },
+  "FL": {
+    capital: "Tallahassee",
+    capitalPopulation: 201731,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 95,
+    population: 9518170,
+  },
+  "GA": {
+    capital: "Atlanta",
+    capitalPopulation: 510823,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 20,
+    population: 2092836,
+  },
+  "HI": {
+    capital: "Honolulu",
+    capitalPopulation: 350964,
+    timezone: "Pacific/Honolulu",
+    tzLabel: "Hawaii Time \u00b7 UTC\u221210",
+    cityCount: 8,
+    population: 671808,
+  },
+  "IA": {
+    capital: "Des Moines",
+    capitalPopulation: 214133,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 13,
+    population: 1065271,
+  },
+  "ID": {
+    capital: "Boise",
+    capitalPopulation: 235684,
+    timezone: "America/Boise",
+    tzLabel: "Mountain Time \u00b7 UTC\u22127",
+    cityCount: 8,
+    population: 678163,
+  },
+  "IL": {
+    capital: "Springfield",
+    capitalPopulation: 114394,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 66,
+    population: 7045845,
+  },
+  "IN": {
+    capital: "Indianapolis",
+    capitalPopulation: 887642,
+    timezone: "America/Indiana/Indianapolis",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 22,
+    population: 2491391,
+  },
+  "KS": {
+    capital: "Topeka",
+    capitalPopulation: 125963,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 11,
+    population: 1352978,
+  },
+  "KY": {
+    capital: "Frankfort",
+    capitalPopulation: 28391,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 7,
+    population: 1711583,
+  },
+  "LA": {
+    capital: "Baton Rouge",
+    capitalPopulation: 227470,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 11,
+    population: 1488850,
+  },
+  "MA": {
+    capital: "Boston",
+    capitalPopulation: 653833,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 44,
+    population: 4101431,
+  },
+  "MD": {
+    capital: "Annapolis",
+    capitalPopulation: 40812,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 25,
+    population: 1982494,
+  },
+  "ME": {
+    capital: "Augusta",
+    capitalPopulation: 18899,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 1,
+    population: 66881,
+  },
+  "MI": {
+    capital: "Lansing",
+    capitalPopulation: 112644,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 35,
+    population: 3314140,
+  },
+  "MN": {
+    capital: "Saint Paul",
+    capitalPopulation: 303176,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 25,
+    population: 2166822,
+  },
+  "MO": {
+    capital: "Jefferson City",
+    capitalPopulation: 42595,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 16,
+    population: 1906497,
+  },
+  "MS": {
+    capital: "Jackson",
+    capitalPopulation: 153701,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 6,
+    population: 441917,
+  },
+  "MT": {
+    capital: "Helena",
+    capitalPopulation: 32091,
+    timezone: "America/Denver",
+    tzLabel: "Mountain Time \u00b7 UTC\u22127",
+    cityCount: 4,
+    population: 291181,
+  },
+  "NC": {
+    capital: "Raleigh",
+    capitalPopulation: 482295,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 23,
+    population: 3922039,
+  },
+  "ND": {
+    capital: "Bismarck",
+    capitalPopulation: 75092,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 4,
+    population: 300076,
+  },
+  "NE": {
+    capital: "Lincoln",
+    capitalPopulation: 294757,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 4,
+    population: 887758,
+  },
+  "NH": {
+    capital: "Concord",
+    capitalPopulation: 43976,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 4,
+    population: 284780,
+  },
+  "NJ": {
+    capital: "Trenton",
+    capitalPopulation: 89620,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 45,
+    population: 3208052,
+  },
+  "NM": {
+    capital: "Santa Fe",
+    capitalPopulation: 87505,
+    timezone: "America/Denver",
+    tzLabel: "Mountain Time \u00b7 UTC\u22127",
+    cityCount: 8,
+    population: 1061140,
+  },
+  "NV": {
+    capital: "Carson City",
+    capitalPopulation: 58639,
+    timezone: "America/Los_Angeles",
+    tzLabel: "Pacific Time \u00b7 UTC\u22128",
+    cityCount: 10,
+    population: 2280690,
+  },
+  "NY": {
+    capital: "Albany",
+    capitalPopulation: 101228,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 80,
+    population: 23682778,
+  },
+  "OH": {
+    capital: "Columbus",
+    capitalPopulation: 913175,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 28,
+    population: 3342948,
+  },
+  "OK": {
+    capital: "Oklahoma City",
+    capitalPopulation: 681054,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 10,
+    population: 1733899,
+  },
+  "OR": {
+    capital: "Salem",
+    capitalPopulation: 175535,
+    timezone: "America/Los_Angeles",
+    tzLabel: "Pacific Time \u00b7 UTC\u22128",
+    cityCount: 13,
+    population: 1750491,
+  },
+  "PA": {
+    capital: "Harrisburg",
+    capitalPopulation: 50183,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 22,
+    population: 3088996,
+  },
+  "RI": {
+    capital: "Providence",
+    capitalPopulation: 190934,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 6,
+    population: 514180,
+  },
+  "SC": {
+    capital: "Columbia",
+    capitalPopulation: 142416,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 10,
+    population: 771582,
+  },
+  "SD": {
+    capital: "Pierre",
+    capitalPopulation: 14091,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 2,
+    population: 245113,
+  },
+  "TN": {
+    capital: "Nashville",
+    capitalPopulation: 689447,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 19,
+    population: 3445336,
+  },
+  "TX": {
+    capital: "Austin",
+    capitalPopulation: 974447,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 87,
+    population: 16286819,
+  },
+  "UT": {
+    capital: "Salt Lake City",
+    capitalPopulation: 215548,
+    timezone: "America/Denver",
+    tzLabel: "Mountain Time \u00b7 UTC\u22127",
+    cityCount: 19,
+    population: 1562707,
+  },
+  "VA": {
+    capital: "Richmond",
+    capitalPopulation: 226610,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 31,
+    population: 3336425,
+  },
+  "VT": {
+    capital: "Montpelier",
+    capitalPopulation: 8074,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 1,
+    population: 42452,
+  },
+  "WA": {
+    capital: "Olympia",
+    capitalPopulation: 55733,
+    timezone: "America/Los_Angeles",
+    tzLabel: "Pacific Time \u00b7 UTC\u22128",
+    cityCount: 30,
+    population: 3514695,
+  },
+  "WI": {
+    capital: "Madison",
+    capitalPopulation: 280305,
+    timezone: "America/Chicago",
+    tzLabel: "Central Time \u00b7 UTC\u22126",
+    cityCount: 16,
+    population: 1773948,
+  },
+  "WV": {
+    capital: "Charleston",
+    capitalPopulation: 46838,
+    timezone: "America/New_York",
+    tzLabel: "Eastern Time \u00b7 UTC\u22125",
+    cityCount: 2,
+    population: 95476,
+  },
+  "WY": {
+    capital: "Cheyenne",
+    capitalPopulation: 65132,
+    timezone: "America/Denver",
+    tzLabel: "Mountain Time \u00b7 UTC\u22127",
+    cityCount: 2,
+    population: 125417,
+  },
+};
+
+window.__STATE_META = STATE_META;</script>
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

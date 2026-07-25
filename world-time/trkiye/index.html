@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "TR";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Türkiye";
   window.__COUNTRY_SLUG = "trkiye";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"66","name":"Yozgat","slug":"yozgat"},{"code":"65","name":"Van","slug":"van"},{"code":"64","name":"Uşak","slug":"usak"},{"code":"63","name":"Şanlıurfa","slug":"sanl-urfa"},{"code":"62","name":"Tunceli","slug":"tunceli"},{"code":"58","name":"Sivas","slug":"sivas"},{"code":"74","name":"Siirt","slug":"siirt"},{"code":"73","name":"Niğde Province","slug":"nigde-province"},{"code":"50","name":"Nevşehir Province","slug":"nevsehir-province"},{"code":"49","name":"Muş","slug":"mus"},{"code":"48","name":"Muğla","slug":"mugla"},{"code":"72","name":"Mardin","slug":"mardin"},{"code":"45","name":"Manisa","slug":"manisa"},{"code":"44","name":"Malatya","slug":"malatya"},{"code":"43","name":"Kütahya","slug":"kutahya"},{"code":"71","name":"Konya","slug":"konya"},{"code":"40","name":"Kırşehir","slug":"k-rsehir"},{"code":"38","name":"Kayseri","slug":"kayseri"},{"code":"46","name":"Kahramanmaraş","slug":"kahramanmaras"},{"code":"35","name":"İzmir Province","slug":"izmir-province"},{"code":"33","name":"Isparta","slug":"isparta"},{"code":"32","name":"Mersin","slug":"mersin"},{"code":"31","name":"Hatay","slug":"hatay"},{"code":"70","name":"Hakkâri","slug":"hakkari"},{"code":"83","name":"Gaziantep","slug":"gaziantep"},{"code":"26","name":"Eskişehir","slug":"eskisehir"},{"code":"25","name":"Erzurum","slug":"erzurum"},{"code":"24","name":"Erzincan","slug":"erzincan"},{"code":"23","name":"Elazığ","slug":"elaz-g"},{"code":"21","name":"Diyarbakır Province","slug":"diyarbak-r-province"},{"code":"20","name":"Denizli","slug":"denizli"},{"code":"15","name":"Burdur","slug":"burdur"},{"code":"13","name":"Bitlis","slug":"bitlis"},{"code":"12","name":"Bingöl","slug":"bingol"},{"code":"11","name":"Bilecik","slug":"bilecik"},{"code":"10","name":"Balıkesir","slug":"bal-kesir"},{"code":"09","name":"Aydın","slug":"ayd-n"},{"code":"07","name":"Antalya","slug":"antalya"},{"code":"68","name":"Ankara","slug":"ankara"},{"code":"04","name":"Ağrı","slug":"agr"},{"code":"03","name":"Afyonkarahisar Province","slug":"afyonkarahisar-province"},{"code":"02","name":"Adıyaman Province","slug":"ad-yaman-province"},{"code":"81","name":"Adana","slug":"adana"},{"code":"91","name":"Osmaniye","slug":"osmaniye"},{"code":"75","name":"Aksaray","slug":"aksaray"},{"code":"76","name":"Batman","slug":"batman"},{"code":"78","name":"Karaman","slug":"karaman"},{"code":"79","name":"Kırıkkale","slug":"k-r-kkale"},{"code":"80","name":"Şırnak","slug":"s-rnak"},{"code":"90","name":"Kilis","slug":"kilis"},{"code":"61","name":"Trabzon","slug":"trabzon"},{"code":"60","name":"Tokat Province","slug":"tokat-province"},{"code":"59","name":"Tekirdağ","slug":"tekirdag"},{"code":"57","name":"Sinop","slug":"sinop"},{"code":"55","name":"Samsun","slug":"samsun"},{"code":"54","name":"Sakarya","slug":"sakarya"},{"code":"53","name":"Rize Province","slug":"rize-province"},{"code":"52","name":"Ordu","slug":"ordu"},{"code":"41","name":"Kocaeli","slug":"kocaeli"},{"code":"39","name":"Kırklareli","slug":"k-rklareli"},{"code":"37","name":"Kastamonu","slug":"kastamonu"},{"code":"34","name":"Istanbul","slug":"istanbul"},{"code":"69","name":"Gümüşhane Province","slug":"gumushane-province"},{"code":"28","name":"Giresun","slug":"giresun"},{"code":"22","name":"Edirne","slug":"edirne"},{"code":"19","name":"Çorum","slug":"corum"},{"code":"17","name":"Canakkale","slug":"canakkale"},{"code":"16","name":"Bursa Province","slug":"bursa-province"},{"code":"14","name":"Bolu","slug":"bolu"},{"code":"08","name":"Artvin","slug":"artvin"},{"code":"05","name":"Amasya","slug":"amasya"},{"code":"92","name":"Yalova","slug":"yalova"},{"code":"86","name":"Ardahan","slug":"ardahan"},{"code":"77","name":"Bayburt Province","slug":"bayburt-province"},{"code":"93","name":"Düzce","slug":"duzce"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

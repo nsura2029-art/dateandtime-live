@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "CV";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Cape Verde";
   window.__COUNTRY_SLUG = "cape-verde";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"20","name":"Tarrafal","slug":"tarrafal"},{"code":"11","name":"São Vicente","slug":"sao-vicente"},{"code":"15","name":"Santa Catarina","slug":"santa-catarina"},{"code":"08","name":"Sal","slug":"sal"},{"code":"07","name":"Ribeira Grande","slug":"ribeira-grande"},{"code":"14","name":"Praia","slug":"praia"},{"code":"05","name":"Paul","slug":"paul"},{"code":"04","name":"Maio","slug":"maio"},{"code":"02","name":"Brava","slug":"brava"},{"code":"01","name":"Boa Vista","slug":"boa-vista"},{"code":"13","name":"Mosteiros","slug":"mosteiros"},{"code":"16","name":"Santa Cruz","slug":"santa-cruz"},{"code":"17","name":"São Domingos","slug":"sao-domingos"},{"code":"18","name":"São Filipe","slug":"sao-filipe"},{"code":"19","name":"São Miguel","slug":"sao-miguel"},{"code":"21","name":"Porto Novo","slug":"porto-novo"},{"code":"22","name":"Ribeira Brava","slug":"ribeira-brava"},{"code":"24","name":"Santa Catarina do Fogo","slug":"santa-catarina-do-fogo"},{"code":"26","name":"São Salvador do Mundo","slug":"sao-salvador-do-mundo"},{"code":"27","name":"Tarrafal de São Nicolau","slug":"tarrafal-de-sao-nicolau"},{"code":"25","name":"São Lourenço dos Órgãos","slug":"sao-lourenco-dos-orgaos"},{"code":"23","name":"Ribeira Grande de Santiago","slug":"ribeira-grande-de-santiago"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

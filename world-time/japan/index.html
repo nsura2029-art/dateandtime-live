@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "JP";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Japan";
   window.__COUNTRY_SLUG = "japan";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"46","name":"Yamanashi","slug":"yamanashi"},{"code":"45","name":"Yamaguchi","slug":"yamaguchi"},{"code":"43","name":"Wakayama","slug":"wakayama"},{"code":"42","name":"Toyama","slug":"toyama"},{"code":"41","name":"Tottori","slug":"tottori"},{"code":"40","name":"Tokyo","slug":"tokyo"},{"code":"39","name":"Tokushima","slug":"tokushima"},{"code":"38","name":"Tochigi","slug":"tochigi"},{"code":"37","name":"Shizuoka","slug":"shizuoka"},{"code":"36","name":"Shimane","slug":"shimane"},{"code":"35","name":"Shiga","slug":"shiga"},{"code":"34","name":"Saitama","slug":"saitama"},{"code":"33","name":"Saga","slug":"saga"},{"code":"32","name":"Osaka","slug":"osaka"},{"code":"47","name":"Okinawa","slug":"okinawa"},{"code":"31","name":"Okayama","slug":"okayama"},{"code":"30","name":"Oita","slug":"oita"},{"code":"29","name":"Niigata","slug":"niigata"},{"code":"28","name":"Nara","slug":"nara"},{"code":"27","name":"Nagasaki","slug":"nagasaki"},{"code":"26","name":"Nagano","slug":"nagano"},{"code":"25","name":"Miyazaki","slug":"miyazaki"},{"code":"23","name":"Mie","slug":"mie"},{"code":"22","name":"Kyoto","slug":"kyoto"},{"code":"21","name":"Kumamoto","slug":"kumamoto"},{"code":"20","name":"Kochi","slug":"kochi"},{"code":"19","name":"Kanagawa","slug":"kanagawa"},{"code":"18","name":"Kagoshima","slug":"kagoshima"},{"code":"17","name":"Kagawa","slug":"kagawa"},{"code":"15","name":"Ishikawa","slug":"ishikawa"},{"code":"13","name":"Hyōgo","slug":"hyogo"},{"code":"11","name":"Hiroshima","slug":"hiroshima"},{"code":"10","name":"Gunma","slug":"gunma"},{"code":"09","name":"Gifu","slug":"gifu"},{"code":"07","name":"Fukuoka","slug":"fukuoka"},{"code":"06","name":"Fukui","slug":"fukui"},{"code":"05","name":"Ehime","slug":"ehime"},{"code":"01","name":"Aichi","slug":"aichi"},{"code":"44","name":"Yamagata","slug":"yamagata"},{"code":"24","name":"Miyagi","slug":"miyagi"},{"code":"16","name":"Iwate","slug":"iwate"},{"code":"14","name":"Ibaraki","slug":"ibaraki"},{"code":"08","name":"Fukushima","slug":"fukushima"},{"code":"04","name":"Chiba","slug":"chiba"},{"code":"02","name":"Akita","slug":"akita"},{"code":"12","name":"Hokkaido","slug":"hokkaido"},{"code":"03","name":"Aomori","slug":"aomori"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

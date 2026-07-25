@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "TH";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Thailand";
   window.__COUNTRY_SLUG = "thailand";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"15","name":"Uthai Thani","slug":"uthai-thani"},{"code":"65","name":"Trang","slug":"trang"},{"code":"08","name":"Tak","slug":"tak"},{"code":"60","name":"Surat Thani","slug":"surat-thani"},{"code":"09","name":"Sukhothai","slug":"sukhothai"},{"code":"52","name":"Ratchaburi","slug":"ratchaburi"},{"code":"57","name":"Prachuap Khiri Khan","slug":"prachuap-khiri-khan"},{"code":"62","name":"Phuket","slug":"phuket"},{"code":"56","name":"Phetchaburi","slug":"phetchaburi"},{"code":"61","name":"Phang Nga","slug":"phang-nga"},{"code":"01","name":"Mae Hong Son","slug":"mae-hong-son"},{"code":"05","name":"Lamphun","slug":"lamphun"},{"code":"06","name":"Lampang","slug":"lampang"},{"code":"63","name":"Krabi","slug":"krabi"},{"code":"50","name":"Kanchanaburi","slug":"kanchanaburi"},{"code":"11","name":"Kamphaeng Phet","slug":"kamphaeng-phet"},{"code":"58","name":"Chumphon","slug":"chumphon"},{"code":"03","name":"Chiang Rai","slug":"chiang-rai"},{"code":"02","name":"Chiang Mai","slug":"chiang-mai"},{"code":"72","name":"Yasothon","slug":"yasothon"},{"code":"70","name":"Yala","slug":"yala"},{"code":"10","name":"Uttaradit","slug":"uttaradit"},{"code":"49","name":"Trat","slug":"trat"},{"code":"29","name":"Surin","slug":"surin"},{"code":"51","name":"Suphan Buri","slug":"suphan-buri"},{"code":"68","name":"Songkhla","slug":"songkhla"},{"code":"30","name":"Si Sa Ket","slug":"si-sa-ket"},{"code":"33","name":"Sing Buri","slug":"sing-buri"},{"code":"67","name":"Satun","slug":"satun"},{"code":"37","name":"Saraburi","slug":"saraburi"},{"code":"54","name":"Samut Songkhram","slug":"samut-songkhram"},{"code":"55","name":"Samut Sakhon","slug":"samut-sakhon"},{"code":"42","name":"Samut Prakan","slug":"samut-prakan"},{"code":"20","name":"Sakon Nakhon","slug":"sakon-nakhon"},{"code":"25","name":"Roi Et","slug":"roi-et"},{"code":"47","name":"Rayong","slug":"rayong"},{"code":"36","name":"Phra Nakhon Si Ayutthaya","slug":"phra-nakhon-si-ayutthaya"},{"code":"07","name":"Phrae","slug":"phrae"},{"code":"12","name":"Phitsanulok","slug":"phitsanulok"},{"code":"13","name":"Phichit","slug":"phichit"},{"code":"14","name":"Phetchabun","slug":"phetchabun"},{"code":"41","name":"Phayao","slug":"phayao"},{"code":"66","name":"Phatthalung","slug":"phatthalung"},{"code":"69","name":"Pattani","slug":"pattani"},{"code":"39","name":"Pathum Thani","slug":"pathum-thani"},{"code":"38","name":"Nonthaburi","slug":"nonthaburi"},{"code":"17","name":"Nong Khai","slug":"nong-khai"},{"code":"31","name":"Narathiwat","slug":"narathiwat"},{"code":"04","name":"Nan","slug":"nan"},{"code":"64","name":"Nakhon Si Thammarat","slug":"nakhon-si-thammarat"},{"code":"16","name":"Nakhon Sawan","slug":"nakhon-sawan"},{"code":"27","name":"Nakhon Ratchasima","slug":"nakhon-ratchasima"},{"code":"73","name":"Nakhon Phanom","slug":"nakhon-phanom"},{"code":"53","name":"Nakhon Pathom","slug":"nakhon-pathom"},{"code":"43","name":"Nakhon Nayok","slug":"nakhon-nayok"},{"code":"78","name":"Mukdahan","slug":"mukdahan"},{"code":"24","name":"Maha Sarakham","slug":"maha-sarakham"},{"code":"34","name":"Lopburi","slug":"lopburi"},{"code":"18","name":"Loei","slug":"loei"},{"code":"40","name":"Bangkok","slug":"bangkok"},{"code":"22","name":"Khon Kaen","slug":"khon-kaen"},{"code":"23","name":"Kalasin","slug":"kalasin"},{"code":"46","name":"Chon Buri","slug":"chon-buri"},{"code":"48","name":"Chanthaburi","slug":"chanthaburi"},{"code":"26","name":"Chaiyaphum","slug":"chaiyaphum"},{"code":"32","name":"Chai Nat","slug":"chai-nat"},{"code":"44","name":"Chachoengsao","slug":"chachoengsao"},{"code":"35","name":"Ang Thong","slug":"ang-thong"},{"code":"76","name":"Udon Thani","slug":"udon-thani"},{"code":"74","name":"Prachin Buri","slug":"prachin-buri"},{"code":"75","name":"Ubon Ratchathani","slug":"ubon-ratchathani"},{"code":"77","name":"Amnat Charoen","slug":"amnat-charoen"},{"code":"80","name":"Sa Kaeo","slug":"sa-kaeo"},{"code":"81","name":"Bueng Kan","slug":"bueng-kan"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

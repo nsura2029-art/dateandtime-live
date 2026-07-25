@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "MK";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "North Macedonia";
   window.__COUNTRY_SLUG = "north-macedonia";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"E9","name":"Valandovo","slug":"valandovo"},{"code":"86","name":"Resen","slug":"resen"},{"code":"51","name":"Kratovo","slug":"kratovo"},{"code":"72","name":"Novo Selo","slug":"novo-selo"},{"code":"11","name":"Bosilovo","slug":"bosilovo"},{"code":"A9","name":"Vasilevo","slug":"vasilevo"},{"code":"E5","name":"Dojran","slug":"dojran"},{"code":"08","name":"Bogdanci","slug":"bogdanci"},{"code":"62","name":"Makedonska Kamenica","slug":"makedonska-kamenica"},{"code":"C6","name":"Zrnovci","slug":"zrnovci"},{"code":"40","name":"Karbinci","slug":"karbinci"},{"code":"25","name":"Demir Kapija","slug":"demir-kapija"},{"code":"87","name":"Rosoman","slug":"rosoman"},{"code":"35","name":"Gradsko","slug":"gradsko"},{"code":"60","name":"Lozovo","slug":"lozovo"},{"code":"19","name":"Češinovo-Obleševo","slug":"cesinovo-oblesevo"},{"code":"E1","name":"Novaci","slug":"novaci"},{"code":"04","name":"Berovo","slug":"berovo"},{"code":"06","name":"Bitola","slug":"bitola"},{"code":"D9","name":"Mogila","slug":"mogila"},{"code":"C7","name":"Bogovinje","slug":"bogovinje"},{"code":"12","name":"Brvenica","slug":"brvenica"},{"code":"D2","name":"Debar","slug":"debar"},{"code":"D3","name":"Demir Hisar","slug":"demir-hisar"},{"code":"28","name":"Dolneni","slug":"dolneni"},{"code":"33","name":"Gevgelija","slug":"gevgelija"},{"code":"D4","name":"Gostivar","slug":"gostivar"},{"code":"36","name":"Ilinden","slug":"ilinden"},{"code":"D5","name":"Jegunovce","slug":"jegunovce"},{"code":"D6","name":"Kavadarci","slug":"kavadarci"},{"code":"52","name":"Kriva Palanka","slug":"kriva-palanka"},{"code":"D7","name":"Kumanovo","slug":"kumanovo"},{"code":"59","name":"Lipkovo","slug":"lipkovo"},{"code":"D8","name":"Makedonski Brod","slug":"makedonski-brod"},{"code":"69","name":"Negotino","slug":"negotino"},{"code":"E2","name":"Ohrid","slug":"ohrid"},{"code":"79","name":"Petrovec","slug":"petrovec"},{"code":"80","name":"Plasnica","slug":"plasnica"},{"code":"E3","name":"Prilep","slug":"prilep"},{"code":"85","name":"Rankovce","slug":"rankovce"},{"code":"E4","name":"Mavrovo and Rostuša","slug":"mavrovo-and-rostusa"},{"code":"92","name":"Sopište","slug":"sopiste"},{"code":"E6","name":"Struga","slug":"struga"},{"code":"E7","name":"Strumica","slug":"strumica"},{"code":"A4","name":"Sveti Nikole","slug":"sveti-nikole"},{"code":"A5","name":"Tearce","slug":"tearce"},{"code":"E8","name":"Tetovo","slug":"tetovo"},{"code":"F1","name":"Veles","slug":"veles"},{"code":"B4","name":"Vinica","slug":"vinica"},{"code":"C2","name":"Zelenikovo","slug":"zelenikovo"},{"code":"F5","name":"Debarca","slug":"debarca"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

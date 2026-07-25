@@ -114,8 +114,9 @@
             <span class="wt-sort-label">Sort:</span>
             <select id="wt-sort-select" class="wt-sort-select">
               <option value="popular">Popular</option>
+              <option value="all">All cities</option>
               <option value="name">City A–Z</option>
-              <option value="country">Country</option>
+              <option value="state">By state</option>
             </select>
           </label>
         </div>
@@ -153,11 +154,27 @@
   <section class="wt-hub-section">
     <div class="container">
       <h2>World Time Tools</h2>
-      <div class="wt-tools-grid">
-        <a href="/world-time/meeting/" class="wt-tool-card"><div class="wt-tool-icon">📅</div><h3>Meeting Planner</h3><p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p></a>
-        <a href="/world-time/event/" class="wt-tool-card"><div class="wt-tool-icon">📣</div><h3>Event Time Announcer</h3><p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p></a>
-        <a href="/time-zones/converter/" class="wt-tool-card"><div class="wt-tool-icon">🔄</div><h3>Time Zone Converter</h3><p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p></a>
-        <a href="/time-zones/" class="wt-tool-card"><div class="wt-tool-icon">🌐</div><h3>Time Zones</h3><p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p></a>
+      <div class="tz-tools-grid">
+        <a href="/world-time/meeting/" class="tz-tool-card">
+          <span class="tz-tool-icon">📅</span>
+          <h3>Meeting Planner</h3>
+          <p>Find meeting times that work for everyone across cities. Drag-select a time slot to see the local time in every city.</p>
+        </a>
+        <a href="/world-time/event/" class="tz-tool-card">
+          <span class="tz-tool-icon">📣</span>
+          <h3>Event Time Announcer</h3>
+          <p>Show local times for a global event. Get a shareable link like "When is 8pm in your time?" for your event.</p>
+        </a>
+        <a href="/time-zones/converter/" class="tz-tool-card">
+          <span class="tz-tool-icon">🔄</span>
+          <h3>Time Zone Converter</h3>
+          <p>Calculate the exact time difference between any two cities. Same drag-select timeline as the Meeting Planner.</p>
+        </a>
+        <a href="/time-zones/" class="tz-tool-card">
+          <span class="tz-tool-icon">🌐</span>
+          <h3>Time Zones</h3>
+          <p>Browse all 408 time zones, learn about UTC, DST, and how time zones work worldwide.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -188,15 +205,19 @@
 
 <script>
   // Page config (set by the build script)
-  window.__PAGE_INITIAL = 20;
-  window.__PAGE_STEP    = 20;
+  window.__PAGE_INITIAL  = 100;
+  window.__PAGE_STEP     = 100;
+  window.__MIN_POPULATION = 0;
+  window.__CITY_TOTAL    = 0;
   window.__COUNTRY_CCA2 = "PR";
   window.__STATE_CODE   = null;
   window.__COUNTRY_NAME = "Puerto Rico";
   window.__COUNTRY_SLUG = "puerto-rico";
   window.__STATE_SLUG   = null;
   window.__STATE_NAME   = null;
+  window.__STATES       = [{"code":"001","name":"Adjuntas","slug":"adjuntas"},{"code":"003","name":"Aguada","slug":"aguada"},{"code":"005","name":"Aguadilla","slug":"aguadilla"},{"code":"007","name":"Aguas Buenas","slug":"aguas-buenas"},{"code":"009","name":"Aibonito","slug":"aibonito"},{"code":"011","name":"Añasco","slug":"anasco"},{"code":"013","name":"Arecibo","slug":"arecibo"},{"code":"015","name":"Arroyo","slug":"arroyo"},{"code":"017","name":"Barceloneta","slug":"barceloneta"},{"code":"019","name":"Barranquitas","slug":"barranquitas"},{"code":"021","name":"Bayamón","slug":"bayamon"},{"code":"023","name":"Cabo Rojo","slug":"cabo-rojo"},{"code":"025","name":"Caguas","slug":"caguas"},{"code":"027","name":"Camuy","slug":"camuy"},{"code":"029","name":"Canóvanas","slug":"canovanas"},{"code":"031","name":"Carolina","slug":"carolina"},{"code":"033","name":"Cataño","slug":"catano"},{"code":"035","name":"Cayey","slug":"cayey"},{"code":"037","name":"Ceiba","slug":"ceiba"},{"code":"039","name":"Ciales","slug":"ciales"},{"code":"041","name":"Cidra","slug":"cidra"},{"code":"043","name":"Coamo","slug":"coamo"},{"code":"045","name":"Comerío","slug":"comerio"},{"code":"047","name":"Corozal","slug":"corozal"},{"code":"049","name":"Culebra","slug":"culebra"},{"code":"051","name":"Dorado","slug":"dorado"},{"code":"053","name":"Fajardo","slug":"fajardo"},{"code":"054","name":"Florida","slug":"florida"},{"code":"055","name":"Guánica","slug":"guanica"},{"code":"057","name":"Guayama","slug":"guayama"},{"code":"059","name":"Guayanilla","slug":"guayanilla"},{"code":"061","name":"Guaynabo","slug":"guaynabo"},{"code":"063","name":"Gurabo","slug":"gurabo"},{"code":"065","name":"Hatillo","slug":"hatillo"},{"code":"067","name":"Hormigueros","slug":"hormigueros"},{"code":"069","name":"Humacao","slug":"humacao"},{"code":"071","name":"Isabela","slug":"isabela"},{"code":"073","name":"Jayuya","slug":"jayuya"},{"code":"075","name":"Juana Díaz","slug":"juana-diaz"},{"code":"077","name":"Juncos","slug":"juncos"},{"code":"079","name":"Lajas","slug":"lajas"},{"code":"081","name":"Lares","slug":"lares"},{"code":"083","name":"Las Marías","slug":"las-marias"},{"code":"085","name":"Las Piedras","slug":"las-piedras"},{"code":"087","name":"Loíza","slug":"loiza"},{"code":"089","name":"Luquillo","slug":"luquillo"},{"code":"091","name":"Manatí","slug":"manati"},{"code":"093","name":"Maricao","slug":"maricao"},{"code":"095","name":"Maunabo","slug":"maunabo"},{"code":"099","name":"Moca","slug":"moca"},{"code":"101","name":"Morovis","slug":"morovis"},{"code":"103","name":"Naguabo","slug":"naguabo"},{"code":"105","name":"Naranjito","slug":"naranjito"},{"code":"107","name":"Orocovis","slug":"orocovis"},{"code":"109","name":"Patillas","slug":"patillas"},{"code":"111","name":"Peñuelas","slug":"penuelas"},{"code":"113","name":"Ponce","slug":"ponce"},{"code":"117","name":"Rincón","slug":"rincon"},{"code":"115","name":"Quebradillas","slug":"quebradillas"},{"code":"119","name":"Río Grande","slug":"rio-grande"},{"code":"121","name":"Sabana Grande","slug":"sabana-grande"},{"code":"123","name":"Salinas","slug":"salinas"},{"code":"125","name":"San Germán","slug":"san-german"},{"code":"127","name":"San Juan","slug":"san-juan"},{"code":"129","name":"San Lorenzo","slug":"san-lorenzo"},{"code":"131","name":"San Sebastián","slug":"san-sebastian"},{"code":"133","name":"Santa Isabel","slug":"santa-isabel"},{"code":"135","name":"Toa Alta","slug":"toa-alta"},{"code":"137","name":"Toa Baja","slug":"toa-baja"},{"code":"139","name":"Trujillo Alto","slug":"trujillo-alto"},{"code":"141","name":"Utuado","slug":"utuado"},{"code":"143","name":"Vega Alta","slug":"vega-alta"},{"code":"145","name":"Vega Baja","slug":"vega-baja"},{"code":"149","name":"Villalba","slug":"villalba"},{"code":"151","name":"Yabucoa","slug":"yabucoa"},{"code":"153","name":"Yauco","slug":"yauco"},{"code":"147","name":"Vieques","slug":"vieques"}];
 </script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>

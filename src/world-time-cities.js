@@ -26,8 +26,12 @@
   "use strict";
 
   const API_BASE = "https://datetime-api-dev.nsura2029.workers.dev";
-  const INITIAL_VISIBLE = (typeof window !== 'undefined' && window.__PAGE_INITIAL) || 50;  // page 1
-  const PAGE_STEP = (typeof window !== 'undefined' && window.__PAGE_STEP) || 50;        // each subsequent page
+  // Initial page size and Load-more step.
+  // - Hub page: 100 + 100 (default; overrides via window.__PAGE_INITIAL / __PAGE_STEP)
+  // - Country pages: 100 + 100 (build script sets these explicitly)
+  // - State pages: 100 + 100 (build script sets these explicitly)
+  const INITIAL_VISIBLE = (typeof window !== 'undefined' && window.__PAGE_INITIAL) || 100; // page 1
+  const PAGE_STEP = (typeof window !== 'undefined' && window.__PAGE_STEP) || 100;        // each subsequent page
   const SEARCH_DEBOUNCE_MS = 250;
 
   // =============== Inline SVG icons (24×24, single path, currentColor) ===============
@@ -118,10 +122,16 @@
     ] }
   ];
 
+  // Sort options for the city grid.
+  //   "all"      — single alphabetical list (no grouping). Default on hub page.
+  //   "popular"  — popularity-weighted (default on country/state pages).
+  //   "name"     — alphabetical by city name.
+  //   "state"    — group by state, then alphabetical within each (US-only).
   const SORTS = [
     { code: "popular", label: "Popular" },
+    { code: "all",     label: "All cities" },
     { code: "name",    label: "City A–Z" },
-    { code: "country", label: "Country" }
+    { code: "state",   label: "By state" }
   ];
 
   // =============== State ===============
@@ -233,15 +243,25 @@
     if (cont && cont.api) params.set("continent", cont.api);
     if (state.region) params.set("region", state.region);
     if (state.country) params.set("country", state.country);
-    // For state pages, use /api/v1/cities (returns top cities by population)
-    // instead of /popular (capped at top-1000 globally). The /popular endpoint
-    // only has 1-6 cities per state because the global top-1000 skews toward
-    // large countries. The /cities endpoint returns top 500 per country, which
-    // gives us 10-200 cities per US state.
-    if (state.stateCode) {
-      // We fetch a bigger set (1000) and filter client-side by state.
-      // This works around the broken server-side state filter.
-      params.set("limit", "1000");
+    // Country + state pages use /api/v1/cities (returns up to 1,000 cities
+    // per country, sorted by population). /popular only has 35 US cities in
+    // its curated top-1000 set, which is too few for country pages.
+    if (state.country) {
+      // Per-country minPopulation (set by the build script via window.__MIN_POPULATION).
+      // US uses 40,000 to cover all 51 states; small countries use 0.
+      const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
+      if (minPop > 0) params.set("minPopulation", String(minPop));
+      // For state pages, we fetch a bigger set (1000) and filter client-side
+      // by state — the /cities endpoint's server-side state filter is broken.
+      // For country pages, we fetch INITIAL_VISIBLE and paginate via offset.
+      if (state.stateCode) {
+        params.set("limit", "1000");
+      } else {
+        const offset = state.page === 1 ? 0 : (INITIAL_VISIBLE + (state.page - 2) * PAGE_STEP);
+        const limit = state.page === 1 ? INITIAL_VISIBLE : PAGE_STEP;
+        params.set("offset", String(offset));
+        params.set("limit", String(limit));
+      }
       return `${API_BASE}/api/v1/cities?${params}`;
     }
     if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
@@ -263,8 +283,17 @@
     if (cont && cont.api) params.set("continent", cont.api);
     if (state.region) params.set("region", state.region);
     if (state.country) params.set("country", state.country);
-    if (state.stateCode) {
-      params.set("limit", "1000");
+    if (state.country) {
+      const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
+      if (minPop > 0) params.set("minPopulation", String(minPop));
+      if (state.stateCode) {
+        params.set("limit", "1000");
+      } else {
+        const offset = p === 1 ? 0 : (INITIAL_VISIBLE + (p - 2) * PAGE_STEP);
+        const limit = p === 1 ? INITIAL_VISIBLE : PAGE_STEP;
+        params.set("offset", String(offset));
+        params.set("limit", String(limit));
+      }
       return `${API_BASE}/api/v1/cities?${params}`;
     }
     if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
@@ -300,6 +329,12 @@
         list = list.filter(c => (c.stateCode || c.state_code) === sc);
       }
       state.total = state.stateCode ? list.length : (data.total != null ? data.total : list.length);
+      // Some /api/v1/cities responses include a "total" that doesn't reflect
+      // the server-side minPopulation filter. When the filter is on AND the
+      // build script pre-baked a __CITY_TOTAL, trust that one instead.
+      if (state.country && (window.__MIN_POPULATION || 0) > 0 && window.__CITY_TOTAL) {
+        state.total = window.__CITY_TOTAL;
+      }
 
       if (append) {
         // Append, dedup by id
@@ -308,6 +343,28 @@
       } else {
         state.cities = list;
       }
+
+      // "By state" sort: group by state name (alphabetical), then by city
+      // name within each state. State code → name lookup uses window.__STATES
+      // (set by the build script). Falls back to the raw state code.
+      if (state.sort === "state") {
+        const stateNameBy = new Map();
+        for (const s of (window.__STATES || [])) {
+          if (s && s.code) stateNameBy.set(s.code, s.name);
+        }
+        const stateNameOf = (c) => stateNameBy.get(c.stateCode || c.state_code) || (c.stateCode || c.state_code) || "ZZZ";
+        state.cities.sort((a, b) => {
+          const sa = stateNameOf(a);
+          const sb = stateNameOf(b);
+          return sa.localeCompare(sb) || a.name.localeCompare(b.name);
+        });
+      } else if (state.sort === "name") {
+        state.cities.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (state.sort === "all") {
+        // All cities: single alphabetical list (no grouping).
+        state.cities.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      // "popular" sort: leave server's order intact (popularity-weighted).
 
       renderGrid();
       updateLoadMoreUI();
@@ -458,6 +515,7 @@
 
   // Renders the "Browse {Country} by state" tile grid on the country page.
   // Pulls state list from window.__STATES (set by the build script).
+  // For US, each tile is a rich card with image + timezone + live clock.
   function renderStateGrid() {
     const host = el("wt-state-grid");
     if (!host) return;
@@ -466,9 +524,67 @@
       host.innerHTML = `<p class="wt-empty">No states available.</p>`;
       return;
     }
+    // Per-state enrichment: timezone, capital, city count, population.
+    // The lookup table is on window.__STATE_META (set by the build script)
+    // and is keyed by state code (e.g. "CA", "NY").
+    const meta = window.__STATE_META || {};
     host.innerHTML = states.map(s => {
-      return `<a href="/world-time/${window.__COUNTRY_SLUG}/state/${s.slug}/" class="wt-state-tile">${s.name}</a>`;
+      const m = meta[s.code] || {};
+      const slug = s.slug || (s.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const tz = m.timezone || 'UTC';
+      const capital = m.capital || '';
+      const cityCount = m.cityCount || 0;
+      const population = m.population || 0;
+      const image = m.image || slug; // falls back to slug-based filename
+      return `
+        <a href="/world-time/${window.__COUNTRY_SLUG}/state/${slug}/" class="wt-state-tile" data-tz="${tz}">
+          <div class="wt-state-tile-img-wrap">
+            <img class="wt-state-tile-img" src="/assets/states/${image}.webp" alt="${escapeHtml(s.name)}" loading="lazy" width="400" height="225" decoding="async" onerror="this.onerror=null;this.classList.add('wt-img-failed');this.parentElement.classList.add('wt-img-failed')" />
+            <span class="wt-state-tile-tz" title="Time zone">${escapeHtml(m.tzLabel || '')}</span>
+          </div>
+          <div class="wt-state-tile-body">
+            <h3 class="wt-state-tile-name">${escapeHtml(s.name)}</h3>
+            <div class="wt-state-tile-stats">
+              <span class="wt-state-tile-cities">${cityCount} cities</span>
+              ${population > 0 ? `<span class="wt-state-tile-pop">${formatPop(population)}</span>` : ''}
+            </div>
+            ${capital ? `<div class="wt-state-tile-capital">Capital: ${escapeHtml(capital)}</div>` : ''}
+            <div class="wt-state-tile-clock" data-clock-tz="${tz}">--:--:--</div>
+          </div>
+        </a>
+      `;
     }).join("");
+    // Start live clocks for the state tiles.
+    startStateClocks();
+  }
+
+  // Format population: 1.2M, 456K, 7.8K
+  function formatPop(n) {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1_000) return (n / 1_000).toFixed(0) + 'K';
+    return String(n);
+  }
+
+  // Live clocks for the state tile grid. Updates every second.
+  let _stateClockTimer = null;
+  function startStateClocks() {
+    if (_stateClockTimer) clearInterval(_stateClockTimer);
+    function tick() {
+      const tiles = document.querySelectorAll('.wt-state-tile-clock');
+      tiles.forEach(t => {
+        const tz = t.getAttribute('data-clock-tz');
+        if (!tz) return;
+        try {
+          const now = new Date();
+          const fmt = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+          });
+          t.textContent = fmt.format(now);
+        } catch (e) { /* tz not supported, leave placeholder */ }
+      });
+    }
+    tick();
+    _stateClockTimer = setInterval(tick, 1000);
   }
 
   function renderRegionPills() {
@@ -492,6 +608,30 @@
     });
   }
 
+  // Slugify a city name the same way the build script does. Used as a fallback
+  // for the city-card link when the API doesn't return `path` (e.g. on state
+  // pages where the data comes from /api/v1/cities instead of /popular).
+  function slugifyCityName(name) {
+    return (name || "")
+      .toLowerCase()
+      .replace(/['\u2018\u2019]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function buildCityPath(c) {
+    if (c.path) return c.path;
+    // The /api/v1/cities endpoint (used on state pages) doesn't enrich with
+    // path/countrySlug/slug, so build it from the name + window globals.
+    const countrySlug =
+      c.countrySlug ||
+      (window.__COUNTRY_SLUG) ||
+      (c.countryCode ? c.countryCode.toLowerCase() : "");
+    const citySlug = c.slug || slugifyCityName(c.name || c.asciiName);
+    if (!countrySlug || !citySlug) return "#";
+    return `/world-time/${countrySlug}/${citySlug}/`;
+  }
+
   function renderCard(c) {
     const safeName = escapeHtml(c.name);
     const safeCountry = escapeHtml(c.countryName || "");
@@ -499,7 +639,7 @@
     const cca2 = (c.countryCode || "").toLowerCase();
     const flagEmoji = c.flagEmoji || "";
     const flagUrl = cca2 ? `https://flagcdn.com/w40/${cca2}.png` : "";
-    const path = c.path || "#";
+    const path = buildCityPath(c);
     return `
       <article class="wt-card" data-tz="${c.timezone || ""}" data-id="${c.id}" data-path="${path}">
         <a class="wt-card-link" href="${path}" aria-label="Open ${safeName} time zone page">
@@ -530,7 +670,27 @@
       if (reset) reset.addEventListener("click", () => resetAll());
       return;
     }
-    grid.innerHTML = state.cities.map(renderCard).join("");
+    // "By state" sort: render state-name section headers between groups.
+    if (state.sort === "state") {
+      const stateNameBy = new Map();
+      for (const s of (window.__STATES || [])) {
+        if (s && s.code) stateNameBy.set(s.code, s.name);
+      }
+      const stateNameOf = (c) => stateNameBy.get(c.stateCode || c.state_code) || (c.stateCode || c.state_code) || "Other";
+      const parts = [];
+      let lastState = null;
+      for (const c of state.cities) {
+        const s = stateNameOf(c);
+        if (s !== lastState) {
+          parts.push(`<h3 class="wt-state-group-header">${escapeHtml(s)}</h3>`);
+          lastState = s;
+        }
+        parts.push(renderCard(c));
+      }
+      grid.innerHTML = parts.join("");
+    } else {
+      grid.innerHTML = state.cities.map(renderCard).join("");
+    }
   }
 
   function updateLoadMoreUI() {
