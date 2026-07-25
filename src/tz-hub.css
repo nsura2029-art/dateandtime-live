@@ -647,3 +647,274 @@
   padding: 2rem;
   color: var(--tz-muted, #77718f);
 }
+
+/* ==========================================================================
+   World Time hub: redesigned card grid (2026-07-25)
+   
+   Replaces the old 5-col alphabetical list with a card grid that matches
+   the home page's city-card visual language. Cards group into sections
+   (top popular, by region) with "Load more" per section.
+   ========================================================================== */
+
+.wt-hub-section {
+  padding: 2rem 0 3rem;
+}
+.wt-hub-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.wt-hub-header h2 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--color-foreground, #49445f);
+  margin: 0;
+}
+.wt-hub-count {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-muted, #77718f);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Section grouping ---- */
+.wt-section {
+  margin-top: 2.5rem;
+}
+.wt-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-border-soft, rgba(92, 74, 175, 0.08));
+}
+.wt-section-head h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-foreground, #49445f);
+  margin: 0;
+}
+.wt-section-head-sub h4 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-foreground, #49445f);
+  margin: 0;
+}
+.wt-section-count {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-muted, #77718f);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.wt-by-region {
+  margin-top: 3rem;
+}
+
+/* ---- Card grid (responsive) ---- */
+.wt-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem;
+}
+@media (min-width: 540px) { .wt-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 720px) { .wt-card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 980px) { .wt-card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .wt-card-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+
+/* ---- Card (matches home page city-card) ---- */
+.wt-card {
+  position: relative;
+  background: var(--color-card-bg, #ffffff);
+  border: 1px solid var(--color-border, rgba(92, 74, 175, 0.16));
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
+  text-align: center;
+  min-width: 0;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  overflow: hidden;
+}
+.wt-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: var(--color-primary, #5b4aaf);
+}
+
+.wt-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.wt-card-link:hover { text-decoration: none; }
+
+.wt-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  min-height: 1.4rem;
+}
+
+.wt-card-flag {
+  font-size: 0.95rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.wt-card-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-foreground, #49445f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+.wt-card-remove {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted-soft, #9a92b0);
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 400;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease;
+  user-select: none;
+}
+.wt-card-remove:hover {
+  color: #f97316;
+  background: color-mix(in srgb, #f97316 12%, transparent);
+}
+
+/* Green live dot with pulse — same as home page */
+.wt-live-pulse {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  position: relative;
+  display: inline-block;
+}
+.wt-live-pulse::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: #10b981;
+  opacity: 0.3;
+  animation: wt-pulse 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes wt-pulse {
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+.wt-card-time {
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", "Courier New", monospace;
+  font-size: clamp(1.125rem, 2.4vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--color-foreground, #49445f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0.25rem 0;
+}
+
+.wt-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  font-size: 0.6875rem;
+  color: var(--color-foreground-soft, #6b6585);
+  margin-top: 0.4rem;
+}
+.wt-card-tz {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.6875rem;
+  color: var(--color-muted, #77718f);
+  max-width: 7.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wt-card-sep { color: var(--color-muted-soft, #9a92b0); opacity: 0.5; }
+.wt-card-day {
+  font-weight: 600;
+  color: var(--color-foreground-soft, #6b6585);
+  text-transform: lowercase;
+}
+.wt-card-pill {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-weight: 700;
+  font-size: 0.6875rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.25rem;
+  color: var(--color-foreground, #49445f);
+  background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+}
+.wt-card-pill.is-positive { color: #047857; background: color-mix(in srgb, #10b981 15%, transparent); }
+.wt-card-pill.is-negative { color: #b45309; background: color-mix(in srgb, #f59e0b 15%, transparent); }
+.wt-card-pill.is-neutral  { color: var(--color-muted, #77718f); background: transparent; }
+
+/* ---- Load more button ---- */
+.wt-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 1.25rem auto 0;
+  padding: 0.55rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary, #5b4aaf);
+  background: transparent;
+  border: 1px solid var(--color-border, rgba(92, 74, 175, 0.16));
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.wt-section > .wt-load-more,
+.wt-section .wt-load-more {
+  display: block;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+.wt-load-more:hover {
+  color: #ffffff;
+  background: var(--color-primary, #5b4aaf);
+  border-color: var(--color-primary, #5b4aaf);
+}
+.wt-load-more [data-section-remaining] {
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+/* ---- Hide old alphabetical list styles ---- */
+.wt-letter-group,
+.wt-letter-head,
+.wt-letter-rows,
+.wt-city-row { display: none; }

@@ -235,23 +235,80 @@
     </div>
   </section>
 
-  <!-- City grid (5-col alphabetical, 200+ popular cities) -->
-  <section class="wt-city-section" id="all-cities">
+  <!-- City cards (top + by region, with Load more per section) -->
+  <section class="wt-hub-section" id="all-cities">
     <div class="container">
-      <div class="wt-city-header">
+      <div class="wt-hub-header">
         <h2>Browse all popular cities</h2>
-        <span class="wt-city-count" id="wt-count">—</span>
+        <span class="wt-hub-count" id="wt-count">—</span>
       </div>
-      <p class="tz-section-sub">Click any city for its full time zone, weather, holidays, and more. Live local time updates every second.</p>
+      <p class="tz-section-sub">Click any city for its full time zone, weather, holidays, and more. Live local time updates every second. Add up to 6 cities to your own world clock — the green dot means it's live.</p>
 
       <div class="wt-filters" id="wt-filters" role="group" aria-label="City filters">
         <!-- Populated by JS -->
       </div>
 
-      <div class="wt-city-grid" id="wt-city-grid">
-        <!-- Populated by JS: 200+ cities, 5 columns, alphabetical groups -->
-        <noscript><p class="wt-empty">Enable JavaScript to see the live city list.</p></noscript>
+      <!-- Top popular cities (5 visible + Load more) -->
+      <div class="wt-section" data-section-key="top">
+        <div class="wt-section-head">
+          <h3>🕐 Top popular cities</h3>
+          <span class="wt-section-count" data-section-count>—</span>
+        </div>
+        <div class="wt-card-grid" data-section="top" data-visible="5">
+          <!-- 5 cards by default; "Load more" expands -->
+        </div>
+        <button class="wt-load-more" data-section="top" hidden>Load more ↓ <span data-section-remaining>0</span></button>
       </div>
+
+      <!-- By region (2-3 visible per region + Load more) -->
+      <div class="wt-by-region">
+        <div class="wt-section-head">
+          <h3>🌏 Browse by region</h3>
+        </div>
+        <!-- Each region is a section with its own grid + Load more -->
+        <div class="wt-section" data-section-key="asia">
+          <div class="wt-section-head wt-section-head-sub">
+            <h4>🌏 Asia</h4>
+            <span class="wt-section-count" data-section-count>—</span>
+          </div>
+          <div class="wt-card-grid" data-section="asia" data-visible="3"></div>
+          <button class="wt-load-more" data-section="asia" hidden>Load more ↓ <span data-section-remaining>0</span></button>
+        </div>
+        <div class="wt-section" data-section-key="europe">
+          <div class="wt-section-head wt-section-head-sub">
+            <h4>🌍 Europe</h4>
+            <span class="wt-section-count" data-section-count>—</span>
+          </div>
+          <div class="wt-card-grid" data-section="europe" data-visible="3"></div>
+          <button class="wt-load-more" data-section="europe" hidden>Load more ↓ <span data-section-remaining>0</span></button>
+        </div>
+        <div class="wt-section" data-section-key="americas">
+          <div class="wt-section-head wt-section-head-sub">
+            <h4>🌎 Americas</h4>
+            <span class="wt-section-count" data-section-count>—</span>
+          </div>
+          <div class="wt-card-grid" data-section="americas" data-visible="3"></div>
+          <button class="wt-load-more" data-section="americas" hidden>Load more ↓ <span data-section-remaining>0</span></button>
+        </div>
+        <div class="wt-section" data-section-key="africa">
+          <div class="wt-section-head wt-section-head-sub">
+            <h4>🌍 Africa</h4>
+            <span class="wt-section-count" data-section-count>—</span>
+          </div>
+          <div class="wt-card-grid" data-section="africa" data-visible="3"></div>
+          <button class="wt-load-more" data-section="africa" hidden>Load more ↓ <span data-section-remaining>0</span></button>
+        </div>
+        <div class="wt-section" data-section-key="oceania">
+          <div class="wt-section-head wt-section-head-sub">
+            <h4>🌏 Oceania</h4>
+            <span class="wt-section-count" data-section-count>—</span>
+          </div>
+          <div class="wt-card-grid" data-section="oceania" data-visible="3"></div>
+          <button class="wt-load-more" data-section="oceania" hidden>Load more ↓ <span data-section-remaining>0</span></button>
+        </div>
+      </div>
+
+      <noscript><p class="wt-empty">Enable JavaScript to see the live city list.</p></noscript>
     </div>
   </section>
 
