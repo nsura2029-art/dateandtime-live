@@ -218,7 +218,7 @@
     </div>
   </div>
 
-  <!-- City cards (single section, top 8 visible + Load more, continent filter) -->
+  <!-- City cards (server-side filter + search + sort + paginated Load more) -->
   <section class="wt-hub-section" id="all-cities">
     <div class="container">
       <div class="wt-hub-header">
@@ -227,20 +227,57 @@
       </div>
       <p class="tz-section-sub">Click any city for its full time zone, weather, holidays, and more. Live local time updates every second. The green dot means it's live.</p>
 
-      <div class="wt-filters" id="wt-filters" role="group" aria-label="City filters">
+      <!-- Filter bar: search + sort + continent + sub-region -->
+      <div class="wt-filter-bar">
+        <div class="wt-filter-bar-top">
+          <div class="wt-search">
+            <svg class="wt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="wt-search-input" class="wt-search-input" placeholder="Search city or country (e.g. Tokyo, Lagos, Reykjavík…)" autocomplete="off" spellcheck="false" />
+            <button type="button" class="wt-search-clear" id="wt-search-clear" aria-label="Clear search" hidden>×</button>
+          </div>
+          <label class="wt-sort-wrap">
+            <span class="wt-sort-label">Sort:</span>
+            <select id="wt-sort-select" class="wt-sort-select">
+              <option value="popular">Popular</option>
+              <option value="name">City A–Z</option>
+              <option value="country">Country</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="wt-filter-row">
+          <span class="wt-filter-label">Continent:</span>
+          <div class="wt-filter-pills" id="wt-continent-pills" role="group" aria-label="Continent filter">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="wt-filter-row wt-region-row" id="wt-region-row" hidden>
+          <span class="wt-filter-label">Sub-region:</span>
+          <div class="wt-filter-pills" id="wt-region-pills" role="group" aria-label="Sub-region filter">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Result count + loading state -->
+      <div class="wt-result-bar">
+        <span class="wt-result-count" id="wt-result-count">—</span>
+        <span class="wt-loading" id="wt-loading" hidden>
+          <span class="wt-spinner" aria-hidden="true"></span> Loading…
+        </span>
+      </div>
+
+      <!-- Cards grid (8 visible on page 1, +15 on each Load more) -->
+      <div class="wt-card-grid" id="wt-card-grid" data-section="cities" data-visible="8" aria-busy="false">
         <!-- Populated by JS -->
       </div>
 
-      <!-- Popular cities (8 visible by default + Load more → all 250) -->
-      <div class="wt-section" data-section-key="top">
-        <div class="wt-section-head">
-          <h3>🕐 Popular cities</h3>
-          <span class="wt-section-count" data-section-count>—</span>
-        </div>
-        <div class="wt-card-grid" data-section="top" data-visible="8">
-          <!-- 8 cards by default; "Load more" expands -->
-        </div>
-        <button class="wt-load-more" data-section="top" hidden>Load more ↓ <span data-section-remaining>0</span></button>
+      <div class="wt-load-more-row">
+        <button class="wt-load-more" id="wt-load-more" hidden>
+          Load more <span data-section-remaining>0</span> ↓
+        </button>
+        <span class="wt-page-info" id="wt-page-info" hidden>Page 1</span>
       </div>
 
       <noscript><p class="wt-empty">Enable JavaScript to see the live city list.</p></noscript>

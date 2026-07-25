@@ -410,6 +410,43 @@ function scoreCity(c) {
   return pop + capitalBonus + aliasBonus;
 }
 
+// Convert a UN sub-region name ("Eastern Asia", "Western Europe") to a URL/API
+// slug. We keep this list in sync with the client-side CONTINENTS.regions
+// in src/world-time-cities.js. If a sub-region isn't in this map (e.g. the
+// API returns a new one we haven't seen), we fall back to a slugified form.
+const SUBREGION_SLUGS = {
+  'Eastern Asia':         'eastern-asia',
+  'South-Eastern Asia':   'south-eastern-asia',
+  'Southern Asia':        'southern-asia',
+  'Central Asia':         'central-asia',
+  'Western Asia':         'western-asia',
+  'Eastern Europe':       'eastern-europe',
+  'Northern Europe':      'northern-europe',
+  'Southern Europe':      'southern-europe',
+  'Western Europe':       'western-europe',
+  'Central Europe':       'central-europe',
+  'Southeast Europe':     'southeast-europe',
+  'Northern Africa':      'northern-africa',
+  'Western Africa':       'western-africa',
+  'Middle Africa':        'middle-africa',
+  'Eastern Africa':       'eastern-africa',
+  'Southern Africa':      'southern-africa',
+  'Australia and New Zealand': 'australia-and-new-zealand',
+  'Melanesia':            'melanesia',
+  'Micronesia':           'micronesia',
+  'Polynesia':            'polynesia',
+  'Caribbean':            'caribbean',
+  'Central America':      'central-america',
+  'North America':        'north-america',
+  'South America':        'south-america'
+};
+function getSubregionSlug(name) {
+  if (!name) return null;
+  if (SUBREGION_SLUGS[name]) return SUBREGION_SLUGS[name];
+  // Fallback: slugify the raw name
+  return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 /**
  * GET /api/v1/cities/popular
  *
@@ -425,10 +462,16 @@ function scoreCity(c) {
 async function handleCitiesPopular(request) {
   const url = new URL(request.url);
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '200', 10) || 200, 1), 500);
+  const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
   const continent = (url.searchParams.get('continent') || '').toUpperCase();
   const country = (url.searchParams.get('country') || '').toUpperCase();
   const isCapital = url.searchParams.get('isCapital') === '1';
   const sort = (url.searchParams.get('sort') || 'population').toLowerCase();
+  // Search query — matches city name, ascii name, or country name (case-insensitive)
+  const q = (url.searchParams.get('q') || '').trim().toLowerCase();
+  // Sub-region slug (e.g. "eastern-asia"). We derive this from the country's
+  // unSubregion field; see getSubregionSlug() below.
+  const region = (url.searchParams.get('region') || '').trim().toLowerCase();
 
   try {
     const [popularData, countrySlugMap] = await Promise.all([
@@ -451,6 +494,7 @@ async function handleCitiesPopular(request) {
         countryName: c.countryName || (countryInfo && countryInfo.name) || null,
         countrySlug, // new: for the /world-time/{country-name}/{city}/ path
         continent: countryInfo ? countryInfo.continent : null,
+        unSubregion: countryInfo ? countryInfo.unSubregion : null,
         stateCode: c.stateCode || null,
         latitude: c.latitude,
         longitude: c.longitude,
@@ -469,6 +513,17 @@ async function handleCitiesPopular(request) {
     if (continent) enriched = enriched.filter(c => c.continent === continent);
     if (country) enriched = enriched.filter(c => c.countryCode === country);
     if (isCapital) enriched = enriched.filter(c => c.isCapital);
+    if (region) enriched = enriched.filter(c => getSubregionSlug(c.unSubregion) === region);
+    if (q) {
+      enriched = enriched.filter(c => {
+        const name = (c.name || '').toLowerCase();
+        const ascii = (c.asciiName || '').toLowerCase();
+        const country = (c.countryName || '').toLowerCase();
+        const aliases = (c.aliases || []).map(a => (a || '').toLowerCase());
+        return name.includes(q) || ascii.includes(q) || country.includes(q) ||
+               aliases.some(a => a.includes(q));
+      });
+    }
 
     // Sort
     if (sort === 'name') {
@@ -483,16 +538,19 @@ async function handleCitiesPopular(request) {
       enriched.sort((a, b) => scoreCity(b) - scoreCity(a));
     }
 
-    const sliced = enriched.slice(0, limit);
+    const sliced = enriched.slice(offset, offset + limit);
 
     return new Response(JSON.stringify({
       success: true,
       data: {
         cities: sliced,
         count: sliced.length,
+        offset,
+        limit,
         total: enriched.length,
+        has_more: offset + sliced.length < enriched.length,
         total_unfiltered: cities.length,
-        filters: { continent: continent || null, country: country || null, isCapital },
+        filters: { continent: continent || null, country: country || null, region: region || null, q: q || null, isCapital },
         sort
       },
       meta: {

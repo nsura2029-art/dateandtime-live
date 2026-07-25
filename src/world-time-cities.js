@@ -1,61 +1,97 @@
-/* dateandtime.live -- World Time hub: card grid
+/* dateandtime.live -- World Time hub: city grid (server-side)
  *
- * Powers the world-time hub at /world-time/. Renders city cards in two
- * groupings, with per-section "Load more" buttons:
- *   1. Top popular cities (5 visible by default)
- *   2. By region — Asia, Europe, Americas, Africa, Oceania (3 visible each)
+ * Powers the /world-time/ page. Renders a paginated card grid of
+ * 33,945+ cities, with continent / sub-region / search / sort filters.
  *
- * Each card uses the same visual language as the home page city-card:
- *   green live pulse  +  city name  +  × close  +  big mono time
- *   +  region info (tz + day + offset pill)
+ * Every state change triggers a fresh API call to
+ * /api/v1/cities/popular — there's no client-side cache or pre-fetch
+ * of the full city list. The API has its own 1h edge cache so this is
+ * cheap. Client responsibilities are: debouncing search, aborting
+ * in-flight requests, rendering the response, syncing URL state.
  *
- * Data:   /api/v1/cities/popular  (250 cities, with continent + country + path)
- * Render: card grid (responsive 2/3/4/5 cols), centered
- * Live:   per-card clock updates every second via requestAnimationFrame
+ * URL state (all optional, ?-prefixed, omit if at default):
+ *   continent  = all | africa | asia | europe | namerica | samerica | oceania
+ *   region     = <sub-region slug, only meaningful when continent != all>
+ *   sort       = popular | name | country
+ *   q          = <search string, URL-encoded>
+ *   p          = <page number, 1-based; default 1>
  *
- * Continent filter and sort are applied client-side over the initial 250
- * so the user can switch instantly without a roundtrip.
+ * Render: 5-col card grid (responsive 2/3/4/5). Page 1 shows 8 cards,
+ * each Load more appends 15 more (3 rows on 5-col desktop).
+ *
+ * Live:   per-card clock updates every requestAnimationFrame
+ *         using Intl.DateTimeFormat (no API calls).
  */
 (function () {
   "use strict";
 
   const API_BASE = "https://datetime-api-dev.nsura2029.workers.dev";
-  const STORAGE_KEY = "tdl.worldtime.cities";
-  const STORAGE_TTL = 24 * 60 * 60 * 1000; // 24h
+  const INITIAL_VISIBLE = 8;   // page 1
+  const PAGE_STEP = 15;        // each subsequent page
+  const SEARCH_DEBOUNCE_MS = 250;
 
-  // Continent metadata (label + emoji + section key)
+  // Continent metadata. continent code → URL/API value, label, emoji,
+  // and sub-region list (slugs that the API understands for that continent).
+  // Sub-region slugs match the API's `?region=` param. The Americas
+  // intentionally have an empty list — the API data is messy (NA/SA
+  // territories sit under continent=XX), so we show "All Americas" only.
   const CONTINENTS = [
-    { code: "all", label: "All",     emoji: "🌍" },
-    { code: "AS",  label: "Asia",    emoji: "🌏", sectionKey: "asia" },
-    { code: "EU",  label: "Europe",  emoji: "🌍", sectionKey: "europe" },
-    { code: "NA",  label: "N. America", emoji: "🌎", sectionKey: "americas" },
-    { code: "SA",  label: "S. America", emoji: "🌎", sectionKey: "americas" },
-    { code: "AF",  label: "Africa",  emoji: "🌍", sectionKey: "africa" },
-    { code: "OC",  label: "Oceania", emoji: "🌏", sectionKey: "oceania" }
+    { code: "all",      api: null,       label: "All",        emoji: "🌍", regions: [] },
+    { code: "africa",   api: "AF",       label: "Africa",     emoji: "🌍", regions: [
+      { slug: "northern-africa",   label: "Northern Africa" },
+      { slug: "western-africa",    label: "Western Africa" },
+      { slug: "middle-africa",     label: "Middle Africa" },
+      { slug: "eastern-africa",    label: "Eastern Africa" },
+      { slug: "southern-africa",   label: "Southern Africa" }
+    ] },
+    { code: "asia",     api: "AS",       label: "Asia",       emoji: "🌏", regions: [
+      { slug: "eastern-asia",      label: "Eastern Asia" },
+      { slug: "south-eastern-asia", label: "South-Eastern Asia" },
+      { slug: "southern-asia",     label: "Southern Asia" },
+      { slug: "central-asia",      label: "Central Asia" },
+      { slug: "western-asia",      label: "Western Asia" }
+    ] },
+    { code: "europe",   api: "EU",       label: "Europe",     emoji: "🌍", regions: [
+      { slug: "western-europe",    label: "Western Europe" },
+      { slug: "northern-europe",   label: "Northern Europe" },
+      { slug: "southern-europe",   label: "Southern Europe" },
+      { slug: "central-europe",    label: "Central Europe" },
+      { slug: "southeast-europe",  label: "Southeast Europe" },
+      { slug: "eastern-europe",    label: "Eastern Europe" }
+    ] },
+    { code: "namerica", api: "NA",       label: "N. America", emoji: "🌎", regions: [] },
+    { code: "samerica", api: "SA",       label: "S. America", emoji: "🌎", regions: [] },
+    { code: "oceania",  api: "OC",       label: "Oceania",    emoji: "🌏", regions: [
+      { slug: "australia-and-new-zealand", label: "Australia & NZ" },
+      { slug: "melanesia",         label: "Melanesia" },
+      { slug: "micronesia",        label: "Micronesia" },
+      { slug: "polynesia",         label: "Polynesia" }
+    ] }
   ];
 
   const SORTS = [
-    { code: "population", label: "Popular" },
-    { code: "name",       label: "City A-Z" },
-    { code: "country",    label: "Country" }
+    { code: "popular", label: "Popular" },
+    { code: "name",    label: "City A–Z" },
+    { code: "country", label: "Country" }
   ];
 
-  // Per-section initial visibility (only the "top" section is rendered now;
-  // the continent filter at the top of the section handles region browsing)
-  const VISIBLE_PER_SECTION = {
-    top: 8
+  // =============== State ===============
+
+  const state = {
+    continent: "all",
+    region: null,
+    sort: "popular",
+    q: "",
+    page: 1,
+    cities: [],          // accumulated across Load more clicks
+    total: 0,            // API's reported total (for current filter set)
+    loading: false,
+    aborter: null
   };
 
-  let state = {
-    cities: [],
-    filter: "all",
-    sort: "population"
-  };
-
-  // =============== Date / time helpers ===============
+  // =============== Date / time helpers (client-only, for live clocks) ===============
 
   function fmtTimeWithMs(tz, date) {
-    // Big mono time with milliseconds, e.g. "02:22:18.98"
     try {
       const parts = new Intl.DateTimeFormat("en-US", {
         timeZone: tz,
@@ -71,13 +107,10 @@
   }
 
   function getDateInTz(tz, date) {
-    // Returns { year, month, day, hour, minute, weekday } in the target timezone
     try {
       const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: tz,
-        year: "numeric", month: "2-digit", day: "2-digit",
-        hour: "2-digit", minute: "2-digit", weekday: "short",
-        hour12: false
+        timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", weekday: "short", hour12: false
       }).formatToParts(date);
       const get = type => parts.find(p => p.type === type)?.value;
       return {
@@ -92,7 +125,6 @@
   }
 
   function getUserTzDate() {
-    // Reference point for "today/tomorrow/yesterday" labelling
     return getDateInTz(Intl.DateTimeFormat().resolvedOptions().timeZone, new Date());
   }
 
@@ -100,11 +132,9 @@
     if (!targetDate) return "";
     const user = getUserTzDate();
     if (!user) return "";
-    // Compare YYYY-MM-DD in each timezone
     const userKey = `${user.year}-${String(user.month).padStart(2, "0")}-${String(user.day).padStart(2, "0")}`;
     const targetKey = `${targetDate.year}-${String(targetDate.month).padStart(2, "0")}-${String(targetDate.day).padStart(2, "0")}`;
     if (targetKey === userKey) return "today";
-    // Day diff (approximate)
     const userD = Date.UTC(user.year, user.month - 1, user.day);
     const targetD = Date.UTC(targetDate.year, targetDate.month - 1, targetDate.day);
     const diff = Math.round((targetD - userD) / 86400000);
@@ -116,7 +146,6 @@
   }
 
   function offsetPill(tz, date) {
-    // Offset from user's local timezone, in hours, like "+5 H" or "-8 H"
     try {
       const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const userOff = getTzOffsetMinutes(userTz, date);
@@ -131,16 +160,11 @@
   }
 
   function getTzOffsetMinutes(tz, date) {
-    // Returns the offset in minutes east of UTC for the given timezone at the
-    // given instant. Uses Intl.DateTimeFormat with timeZoneName to extract
-    // the GMT offset.
     try {
       const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: tz,
-        timeZoneName: "shortOffset"
+        timeZone: tz, timeZoneName: "shortOffset"
       }).formatToParts(date);
       const off = parts.find(p => p.type === "timeZoneName")?.value || "GMT";
-      // "GMT-8", "GMT+5:30", "GMT" etc.
       const m = off.match(/GMT([+\-])(\d{1,2})(?::(\d{2}))?/);
       if (!m) return 0;
       const sign = m[1] === "-" ? -1 : 1;
@@ -150,112 +174,214 @@
     } catch (e) { return 0; }
   }
 
-  // =============== Data loading ===============
+  // =============== Data fetching (server-side, every state change) ===============
 
-  async function fetchCities() {
-    // Try cache first
-    try {
-      const cached = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-      if (cached && Date.now() - cached.at < STORAGE_TTL && Array.isArray(cached.data) && cached.data.length) {
-        return cached.data;
-      }
-    } catch (e) { /* ignore */ }
+  function buildApiUrl() {
+    const cont = CONTINENTS.find(c => c.code === state.continent);
+    const params = new URLSearchParams();
+    if (cont && cont.api) params.set("continent", cont.api);
+    if (state.region) params.set("region", state.region);
+    if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
+    if (state.q) params.set("q", state.q);
+    // Pagination: page 1 → INITIAL_VISIBLE; page N>1 → PAGE_STEP starting after the accumulated count
+    const offset = state.page === 1 ? 0 : (INITIAL_VISIBLE + (state.page - 2) * PAGE_STEP);
+    const limit = state.page === 1 ? INITIAL_VISIBLE : PAGE_STEP;
+    params.set("offset", String(offset));
+    params.set("limit", String(limit));
+    return `${API_BASE}/api/v1/cities/popular?${params}`;
+  }
+
+  // Like buildApiUrl but lets the caller pin the page (used during init
+  // when we need to fetch pages 1..N sequentially to repopulate from a URL
+  // like ?p=3).
+  function buildApiUrlForPage(p) {
+    const cont = CONTINENTS.find(c => c.code === state.continent);
+    const params = new URLSearchParams();
+    if (cont && cont.api) params.set("continent", cont.api);
+    if (state.region) params.set("region", state.region);
+    if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
+    if (state.q) params.set("q", state.q);
+    const offset = p === 1 ? 0 : (INITIAL_VISIBLE + (p - 2) * PAGE_STEP);
+    const limit = p === 1 ? INITIAL_VISIBLE : PAGE_STEP;
+    params.set("offset", String(offset));
+    params.set("limit", String(limit));
+    return `${API_BASE}/api/v1/cities/popular?${params}`;
+  }
+
+  async function fetchPage({ append = false } = {}) {
+    if (state.aborter) {
+      try { state.aborter.abort(); } catch (e) {}
+    }
+    state.aborter = new AbortController();
+    state.loading = true;
+    setLoadingUI(true);
 
     try {
-      const r = await fetch(API_BASE + "/api/v1/cities/popular?limit=250");
+      const r = await fetch(buildApiUrl(), {
+        signal: state.aborter.signal,
+        headers: { "Accept": "application/json" }
+      });
       if (!r.ok) throw new Error("popular upstream " + r.status);
       const j = await r.json();
-      const list = (j.data && j.data.cities) || [];
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ at: Date.now(), data: list })); } catch (e) {}
-      return list;
+      const data = j.data || {};
+      const list = data.cities || [];
+      state.total = data.total != null ? data.total : list.length;
+
+      if (append) {
+        // Append, dedup by id
+        const seen = new Set(state.cities.map(c => c.id));
+        for (const c of list) if (!seen.has(c.id)) state.cities.push(c);
+      } else {
+        state.cities = list;
+      }
+
+      renderGrid();
+      updateLoadMoreUI();
+      updateResultCountUI();
+      // Fire event so schema emit can pick up the visible list
+      window.__popularCities = state.cities;
+      window.dispatchEvent(new CustomEvent("tdl-popular-cities-loaded", { detail: { count: state.cities.length, total: state.total } }));
     } catch (err) {
+      if (err.name === "AbortError") return; // user moved on
       console.error("world-time-cities: failed to fetch", err);
-      return [];
+    } finally {
+      state.loading = false;
+      setLoadingUI(false);
     }
+  }
+
+  function setLoadingUI(on) {
+    const grid = el("wt-card-grid");
+    const loadingEl = el("wt-loading");
+    if (grid) grid.setAttribute("aria-busy", on ? "true" : "false");
+    if (loadingEl) loadingEl.hidden = !on;
+  }
+
+  // =============== State change handlers ===============
+
+  function setContinent(code) {
+    if (state.continent === code) return;
+    state.continent = code;
+    state.region = null;     // reset region when continent changes
+    state.page = 1;
+    state.cities = [];
+    renderContinentPills();
+    renderRegionPills();
+    pushUrl();
+    fetchPage({ append: false });
+  }
+
+  function setRegion(slug) {
+    if (state.region === slug) return;
+    state.region = slug || null;
+    state.page = 1;
+    state.cities = [];
+    renderRegionPills();
+    pushUrl();
+    fetchPage({ append: false });
+  }
+
+  function setSort(code) {
+    if (state.sort === code) return;
+    state.sort = code;
+    state.page = 1;
+    state.cities = [];
+    pushUrl();
+    fetchPage({ append: false });
+  }
+
+  function setQuery(q) {
+    state.q = (q || "").trim();
+    state.page = 1;
+    state.cities = [];
+    pushUrl();
+    fetchPage({ append: false });
+  }
+
+  function loadMore() {
+    if (state.loading) return;
+    if (state.cities.length >= state.total) return;
+    state.page += 1;
+    pushUrl();
+    fetchPage({ append: true });
+  }
+
+  // =============== URL state ===============
+
+  function pushUrl() {
+    const params = new URLSearchParams();
+    if (state.continent !== "all") params.set("continent", state.continent);
+    if (state.region) params.set("region", state.region);
+    if (state.sort !== "popular") params.set("sort", state.sort);
+    if (state.q) params.set("q", state.q);
+    if (state.page > 1) params.set("p", String(state.page));
+    const qs = params.toString();
+    const url = qs ? `?${qs}` : window.location.pathname;
+    try { window.history.replaceState(null, "", url); } catch (e) {}
+  }
+
+  function readUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const continent = params.get("continent") || "all";
+    const validCont = CONTINENTS.find(c => c.code === continent);
+    if (validCont) state.continent = continent;
+
+    const region = params.get("region") || null;
+    if (region) {
+      const cont = CONTINENTS.find(c => c.code === state.continent);
+      if (cont && cont.regions.find(r => r.slug === region)) {
+        state.region = region;
+      }
+    }
+
+    const sort = params.get("sort") || "popular";
+    if (SORTS.find(s => s.code === sort)) state.sort = sort;
+
+    state.q = params.get("q") || "";
+    state.page = Math.max(1, parseInt(params.get("p") || "1", 10) || 1);
   }
 
   // =============== Rendering ===============
 
   function el(id) { return document.getElementById(id); }
-
   function escapeHtml(s) {
     return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
   }
 
-  function renderFilters() {
-    const host = el("wt-filters");
+  function renderContinentPills() {
+    const host = el("wt-continent-pills");
     if (!host) return;
-    const filterPills = CONTINENTS.map(c => {
-      const active = state.filter === c.code ? " is-active" : "";
-      return `<button type="button" class="wt-filter${active}" data-filter="${c.code}">${c.emoji} ${c.label}</button>`;
+    host.innerHTML = CONTINENTS.map(c => {
+      const active = state.continent === c.code ? " is-active" : "";
+      return `<button type="button" class="wt-pill${active}" data-continent="${c.code}">${c.emoji} ${c.label}</button>`;
     }).join("");
-    const sortBtns = SORTS.map(s => {
-      const active = state.sort === s.code ? " is-active" : "";
-      return `<button type="button" class="wt-sort${active}" data-sort="${s.code}">${s.label}</button>`;
-    }).join("");
-    host.innerHTML = `
-      <div class="wt-filter-row">
-        <span class="wt-filter-label">Continent:</span>
-        <div class="wt-filter-pills">${filterPills}</div>
-      </div>
-      <div class="wt-sort-row">
-        <span class="wt-sort-label">Sort:</span>
-        <div class="wt-sort-pills">${sortBtns}</div>
-      </div>
-    `;
-    host.querySelectorAll(".wt-filter").forEach(btn => {
-      btn.addEventListener("click", () => {
-        state.filter = btn.dataset.filter;
-        host.querySelectorAll(".wt-filter").forEach(b => b.classList.toggle("is-active", b === btn));
-        renderSections();
-      });
-    });
-    host.querySelectorAll(".wt-sort").forEach(btn => {
-      btn.addEventListener("click", () => {
-        state.sort = btn.dataset.sort;
-        host.querySelectorAll(".wt-sort").forEach(b => b.classList.toggle("is-active", b === btn));
-        renderSections();
-      });
+    host.querySelectorAll(".wt-pill").forEach(btn => {
+      btn.addEventListener("click", () => setContinent(btn.dataset.continent));
     });
   }
 
-  function getVisible() {
-    let cities = state.cities;
-    if (state.filter !== "all") {
-      cities = cities.filter(c => c.continent === state.filter);
+  function renderRegionPills() {
+    const host = el("wt-region-pills");
+    const row = el("wt-region-row");
+    if (!host || !row) return;
+    const cont = CONTINENTS.find(c => c.code === state.continent);
+    const regions = (cont && cont.regions) || [];
+    if (!regions.length) {
+      row.hidden = true;
+      host.innerHTML = "";
+      return;
     }
-    if (state.sort === "name") {
-      cities = cities.slice().sort((a, b) => a.name.localeCompare(b.name));
-    } else if (state.sort === "country") {
-      cities = cities.slice().sort((a, b) =>
-        (a.countryName || "").localeCompare(b.countryName || "") || a.name.localeCompare(b.name)
-      );
-    } else {
-      // 'population' (default) - already sorted by the API
-    }
-    return cities;
-  }
-
-  function continentToSection(continent) {
-    // Kept for backward-compat with any legacy code that called this; the
-    // single-section redesign no longer needs it.
-    const meta = CONTINENTS.find(c => c.code === continent);
-    return meta ? meta.sectionKey : null;
-  }
-
-  function renderSections() {
-    const visible = getVisible();
-    el("wt-count").textContent = visible.length.toLocaleString();
-
-    // Single "top" section: first N cities (continent filter narrows visible[])
-    const topList = visible.slice(0, VISIBLE_PER_SECTION.top);
-    renderGrid("top", topList);
-    // Hide top section if no cities
-    document.querySelector('[data-section-key="top"]').style.display = topList.length ? "" : "none";
+    row.hidden = false;
+    host.innerHTML = regions.map(r => {
+      const active = state.region === r.slug ? " is-active" : "";
+      return `<button type="button" class="wt-pill wt-pill-sub${active}" data-region="${r.slug}">${r.label}</button>`;
+    }).join("");
+    host.querySelectorAll(".wt-pill").forEach(btn => {
+      btn.addEventListener("click", () => setRegion(btn.dataset.region));
+    });
   }
 
   function renderCard(c) {
-    // The card mirrors the home page city-card structure for visual consistency.
     const safeName = escapeHtml(c.name);
     const safeCountry = escapeHtml(c.countryName || "");
     const safeTz = escapeHtml(c.timezone || "");
@@ -267,7 +393,7 @@
           <div class="wt-card-head">
             <span class="wt-live-pulse" aria-hidden="true"></span>
             <span class="wt-card-name">${flag ? `<span class="wt-card-flag">${flag}</span>` : ""}${safeName}</span>
-            <span class="wt-card-remove" aria-hidden="true" title="Close">×</span>
+            <span class="wt-card-remove" aria-hidden="true" title="Hide">×</span>
           </div>
           <div class="wt-card-time" data-clock-tz="${c.timezone || ""}">--:--:--.--</div>
           <div class="wt-card-meta">
@@ -281,44 +407,24 @@
     `;
   }
 
-  function renderGrid(sectionKey, cities) {
-    const grid = document.querySelector(`[data-section="${sectionKey}"]`);
+  function renderGrid() {
+    const grid = el("wt-card-grid");
     if (!grid) return;
-    if (!cities.length) {
-      grid.innerHTML = "";
-      updateLoadMore(sectionKey, 0, 0);
+    if (!state.cities.length) {
+      grid.innerHTML = `<p class="wt-empty">No cities match the current filters. <button type="button" class="wt-link-btn" id="wt-reset">Reset filters</button></p>`;
+      const reset = el("wt-reset");
+      if (reset) reset.addEventListener("click", () => resetAll());
       return;
     }
-    grid.innerHTML = cities.map(renderCard).join("");
-
-    // Section count
-    const countEl = document.querySelector(`[data-section-key="${sectionKey}"] [data-section-count]`);
-    if (countEl) {
-      const total = getTotalForSection(sectionKey);
-      countEl.textContent = total === cities.length ? `${total} cities` : `${cities.length} of ${total} cities`;
-    }
-
-    // Load more
-    const total = getTotalForSection(sectionKey);
-    updateLoadMore(sectionKey, cities.length, total);
+    grid.innerHTML = state.cities.map(renderCard).join("");
   }
 
-  function getTotalForSection(sectionKey) {
-    // Returns the total number of cities in this section (not just visible)
-    if (sectionKey === "top") {
-      return getVisible().length;
-    }
-    const visible = getVisible();
-    let n = 0;
-    for (const c of visible) {
-      if (continentToSection(c.continent) === sectionKey) n++;
-    }
-    return n;
-  }
-
-  function updateLoadMore(sectionKey, shown, total) {
-    const btn = document.querySelector(`[data-section-key="${sectionKey}"] .wt-load-more`);
+  function updateLoadMoreUI() {
+    const btn = el("wt-load-more");
+    const info = el("wt-page-info");
     if (!btn) return;
+    const shown = state.cities.length;
+    const total = state.total;
     const remaining = Math.max(0, total - shown);
     if (remaining > 0) {
       btn.hidden = false;
@@ -327,20 +433,45 @@
     } else {
       btn.hidden = true;
     }
-  }
-
-  // Expand a section to show all cities
-  function expandSection(sectionKey) {
-    let list;
-    if (sectionKey === "top") {
-      list = getVisible();
-    } else {
-      list = getVisible().filter(c => continentToSection(c.continent) === sectionKey);
+    if (info) {
+      info.hidden = false;
+      info.textContent = `Page ${state.page} · ${shown.toLocaleString()} of ${total.toLocaleString()}`;
     }
-    renderGrid(sectionKey, list);
   }
 
-  // =============== Live clock updates ===============
+  function updateResultCountUI() {
+    const count = el("wt-count");
+    if (count) count.textContent = state.total > 0 ? `${state.total.toLocaleString()} cities` : "—";
+    const rc = el("wt-result-count");
+    if (rc) {
+      if (state.total === 0) {
+        rc.textContent = "No matches";
+      } else {
+        rc.textContent = `Showing ${state.cities.length.toLocaleString()} of ${state.total.toLocaleString()} cities`;
+      }
+    }
+  }
+
+  function resetAll() {
+    state.continent = "all";
+    state.region = null;
+    state.sort = "popular";
+    state.q = "";
+    state.page = 1;
+    state.cities = [];
+    const searchInput = el("wt-search-input");
+    if (searchInput) searchInput.value = "";
+    const sortSelect = el("wt-sort-select");
+    if (sortSelect) sortSelect.value = "popular";
+    const clear = el("wt-search-clear");
+    if (clear) clear.hidden = true;
+    renderContinentPills();
+    renderRegionPills();
+    pushUrl();
+    fetchPage({ append: false });
+  }
+
+  // =============== Live clock updates (client-side, ~60fps) ===============
 
   let rafId = null;
   function tick() {
@@ -350,7 +481,6 @@
       if (!tz) return;
       el.textContent = fmtTimeWithMs(tz, now);
     });
-    // Update day labels and offset pills
     document.querySelectorAll("[data-day-tz]").forEach(el => {
       const tz = el.dataset.dayTz;
       if (!tz) return;
@@ -369,22 +499,49 @@
 
   // =============== Event wiring ===============
 
-  function wireLoadMore() {
-    document.querySelectorAll(".wt-load-more").forEach(btn => {
-      btn.addEventListener("click", e => {
-        e.preventDefault();
-        const section = btn.dataset.section;
-        if (!section) return;
-        expandSection(section);
-      });
+  function wireSearch() {
+    const input = el("wt-search-input");
+    const clear = el("wt-search-clear");
+    if (!input) return;
+    let t = null;
+    input.addEventListener("input", () => {
+      const v = input.value;
+      if (clear) clear.hidden = !v;
+      if (t) clearTimeout(t);
+      t = setTimeout(() => setQuery(v), SEARCH_DEBOUNCE_MS);
     });
+    // Trigger immediately on Enter
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (t) { clearTimeout(t); t = null; }
+        setQuery(input.value);
+      }
+    });
+    if (clear) {
+      clear.addEventListener("click", () => {
+        input.value = "";
+        clear.hidden = true;
+        if (t) { clearTimeout(t); t = null; }
+        setQuery("");
+        input.focus();
+      });
+    }
+  }
+
+  function wireSort() {
+    const sel = el("wt-sort-select");
+    if (!sel) return;
+    sel.addEventListener("change", () => setSort(sel.value));
+  }
+
+  function wireLoadMore() {
+    const btn = el("wt-load-more");
+    if (!btn) return;
+    btn.addEventListener("click", loadMore);
   }
 
   function wireCloseButtons() {
-    // The × button on each card removes the card from the DOM for the
-    // current session (no persistence — the user can always re-render via
-    // the page reload). This is just a visual opt-out, like hiding a
-    // banner — the data is still in the underlying state.
     document.addEventListener("click", e => {
       const btn = e.target.closest(".wt-card-remove");
       if (!btn) return;
@@ -397,6 +554,9 @@
       card.style.transform = "scale(0.95)";
       setTimeout(() => {
         card.remove();
+        state.cities = state.cities.filter(c => String(c.id) !== String(card.dataset.id));
+        updateLoadMoreUI();
+        updateResultCountUI();
       }, 200);
     });
   }
@@ -404,18 +564,73 @@
   // =============== Boot ===============
 
   async function init() {
-    const topGrid = document.querySelector('[data-section="top"]');
-    if (!topGrid) return; // not the /world-time/ page
+    const grid = el("wt-card-grid");
+    if (!grid) return; // not the /world-time/ page
 
-    renderFilters();
-    state.cities = await fetchCities();
-    renderSections();
+    readUrl();
+    // Sync the controls with the URL state
+    const searchInput = el("wt-search-input");
+    if (searchInput) searchInput.value = state.q;
+    const clear = el("wt-search-clear");
+    if (clear) clear.hidden = !state.q;
+    const sortSel = el("wt-sort-select");
+    if (sortSel) sortSel.value = state.sort;
+
+    renderContinentPills();
+    renderRegionPills();
+    wireSearch();
+    wireSort();
     wireLoadMore();
     wireCloseButtons();
     tick();
-    // Expose + announce so other scripts (ItemList schema) can pick up.
-    window.__popularCities = state.cities;
-    window.dispatchEvent(new CustomEvent("tdl-popular-cities-loaded", { detail: { count: state.cities.length } }));
+    // If the URL asks for page > 1, we need to fetch pages 1..N sequentially
+    // so the user sees the full accumulated list (initial 8 + (p-1)*15 more).
+    if (state.page > 1) {
+      for (let p = 1; p <= state.page; p++) {
+        const before = state.cities.length;
+        await fetchPagesUpTo(p, { append: p > 1 });
+        if (state.cities.length === before) break; // no more results
+      }
+    } else {
+      fetchPage({ append: false });
+    }
+  }
+
+  // Fetch with an explicit page number (doesn't mutate state.page). Used only
+  // during init when we need to repopulate from a URL like ?p=3.
+  async function fetchPagesUpTo(p, { append = false } = {}) {
+    if (state.aborter) {
+      try { state.aborter.abort(); } catch (e) {}
+    }
+    state.aborter = new AbortController();
+    state.loading = true;
+    setLoadingUI(true);
+    try {
+      const r = await fetch(buildApiUrlForPage(p), {
+        signal: state.aborter.signal,
+        headers: { "Accept": "application/json" }
+      });
+      if (!r.ok) throw new Error("popular upstream " + r.status);
+      const j = await r.json();
+      const data = j.data || {};
+      const list = data.cities || [];
+      state.total = data.total != null ? data.total : list.length;
+      if (append) {
+        const seen = new Set(state.cities.map(c => c.id));
+        for (const c of list) if (!seen.has(c.id)) state.cities.push(c);
+      } else {
+        state.cities = list;
+      }
+      renderGrid();
+      updateLoadMoreUI();
+      updateResultCountUI();
+    } catch (err) {
+      if (err.name === "AbortError") return;
+      console.error("world-time-cities: failed to fetch", err);
+    } finally {
+      state.loading = false;
+      setLoadingUI(false);
+    }
   }
 
   if (document.readyState === "loading") {
