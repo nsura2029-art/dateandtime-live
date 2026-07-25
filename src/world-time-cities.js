@@ -30,42 +30,91 @@
   const PAGE_STEP = 15;        // each subsequent page
   const SEARCH_DEBOUNCE_MS = 250;
 
-  // Continent metadata. continent code → URL/API value, label, emoji,
+  // =============== Inline SVG icons (24×24, single path, currentColor) ===============
+  // Kept inline so the filter bar can render with no extra HTTP request and
+  // the icon inherits the pill's text color via `currentColor`. Defined BEFORE
+  // the CONTINENTS array because CONTINENTS references them as values.
+  const ICON_GRID = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+  const ICON_AFRICA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L8 7 L9 13 L7 17 L10 22 L14 22 L17 17 L15 13 L16 7 Z"/><path d="M12 8 L12 16"/></svg>';
+  const ICON_ASIA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4 L20 4 L20 10 L13 10 L13 14 L20 14 L20 20 L4 20 L4 14 L11 14 L11 10 L4 10 Z"/></svg>';
+  const ICON_EUROPE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12 L21 12 M12 3 L16 8 L16 16 L12 21 M12 3 L8 8 L8 16 L12 21"/></svg>';
+  const ICON_NAMERICA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18 L3 6 L9 4 L13 6 L17 5 L21 8 L20 14 L17 18 L13 19 L9 18 L6 20 Z"/><path d="M9 4 L9 18"/></svg>';
+  const ICON_SAMERICA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3 L18 5 L20 9 L21 14 L18 19 L14 21 L10 19 L8 14 L9 9 L11 5 Z"/><path d="M14 9 L18 13"/></svg>';
+  const ICON_OCEANIA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 C5 8, 7 12, 9 10 S13 8, 15 10 S19 12, 21 10"/><path d="M3 16 C5 14, 7 18, 9 16 S13 14, 15 16 S19 18, 21 16"/><circle cx="12" cy="5" r="1.2" fill="currentColor"/></svg>';
+  // Africa sub-regions
+  const ICON_DESERT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18 L7 14 L10 16 L13 11 L17 15 L21 12"/><circle cx="19" cy="6" r="2.5"/></svg>';
+  const ICON_TREE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L6 12 L9 12 L5 18 L19 18 L15 12 L18 12 Z"/><path d="M12 18 L12 22"/></svg>';
+  const ICON_RIVER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7 C7 9, 9 5, 12 7 S17 9, 21 7"/><path d="M3 13 C7 15, 9 11, 12 13 S17 15, 21 13"/><path d="M3 19 C7 21, 9 17, 12 19 S17 21, 21 19"/></svg>';
+  const ICON_MOUNTAIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19 L8 11 L12 15 L16 8 L21 19 Z"/><circle cx="17" cy="6" r="1.5" fill="currentColor"/></svg>';
+  const ICON_DIAMOND = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4 L18 4 L22 10 L12 22 L2 10 Z"/><path d="M2 10 L22 10 M6 4 L12 10 L18 4"/></svg>';
+  // Asia sub-regions
+  const ICON_TEMPLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 L21 10 L20 21 L4 21 Z"/><path d="M3 10 L12 3 L21 10"/><path d="M8 14 L8 18 M12 14 L12 18 M16 14 L16 18"/></svg>';
+  const ICON_PALM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22 L12 12"/><path d="M12 12 C9 11, 5 11, 3 12 C5 9, 9 9, 12 12 Z"/><path d="M12 12 C15 11, 19 11, 21 12 C19 9, 15 9, 12 12 Z"/><path d="M12 12 C10 9, 10 5, 12 3 C14 5, 14 9, 12 12 Z"/></svg>';
+  const ICON_LOTUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21 C7 18, 4 13, 6 8 C8 11, 10 12, 12 12 C14 12, 16 11, 18 8 C20 13, 17 18, 12 21 Z"/><path d="M12 12 L12 3 M9 8 L12 10 L15 8"/></svg>';
+  const ICON_STEPPE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20 L22 20"/><path d="M3 17 C5 15, 7 17, 9 16 S13 14, 15 16 S19 18, 21 16"/><path d="M5 12 L8 9 L11 11 L14 8 L17 10 L20 7"/><circle cx="19" cy="4" r="1.5"/></svg>';
+  const ICON_DOME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21 L4 13 C4 7, 20 7, 20 13 L20 21 Z"/><path d="M2 21 L22 21"/><circle cx="12" cy="6" r="1" fill="currentColor"/></svg>';
+  // Europe sub-regions
+  const ICON_CASTLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 L3 21 L21 21 L21 10 M3 10 L6 10 L6 7 L9 7 L9 10 L12 10 L12 7 L15 7 L15 10 L18 10 L18 7 L21 7 L21 10"/><path d="M10 21 L10 14 L14 14 L14 21"/></svg>';
+  const ICON_VIKING = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13 C5 8, 8 5, 12 5 C16 5, 19 8, 19 13 L19 17 L5 17 Z"/><path d="M8 13 L8 11 M12 13 L12 11 M16 13 L16 11"/><path d="M3 19 L21 19"/><path d="M5 17 L5 19 M19 17 L19 19"/></svg>';
+  const ICON_OLIVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22 L12 14"/><path d="M12 14 C9 12, 7 9, 8 6 C10 7, 11 10, 12 14 Z"/><path d="M12 14 C15 12, 17 9, 16 6 C14 7, 13 10, 12 14 Z"/><circle cx="6" cy="6" r="1" fill="currentColor"/><circle cx="18" cy="6" r="1" fill="currentColor"/></svg>';
+  const ICON_CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7 L12 12 L16 14"/></svg>';
+  const ICON_BRIDGE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18 C7 12, 17 12, 22 18"/><path d="M2 18 L22 18"/><path d="M6 18 L6 14 M10 18 L10 13 M14 18 L14 13 M18 18 L18 14"/></svg>';
+  const ICON_ONION = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 C8 7, 6 12, 8 18 C10 21, 14 21, 16 18 C18 12, 16 7, 12 3 Z"/><path d="M12 8 L12 21"/></svg>';
+  // Oceania sub-regions
+  const ICON_KANGAROO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22 L8 16 C8 13, 11 11, 14 11 L17 7 C18 5, 16 3, 14 5 L11 9 C8 9, 6 11, 5 14 L4 18 L7 22 Z"/><path d="M11 14 L13 14"/></svg>';
+  const ICON_WAVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12 C4 8, 8 8, 10 12 S16 16, 18 12 S22 8, 22 8"/><path d="M2 18 C4 14, 8 14, 10 18 S16 22, 18 18 S22 14, 22 14"/></svg>';
+  const ICON_CORAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21 C3 16, 6 14, 7 11 C8 14, 10 14, 11 11 C12 14, 14 14, 15 11 C16 14, 18 14, 19 11 C20 14, 21 16, 21 21 Z"/><circle cx="12" cy="6" r="2"/></svg>';
+  const ICON_TIKI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 L16 4 L17 8 L19 14 L17 20 L7 20 L5 14 L7 8 Z"/><circle cx="10" cy="11" r="1" fill="currentColor"/><circle cx="14" cy="11" r="1" fill="currentColor"/><path d="M9 16 L15 16"/></svg>';
+  // Americas sub-regions
+  const ICON_STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L14 9 L20 9 L15 13 L17 19 L12 15 L7 19 L9 13 L4 9 L10 9 Z"/></svg>';
+  const ICON_PYRAMID = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L22 21 L2 21 Z"/><path d="M8 21 L12 13 L16 21"/></svg>';
+
+  // Continent metadata. continent code → URL/API value, label, icon,
   // and sub-region list (slugs that the API understands for that continent).
   // Sub-region slugs match the API's `?region=` param. The Americas
   // intentionally have an empty list — the API data is messy (NA/SA
   // territories sit under continent=XX), so we show "All Americas" only.
+  //
+  // Each continent + sub-region gets a unique inline SVG icon (24×24, single
+  // path, currentColor) instead of a generic globe emoji — helps the user
+  // recognize regions at a glance and adds visual variety to the filter bar.
   const CONTINENTS = [
-    { code: "all",      api: null,       label: "All",        emoji: "🌍", regions: [] },
-    { code: "africa",   api: "AF",       label: "Africa",     emoji: "🌍", regions: [
-      { slug: "northern-africa",   label: "Northern Africa" },
-      { slug: "western-africa",    label: "Western Africa" },
-      { slug: "middle-africa",     label: "Middle Africa" },
-      { slug: "eastern-africa",    label: "Eastern Africa" },
-      { slug: "southern-africa",   label: "Southern Africa" }
+    { code: "all",      api: null, label: "All",        icon: ICON_GRID, regions: [] },
+    { code: "africa",   api: "AF",  label: "Africa",     icon: ICON_AFRICA, regions: [
+      { slug: "northern-africa",   label: "Northern Africa",  icon: ICON_DESERT },
+      { slug: "western-africa",    label: "Western Africa",   icon: ICON_TREE },
+      { slug: "middle-africa",     label: "Middle Africa",    icon: ICON_RIVER },
+      { slug: "eastern-africa",    label: "Eastern Africa",   icon: ICON_MOUNTAIN },
+      { slug: "southern-africa",   label: "Southern Africa",  icon: ICON_DIAMOND }
     ] },
-    { code: "asia",     api: "AS",       label: "Asia",       emoji: "🌏", regions: [
-      { slug: "eastern-asia",      label: "Eastern Asia" },
-      { slug: "south-eastern-asia", label: "South-Eastern Asia" },
-      { slug: "southern-asia",     label: "Southern Asia" },
-      { slug: "central-asia",      label: "Central Asia" },
-      { slug: "western-asia",      label: "Western Asia" }
+    { code: "asia",     api: "AS",  label: "Asia",       icon: ICON_ASIA, regions: [
+      { slug: "eastern-asia",       label: "Eastern Asia",       icon: ICON_TEMPLE },
+      { slug: "south-eastern-asia", label: "South-Eastern Asia", icon: ICON_PALM },
+      { slug: "southern-asia",      label: "Southern Asia",      icon: ICON_LOTUS },
+      { slug: "central-asia",       label: "Central Asia",       icon: ICON_STEPPE },
+      { slug: "western-asia",       label: "Western Asia",       icon: ICON_DOME }
     ] },
-    { code: "europe",   api: "EU",       label: "Europe",     emoji: "🌍", regions: [
-      { slug: "western-europe",    label: "Western Europe" },
-      { slug: "northern-europe",   label: "Northern Europe" },
-      { slug: "southern-europe",   label: "Southern Europe" },
-      { slug: "central-europe",    label: "Central Europe" },
-      { slug: "southeast-europe",  label: "Southeast Europe" },
-      { slug: "eastern-europe",    label: "Eastern Europe" }
+    { code: "europe",   api: "EU",  label: "Europe",     icon: ICON_EUROPE, regions: [
+      { slug: "western-europe",    label: "Western Europe",    icon: ICON_CASTLE },
+      { slug: "northern-europe",   label: "Northern Europe",   icon: ICON_VIKING },
+      { slug: "southern-europe",   label: "Southern Europe",   icon: ICON_OLIVE },
+      { slug: "central-europe",    label: "Central Europe",    icon: ICON_CLOCK },
+      { slug: "southeast-europe",  label: "Southeast Europe",  icon: ICON_BRIDGE },
+      { slug: "eastern-europe",    label: "Eastern Europe",    icon: ICON_ONION }
     ] },
-    { code: "namerica", api: "NA",       label: "N. America", emoji: "🌎", regions: [] },
-    { code: "samerica", api: "SA",       label: "S. America", emoji: "🌎", regions: [] },
-    { code: "oceania",  api: "OC",       label: "Oceania",    emoji: "🌏", regions: [
-      { slug: "australia-and-new-zealand", label: "Australia & NZ" },
-      { slug: "melanesia",         label: "Melanesia" },
-      { slug: "micronesia",        label: "Micronesia" },
-      { slug: "polynesia",         label: "Polynesia" }
+    { code: "namerica", api: "NA",  label: "N. America", icon: ICON_NAMERICA, regions: [
+      { slug: "north-america",     label: "United States",     icon: ICON_STAR },
+      { slug: "central-america",   label: "Central America",   icon: ICON_PYRAMID },
+      { slug: "caribbean",         label: "Caribbean",         icon: ICON_PALM }
+    ] },
+    { code: "samerica", api: "SA",  label: "S. America", icon: ICON_SAMERICA, regions: [
+      { slug: "south-america",     label: "South America",     icon: ICON_TREE }
+    ] },
+    { code: "oceania",  api: "OC",  label: "Oceania",    icon: ICON_OCEANIA, regions: [
+      { slug: "australia-and-new-zealand", label: "Australia & NZ", icon: ICON_KANGAROO },
+      { slug: "melanesia",         label: "Melanesia",         icon: ICON_WAVE },
+      { slug: "micronesia",        label: "Micronesia",        icon: ICON_CORAL },
+      { slug: "polynesia",         label: "Polynesia",         icon: ICON_TIKI }
     ] }
   ];
 
@@ -366,7 +415,7 @@
     if (!host) return;
     host.innerHTML = CONTINENTS.map(c => {
       const active = state.continent === c.code ? " is-active" : "";
-      return `<button type="button" class="wt-pill${active}" data-continent="${c.code}">${c.emoji} ${c.label}</button>`;
+      return `<button type="button" class="wt-pill${active}" data-continent="${c.code}"><span class="wt-pill-icon" aria-hidden="true">${c.icon}</span><span class="wt-pill-label">${c.label}</span></button>`;
     }).join("");
     host.querySelectorAll(".wt-pill").forEach(btn => {
       btn.addEventListener("click", () => setContinent(btn.dataset.continent));
@@ -387,7 +436,7 @@
     row.hidden = false;
     host.innerHTML = regions.map(r => {
       const active = state.region === r.slug ? " is-active" : "";
-      return `<button type="button" class="wt-pill wt-pill-sub${active}" data-region="${r.slug}">${r.label}</button>`;
+      return `<button type="button" class="wt-pill wt-pill-sub${active}" data-region="${r.slug}"><span class="wt-pill-icon" aria-hidden="true">${r.icon}</span><span class="wt-pill-label">${r.label}</span></button>`;
     }).join("");
     host.querySelectorAll(".wt-pill").forEach(btn => {
       btn.addEventListener("click", () => setRegion(btn.dataset.region));
