@@ -94,6 +94,52 @@
 | Check | Result |
 |---|---|
 | API endpoint returns 3 cities | ✅ Beijing, Kinshasa, Mexico City (with flagEmoji + path) |
+
+### Phase 4 — Card redesign matching home page (`/world-time/` hub, 2026-07-25)
+
+Replaced the 5-column alphabetical list with a card-based layout that mirrors
+the home page's `city-card` visual language. Two grouping strategies with
+per-section "Load more" buttons:
+
+**Sections (6 total, 1 top + 5 region):**
+- **🕐 Top popular cities** — 5 visible by default, "Load more" → all 250
+- **🌏 By region** — for each of Asia, Europe, Americas, Africa, Oceania:
+  - 3 visible by default, "Load more" → all in that region
+  - Americas combines North + South America
+- Empty sections are auto-hidden (e.g. when a continent filter is active)
+
+**Card structure** (matches home page `city-card`):
+- **Header** — green live dot (pulse animation) + flag + city name + × close button
+- **Big mono time** — `HH:MM:SS.MS` (with milliseconds), `clamp(1.125rem, 2.4vw, 1.5rem)` font, font-weight 800
+- **Meta row** — timezone (mono) + `·` + day label (`today` / `tomorrow` / `yesterday` / `+N d`) + offset pill (`+8 H` / `-6 H`)
+  - Offset pill is green for positive, amber for negative, neutral for same-tz
+
+**Live updates:** per-card time, day label, and offset pill all re-render
+every `requestAnimationFrame` (~60fps) using `Intl.DateTimeFormat` + the
+IANA tz offset diff.
+
+**Close button:** `×` on each card hides it from the section for the current
+session (no persistence — user re-renders on reload). Card body still
+navigates to the city page.
+
+**Files added/changed:**
+- `src/world-time-cities.js` (15.7KB) — rewritten to render cards + sections
+- `src/tz-hub.css` (+265 lines) — `.wt-card`, `.wt-card-head`, `.wt-live-pulse`,
+  `.wt-card-time`, `.wt-card-meta`, `.wt-card-pill`, `.wt-card-grid`,
+  `.wt-section`, `.wt-section-head`, `.wt-load-more`
+- `world-time/index.html` — replaced the 5-col alphabetical grid with 6
+  `<div class="wt-section">` blocks (top + 5 region), with per-section
+  Load more buttons
+- `screenshots/world-time-hub-light.png` + `world-time-hub-dark.png` +
+  `world-time-hub-mobile.png` (NEW)
+
+**Verified live (1280x1800 desktop + 390x800 mobile, light + dark themes):**
+- Top section: 5 → 250 cards on Load more
+- Asia section: 3 → 119 cards on Load more (3 → 41 for Americas, 3 → 48 for Africa, etc.)
+- Cards have: live green dot (pulse), city name with flag, × close, big mono time with ms, timezone + day + offset pill
+- Mobile (390px wide): 2-col card grid, all sections still legible
+- No console errors / warnings
+- API call: `GET /api/v1/cities/popular?limit=250` → 200 OK
 | 250 city rows in grid | ✅ |
 | 27 letter groups | ✅ |
 | 7 continent filters + 3 sort options | ✅ |

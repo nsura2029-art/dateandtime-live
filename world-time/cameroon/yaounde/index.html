@@ -17,6 +17,7 @@
     "timeZone": "Africa/Douala"
   }
   </script>
+  <link rel="stylesheet" href="/src/site-shell.css" />
   <style>
     :root {
       --color-bg: #ffffff; --color-bg-soft: #f8f9fb; --color-bg-elev: #ffffff;
@@ -67,16 +68,10 @@
     h3 { font-size: 1.0625rem; margin: 1.5rem 0 0.5rem; }
     p { color: var(--color-foreground-soft); }
     .serif { font-family: var(--font-serif); }
-    .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 100; width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: var(--color-bg-elev); border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .theme-toggle svg { width: 1.125rem; height: 1.125rem; color: var(--color-foreground); }
     .topnav { padding: 0.875rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-border-soft); background: var(--color-bg); position: sticky; top: 0; z-index: 50; }
     .topnav .logo { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--color-foreground); }
     .topnav nav { display: flex; gap: 1rem; font-size: 0.875rem; }
     .topnav nav a { color: var(--color-muted); }
-    .crumbs { padding: 0.75rem 0; font-size: 0.8125rem; color: var(--color-muted); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-    .crumbs a { color: var(--color-muted); }
-    .crumbs .sep { opacity: 0.4; }
-    .crumbs .current { color: var(--color-foreground); font-weight: 600; }
     .hero { padding: 1.5rem 0 2rem; display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; align-items: end; }
     @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } }
     .hero-left .pre-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 0.5rem; }
@@ -151,44 +146,142 @@
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
-    footer { margin-top: 4rem; padding: 2.5rem 0 1.5rem; border-top: 1px solid var(--color-border); background: var(--color-bg-soft); }
-    .footer-cols { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-    @media (max-width: 800px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
-    .footer-col h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); margin-bottom: 0.75rem; font-weight: 700; }
-    .footer-col a { display: block; padding: 0.2rem 0; font-size: 0.8125rem; color: var(--color-foreground-soft); }
-    .footer-col a:hover { color: var(--color-link); text-decoration: none; }
-    .footer-bottom { padding-top: 1.5rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.75rem; color: var(--color-muted); }
     .city-page-loading { color: var(--color-muted); font-style: italic; }
   </style>
 </head>
-<body>
-  <button class="theme-toggle" aria-label="Toggle dark mode" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="theme-icon"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-  </button>
-
-  <header class="topnav">
-    <a href="/" class="logo">⏱ dateandtime.live</a>
-    <nav>
-      <a href="/world-time/">World</a>
-      <a href="/world-time/cameroon/">Cameroon</a>
-      <a href="/time-zones/zone/africa/douala/">Africa/Douala</a>
-      <a href="/holidays/cameroon/">Holidays</a>
-      <a href="/meeting/?with=yaounde">Meeting</a>
-    </nav>
-    <div>
-      <span class="pill" style="background: var(--color-primary-soft); color: var(--color-primary); font-size: 0.75rem; padding: 0.25rem 0.625rem; border-radius: 9999px;">🇨🇲 CM</span>
+<body class="shell-page">
+  <header class="site-header">
+    <div class="container header-row">
+      <a href="/" class="logo" aria-label="dateandtime.live home">
+        <span class="logo-mark">T</span>
+        <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+        <a href="/holidays/" class="nav-link">Holidays</a>
+        <a href="/onthisday/" class="nav-link">On this day</a>
+        <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+        <div class="nav-item has-dropdown">
+          <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="nav-icon" aria-hidden="true">🕐</span>World time
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/world-time/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
+              <span class="dropdown-desc">Live current time in 33,945 cities</span>
+            </a>
+            <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
+              <span class="dropdown-desc">Find meeting times across time zones</span>
+            </a>
+            <a href="/world-time/event/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
+              <span class="dropdown-desc">Show local times for a global event</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-label">Learn</div>
+            <a href="/world-time/about/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">💡</span>What is a World Clock?</span>
+              <span class="dropdown-desc">How live world clocks work</span>
+            </a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/time-zones/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
+              <span class="dropdown-desc">Browse all 408 time zones</span>
+            </a>
+            <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
+              <span class="dropdown-desc">Time difference calculator</span>
+            </a>
+            <a href="/time-zones/in/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🗺️</span>Time Zones in [Country]</span>
+              <span class="dropdown-desc">All countries and their zones</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-label">Learn</div>
+            <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+              <span class="dropdown-desc">UTC, offsets, and the prime meridian</span>
+            </a>
+            <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
+              <span class="dropdown-desc">Spring forward, fall back</span>
+            </a>
+            <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span>
+              <span class="dropdown-desc">The world's time standard</span>
+            </a>
+          </div>
+        </div>
+        <a href="/news/" class="nav-link">News</a>
+      </nav>
+      <div class="header-actions">
+        <div class="theme-toggle" role="group" aria-label="Theme">
+          <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+        <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <span class="nav-toggle-icon" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <div class="container">
-    <div class="crumbs">
-      <a href="/world-time/">World time</a>
-      <span class="sep">›</span>
-      <a href="/world-time/cameroon/">Cameroon</a>
-      <span class="sep">›</span><a href="/world-time/cameroon/11/">11</a>
-      <span class="sep">›</span>
-      <span class="current">Yaoundé</span>
+  <aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+    <div class="mobile-nav-header">
+      <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+        <span class="logo-mark">T</span>
+        <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+      </a>
+      <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
+    <nav class="mobile-nav-list" aria-label="Mobile main">
+      <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+      <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+      <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+      <div class="mobile-nav-section">World time</div>
+      <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+      <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+      <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
+      <div class="mobile-nav-section">Timezone</div>
+      <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
+      <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
+      <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+      <a href="/time-zones/utc/" class="mobile-nav-link mobile-nav-sub">UTC &amp; GMT</a>
+      <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
+      <a href="/news/" class="mobile-nav-link">News</a>
+    </nav>
+  </aside>
+  <div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/world-time/">World time</a></li>
+        <li><a href="/world-time/cameroon/">Cameroon</a></li>
+        <li><a href="/world-time/cameroon/11/">11</a></li>
+        <li><span aria-current="page">Yaoundé</span></li>
+      </ol>
+    </div>
+  </nav>
 
     <!-- HERO -->
     <section class="hero">
@@ -205,7 +298,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">1:31:45<span class="ms">.00</span><span class="ampm">AM</span></span>
+          <span class="clock-time" id="clockTime">2:12:02<span class="ms">.00</span><span class="ampm">AM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -237,7 +330,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Africa/Douala">1:31:45 AM<br>CET · Saturday</div>
+      <div class="value" data-tz="Africa/Douala">2:12:02 AM<br>CET · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -360,9 +453,9 @@
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
       <span>💧 98% humidity</span>
       <span>💨 5 mph wind</span>
-      <span>🌡 166°F feels like</span>
+      <span>🌡 165°F feels like</span>
       <span>🕵 UV 7.4</span>
-      <span>📏 932.9 hPa</span>
+      <span>📏 932.7 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -397,25 +490,25 @@
         <a href="/world-time/cameroon/douala/" class="nearby-card">
           <div class="name">Douala</div>
           <div class="meta">202 km · 05 · CM</div>
-          <div class="time" data-tz="Africa/Douala">2:31:45<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Africa/Douala">3:12:03<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/cameroon/bafoussam/" class="nearby-card">
           <div class="name">Bafoussam</div>
           <div class="meta">217 km · 08 · CM</div>
-          <div class="time" data-tz="Africa/Douala">2:31:45<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Africa/Douala">3:12:03<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/cameroon/bamenda/" class="nearby-card">
           <div class="name">Bamenda</div>
           <div class="meta">278 km · 07 · CM</div>
-          <div class="time" data-tz="Africa/Douala">2:31:45<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Africa/Douala">3:12:03<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/cameroon/maroua/" class="nearby-card">
           <div class="name">Maroua</div>
           <div class="meta">809 km · 12 · CM</div>
-          <div class="time" data-tz="Africa/Douala">2:31:45<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Africa/Douala">3:12:03<span class="ampm">AM</span></div>
         </a>
       
     </div>
@@ -555,45 +648,26 @@
       <a href="/meeting/?with=yaounde" class="explore-link"><span class="label">📅 Meeting</span>Plan with Yaoundé</a>
     </section>
 
-    <footer>
-      <div class="footer-cols">
-        <div>
-          <div class="logo" style="margin-bottom: 0.5rem;">⏱ dateandtime.live</div>
-          <p style="font-size: 0.875rem; color: var(--color-muted);">Live time, time zone, weather, and calendar for every city on Earth. 33,945 cities, 408 time zones, 242 countries.</p>
-        </div>
-        <div class="footer-col">
-          <h4>Yaoundé</h4>
-          <a href="/world-time/cameroon/yaounde/">Overview</a>
-          <a href="/world-time/cameroon/yaounde/sunrise/">Sun & Moon</a>
-          <a href="/world-time/cameroon/yaounde/holidays/">Holidays</a>
-          <a href="/world-time/cameroon/yaounde/people/">People</a>
-          <a href="/world-time/cameroon/yaounde/weather/">Weather</a>
-        </div>
-        <div class="footer-col">
-          <h4>Cameroon</h4>
-          <a href="/world-time/cameroon/">All Cameroon cities</a>
-          <a href="/holidays/cameroon/">Cameroon holidays</a>
-          <a href="/time-zones/zone/africa/douala/">Africa/Douala</a>
-        </div>
-        <div class="footer-col">
-          <h4>Tools</h4>
-          <a href="/meeting/?with=yaounde">Meeting planner</a>
-          <a href="/converter/?from=yaounde">Time converter</a>
-          <a href="/distance/?from=yaounde">Distance</a>
-          <a href="/event-time/?at=yaounde">Event time</a>
-        </div>
-        <div class="footer-col">
-          <h4>Top cities</h4>
-          <a href="/world-time/us/new-york/">New York</a>
-          <a href="/world-time/gb/london/">London</a>
-          <a href="/world-time/jp/tokyo/">Tokyo</a>
-          <a href="/world-time/au/sydney/">Sydney</a>
-          <a href="/world-time/ae/dubai/">Dubai</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <span>© 2026 dateandtime.live · Yaoundé, 11</span>
-        <span>Wikipedia-derived content licensed CC BY-SA 4.0</span>
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-footer-inner">
+        <nav class="site-footer-nav" aria-label="Site links">
+          <a href="/">Home</a>
+          <a href="/holidays/">Holidays</a>
+          <a href="/onthisday/">On this day</a>
+          <a href="/about/">About</a>
+          <a href="/editorial-policy/">Editorial policy</a>
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="mailto:hello@dateandtime.live">Contact</a>
+          <a href="/sitemap.xml">Sitemap</a>
+        </nav>
+        <p class="site-footer-meta">
+          © 2026 dateandtime.live · Yaoundé, 11 · 33,945 cities · 408 time zones · 1,600+ holidays ·
+          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+        </p>
+        <p class="site-footer-meta">
+          <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+        </p>
       </div>
     </footer>
   </div>
@@ -625,18 +699,7 @@
       requestAnimationFrame(updateClock);
     }
     updateClock();
-
-    // Theme icon
-    function updateThemeIcon() {
-      const isDark = document.documentElement.dataset.theme === 'dark';
-      const icon = document.getElementById('theme-icon');
-      if (!icon) return;
-      icon.innerHTML = isDark
-        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
-        : '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>';
-    }
-    updateThemeIcon();
-    document.querySelector('.theme-toggle').addEventListener('click', () => setTimeout(updateThemeIcon, 50));
   </script>
+  <script src="/src/site-shell.js" defer></script>
 </body>
 </html>
