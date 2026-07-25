@@ -35,7 +35,7 @@
       --blk-air-bg: #d1fae5; --blk-air-fg: #047857;
       --blk-pop-bg: #fce7f3; --blk-pop-fg: #be185d;
       --blk-dst-bg: #fef3c7; --blk-dst-fg: #92400e;
-      --container: 1280px;
+      --container: 1240px;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
       --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
@@ -277,12 +277,12 @@
         <li><a href="/">Home</a></li>
         <li><a href="/world-time/">World time</a></li>
         <li><a href="/world-time/romania/">Romania</a></li>
-        <li><a href="/world-time/romania/10/">10</a></li>
         <li><span aria-current="page">Bucharest</span></li>
       </ol>
     </div>
   </nav>
 
+  <div class="container city-page-container">
     <!-- HERO -->
     <section class="hero">
       <div class="hero-left">
@@ -298,7 +298,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">2:11:00<span class="ms">.00</span><span class="ampm">AM</span></span>
+          <span class="clock-time" id="clockTime">2:20:11<span class="ms">.00</span><span class="ampm">AM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -330,7 +330,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Europe/Bucharest">2:11:00 AM<br>+3 · Saturday</div>
+      <div class="value" data-tz="Europe/Bucharest">2:20:11 AM<br>+3 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -480,25 +480,25 @@
         <a href="/world-time/romania/sector-3/" class="nearby-card">
           <div class="name">Sector 3</div>
           <div class="meta">5 km · 10 · RO</div>
-          <div class="time" data-tz="Europe/Bucharest">5:11:01<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Bucharest">5:20:11<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/romania/sector-6/" class="nearby-card">
           <div class="name">Sector 6</div>
           <div class="meta">7 km · 10 · RO</div>
-          <div class="time" data-tz="Europe/Bucharest">5:11:01<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Bucharest">5:20:11<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/romania/constanta/" class="nearby-card">
           <div class="name">Constanţa</div>
           <div class="meta">203 km · 14 · RO</div>
-          <div class="time" data-tz="Europe/Bucharest">5:11:01<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Bucharest">5:20:11<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/romania/iasi/" class="nearby-card">
           <div class="name">Iaşi</div>
           <div class="meta">325 km · 23 · RO</div>
-          <div class="time" data-tz="Europe/Bucharest">5:11:01<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Bucharest">5:20:11<span class="ampm">AM</span></div>
         </a>
       
     </div>
@@ -637,30 +637,30 @@
       <a href="/holidays/romania/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=bucharest" class="explore-link"><span class="label">📅 Meeting</span>Plan with Bucharest</a>
     </section>
-
-    <footer class="site-footer" role="contentinfo">
-      <div class="site-footer-inner">
-        <nav class="site-footer-nav" aria-label="Site links">
-          <a href="/">Home</a>
-          <a href="/holidays/">Holidays</a>
-          <a href="/onthisday/">On this day</a>
-          <a href="/about/">About</a>
-          <a href="/editorial-policy/">Editorial policy</a>
-          <a href="/privacy/">Privacy</a>
-          <a href="/terms/">Terms</a>
-          <a href="mailto:hello@dateandtime.live">Contact</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-        <p class="site-footer-meta">
-          © 2026 dateandtime.live · Bucharest, 10 · 33,945 cities · 408 time zones · 1,600+ holidays ·
-          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
-        </p>
-        <p class="site-footer-meta">
-          <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
-        </p>
-      </div>
-    </footer>
   </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live · Bucharest, 10 · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
   <script>
     // Live clock updates (60fps via requestAnimationFrame)

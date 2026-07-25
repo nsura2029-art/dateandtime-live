@@ -35,7 +35,7 @@
       --blk-air-bg: #d1fae5; --blk-air-fg: #047857;
       --blk-pop-bg: #fce7f3; --blk-pop-fg: #be185d;
       --blk-dst-bg: #fef3c7; --blk-dst-fg: #92400e;
-      --container: 1280px;
+      --container: 1240px;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
       --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
@@ -277,12 +277,12 @@
         <li><a href="/">Home</a></li>
         <li><a href="/world-time/">World time</a></li>
         <li><a href="/world-time/canada/">Canada</a></li>
-        <li><a href="/world-time/canada/02/">02</a></li>
         <li><span aria-current="page">Vancouver</span></li>
       </ol>
     </div>
   </nav>
 
+  <div class="container city-page-container">
     <!-- HERO -->
     <section class="hero">
       <div class="hero-left">
@@ -298,7 +298,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">2:12:36<span class="ms">.00</span><span class="ampm">AM</span></span>
+          <span class="clock-time" id="clockTime">2:21:45<span class="ms">.00</span><span class="ampm">AM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -330,7 +330,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="America/Vancouver">2:12:36 AM<br>-7 · Saturday</div>
+      <div class="value" data-tz="America/Vancouver">2:21:45 AM<br>-7 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -452,10 +452,10 @@
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
       <span>💧 57% humidity</span>
-      <span>💨 1 mph wind</span>
-      <span>🌡 176°F feels like</span>
+      <span>💨 2 mph wind</span>
+      <span>🌡 174°F feels like</span>
       <span>🕵 UV 7</span>
-      <span>📏 1002 hPa</span>
+      <span>📏 1001.9 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -514,37 +514,37 @@
         <a href="/world-time/canada/surrey/" class="nearby-card">
           <div class="name">Surrey</div>
           <div class="meta">27 km · 02 · CA</div>
-          <div class="time" data-tz="America/Vancouver">7:12:37<span class="ampm">PM</span></div>
+          <div class="time" data-tz="America/Vancouver">7:21:46<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/canada/calgary/" class="nearby-card">
           <div class="name">Calgary</div>
           <div class="meta">674 km · 01 · CA</div>
-          <div class="time" data-tz="America/Edmonton">8:12:37<span class="ampm">PM</span></div>
+          <div class="time" data-tz="America/Edmonton">8:21:46<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/canada/edmonton/" class="nearby-card">
           <div class="name">Edmonton</div>
           <div class="meta">822 km · 01 · CA</div>
-          <div class="time" data-tz="America/Edmonton">8:12:37<span class="ampm">PM</span></div>
+          <div class="time" data-tz="America/Edmonton">8:21:46<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/canada/winnipeg/" class="nearby-card">
           <div class="name">Winnipeg</div>
           <div class="meta">1865 km · 03 · CA</div>
-          <div class="time" data-tz="America/Winnipeg">9:12:37<span class="ampm">PM</span></div>
+          <div class="time" data-tz="America/Winnipeg">9:21:46<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/canada/london/" class="nearby-card">
           <div class="name">London</div>
           <div class="meta">3259 km · 08 · CA</div>
-          <div class="time" data-tz="America/Toronto">10:12:37<span class="ampm">PM</span></div>
+          <div class="time" data-tz="America/Toronto">10:21:46<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/canada/brampton/" class="nearby-card">
           <div class="name">Brampton</div>
           <div class="meta">3330 km · 08 · CA</div>
-          <div class="time" data-tz="America/Toronto">10:12:37<span class="ampm">PM</span></div>
+          <div class="time" data-tz="America/Toronto">10:21:46<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -683,30 +683,30 @@
       <a href="/holidays/canada/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=vancouver" class="explore-link"><span class="label">📅 Meeting</span>Plan with Vancouver</a>
     </section>
-
-    <footer class="site-footer" role="contentinfo">
-      <div class="site-footer-inner">
-        <nav class="site-footer-nav" aria-label="Site links">
-          <a href="/">Home</a>
-          <a href="/holidays/">Holidays</a>
-          <a href="/onthisday/">On this day</a>
-          <a href="/about/">About</a>
-          <a href="/editorial-policy/">Editorial policy</a>
-          <a href="/privacy/">Privacy</a>
-          <a href="/terms/">Terms</a>
-          <a href="mailto:hello@dateandtime.live">Contact</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-        <p class="site-footer-meta">
-          © 2026 dateandtime.live · Vancouver, 02 · 33,945 cities · 408 time zones · 1,600+ holidays ·
-          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
-        </p>
-        <p class="site-footer-meta">
-          <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
-        </p>
-      </div>
-    </footer>
   </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live · Vancouver, 02 · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
   <script>
     // Live clock updates (60fps via requestAnimationFrame)

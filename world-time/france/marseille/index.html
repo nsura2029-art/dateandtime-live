@@ -35,7 +35,7 @@
       --blk-air-bg: #d1fae5; --blk-air-fg: #047857;
       --blk-pop-bg: #fce7f3; --blk-pop-fg: #be185d;
       --blk-dst-bg: #fef3c7; --blk-dst-fg: #92400e;
-      --container: 1280px;
+      --container: 1240px;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
       --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
@@ -277,12 +277,12 @@
         <li><a href="/">Home</a></li>
         <li><a href="/world-time/">World time</a></li>
         <li><a href="/world-time/france/">France</a></li>
-        <li><a href="/world-time/france/93/">93</a></li>
         <li><span aria-current="page">Marseille</span></li>
       </ol>
     </div>
   </nav>
 
+  <div class="container city-page-container">
     <!-- HERO -->
     <section class="hero">
       <div class="hero-left">
@@ -298,7 +298,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">2:12:15<span class="ms">.00</span><span class="ampm">AM</span></span>
+          <span class="clock-time" id="clockTime">2:21:25<span class="ms">.00</span><span class="ampm">AM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -330,7 +330,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Europe/Paris">2:12:15 AM<br>+2 · Saturday</div>
+      <div class="value" data-tz="Europe/Paris">2:21:25 AM<br>+2 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -451,11 +451,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 46% humidity</span>
-      <span>💨 7 mph wind</span>
+      <span>💧 45% humidity</span>
+      <span>💨 6 mph wind</span>
       <span>🌡 173°F feels like</span>
       <span>🕵 UV 7.55</span>
-      <span>📏 1007.7 hPa</span>
+      <span>📏 1007.6 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -502,37 +502,37 @@
         <a href="/world-time/france/nice/" class="nearby-card">
           <div class="name">Nice</div>
           <div class="meta">159 km · 93 · FR</div>
-          <div class="time" data-tz="Europe/Paris">4:12:15<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:21:25<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/france/lyon/" class="nearby-card">
           <div class="name">Lyon</div>
           <div class="meta">276 km · 84 · FR</div>
-          <div class="time" data-tz="Europe/Paris">4:12:15<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:21:25<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/france/toulouse/" class="nearby-card">
           <div class="name">Toulouse</div>
           <div class="meta">320 km · 76 · FR</div>
-          <div class="time" data-tz="Europe/Paris">4:12:15<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:21:25<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/france/marne-la-vallee/" class="nearby-card">
           <div class="name">Marne La Vallée</div>
           <div class="meta">651 km · 11 · FR</div>
-          <div class="time" data-tz="Europe/Paris">4:12:15<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:21:25<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/france/paris/" class="nearby-card">
           <div class="name">Paris</div>
           <div class="meta">661 km · 11 · FR</div>
-          <div class="time" data-tz="Europe/Paris">4:12:15<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:21:25<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/france/nantes/" class="nearby-card">
           <div class="name">Nantes</div>
           <div class="meta">696 km · 52 · FR</div>
-          <div class="time" data-tz="Europe/Paris">4:12:15<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:21:25<span class="ampm">AM</span></div>
         </a>
       
     </div>
@@ -671,30 +671,30 @@
       <a href="/holidays/france/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=marseille" class="explore-link"><span class="label">📅 Meeting</span>Plan with Marseille</a>
     </section>
-
-    <footer class="site-footer" role="contentinfo">
-      <div class="site-footer-inner">
-        <nav class="site-footer-nav" aria-label="Site links">
-          <a href="/">Home</a>
-          <a href="/holidays/">Holidays</a>
-          <a href="/onthisday/">On this day</a>
-          <a href="/about/">About</a>
-          <a href="/editorial-policy/">Editorial policy</a>
-          <a href="/privacy/">Privacy</a>
-          <a href="/terms/">Terms</a>
-          <a href="mailto:hello@dateandtime.live">Contact</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-        <p class="site-footer-meta">
-          © 2026 dateandtime.live · Marseille, 93 · 33,945 cities · 408 time zones · 1,600+ holidays ·
-          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
-        </p>
-        <p class="site-footer-meta">
-          <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
-        </p>
-      </div>
-    </footer>
   </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live · Marseille, 93 · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
   <script>
     // Live clock updates (60fps via requestAnimationFrame)

@@ -163,6 +163,56 @@ navigates to the city page.
 - `world-time/index.html` — added city grid section + script
 - `screenshots/screen-wt-new-top.png` + `screen-wt-new-grid.png` (NEW)
 
+### Phase 5 — City pages use the same header/footer as the home page (2026-07-25)
+
+City pages had a stripped-down `<header class="topnav">` and a simple
+`<footer>` that didn't match the rest of the site. Replaced both with
+the home page's design-system shell:
+
+- **Header**: full `<header class="site-header">` with dropdown nav
+  (Today, Holidays, On this day, Meeting finder, World time, Timezone, News)
+  + theme toggle + mobile nav toggle. Loaded from `/src/site-shell.css`
+  + `/src/site-shell.js`.
+- **Mobile nav**: `<aside class="mobile-nav">` with the same nav structure
+  (dropdowns are flat in mobile, no nested menu). Backdrop + close button.
+- **Breadcrumb**: replaced the old `<div class="crumbs">` with the
+  site-shell's `<nav class="breadcrumbs">` using `<ol>`/`<li>` structure.
+  Links: Home › World time › Country › State › City.
+- **Footer**: full `<footer class="site-footer">` with site links
+  (Home, Holidays, On this day, About, Editorial policy, Privacy, Terms,
+  Contact, Sitemap) + © + Data attribution + CCPA link.
+- **Body class**: `class="shell-page"` for global shell styles.
+- **Removed**: old theme-toggle button + `updateThemeIcon()` JS
+  (site-shell handles theme).
+- **Cleaned up**: 7 lines of dead CSS (`.theme-toggle`, `.footer-cols`,
+  `.footer-col`, `.footer-bottom`, `.crumbs`).
+- **All 911 city pages regenerated** with the new shell.
+
+**Verified live** (light + dark + mobile, multiple cities):
+- `/world-time/nicaragua/managua/` ✓
+- `/world-time/united-states/tampa/` ✓
+- `/world-time/united-kingdom/london/` ✓
+- `/world-time/china/beijing/` ✓
+- `/world-time/japan/tokyo/` ✓
+- `/world-time/brazil/sao-paulo/` ✓
+- Mobile nav opens/closes via `[data-nav-toggle]` + `[data-nav-close]`
+- Theme toggle works (sun/moon buttons)
+- Breadcrumb: Home › World time › Country › State (optional) › City
+- Site-footer: 9 nav links + © + Data attribution + CCPA
+
+**Files:**
+- `scripts/build-city-pages.js` — replaced header/footer/body class
+- 911 city pages regenerated
+- `screenshots/city-page-managua.png` + `city-page-managua-footer.png` +
+  `city-page-dark.png` + `city-page-mobile.png` + `city-page-mobile-nav.png` (NEW)
+
+**Color caveat**: the city page content still uses its own red palette
+(`--color-primary: #c44536`) for clock, weather, and section blocks.
+The site-shell header/footer use the home page's purple
+(`--color-primary: #5b4aaf`). This is intentional for now — the city
+page's "data display" color system is different from the site shell.
+Unifying both would be a follow-up (city content → site-shell tokens).
+
 ### Open follow-ups (not done in this batch)
 
 - Sub-page URL tails (`/time/`, `/facts/`, `/weather/`, `/map/`) — the Worker now 301s them to the parent city page so the chain doesn't end in 404, but the URLs are not first-class pages. If/when SEO data shows that users want the per-section deep links, build them out as separate files.

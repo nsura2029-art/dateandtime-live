@@ -544,7 +544,7 @@ function renderTemplate(d) {
       --blk-air-bg: #d1fae5; --blk-air-fg: #047857;
       --blk-pop-bg: #fce7f3; --blk-pop-fg: #be185d;
       --blk-dst-bg: #fef3c7; --blk-dst-fg: #92400e;
-      --container: 1280px;
+      --container: 1240px;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
       --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
@@ -786,12 +786,12 @@ function renderTemplate(d) {
         <li><a href="/">Home</a></li>
         <li><a href="/world-time/">World time</a></li>
         <li><a href="/world-time/${c.countrySlug}/">${c.countryName}</a></li>
-        ${c.stateCode ? `<li><a href="/world-time/${c.countrySlug}/${c.stateCode.toLowerCase()}/">${c.stateCode}</a></li>` : ''}
         <li><span aria-current="page">${c.name}</span></li>
       </ol>
     </div>
   </nav>
 
+  <div class="container city-page-container">
     <!-- HERO -->
     <section class="hero">
       <div class="hero-left">
@@ -884,30 +884,30 @@ function renderTemplate(d) {
       <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=${d.city.slug}" class="explore-link"><span class="label">📅 Meeting</span>Plan with ${c.name}</a>
     </section>
-
-    <footer class="site-footer" role="contentinfo">
-      <div class="site-footer-inner">
-        <nav class="site-footer-nav" aria-label="Site links">
-          <a href="/">Home</a>
-          <a href="/holidays/">Holidays</a>
-          <a href="/onthisday/">On this day</a>
-          <a href="/about/">About</a>
-          <a href="/editorial-policy/">Editorial policy</a>
-          <a href="/privacy/">Privacy</a>
-          <a href="/terms/">Terms</a>
-          <a href="mailto:hello@dateandtime.live">Contact</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-        <p class="site-footer-meta">
-          © 2026 dateandtime.live · ${fullName} · 33,945 cities · 408 time zones · 1,600+ holidays ·
-          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
-        </p>
-        <p class="site-footer-meta">
-          <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
-        </p>
-      </div>
-    </footer>
   </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live · ${fullName} · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
   <script>
     // Live clock updates (60fps via requestAnimationFrame)

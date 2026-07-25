@@ -35,7 +35,7 @@
       --blk-air-bg: #d1fae5; --blk-air-fg: #047857;
       --blk-pop-bg: #fce7f3; --blk-pop-fg: #be185d;
       --blk-dst-bg: #fef3c7; --blk-dst-fg: #92400e;
-      --container: 1280px;
+      --container: 1240px;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
       --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
@@ -277,12 +277,12 @@
         <li><a href="/">Home</a></li>
         <li><a href="/world-time/">World time</a></li>
         <li><a href="/world-time/china/">China</a></li>
-        <li><a href="/world-time/china/10/">10</a></li>
         <li><span aria-current="page">Zhangjiakou</span></li>
       </ol>
     </div>
   </nav>
 
+  <div class="container city-page-container">
     <!-- HERO -->
     <section class="hero">
       <div class="hero-left">
@@ -298,7 +298,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">2:11:58<span class="ms">.00</span><span class="ampm">AM</span></span>
+          <span class="clock-time" id="clockTime">2:21:08<span class="ms">.00</span><span class="ampm">AM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -330,7 +330,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Shanghai">2:11:58 AM<br>+8 · Saturday</div>
+      <div class="value" data-tz="Asia/Shanghai">2:21:08 AM<br>+8 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -451,11 +451,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 61% humidity</span>
+      <span>💧 59% humidity</span>
       <span>💨 5 mph wind</span>
-      <span>🌡 183°F feels like</span>
+      <span>🌡 184°F feels like</span>
       <span>🕵 UV 5.95</span>
-      <span>📏 929.6 hPa</span>
+      <span>📏 929.7 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -490,37 +490,37 @@
         <a href="/world-time/china/datong/" class="nearby-card">
           <div class="name">Datong</div>
           <div class="meta">154 km · 24 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">10:11:59<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">10:21:09<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/china/beijing/" class="nearby-card">
           <div class="name">Beijing</div>
           <div class="meta">162 km · 22 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">10:11:59<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">10:21:09<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/china/baoding/" class="nearby-card">
           <div class="name">Baoding</div>
           <div class="meta">218 km · 10 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">10:11:59<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">10:21:09<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/china/tianjin/" class="nearby-card">
           <div class="name">Tianjin</div>
           <div class="meta">268 km · 28 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">10:11:59<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">10:21:09<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/china/hohhot/" class="nearby-card">
           <div class="name">Hohhot</div>
           <div class="meta">271 km · 20 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">10:11:59<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">10:21:09<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/china/shijiazhuang/" class="nearby-card">
           <div class="name">Shijiazhuang</div>
           <div class="meta">307 km · 10 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">10:11:59<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">10:21:09<span class="ampm">AM</span></div>
         </a>
       
     </div>
@@ -659,30 +659,30 @@
       <a href="/holidays/china/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=zhangjiakou" class="explore-link"><span class="label">📅 Meeting</span>Plan with Zhangjiakou</a>
     </section>
-
-    <footer class="site-footer" role="contentinfo">
-      <div class="site-footer-inner">
-        <nav class="site-footer-nav" aria-label="Site links">
-          <a href="/">Home</a>
-          <a href="/holidays/">Holidays</a>
-          <a href="/onthisday/">On this day</a>
-          <a href="/about/">About</a>
-          <a href="/editorial-policy/">Editorial policy</a>
-          <a href="/privacy/">Privacy</a>
-          <a href="/terms/">Terms</a>
-          <a href="mailto:hello@dateandtime.live">Contact</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-        <p class="site-footer-meta">
-          © 2026 dateandtime.live · Zhangjiakou, 10 · 33,945 cities · 408 time zones · 1,600+ holidays ·
-          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
-        </p>
-        <p class="site-footer-meta">
-          <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
-        </p>
-      </div>
-    </footer>
   </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live · Zhangjiakou, 10 · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
   <script>
     // Live clock updates (60fps via requestAnimationFrame)

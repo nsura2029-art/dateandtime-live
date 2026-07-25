@@ -35,7 +35,7 @@
       --blk-air-bg: #d1fae5; --blk-air-fg: #047857;
       --blk-pop-bg: #fce7f3; --blk-pop-fg: #be185d;
       --blk-dst-bg: #fef3c7; --blk-dst-fg: #92400e;
-      --container: 1280px;
+      --container: 1240px;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       --font-serif: "Source Serif 4", "Tiempos Headline", Charter, Georgia, serif;
       --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
@@ -277,12 +277,12 @@
         <li><a href="/">Home</a></li>
         <li><a href="/world-time/">World time</a></li>
         <li><a href="/world-time/russia/">Russia</a></li>
-        <li><a href="/world-time/russia/78/">78</a></li>
         <li><span aria-current="page">Tyumen</span></li>
       </ol>
     </div>
   </nav>
 
+  <div class="container city-page-container">
     <!-- HERO -->
     <section class="hero">
       <div class="hero-left">
@@ -298,7 +298,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">2:11:19<span class="ms">.00</span><span class="ampm">AM</span></span>
+          <span class="clock-time" id="clockTime">2:20:30<span class="ms">.00</span><span class="ampm">AM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -330,7 +330,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Yekaterinburg">2:11:19 AM<br>+5 · Saturday</div>
+      <div class="value" data-tz="Asia/Yekaterinburg">2:20:30 AM<br>+5 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -451,9 +451,9 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 83% humidity</span>
-      <span>💨 3 mph wind</span>
-      <span>🌡 166°F feels like</span>
+      <span>💧 81% humidity</span>
+      <span>💨 2 mph wind</span>
+      <span>🌡 168°F feels like</span>
       <span>🕵 UV 6.15</span>
       <span>📏 1005.7 hPa</span>
     </div>
@@ -484,37 +484,37 @@
         <a href="/world-time/russia/yekaterinburg/" class="nearby-card">
           <div class="name">Yekaterinburg</div>
           <div class="meta">299 km · 71 · RU</div>
-          <div class="time" data-tz="Asia/Yekaterinburg">7:11:19<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Yekaterinburg">7:20:30<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/russia/chelyabinsk/" class="nearby-card">
           <div class="name">Chelyabinsk</div>
           <div class="meta">337 km · 13 · RU</div>
-          <div class="time" data-tz="Asia/Yekaterinburg">7:11:19<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Yekaterinburg">7:20:30<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/russia/omsk/" class="nearby-card">
           <div class="name">Omsk</div>
           <div class="meta">542 km · 54 · RU</div>
-          <div class="time" data-tz="Asia/Omsk">8:11:19<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Omsk">8:20:30<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/russia/perm/" class="nearby-card">
           <div class="name">Perm</div>
           <div class="meta">561 km · 90 · RU</div>
-          <div class="time" data-tz="Asia/Yekaterinburg">7:11:19<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Yekaterinburg">7:20:30<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/russia/ufa/" class="nearby-card">
           <div class="name">Ufa</div>
           <div class="meta">652 km · 08 · RU</div>
-          <div class="time" data-tz="Asia/Yekaterinburg">7:11:19<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Asia/Yekaterinburg">7:20:30<span class="ampm">AM</span></div>
         </a>
       
         <a href="/world-time/russia/izhevsk/" class="nearby-card">
           <div class="name">Izhevsk</div>
           <div class="meta">746 km · 80 · RU</div>
-          <div class="time" data-tz="Europe/Samara">6:11:19<span class="ampm">AM</span></div>
+          <div class="time" data-tz="Europe/Samara">6:20:30<span class="ampm">AM</span></div>
         </a>
       
     </div>
@@ -653,30 +653,30 @@
       <a href="/holidays/russia/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=tyumen" class="explore-link"><span class="label">📅 Meeting</span>Plan with Tyumen</a>
     </section>
-
-    <footer class="site-footer" role="contentinfo">
-      <div class="site-footer-inner">
-        <nav class="site-footer-nav" aria-label="Site links">
-          <a href="/">Home</a>
-          <a href="/holidays/">Holidays</a>
-          <a href="/onthisday/">On this day</a>
-          <a href="/about/">About</a>
-          <a href="/editorial-policy/">Editorial policy</a>
-          <a href="/privacy/">Privacy</a>
-          <a href="/terms/">Terms</a>
-          <a href="mailto:hello@dateandtime.live">Contact</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-        <p class="site-footer-meta">
-          © 2026 dateandtime.live · Tyumen, 78 · 33,945 cities · 408 time zones · 1,600+ holidays ·
-          Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
-        </p>
-        <p class="site-footer-meta">
-          <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
-        </p>
-      </div>
-    </footer>
   </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live · Tyumen, 78 · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
   <script>
     // Live clock updates (60fps via requestAnimationFrame)
