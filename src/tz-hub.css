@@ -462,3 +462,188 @@
   margin-top: 1.25rem;
   text-align: center;
 }
+
+/* =====================================================
+   World Clock hub: city grid (5-col alphabetical)
+   Added 2026-07-24. Powers /world-time/.
+   Data: /api/v1/cities/popular
+   ===================================================== */
+.wt-city-section {
+  padding: clamp(2rem, 4vw, 3rem) 0;
+}
+
+.wt-city-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.wt-city-header h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.wt-city-count {
+  font-size: 0.875rem;
+  color: var(--tz-muted);
+  font-weight: 500;
+}
+
+.wt-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--tz-bg-soft, rgba(92, 74, 175, 0.04));
+  border: 1px solid var(--tz-border-soft, rgba(92, 74, 175, 0.08));
+  border-radius: 14px;
+}
+.wt-filter-row, .wt-sort-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.wt-filter-label, .wt-sort-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tz-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 5rem;
+}
+.wt-filter-pills, .wt-sort-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  flex: 1;
+}
+.wt-filter, .wt-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid var(--tz-border, rgba(92, 74, 175, 0.16));
+  background: var(--tz-bg, #ffffff);
+  color: var(--tz-foreground, #49445f);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.wt-filter:hover, .wt-sort:hover {
+  border-color: var(--tz-primary, #5b4aaf);
+  color: var(--tz-primary, #5b4aaf);
+}
+.wt-filter.is-active, .wt-sort.is-active {
+  background: var(--tz-primary, #5b4aaf);
+  border-color: var(--tz-primary, #5b4aaf);
+  color: #ffffff;
+}
+
+.wt-city-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 600px) {
+  .wt-city-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .wt-city-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1200px) {
+  .wt-city-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+.wt-letter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.wt-letter-head {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--tz-primary, #5b4aaf);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid var(--tz-primary, #5b4aaf);
+}
+.wt-letter-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.wt-city-row {
+  display: grid;
+  grid-template-columns: 1.4rem 1fr auto auto 0.85rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--tz-foreground, #49445f);
+  transition: background 150ms ease, transform 150ms ease;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+.wt-city-row:hover {
+  background: var(--tz-primary-soft, rgba(92, 74, 175, 0.08));
+  transform: translateX(2px);
+  text-decoration: none;
+}
+.wt-city-flag {
+  font-size: 1.1rem;
+  line-height: 1;
+  text-align: center;
+}
+.wt-city-name {
+  font-weight: 700;
+  color: var(--tz-foreground, #49445f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.wt-city-country {
+  font-size: 0.75rem;
+  color: var(--tz-muted, #77718f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 7rem;
+}
+.wt-city-time {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tz-primary, #5b4aaf);
+  background: var(--tz-primary-soft, rgba(92, 74, 175, 0.08));
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  min-width: 5.5rem;
+  text-align: center;
+}
+.wt-city-arrow {
+  color: var(--tz-muted, #77718f);
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+.wt-city-row:hover .wt-city-arrow {
+  opacity: 1;
+}
+.wt-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--tz-muted, #77718f);
+}

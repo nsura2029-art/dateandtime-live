@@ -54,6 +54,48 @@
   </script>
   <script src="/src/site-shell.js" defer></script>
   <script src="/src/world-clock-hub.js" defer></script>
+  <script src="/src/world-time-cities.js" defer></script>
+  <script>
+    // Inject a full ItemList schema once the popular cities load.
+    // The city grid is JS-rendered; we hydrate schema.org markup the same way
+    // so search engines see the full list, not just an empty div.
+    document.addEventListener("DOMContentLoaded", function () {
+      function emit() {
+        var list = window.__popularCities || [];
+        if (!list.length) return;
+        var itemList = {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": "World clock cities",
+          "description": "Current local time in major cities worldwide, each linking to a dedicated time zone page.",
+          "numberOfItems": list.length,
+          "itemListElement": list.slice(0, 200).map(function (c, i) {
+            return {
+              "@type": "ListItem",
+              "position": i + 1,
+              "name": c.name,
+              "url": "https://dateandtime.live" + (c.path || ""),
+              "description": (c.countryName || "") + (c.timezone ? " - " + c.timezone : "")
+            };
+          })
+        };
+        var s = document.createElement("script");
+        s.type = "application/ld+json";
+        s.text = JSON.stringify(itemList);
+        document.head.appendChild(s);
+      }
+      // The world-time-cities module fires this event after loading.
+      window.addEventListener("tdl-popular-cities-loaded", emit);
+      // Also check localStorage for already-cached cities.
+      try {
+        var cached = JSON.parse(localStorage.getItem("tdl.worldtime.cities") || "null");
+        if (cached && cached.data && cached.data.length) {
+          window.__popularCities = cached.data;
+          emit();
+        }
+      } catch (e) {}
+    });
+  </script>
 </head>
 <body class="shell-page">
 <header class="site-header">
@@ -189,6 +231,26 @@
       </div>
       <div class="wt-featured-add">
         <a href="/world-time/meeting/" class="tz-cta tz-cta-secondary">+ Add your own city</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- City grid (5-col alphabetical, 200+ popular cities) -->
+  <section class="wt-city-section" id="all-cities">
+    <div class="container">
+      <div class="wt-city-header">
+        <h2>Browse all popular cities</h2>
+        <span class="wt-city-count" id="wt-count">—</span>
+      </div>
+      <p class="tz-section-sub">Click any city for its full time zone, weather, holidays, and more. Live local time updates every second.</p>
+
+      <div class="wt-filters" id="wt-filters" role="group" aria-label="City filters">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="wt-city-grid" id="wt-city-grid">
+        <!-- Populated by JS: 200+ cities, 5 columns, alphabetical groups -->
+        <noscript><p class="wt-empty">Enable JavaScript to see the live city list.</p></noscript>
       </div>
     </div>
   </section>
