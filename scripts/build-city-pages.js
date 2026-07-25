@@ -401,7 +401,6 @@ function renderTemplate(d) {
     <div class="stat-cell"><div class="value">${c.featureCode}</div><div class="label">Feature</div></div>
     <div class="stat-cell"><div class="value">${c.isCapital ? '✓' : '—'}</div><div class="label">Capital</div></div>
     <div class="stat-cell"><div class="value">${c.stateCode || '—'}</div><div class="label">Region</div></div>
-    <div class="stat-cell"><div class="value">${c.countryCode}</div><div class="label">Country</div></div>
   `;
 
   // OTD events (limit 3)
@@ -796,7 +795,7 @@ function renderTemplate(d) {
     <section class="hero">
       <div class="hero-left">
         <div class="pre-title">Current local time in</div>
-        <h1><span class="name">${c.name}</span>${c.stateCode ? `, <span style="font-size: 0.6em; color: var(--color-muted);">${c.stateCode}</span>` : ''}</h1>
+        <h1><span class="name">${c.name}</span></h1>
         <p class="lede">Live local time, time zone, weather, and history for ${c.name}${c.isCapital ? ' (capital city)' : ''} — a city in ${c.countryName} with ${numberFormat(c.population)} people.</p>
         <div class="hero-meta">
           <span>📍 ${c.latitude.toFixed(4)}°N, ${c.longitude.toFixed(4)}°E</span>

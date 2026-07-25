@@ -265,8 +265,11 @@
     state.region = null;     // reset region when continent changes
     state.page = 1;
     state.cities = [];
+    state.total = 0;          // reset total too so the Load more text is correct
     renderContinentPills();
     renderRegionPills();
+    updateLoadMoreUI();
+    updateResultCountUI();
     pushUrl();
     fetchPage({ append: false });
   }
@@ -276,7 +279,10 @@
     state.region = slug || null;
     state.page = 1;
     state.cities = [];
+    state.total = 0;
     renderRegionPills();
+    updateLoadMoreUI();
+    updateResultCountUI();
     pushUrl();
     fetchPage({ append: false });
   }
@@ -286,6 +292,9 @@
     state.sort = code;
     state.page = 1;
     state.cities = [];
+    state.total = 0;
+    updateLoadMoreUI();
+    updateResultCountUI();
     pushUrl();
     fetchPage({ append: false });
   }
@@ -294,6 +303,9 @@
     state.q = (q || "").trim();
     state.page = 1;
     state.cities = [];
+    state.total = 0;
+    updateLoadMoreUI();
+    updateResultCountUI();
     pushUrl();
     fetchPage({ append: false });
   }
@@ -301,6 +313,7 @@
   function loadMore() {
     if (state.loading) return;
     if (state.cities.length >= state.total) return;
+    if (state.total === 0) return;  // not loaded yet
     state.page += 1;
     pushUrl();
     fetchPage({ append: true });
@@ -393,14 +406,14 @@
           <div class="wt-card-head">
             <span class="wt-live-pulse" aria-hidden="true"></span>
             <span class="wt-card-name">${flag ? `<span class="wt-card-flag">${flag}</span>` : ""}${safeName}</span>
-            <span class="wt-card-remove" aria-hidden="true" title="Hide">×</span>
           </div>
           <div class="wt-card-time" data-clock-tz="${c.timezone || ""}">--:--:--.--</div>
           <div class="wt-card-meta">
             <span class="wt-card-tz" title="${safeTz}">${safeTz}</span>
-            <span class="wt-card-sep" aria-hidden="true">·</span>
-            <span class="wt-card-day" data-day-tz="${c.timezone || ""}">—</span>
-            <span class="wt-card-pill" data-pill-tz="${c.timezone || ""}">—</span>
+            <div class="wt-card-meta-row">
+              <span class="wt-card-day" data-day-tz="${c.timezone || ""}">—</span>
+              <span class="wt-card-pill" data-pill-tz="${c.timezone || ""}">—</span>
+            </div>
           </div>
         </a>
       </article>
@@ -426,7 +439,10 @@
     const shown = state.cities.length;
     const total = state.total;
     const remaining = Math.max(0, total - shown);
-    if (remaining > 0) {
+    // Hide the button when the remainder is small enough that another
+    // "Load more" click would be annoying (a one or two city gap). The
+    // result counter still shows the full total.
+    if (remaining > 10) {
       btn.hidden = false;
       const rem = btn.querySelector("[data-section-remaining]");
       if (rem) rem.textContent = `(${remaining} more)`;
@@ -542,23 +558,9 @@
   }
 
   function wireCloseButtons() {
-    document.addEventListener("click", e => {
-      const btn = e.target.closest(".wt-card-remove");
-      if (!btn) return;
-      e.preventDefault();
-      e.stopPropagation();
-      const card = btn.closest(".wt-card");
-      if (!card) return;
-      card.style.transition = "opacity 200ms ease, transform 200ms ease";
-      card.style.opacity = "0";
-      card.style.transform = "scale(0.95)";
-      setTimeout(() => {
-        card.remove();
-        state.cities = state.cities.filter(c => String(c.id) !== String(card.dataset.id));
-        updateLoadMoreUI();
-        updateResultCountUI();
-      }, 200);
-    });
+    // No-op: the close button was removed from the card per the design
+    // update. Kept as a stub in case we want to add a different interaction
+    // (e.g. favorite-toggle) in the future.
   }
 
   // =============== Boot ===============
