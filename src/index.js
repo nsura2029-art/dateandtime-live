@@ -16,11 +16,15 @@
 //
 // Plus a /api/time/now endpoint so the page can compute real clock-drift
 // without depending on the prod API.
-
 // In-memory cache of the cities list so we don't re-fetch it on every
 // page load. The DB changes rarely, so a 5-min TTL is fine.
 let citiesCache = { at: 0, data: null };
 const CITIES_TTL_MS = 5 * 60 * 1000;
+
+// Slug → country mapping for 301 redirects from the legacy /world-time/city/{slug}/
+// path to the canonical /world-time/{country}/{slug}/. Generated at build time
+// from scripts/build-city-pages.js. See src/slug-to-country.js.
+import { SLUG_TO_COUNTRY } from './slug-to-country.js';
 
 async function getCities() {
   const now = Date.now();
@@ -444,26 +448,31 @@ export default {
       return new Response("Asset not found: " + r.status, { status: 500 });
     }
 
-    // City pages: /world-time/city/{slug}/
-    // (Pre-rendered static HTML files at /world-time/city/{slug}/index.html)
-    const cityPageMatch = url.pathname.match(/^\/world-time\/city\/[^/]+\/?$/);
-    if (cityPageMatch) {
-      const templateReq = new Request(new URL(url.pathname + "index.html", request.url).toString());
+    // City pages: /world-time/city/{slug}/...
+    // (LEGACY path — migrated to /world-time/{country}/{slug}/ on 2026-07-24.)
+    //
+    // We issue a 301 redirect to the canonical new path. For the 911 pre-built
+    // cities, SLUG_TO_COUNTRY has the mapping. For unknown slugs (the 33K we
+    // haven't pre-built yet), the redirect lands on a 404 in the new path.
+    const legacyCityMatch = url.pathname.match(/^\/world-time\/city\/([^/]+)(\/.*)?\/?$/);
+    if (legacyCityMatch) {
+      const slug = legacyCityMatch[1];
+      const tail = legacyCityMatch[2] || '/';
+      const cca2 = SLUG_TO_COUNTRY[slug];
+      if (cca2) {
+        const newPath = `/world-time/${cca2}/${slug}${tail === '/' ? '/' : tail}`;
+        return new Response(null, { status: 301, headers: { Location: newPath } });
+      }
+      // Unknown slug: fall through and try the legacy asset (so we don't 404
+      // the user's link if the city was built before this migration but the
+      // slug map doesn't have it).
+      const templateReq = new Request(new URL(url.pathname.replace(/\/?$/, '/') + "index.html", request.url).toString());
       const r = await env.ASSETS.fetch(templateReq);
       if (r.ok) {
         const body = await r.text();
         return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
       }
-      // Try the slug without trailing slash
-      if (r.status === 307 || r.status === 301) {
-        const finalUrl = new URL(r.headers.get("location") || url.pathname, request.url);
-        const final = await env.ASSETS.fetch(new Request(finalUrl, request));
-        if (final.ok) {
-          const body = await final.text();
-          return new Response(body, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
-        }
-      }
-      return new Response("City page not found: " + r.status, { status: 404 });
+      return new Response("City page not found: " + slug, { status: 404 });
     }
 
     // Get the asset (HTML or other) from the [assets] binding.

@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 /* Generate static city pages using Template D (Data Hub)
- * URL: /world-time/city/{slug}/
- * Pattern: Home / World Time / {Country} / {State} / {City}
+ * URL: /world-time/{country}/{slug}/
+ * Pattern: Home / World Time / {Country} / {City}
  *
  * Inputs: list of cities (id + slug)
  * Fetches: city data, holidays, OTD, climate, people
  * Renders: Template D with all data injected
- * Output: world-time/city/{slug}/index.html
+ * Output: world-time/{country}/{slug}/index.html
+ *
+ * Backward-compat: the OLD /world-time/city/{slug}/ pages are kept on disk
+ * and the Worker (src/index.js) issues a 301 redirect to the new path. This
+ * is additive — no section deleted from any page.
  */
 const fs = require('fs');
 const path = require('path');
@@ -444,7 +448,7 @@ function renderTemplate(d) {
   const nearbyHtml = (nearby && nearby.length > 0) ? `
     <div class="nearby-grid">
       ${nearby.map(n => `
-        <a href="/world-time/city/${n.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}/" class="nearby-card">
+        <a href="/world-time/${(n.countryCode || n.country || 'us').toLowerCase()}/${n.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}/" class="nearby-card">
           <div class="name">${n.name}</div>
           <div class="meta">${Math.round(n.distanceKm)} km ${n.stateCode ? `· ${n.stateCode}` : ''} · ${n.countryCode}</div>
           <div class="time" data-tz="${n.timezone}">${fmtTime(new Date().toLocaleString('en-US', { timeZone: n.timezone }), false).split(' ')[0]}<span class="ampm">${fmtTime(new Date().toLocaleString('en-US', { timeZone: n.timezone }), false).split(' ')[1]}</span></div>
@@ -489,7 +493,7 @@ function renderTemplate(d) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${fullName} — Current Time, Time Zone, Weather & People · dateandtime.live</title>
   <meta name="description" content="${c.name}: live local time (${offsetAbbr}, ${offsetStr}), 7-day weather, sunrise & sunset, holidays, famous people, climate, and time difference from every major city. Updated every second." />
-  <link rel="canonical" href="https://dateandtime.live/world-time/city/${c.slug || d.city.slug || ''}/" />
+  <link rel="canonical" href="https://dateandtime.live/world-time/${(c.countryCode || c.country || 'us').toLowerCase()}/${c.slug || d.city.slug || ''}/" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -709,14 +713,14 @@ function renderTemplate(d) {
     <!-- Section 02: TAD-style color blocks -->
     <div class="section-head">
       <h2><span class="num">02</span> · Time, zone, and environment</h2>
-      <a class="more" href="/world-time/city/${d.city.slug}/time/">All time details →</a>
+      <a class="more" href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/time/">All time details →</a>
     </div>
     <section class="info-blocks">${blocksHtml}</section>
 
     <!-- Section 03: Tampa in numbers -->
     <div class="section-head">
       <h2><span class="num">03</span> · ${c.name} in numbers</h2>
-      <a class="more" href="/world-time/city/${d.city.slug}/facts/">More facts →</a>
+      <a class="more" href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/facts/">More facts →</a>
     </div>
     <section class="stats-inline">${statsHtml}</section>
 
@@ -730,7 +734,7 @@ function renderTemplate(d) {
     <!-- Section 05: 7-day weather -->
     <div class="section-head">
       <h2><span class="num">05</span> · 7-day weather in ${c.name}</h2>
-      <a class="more" href="/world-time/city/${d.city.slug}/weather/">Full forecast →</a>
+      <a class="more" href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/weather/">Full forecast →</a>
     </div>
     <section>${weatherHtml}</section>
 
@@ -751,7 +755,7 @@ function renderTemplate(d) {
     <!-- Section 08: Climate year-round -->
     <div class="section-head">
       <h2><span class="num">08</span> · ${c.name} climate year-round</h2>
-      <a class="more" href="/world-time/city/${d.city.slug || c.slug || ''}/climate/">Full climate →</a>
+      <a class="more" href="/world-time/${(d.city.countryCode || c.countryCode || c.country || 'us').toLowerCase()}/${d.city.slug || c.slug || ''}/climate/">Full climate →</a>
     </div>
     <section>${climateHtml}</section>
 
@@ -775,11 +779,11 @@ function renderTemplate(d) {
         </div>
         <div class="footer-col">
           <h4>${c.name}</h4>
-          <a href="/world-time/city/${d.city.slug}/">Overview</a>
-          <a href="/world-time/city/${d.city.slug}/sunrise/">Sun & Moon</a>
-          <a href="/world-time/city/${d.city.slug}/holidays/">Holidays</a>
-          <a href="/world-time/city/${d.city.slug}/people/">People</a>
-          <a href="/world-time/city/${d.city.slug}/weather/">Weather</a>
+          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/">Overview</a>
+          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/sunrise/">Sun & Moon</a>
+          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/holidays/">Holidays</a>
+          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/people/">People</a>
+          <a href="/world-time/${(d.city.countryCode || d.city.country || 'us').toLowerCase()}/${d.city.slug}/weather/">Weather</a>
         </div>
         <div class="footer-col">
           <h4>${c.countryName}</h4>
@@ -796,11 +800,11 @@ function renderTemplate(d) {
         </div>
         <div class="footer-col">
           <h4>Top cities</h4>
-          <a href="/world-time/city/new-york/">New York</a>
-          <a href="/world-time/city/london/">London</a>
-          <a href="/world-time/city/tokyo/">Tokyo</a>
-          <a href="/world-time/city/sydney/">Sydney</a>
-          <a href="/world-time/city/dubai/">Dubai</a>
+          <a href="/world-time/us/new-york/">New York</a>
+          <a href="/world-time/gb/london/">London</a>
+          <a href="/world-time/jp/tokyo/">Tokyo</a>
+          <a href="/world-time/au/sydney/">Sydney</a>
+          <a href="/world-time/ae/dubai/">Dubai</a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -857,11 +861,15 @@ function renderTemplate(d) {
 async function buildCity(city) {
   try {
     const data = await fetchAll(city);
+    // Need the country code to know where to write the new path.
+    // It's not in the build script's city list, so we read it from the data.
+    const cca2 = (data && data.city && (data.city.countryCode || data.city.country)) || city.code || 'us';
+    const countrySlug = String(cca2).toLowerCase();
     const html = renderTemplate(data);
-    const outDir = path.join('/workspace/dateandtime-live/world-time/city', city.slug);
+    const outDir = path.join(process.cwd(), 'world-time', countrySlug, city.slug);
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, 'index.html'), html);
-    console.log(`✓ ${city.slug}/index.html (${html.length} bytes)`);
+    console.log(`✓ ${countrySlug}/${city.slug}/index.html (${html.length} bytes)`);
     return true;
   } catch (err) {
     console.error(`✗ ${city.slug} failed:`, err.message);
