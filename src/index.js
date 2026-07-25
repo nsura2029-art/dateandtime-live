@@ -21,10 +21,20 @@
 let citiesCache = { at: 0, data: null };
 const CITIES_TTL_MS = 5 * 60 * 1000;
 
-// Slug → country mapping for 301 redirects from the legacy /world-time/city/{slug}/
+// Slug to country mapping for 301 redirects from the legacy /world-time/city/{slug}/
 // path to the canonical /world-time/{country}/{slug}/. Generated at build time
-// from scripts/build-city-pages.js. See src/slug-to-country.js.
-import { SLUG_TO_COUNTRY } from './slug-to-country.js';
+// from scripts/build-city-pages.js (911 entries, compact string).
+// Format: "slug,country|slug,country|..." - parsed at runtime to avoid
+// wrangler build errors on a large JS object literal.
+import { SLUG_DATA } from './slug-data.js';
+const SLUG_TO_COUNTRY = (() => {
+  const m = {};
+  for (const pair of SLUG_DATA.split('|')) {
+    const i = pair.indexOf(',');
+    if (i > 0) m[pair.slice(0, i)] = pair.slice(i + 1);
+  }
+  return m;
+})();
 
 async function getCities() {
   const now = Date.now();
