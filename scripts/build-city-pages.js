@@ -107,6 +107,55 @@ function getCountryName(iso2) {
   return COUNTRY_NAMES[iso2] || COUNTRY_NAMES[iso2?.toUpperCase()] || iso2 || '';
 }
 
+// ============================================================================
+// Phase 13 (dr5hn) lookups
+// ============================================================================
+// state-lookup.txt: "CC|admin1_code|name|native" per line (2,581 states)
+const STATE_NAME_LOOKUP = (() => {
+  const map = {};
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const file = path.join(__dirname, 'state-lookup.txt');
+    if (fs.existsSync(file)) {
+      for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+        if (!line) continue;
+        const [cc, code, name, native] = line.split('|');
+        if (cc && code) map[`${cc}|${code}`] = name;
+      }
+      console.log(`  loaded ${Object.keys(map).length} state name lookups from state-lookup.txt`);
+    } else {
+      console.warn(`  state-lookup.txt not found at ${file} — state names will fall back to codes`);
+    }
+  } catch (e) {
+    console.warn('  failed to load state-lookup.txt:', e.message);
+  }
+  return map;
+})();
+
+// country-lookup.txt: "CC|name|native|nationality" per line (242 countries)
+const COUNTRY_NATIVE_LOOKUP = (() => {
+  const map = {};
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const file = path.join(__dirname, 'country-lookup.txt');
+    if (fs.existsSync(file)) {
+      for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+        if (!line) continue;
+        const [cc, name, native, nationality] = line.split('|');
+        if (cc) map[cc] = { name, native, nationality };
+      }
+      console.log(`  loaded ${Object.keys(map).length} country lookups from country-lookup.txt`);
+    } else {
+      console.warn(`  country-lookup.txt not found at ${file}`);
+    }
+  } catch (e) {
+    console.warn('  failed to load country-lookup.txt:', e.message);
+  }
+  return map;
+})();
+
 // WMO weather codes → emoji + label
 // https://open-meteo.com/en/docs (WMO Weather interpretation codes)
 const WMO_CODES = {
@@ -201,6 +250,9 @@ async function fetchAll(city) {
   c.countryCode = c.countryCode || c.country;
   c.countryName = c.countryName || getCountryName(c.countryCode);
   c.stateCode = c.stateCode || c.state_code;
+  // Phase 13 (dr5hn): enrich with real state name
+  c.stateName = c.state || STATE_NAME_LOOKUP[`${c.countryCode}|${c.stateCode}`] || c.stateCode;
+  c.countryNative = COUNTRY_NATIVE_LOOKUP[c.countryCode] || null;
   c.timezone = c.timezone || c.tz;
   c.isCapital = c.isCapital || !!c.is_capital;
   c.slug = city.slug;  // attach our disambiguated slug for URL building
@@ -339,7 +391,7 @@ function renderTemplate(d) {
                      t.offsetMinutes === 60 ? 'CET' :
                      t.offsetMinutes > 0 ? `+${t.offsetMinutes/60}` :
                      `${t.offsetMinutes/60}`;
-  const fullName = c.name + (c.stateCode ? `, ${c.stateCode}` : '');
+  const fullName = c.name + (c.stateName && c.stateName !== c.stateCode ? `, ${c.stateName}` : (c.stateCode ? `, ${c.stateCode}` : ''));
 
   // 5 quick-info pills (we'll let JS fill in more)
   const pillsHtml = `
@@ -400,7 +452,7 @@ function renderTemplate(d) {
     <div class="stat-cell"><div class="value">${c.elevation ? c.elevation + 'm' : '—'}</div><div class="label">Elevation</div></div>
     <div class="stat-cell"><div class="value">${c.featureCode}</div><div class="label">Feature</div></div>
     <div class="stat-cell"><div class="value">${c.isCapital ? '✓' : '—'}</div><div class="label">Capital</div></div>
-    <div class="stat-cell"><div class="value">${c.stateCode || '—'}</div><div class="label">Region</div></div>
+    <div class="stat-cell"><div class="value">${c.stateName && c.stateName !== c.stateCode ? c.stateName : (c.stateCode || '—')}</div><div class="label">Region</div></div>
   `;
 
   // OTD events (limit 3)
@@ -878,7 +930,7 @@ function renderTemplate(d) {
     </div>
     <section class="explore-grid">
       <a href="/world-time/${c.countrySlug}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>
-      ${c.stateCode ? `<a href="/world-time/${c.countrySlug}/${c.stateCode.toLowerCase()}/" class="explore-link"><span class="label">${c.stateCode}</span>All ${c.stateCode} cities</a>` : ''}
+      ${c.stateCode ? `<a href="/world-time/${c.countrySlug}/${c.stateCode.toLowerCase()}/" class="explore-link"><span class="label">${c.stateName && c.stateName !== c.stateCode ? c.stateName : c.stateCode}</span>All ${c.stateName && c.stateName !== c.stateCode ? c.stateName : c.stateCode} cities</a>` : ''}
       <a href="/time-zones/zone/${c.timezone.toLowerCase()}/" class="explore-link"><span class="label">🕒 ${c.timezone}</span>Time zone hub</a>
       <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
       <a href="/meeting/?with=${d.city.slug}" class="explore-link"><span class="label">📅 Meeting</span>Plan with ${c.name}</a>

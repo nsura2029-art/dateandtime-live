@@ -1,0 +1,242 @@
+AF|Afghanistan|افغانستان|Afghan
+AO|Angola|Angola|Angolan
+AL|Albania|Shqipëria|Albanian 
+AD|Andorra|Andorra|Andorran
+AE|United Arab Emirates|دولة الإمارات العربية المتحدة|Emirati, Emirian, Emiri
+AR|Argentina|Argentina|Argentine
+AM|Armenia|Հայաստան|Armenian
+AG|Antigua and Barbuda|Antigua and Barbuda|Antiguan or Barbudan
+AU|Australia|Australia|Australian
+AT|Austria|Österreich|Austrian
+AZ|Azerbaijan|Azərbaycan|Azerbaijani, Azeri
+BI|Burundi|Burundi|Burundian
+BE|Belgium|België|Belgian
+BJ|Benin|Bénin|Beninese, Beninois
+BF|Burkina Faso|Burkina Faso|Burkinabe
+BD|Bangladesh|Bangladesh|Bangladeshi
+BG|Bulgaria|България|Bulgarian
+BH|Bahrain|‏البحرين|Bahraini
+BS|Bahamas|Bahamas|Bahamian
+BA|Bosnia and Herzegovina|Bosna i Hercegovina|Bosnian or Herzegovinian
+BY|Belarus|Белару́сь|Belarusian
+BZ|Belize|Belize|Belizean
+BO|Bolivia|Bolivia|Bolivian
+BR|Brazil|Brasil|Brazilian
+BB|Barbados|Barbados|Barbadian
+BN|Brunei|Negara Brunei Darussalam|Bruneian
+BT|Bhutan|ʼbrug-yul|Bhutanese
+BW|Botswana|Botswana|Motswana, Botswanan
+CF|Central African Republic|Ködörösêse tî Bêafrîka|Central African
+CA|Canada|Canada|Canadian
+CH|Switzerland|Schweiz|Swiss
+CL|Chile|Chile|Chilean
+CN|China|中国|Chinese
+CI|Ivory Coast|Cote D'Ivoire|Ivorian
+CM|Cameroon|Cameroon|Cameroonian
+CD|DR Congo|République démocratique du Congo|Congolese
+CG|Congo|République du Congo|Congolese
+CO|Colombia|Colombia|Colombian
+KM|Comoros|Komori|Comoran, Comorian
+CV|Cape Verde|Cabo Verde|Verdean
+CR|Costa Rica|Costa Rica|Costa Rican
+CU|Cuba|Cuba|Cuban
+CY|Cyprus|Κύπρος|Cypriot
+CZ|Czechia|Česká republika|Czech
+DE|Germany|Deutschland|German
+DJ|Djibouti|Djibouti|Djiboutian
+DM|Dominica|Dominica|Dominican
+DK|Denmark|Danmark|Danish
+DO|Dominican Republic|República Dominicana|Dominican
+DZ|Algeria|الجزائر|Algerian
+EC|Ecuador|Ecuador|Ecuadorian
+EG|Egypt|مصر‎|Egyptian
+ER|Eritrea|ኤርትራ|Eritrean
+ES|Spain|España|Spanish
+EE|Estonia|Eesti|Estonian
+ET|Ethiopia|ኢትዮጵያ|Ethiopian
+FI|Finland|Suomi|Finnish
+FJ|Fiji|Fiji|Fijian
+FR|France|France|French
+FM|Micronesia|Micronesia|Micronesian
+GA|Gabon|Gabon|Gabonese
+GB|United Kingdom|United Kingdom|British, UK
+GE|Georgia|საქართველო|Georgian
+GH|Ghana|Ghana|Ghanaian
+GN|Guinea|Guinée|Guinean
+GM|Gambia|Gambia|Gambian
+GW|Guinea-Bissau|Guiné-Bissau|Bissau-Guinean
+GQ|Equatorial Guinea|Guinea Ecuatorial|Equatorial Guinean, Equatoguinean
+GR|Greece|Ελλάδα|Greek, Hellenic
+GD|Grenada|Grenada|Grenadian
+GT|Guatemala|Guatemala|Guatemalan
+GY|Guyana|Guyana|Guyanese
+HN|Honduras|Honduras|Honduran
+HR|Croatia|Hrvatska|Croatian
+HT|Haiti|Haïti|Haitian
+HU|Hungary|Magyarország|Hungarian, Magyar
+ID|Indonesia|Indonesia|Indonesian
+IN|India|भारत|Indian
+IE|Ireland|Éire|Irish
+IR|Iran|ایران|Iranian, Persian
+IQ|Iraq|العراق|Iraqi
+IS|Iceland|Ísland|Icelandic
+IL|Israel|יִשְׂרָאֵל|Israeli
+IT|Italy|Italia|Italian
+JM|Jamaica|Jamaica|Jamaican
+JO|Jordan|الأردن|Jordanian
+JP|Japan|日本|Japanese
+KZ|Kazakhstan|Қазақстан|Kazakhstani, Kazakh
+KE|Kenya|Kenya|Kenyan
+KG|Kyrgyzstan|Кыргызстан|Kyrgyzstani, Kyrgyz, Kirgiz, Kirghiz
+KH|Cambodia|Kâmpŭchéa|Cambodian
+KI|Kiribati|Kiribati|I-Kiribati
+KN|Saint Kitts and Nevis|Saint Kitts and Nevis|Kittitian or Nevisian
+KR|South Korea|대한민국|South Korean
+KW|Kuwait|الكويت|Kuwaiti
+LA|Laos|ສປປລາວ|Lao, Laotian
+LB|Lebanon|لبنان|Lebanese
+LR|Liberia|Liberia|Liberian
+LY|Libya|‏ليبيا|Libyan
+LC|Saint Lucia|Saint Lucia|Saint Lucian
+LI|Liechtenstein|Liechtenstein|Liechtenstein
+LK|Sri Lanka|śrī laṃkāva|Sri Lankan
+LS|Lesotho|Lesotho|Basotho
+LT|Lithuania|Lietuva|Lithuanian
+LU|Luxembourg|Luxembourg|Luxembourg, Luxembourgish
+LV|Latvia|Latvija|Latvian
+MA|Morocco|المغرب|Moroccan
+MC|Monaco|Monaco|Monegasque, Monacan
+MD|Moldova|Moldova|Moldovan
+MG|Madagascar|Madagasikara|Malagasy
+MV|Maldives|Maldives|Maldivian
+MX|Mexico|México|Mexican
+MH|Marshall Islands|M̧ajeļ|Marshallese
+MK|North Macedonia|Северна Македонија|Macedonian
+ML|Mali|Mali|Malian, Malinese
+MT|Malta|Malta|Maltese
+MM|Myanmar|မြန်မာ|Burmese
+ME|Montenegro|Црна Гора|Montenegrin
+MN|Mongolia|Монгол улс|Mongolian
+MZ|Mozambique|Moçambique|Mozambican
+MR|Mauritania|موريتانيا|Mauritanian
+MU|Mauritius|Maurice|Mauritian
+MW|Malawi|Malawi|Malawian
+MY|Malaysia|Malaysia|Malaysian
+NA|Namibia|Namibia|Namibian
+NE|Niger|Niger|Nigerien
+NG|Nigeria|Nigeria|Nigerian
+NI|Nicaragua|Nicaragua|Nicaraguan
+NL|Netherlands|Nederland|Dutch, Netherlandic
+NO|Norway|Norge|Norwegian
+NP|Nepal|नेपाल|Nepali, Nepalese
+NR|Nauru|Nauru|Nauruan
+NZ|New Zealand|New Zealand|New Zealand, NZ
+OM|Oman|عمان|Omani
+PK|Pakistan|پاکستان|Pakistani
+PA|Panama|Panamá|Panamanian
+PE|Peru|Perú|Peruvian
+PH|Philippines|Pilipinas|Philippine, Filipino
+PW|Palau|Palau|Palauan
+PG|Papua New Guinea|Papua Niugini|Papua New Guinean, Papuan
+PL|Poland|Polska|Polish
+KP|North Korea|북한|North Korean
+PT|Portugal|Portugal|Portuguese
+PY|Paraguay|Paraguay|Paraguayan
+QA|Qatar|قطر|Qatari
+RO|Romania|România|Romanian
+RU|Russia|Россия|Russian
+RW|Rwanda|Rwanda|Rwandan
+SA|Saudi Arabia|المملكة العربية السعودية|Saudi, Saudi Arabian
+SD|Sudan|السودان|Sudanese
+SN|Senegal|Sénégal|Senegalese
+SG|Singapore|Singapore|Singaporean
+SB|Solomon Islands|Solomon Islands|Solomon Island
+SL|Sierra Leone|Sierra Leone|Sierra Leonean
+SV|El Salvador|El Salvador|Salvadoran
+SM|San Marino|San Marino|Sammarinese
+SO|Somalia|Soomaaliya|Somali, Somalian
+RS|Serbia|Србија|Serbian
+SS|South Sudan|South Sudan|South Sudanese
+ST|São Tomé and Príncipe|São Tomé e Príncipe|Sao Tomean
+SR|Suriname|Suriname|Surinamese
+SK|Slovakia|Slovensko|Slovak
+SI|Slovenia|Slovenija|Slovenian, Slovene
+SE|Sweden|Sverige|Swedish
+SZ|Eswatini|Swaziland|Swazi
+SC|Seychelles|Seychelles|Seychellois
+SY|Syria|سوريا|Syrian
+TD|Chad|Tchad|Chadian
+TG|Togo|Togo|Togolese
+TH|Thailand|ประเทศไทย|Thai
+TJ|Tajikistan|Тоҷикистон|Tajikistani
+TM|Turkmenistan|Türkmenistan|Turkmen
+TL|Timor-Leste|Timor-Leste|Timorese
+TO|Tonga|Tonga|Tongan
+TT|Trinidad and Tobago|Trinidad and Tobago|Trinidadian or Tobagonian
+TN|Tunisia|تونس|Tunisian
+TR|Türkiye|Türkiye|Turkish
+TV|Tuvalu|Tuvalu|Tuvaluan
+TZ|Tanzania|Tanzania|Tanzanian
+UG|Uganda|Uganda|Ugandan
+UA|Ukraine|Україна|Ukrainian
+UY|Uruguay|Uruguay|Uruguayan
+US|United States|United States|American
+UZ|Uzbekistan|O‘zbekiston|Uzbekistani, Uzbek
+VA|Vatican City|Vaticano|Vatican
+VC|Saint Vincent and the Grenadines|Saint Vincent and the Grenadines|Saint Vincentian, Vincentian
+VE|Venezuela|Venezuela|Venezuelan
+VN|Vietnam|Việt Nam|Vietnamese
+VU|Vanuatu|Vanuatu|Ni-Vanuatu, Vanuatuan
+WS|Samoa|Samoa|Samoan
+YE|Yemen|اليَمَن|Yemeni
+ZA|South Africa|South Africa|South African
+ZM|Zambia|Zambia|Zambian
+ZW|Zimbabwe|Zimbabwe|Zimbabwean
+AS|American Samoa|American Samoa|American Samoan
+AW|Aruba|Aruba|Aruban
+AI|Anguilla|Anguilla|Anguillan
+AQ|Antarctica|Antarctica|Antarctic
+BL|Saint Barthélemy|Saint-Barthélemy|Barthelemois
+BM|Bermuda|Bermuda|Bermudian, Bermudan
+BQ|Caribbean Netherlands|Caribisch Nederland|Bonaire
+BV|Bouvet Island|Bouvetøya|Bouvet Island
+CC|Cocos (Keeling) Islands|Cocos (Keeling) Islands|Cocos Island
+CK|Cook Islands|Cook Islands|Cook Island
+CW|Curaçao|Curaçao|Curacaoan
+CX|Christmas Island|Christmas Island|Christmas Island
+EH|Western Sahara|الصحراء الغربية|Sahrawi, Sahrawian, Sahraouian
+FK|Falkland Islands|Falkland Islands|Falkland Island
+FO|Faroe Islands|Føroyar|Faroese
+GF|French Guiana|Guyane française|French Guianese
+GI|Gibraltar|Gibraltar|Gibraltar
+GL|Greenland|Kalaallit Nunaat|Greenlandic
+GP|Guadeloupe|Guadeloupe|Guadeloupe
+HK|Hong Kong|香港|Hong Kong, Hong Kongese
+HM|Heard Island and McDonald Islands|Heard Island and McDonald Islands|Heard Island or McDonald Islands
+IO|British Indian Ocean Territory|British Indian Ocean Territory|BIOT
+JE|Jersey|Jersey|Channel Island
+KY|Cayman Islands|Cayman Islands|Caymanian
+MF|Saint Martin|Saint-Martin|Saint-Martinoise
+MO|Macao|澳門|Macanese, Chinese
+MP|Northern Mariana Islands|Northern Mariana Islands|Northern Marianan
+MQ|Martinique|Martinique|Martiniquais, Martinican
+MS|Montserrat|Montserrat|Montserratian
+NC|New Caledonia|Nouvelle-Calédonie|New Caledonian
+NU|Niue|Niuē|Niuean
+PF|French Polynesia|Polynésie française|French Polynesia
+PM|Saint Pierre and Miquelon|Saint-Pierre-et-Miquelon|Saint-Pierrais or Miquelonnais
+PN|Pitcairn|Pitcairn Islands|Pitcairn Island
+PR|Puerto Rico|Puerto Rico|Puerto Rican
+PS|Palestine|فلسطين|Palestinian
+RE|Réunion|La Réunion|Reunionese, Reunionnais
+SH|Saint Helena|Saint Helena|Saint Helenian
+SJ|Svalbard and Jan Mayen|Svalbard og Jan Mayen|Svalbard
+SX|Sint Maarten|Sint Maarten|Sint Maarten
+TC|Turks and Caicos Islands|Turks and Caicos Islands|Turks and Caicos Island
+TF|French Southern Territories|Territoire des Terres australes et antarctiques fr|French Southern Territories
+TK|Tokelau|Tokelau|Tokelauan
+UM|United States Minor Outlying Islands|United States Minor Outlying Islands|American
+VG|British Virgin Islands|British Virgin Islands|British Virgin Island
+VI|U.S. Virgin Islands|United States Virgin Islands|U.S. Virgin Island
+WF|Wallis and Futuna|Wallis et Futuna|Wallis and Futuna, Wallisian or Futunan
+YT|Mayotte|Mayotte|Mahoran
