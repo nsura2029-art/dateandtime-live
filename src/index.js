@@ -84,6 +84,159 @@ function findNearest(cities, lat, lon) {
   return best ? { city: best, distanceKm: bestD } : null;
 }
 
+// Humanize a slug: "san-francisco" -> "San Francisco"
+function humanizeSlug(slug) {
+  if (!slug) return "";
+  return slug
+    .split("-")
+    .map(w => w.length <= 2 ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+// "Coming Soon" page for city URLs that don't have a pre-built static page.
+// We pre-build 911 cities; the DB has 33,945. When a user visits an unmapped
+// city, serve this page with: live time in the user's tz (we don't know
+// the city's tz yet), 3 feedback CTAs, and 6 contextual backlinks.
+function generateComingSoonPage(countrySlug, citySlug) {
+  const cityName = humanizeSlug(citySlug);
+  const countryName = humanizeSlug(countrySlug);
+  const countryUrl = `/world-time/${countrySlug}/`;
+  return `<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${cityName}, ${countryName} — Current Time | dateandtime.live</title>
+  <meta name="description" content="Live time, time zone, and weather for ${cityName}, ${countryName}. Coming soon to dateandtime.live.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dateandtime.live/world-time/${countrySlug}/${citySlug}/">
+  <link rel="stylesheet" href="/src/site-shell.css">
+  <link rel="stylesheet" href="/src/tz-hub.css">
+  <style>
+    .coming-soon { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+    .coming-soon h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.5rem; }
+    .coming-soon .badge { display: inline-block; background: linear-gradient(135deg, #7866d4 0%, #ff7a59 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.5rem; }
+    .coming-soon .lede { font-size: 1.125rem; color: var(--color-foreground-soft); margin-bottom: 2rem; line-height: 1.6; }
+    .coming-soon .live-time { font-family: var(--font-mono); font-size: 2.5rem; font-weight: 700; color: var(--color-primary); padding: 1.5rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 12px; text-align: center; margin-bottom: 2rem; }
+    .coming-soon .feedback-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0; }
+    .coming-soon .feedback-card { padding: 1.25rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 10px; text-decoration: none; color: var(--color-foreground); transition: border-color 200ms, transform 200ms; }
+    .coming-soon .feedback-card:hover { border-color: var(--color-primary); transform: translateY(-2px); text-decoration: none; }
+    .coming-soon .feedback-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .coming-soon .feedback-card h3 { font-size: 0.9375rem; font-weight: 700; margin: 0 0 0.25rem; }
+    .coming-soon .feedback-card p { font-size: 0.8125rem; color: var(--color-foreground-soft); margin: 0; line-height: 1.4; }
+    .coming-soon .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin: 1.5rem 0; }
+    .coming-soon .link-card { padding: 0.75rem 1rem; border: 1px solid var(--color-border-soft); border-radius: 8px; text-decoration: none; color: var(--color-foreground-soft); font-size: 0.875rem; }
+    .coming-soon .link-card:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
+    .coming-soon .link-card .label { display: block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); margin-bottom: 0.125rem; }
+    .coming-soon .country-link { display: inline-block; margin-top: 2rem; padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; }
+    .coming-soon .country-link:hover { background: var(--color-primary-dark); text-decoration: none; }
+    [data-theme="dark"] .coming-soon .live-time { color: #b3a8ff; }
+  </style>
+</head>
+<body class="shell-page">
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a href="/" class="site-logo">
+        <span class="logo-mark" aria-hidden="true">T</span>
+        <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="/" class="nav-link">Today</a>
+        <a href="/holidays/" class="nav-link">Holidays</a>
+        <a href="/onthisday/" class="nav-link">On this day</a>
+        <a href="/meeting/" class="nav-link">Meeting finder</a>
+        <a href="/world-time/" class="nav-link nav-active">World time</a>
+        <a href="/time-zones/" class="nav-link">Timezone</a>
+        <a href="/news/" class="nav-link">News</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="coming-soon">
+    <div class="badge">Coming Soon</div>
+    <h1>${cityName}, ${countryName}</h1>
+    <p class="lede">We're building the full time zone page for <strong>${cityName}</strong>. The static page isn't ready yet, but here's what we have so far — plus a few ways you can help.</p>
+
+    <div class="live-time" id="live-time">--:--:--</div>
+    <script>
+      // Show the user's current time as a placeholder. The live city-specific
+      // clock will be added once the city is in our DB.
+      (function() {
+        const el = document.getElementById('live-time');
+        if (!el) return;
+        const tick = () => {
+          const now = new Date();
+          const fmt = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+          });
+          el.textContent = fmt.format(now);
+        };
+        tick();
+        setInterval(tick, 1000);
+      })();
+    </script>
+
+    <h2 style="margin-top:2rem;font-size:1.125rem;">Help us build this page</h2>
+    <div class="feedback-grid">
+      <a href="/feedback/?type=city&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
+        <div class="icon">📍</div>
+        <h3>Suggest the city</h3>
+        <p>Tell us the exact coordinates and time zone of ${cityName}.</p>
+      </a>
+      <a href="/feedback/?type=info&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
+        <div class="icon">ℹ️</div>
+        <h3>Tell us more</h3>
+        <p>Share history, alternate names, or local facts.</p>
+      </a>
+      <a href="/feedback/?type=notify&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
+        <div class="icon">🔔</div>
+        <h3>Notify me</h3>
+        <p>Get an email when this page goes live.</p>
+      </a>
+    </div>
+
+    <h2 style="margin-top:2rem;font-size:1.125rem;">While you wait, learn about time zones</h2>
+    <div class="links-grid">
+      <a href="/time-zones/what-is/" class="link-card"><span class="label">Learn</span>What is a time zone?</a>
+      <a href="/time-zones/dst/" class="link-card"><span class="label">Learn</span>Daylight Saving Time</a>
+      <a href="/time-zones/converter/" class="link-card"><span class="label">Tool</span>Time Zone Converter</a>
+      <a href="/time-zones/utc/" class="link-card"><span class="label">Learn</span>UTC & GMT</a>
+      <a href="/meeting/" class="link-card"><span class="label">Tool</span>Meeting Planner</a>
+      <a href="/globe/" class="link-card"><span class="label">Tool</span>World Clock Globe</a>
+    </div>
+
+    <h2 style="margin-top:2rem;font-size:1.125rem;">Today, on this day, and holidays</h2>
+    <div class="links-grid">
+      <a href="/" class="link-card"><span class="label">Today</span>What day is it?</a>
+      <a href="/onthisday/" class="link-card"><span class="label">On this day</span>Historical events today</a>
+      <a href="/holidays/${countrySlug}/" class="link-card"><span class="label">Holidays</span>${countryName} public holidays</a>
+      <a href="/news/timezone/" class="link-card"><span class="label">News</span>Latest time zone news</a>
+      <a href="/news/astronomy/" class="link-card"><span class="label">News</span>Astronomy & celestial events</a>
+      <a href="/news/calendar/" class="link-card"><span class="label">News</span>Calendar changes</a>
+    </div>
+
+    <a href="${countryUrl}" class="country-link">Browse all ${countryName} cities →</a>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <p>© 2026 <a href="/">dateandtime.live</a> · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones">IANA</a> · <a href="https://www.geonames.org/">GeoNames</a> · <a href="https://date.nager.at/">Nager.Date</a></p>
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/world-time/">World time</a>
+        <a href="/time-zones/">Time zones</a>
+        <a href="/news/">News</a>
+        <a href="/meeting/">Meeting</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="/src/site-shell.js" defer></script>
+</body>
+</html>`;
+}
+
 // ===== Cookie consent helpers =====
 const COOKIE_NAME = "cookie_consent";
 const COOKIE_VERSION = 1;
@@ -566,6 +719,37 @@ export default {
         return new Response(null, { status: 301, headers: { Location: newPath } });
       }
       // Not a state (it's a city page) — fall through to ASSETS
+    }
+
+    // City pages: /world-time/{country-slug}/{city-slug}/
+    // If the static HTML doesn't exist (we only pre-build 911 cities; the DB
+    // has 33,945), serve a "coming soon" page with live time, educational
+    // links, and a feedback form so users can suggest we add the city.
+    const comingSoonMatch = url.pathname.match(/^\/world-time\/([a-z][a-z0-9-]+)\/([a-z][a-z0-9-]+)\/?$/);
+    if (comingSoonMatch) {
+      const countrySlug = comingSoonMatch[1];
+      const citySlug = comingSoonMatch[2];
+      // Try the static asset. CF Pages returns 200 with HTML for both
+      // existing and non-existing files (the 404 body for missing ones
+      // is small ~8KB; existing pages are 30-50KB). Use body length
+      // to distinguish: a real city page is >20KB; a 404 body is <12KB.
+      let cityCheck;
+      try {
+        cityCheck = await env.ASSETS.fetch(
+          new Request(`/world-time/${countrySlug}/${citySlug}/`)
+        );
+        // Read up to 1 byte to force the body to be fetched.
+        const buf = await cityCheck.arrayBuffer();
+        if (buf.byteLength < 12000) {
+          // Likely a 404 fallback page. Serve coming-soon.
+          return new Response(generateComingSoonPage(countrySlug, citySlug), {
+            status: 200,
+            headers: { "content-type": "text/html; charset=utf-8" }
+          });
+        }
+      } catch (e) {
+        // Error fetching — fall through to default asset serving.
+      }
     }
 
     // Get the asset (HTML or other) from the [assets] binding.

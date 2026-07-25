@@ -289,17 +289,20 @@
       <div class="hero-left">
         <div class="pre-title">Current local time in</div>
         <h1><span class="name">Guilin</span></h1>
-        <p class="lede">Live local time, time zone, weather, and history for Guilin — a city in China with 1.57M people.</p>
+        <p class="lede">Live local time, time zone, weather, and history for Guilin — a city in China with <span data-live="population">1.57M</span> people.</p>
         <div class="hero-meta">
-          <span>📍 25.2802°N, 110.2964°E</span>
-          <span>👥 1.57M</span>
-          <span>🌎 Asia/Shanghai</span>
+          <span>📍 <span data-live="coords">25.2802°N, 110.2964°E</span></span>
+          <span>👥 <span data-live="pop">1.57M</span></span>
+          <span>🌎 <span data-live="tz">Asia/Shanghai</span></span>
           <span>📅 Saturday, July 25, 2026</span>
+        </div>
+        <div class="hero-meta" style="margin-top: 0.5rem; font-size: 0.75rem;">
+          <span data-live="updated" style="opacity: 0.6;">⏱ Live data — updated just now</span>
         </div>
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">12:37:04<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">12:51:13<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -331,7 +334,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Shanghai">12:37:04 PM<br>+8 · Saturday</div>
+      <div class="value" data-tz="Asia/Shanghai">12:51:13 PM<br>+8 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -451,11 +454,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 76% humidity</span>
+      <span>💧 77% humidity</span>
       <span>💨 3 mph wind</span>
-      <span>🌡 205°F feels like</span>
+      <span>🌡 204°F feels like</span>
       <span>🕵 UV 8.55</span>
-      <span>📏 985.2 hPa</span>
+      <span>📏 985.4 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -490,37 +493,37 @@
         <a href="/world-time/china/liuzhou/" class="nearby-card">
           <div class="name">Liuzhou</div>
           <div class="meta">139 km · 16 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:37:05<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/yunfu/" class="nearby-card">
           <div class="name">Yunfu</div>
           <div class="meta">316 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:37:05<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/qingyuan/" class="nearby-card">
           <div class="name">Qingyuan</div>
           <div class="meta">328 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:37:05<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/zhaoqing/" class="nearby-card">
           <div class="name">Zhaoqing</div>
           <div class="meta">331 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:37:05<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/nanning/" class="nearby-card">
           <div class="name">Nanning</div>
           <div class="meta">340 km · 16 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:37:05<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/foshan/" class="nearby-card">
           <div class="name">Foshan</div>
           <div class="meta">381 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:37:05<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -648,9 +651,33 @@
     </p>
   </section>
 
-    <!-- Section 09: More to explore -->
+    <!-- Section 09: Learn about time zones -->
     <div class="section-head">
-      <h2><span class="num">09</span> · More to explore</h2>
+      <h2><span class="num">09</span> · Learn about time zones</h2>
+    </div>
+    <section class="explore-grid">
+      <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
+      <a href="/time-zones/dst/" class="explore-link"><span class="label">🔄 Daylight Saving Time</span>When the clocks change and why</a>
+      <a href="/time-zones/converter/" class="explore-link"><span class="label">🔁 Time Zone Converter</span>Convert Asia/Shanghai to anywhere</a>
+      <a href="/time-zones/utc/" class="explore-link"><span class="label">🌐 UTC & GMT</span>The global time standard</a>
+      <a href="/time-zones/in/china/" class="explore-link"><span class="label">🗺 China time zones</span>All zones in this country</a>
+    </section>
+
+    <!-- Section 10: Today's content -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Today</h2>
+    </div>
+    <section class="explore-grid">
+      <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
+      <a href="/holidays/china/" class="explore-link"><span class="label">🎉 Holidays</span>China public holidays</a>
+      <a href="/onthisday/" class="explore-link"><span class="label">📜 On this day</span>Historical events on this date</a>
+      <a href="/news/timezone/" class="explore-link"><span class="label">📰 News</span>Latest time zone news</a>
+      <a href="/meeting/?with=guilin" class="explore-link"><span class="label">📅 Meeting Planner</span>Find a meeting time with Guilin</a>
+    </section>
+
+    <!-- Section 11: More to explore -->
+    <div class="section-head">
+      <h2><span class="num">11</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/china/" class="explore-link"><span class="label">🇨🇳 China</span>All China cities</a>
@@ -711,6 +738,53 @@
       requestAnimationFrame(updateClock);
     }
     updateClock();
+
+    // Fetch live city data from /api/v1/cities/{id} on page load.
+    // Updates the hero meta (population, coords, timezone) and the
+    // "Last updated" timestamp. If the API is unreachable, the static
+    // values baked at build time stay visible.
+    (function fetchLiveCityData() {
+      const CITY_ID = 1809498;
+      if (!CITY_ID) return;
+      const API_BASE = "https://datetime-api-dev.nsura2029.workers.dev";
+      const updatedEl = document.querySelector('[data-live="updated"]');
+      function setUpdated(text) { if (updatedEl) updatedEl.textContent = '⏱ ' + text; }
+      function fmt(n) {
+        if (n == null) return '';
+        if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/.0$/, '') + 'M';
+        if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+        return String(n);
+      }
+      function fmtCoords(lat, lon) {
+        const latH = lat >= 0 ? 'N' : 'S';
+        const lonH = lon >= 0 ? 'E' : 'W';
+        return Math.abs(lat).toFixed(4) + '°' + latH + ', ' + Math.abs(lon).toFixed(4) + '°' + lonH;
+      }
+      fetch(API_BASE + '/api/v1/cities/' + CITY_ID, { headers: { 'Accept': 'application/json' } })
+        .then(r => r.ok ? r.json() : null)
+        .then(j => {
+          if (!j || !j.success || !j.data) return;
+          const city = j.data.city || j.data;
+          if (!city || !city.id) return;
+          const popEl = document.querySelector('[data-live="pop"]');
+          if (popEl && city.population != null) popEl.textContent = fmt(city.population);
+          const ledeEl = document.querySelector('[data-live="population"]');
+          if (ledeEl && city.population != null) ledeEl.textContent = fmt(city.population);
+          const coordsEl = document.querySelector('[data-live="coords"]');
+          if (coordsEl && city.latitude != null && city.longitude != null) {
+            coordsEl.textContent = fmtCoords(city.latitude, city.longitude);
+          }
+          const tzEl = document.querySelector('[data-live="tz"]');
+          if (tzEl && city.timezone) tzEl.textContent = city.timezone;
+          const now = new Date();
+          const stamp = now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          setUpdated('Live data — updated ' + stamp);
+        })
+        .catch(() => {
+          if (updatedEl) updatedEl.textContent = '⏱ Static data (network unreachable)';
+        });
+      setTimeout(fetchLiveCityData, 5 * 60 * 1000);
+    })();
   </script>
   <script src="/src/site-shell.js" defer></script>
 </body>

@@ -856,12 +856,15 @@ function renderTemplate(d) {
       <div class="hero-left">
         <div class="pre-title">Current local time in</div>
         <h1><span class="name">${c.name}</span></h1>
-        <p class="lede">Live local time, time zone, weather, and history for ${c.name}${c.isCapital ? ' (capital city)' : ''} — a city in ${c.countryName} with ${numberFormat(c.population)} people.</p>
+        <p class="lede">Live local time, time zone, weather, and history for ${c.name}${c.isCapital ? ' (capital city)' : ''} — a city in ${c.countryName} with <span data-live="population">${numberFormat(c.population)}</span> people.</p>
         <div class="hero-meta">
-          <span>📍 ${c.latitude.toFixed(4)}°${c.latitude >= 0 ? 'N' : 'S'}, ${Math.abs(c.longitude).toFixed(4)}°${c.longitude >= 0 ? 'E' : 'W'}</span>
-          <span>👥 ${numberFormat(c.population)}</span>
-          <span>🌎 ${c.timezone}</span>
+          <span>📍 <span data-live="coords">${c.latitude.toFixed(4)}°${c.latitude >= 0 ? 'N' : 'S'}, ${Math.abs(c.longitude).toFixed(4)}°${c.longitude >= 0 ? 'E' : 'W'}</span></span>
+          <span>👥 <span data-live="pop">${numberFormat(c.population)}</span></span>
+          <span>🌎 <span data-live="tz">${c.timezone}</span></span>
           <span>📅 ${fmtDate(new Date().toISOString())}</span>
+        </div>
+        <div class="hero-meta" style="margin-top: 0.5rem; font-size: 0.75rem;">
+          <span data-live="updated" style="opacity: 0.6;">⏱ Live data — updated just now</span>
         </div>
       </div>
       <div class="hero-clock">
@@ -932,9 +935,33 @@ function renderTemplate(d) {
     </div>
     <section>${climateHtml}</section>
 
-    <!-- Section 09: More to explore -->
+    <!-- Section 09: Learn about time zones -->
     <div class="section-head">
-      <h2><span class="num">09</span> · More to explore</h2>
+      <h2><span class="num">09</span> · Learn about time zones</h2>
+    </div>
+    <section class="explore-grid">
+      <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
+      <a href="/time-zones/dst/" class="explore-link"><span class="label">🔄 Daylight Saving Time</span>When the clocks change and why</a>
+      <a href="/time-zones/converter/" class="explore-link"><span class="label">🔁 Time Zone Converter</span>Convert ${c.timezone} to anywhere</a>
+      <a href="/time-zones/utc/" class="explore-link"><span class="label">🌐 UTC & GMT</span>The global time standard</a>
+      <a href="/time-zones/in/${c.countrySlug}/" class="explore-link"><span class="label">🗺 ${c.countryName} time zones</span>All zones in this country</a>
+    </section>
+
+    <!-- Section 10: Today's content -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Today</h2>
+    </div>
+    <section class="explore-grid">
+      <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
+      <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>${c.countryName} public holidays</a>
+      <a href="/onthisday/" class="explore-link"><span class="label">📜 On this day</span>Historical events on this date</a>
+      <a href="/news/timezone/" class="explore-link"><span class="label">📰 News</span>Latest time zone news</a>
+      <a href="/meeting/?with=${d.city.slug}" class="explore-link"><span class="label">📅 Meeting Planner</span>Find a meeting time with ${c.name}</a>
+    </section>
+
+    <!-- Section 11: More to explore -->
+    <div class="section-head">
+      <h2><span class="num">11</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/${c.countrySlug}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>
@@ -1002,6 +1029,53 @@ function renderTemplate(d) {
       requestAnimationFrame(updateClock);
     }
     updateClock();
+
+    // Fetch live city data from /api/v1/cities/{id} on page load.
+    // Updates the hero meta (population, coords, timezone) and the
+    // "Last updated" timestamp. If the API is unreachable, the static
+    // values baked at build time stay visible.
+    (function fetchLiveCityData() {
+      const CITY_ID = ${c.id};
+      if (!CITY_ID) return;
+      const API_BASE = "https://datetime-api-dev.nsura2029.workers.dev";
+      const updatedEl = document.querySelector('[data-live="updated"]');
+      function setUpdated(text) { if (updatedEl) updatedEl.textContent = '⏱ ' + text; }
+      function fmt(n) {
+        if (n == null) return '';
+        if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+        return String(n);
+      }
+      function fmtCoords(lat, lon) {
+        const latH = lat >= 0 ? 'N' : 'S';
+        const lonH = lon >= 0 ? 'E' : 'W';
+        return Math.abs(lat).toFixed(4) + '°' + latH + ', ' + Math.abs(lon).toFixed(4) + '°' + lonH;
+      }
+      fetch(API_BASE + '/api/v1/cities/' + CITY_ID, { headers: { 'Accept': 'application/json' } })
+        .then(r => r.ok ? r.json() : null)
+        .then(j => {
+          if (!j || !j.success || !j.data) return;
+          const city = j.data.city || j.data;
+          if (!city || !city.id) return;
+          const popEl = document.querySelector('[data-live="pop"]');
+          if (popEl && city.population != null) popEl.textContent = fmt(city.population);
+          const ledeEl = document.querySelector('[data-live="population"]');
+          if (ledeEl && city.population != null) ledeEl.textContent = fmt(city.population);
+          const coordsEl = document.querySelector('[data-live="coords"]');
+          if (coordsEl && city.latitude != null && city.longitude != null) {
+            coordsEl.textContent = fmtCoords(city.latitude, city.longitude);
+          }
+          const tzEl = document.querySelector('[data-live="tz"]');
+          if (tzEl && city.timezone) tzEl.textContent = city.timezone;
+          const now = new Date();
+          const stamp = now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          setUpdated('Live data — updated ' + stamp);
+        })
+        .catch(() => {
+          if (updatedEl) updatedEl.textContent = '⏱ Static data (network unreachable)';
+        });
+      setTimeout(fetchLiveCityData, 5 * 60 * 1000);
+    })();
   </script>
   <script src="/src/site-shell.js" defer></script>
 </body>
