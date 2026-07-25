@@ -1,6 +1,6 @@
 # dateandtime.live — Project Progress
 
-> Last updated: 2026-07-22
+> Last updated: 2026-07-25
 > Tracking all work shipped to dev. Each entry has date, what shipped, files changed, and how to test.
 
 ## Live URLs
@@ -12,9 +12,94 @@
 | API (custom domain) | https://dev.api.dateandtime.live/api/v1/ | ✅ Live |
 | Cron worker (dev) | https://city-cron-dev.nsura2029.workers.dev/ | ✅ Live |
 | City page preview (D) | https://tdp-landing-dev.nsura2029.workers.dev/city-page-preview/D-data-hub.html | ✅ Live |
-| City page (Tampa) | https://tdp-landing-dev.nsura2029.workers.dev/world-time/city/tampa/ | ✅ Live |
+| City page (Tampa, NEW path) | https://tdp-landing-dev.nsura2029.workers.dev/world-time/us/tampa/ | ✅ Live |
+| City page (Tampa, old path) | https://tdp-landing-dev.nsura2029.workers.dev/world-time/city/tampa/ | 301 → new path |
 | API (prod) | https://api.dateandtime.live/api/v1/ | ✅ Live (legacy routes) |
 | Frontend (prod) | https://dateandtime.live/ | ✅ Live (NOT updated with new features) |
+
+---
+
+## 2026-07-25 — World Time hub redesign: hybrid page + URL migration
+
+**Goal:** the /world-time/ hub now lists 250 popular cities in a 5-col alphabetical grid (each linking to its dedicated page) — inspired by timeanddate.com/worldclock/. All 911 city pages migrated to the new canonical URL pattern `/world-time/{country}/{slug}/`, with 301 redirects from the old `/world-time/city/{slug}/` path. New API endpoint `/api/v1/cities/popular` powers the grid (filterable, sortable, enriched with flag emoji + canonical path).
+
+### Phase 1 — API ready (`cloudflare/datetime-api/routes/cities.js`, +250 lines)
+
+- **New endpoint: `GET /api/v1/cities/popular`**
+  - Query params: `limit` (default 200, max 500), `continent` (AF/AS/EU/NA/OC/SA), `country` (cca2), `isCapital` (1), `sort` (population|name|country)
+  - Returns top N cities with `flagEmoji` (computed via Unicode regional indicators), `path` (canonical /world-time/{country}/{slug}/), `continent` (derived from unRegion + unSubregion)
+  - 1h in-memory cache + 1h edge cache
+  - Slug fallback: `slugify(name)` for the 33K cities we haven't pre-built
+- **Continent derivation** — the prod API returns `continent: null` for all countries, so we map from `unRegion` (Africa → AF, Asia → AS, Europe → EU, Oceania → OC, Antarctic → AN) + `unSubregion` (Americas splits into NA / SA)
+- **Deployed to dev:** `https://datetime-api-dev.nsura2029.workers.dev/api/v1/cities/popular`
+
+### Phase 2 — URL migration: `/world-time/city/{slug}/` → `/world-time/{country}/{slug}/`
+
+- **911 city pages regenerated** at the new path (`world-time/{country}/{slug}/index.html`, 73MB total across 133 country directories)
+- **Build script** (`scripts/build-city-pages.js`) updated:
+  - Output path: `world-time/city/{slug}/index.html` → `world-time/{country}/{slug}/index.html`
+  - All internal links (canonical, nearby cities, sub-page anchors) updated to new pattern
+  - Hardcoded popular city links (NY/London/Tokyo/Sydney/Dubai) updated
+- **Old files kept on disk** (additive — no section deleted from any page)
+- **301 redirects** (`src/index.js` + `src/slug-data.js`):
+  - 911-entry compact slug→cca2 map (10.8KB) parsed at module init
+  - Old URL → 301 → new URL (e.g. `/world-time/city/tampa/` → `/world-time/us/tampa/`)
+  - Unknown slugs fall through to the legacy asset (graceful)
+  - Note: wrangler 4.x couldn't parse the 911-entry JS object literal directly; switched to a compact `slug,country|...` string + runtime parser
+- **Verified live:**
+  - `/world-time/city/tampa/` 301 → `/world-time/us/tampa/`
+  - `/world-time/city/london/` 301 → `/world-time/gb/london/`
+  - `/world-time/us/tampa/` 200 (43KB, all 8 sections + new internal links)
+
+### Phase 3 — New `/world-time/` hub (hybrid design)
+
+- **Section 1: Featured live clocks** (kept from v1) — 12 cities, 1Hz updates
+- **Section 2: City grid** (NEW) — 5-col alphabetical grid of 250 popular cities
+  - Each row: flag emoji + city name (link to /world-time/{country}/{slug}/) + country + live local time (1Hz)
+  - 27 letter groups (A–Z)
+  - 7 continent filter pills: All, Africa, Asia, Europe, N. America, Oceania, S. America
+  - 3 sort options: Popular (default), City A-Z, Country
+  - localStorage-cached (24h TTL) to avoid hammering the API
+- **Section 3: Tools + FAQ** (kept from v1)
+- **Schema**: 4 types now — WebApplication, BreadcrumbList, FAQPage, **ItemList** (hydrated from `window.__popularCities` after the JS loads so Google sees the full list, not an empty div)
+- **Files added/changed:**
+  - `src/world-time-cities.js` (NEW, 7.5KB) — fetch + render + live clocks
+  - `src/tz-hub.css` (+250 lines) — `.wt-filters`, `.wt-city-grid`, `.wt-letter-group`, `.wt-city-row`
+  - `world-time/index.html` — added `<section class="wt-city-section">` + new script + ItemList emitter
+
+### Verification
+
+| Check | Result |
+|---|---|
+| API endpoint returns 3 cities | ✅ Beijing, Kinshasa, Mexico City (with flagEmoji + path) |
+| 250 city rows in grid | ✅ |
+| 27 letter groups | ✅ |
+| 7 continent filters + 3 sort options | ✅ |
+| 4 schema types (WebApp, Breadcrumb, FAQ, ItemList) | ✅ |
+| Click city in grid → navigates to /world-time/{country}/{slug}/ | ✅ |
+| /world-time/city/{slug}/ → 301 → /world-time/{country}/{slug}/ | ✅ Tampa, London, Tokyo, Mumbai all redirect |
+| New /world-time/us/tampa/ page loads with all 8 sections | ✅ |
+| No console errors | ✅ |
+
+### What changed in files
+
+- `cloudflare/datetime-api/routes/cities.js` (+250 lines)
+- `src/slug-data.js` (NEW, 10.8KB)
+- `src/index.js` (+30 lines, 301 redirect handler)
+- `src/world-time-cities.js` (NEW, 7.5KB)
+- `src/tz-hub.css` (+250 lines)
+- `scripts/build-city-pages.js` (output path + all internal links updated)
+- `scripts/cities-911-build.json` (NEW, input for the build run)
+- `world-time/{country}/{slug}/index.html` — 911 NEW city pages
+- `world-time/city/{slug}/index.html` — 911 OLD city pages (kept, redirected)
+- `world-time/index.html` — added city grid section + script
+- `screenshots/screen-wt-new-top.png` + `screen-wt-new-grid.png` (NEW)
+
+### Open follow-ups (not done in this batch)
+
+- Sub-pages (`/world-time/{country}/{slug}/time/`, `/facts/`, `/weather/`, etc.) — not migrated yet, would 404 at the new path. Follow-up: build the sub-pages or move them to query strings.
+- Scale city page coverage from 911 to all 33,945 (would need KV or R2 storage for the assets; current deploy is already ~73MB at the new path).
+- The 7-city continent filter could be expanded with sub-region pills (Caribbean, Central America, etc.).
 
 ---
 
