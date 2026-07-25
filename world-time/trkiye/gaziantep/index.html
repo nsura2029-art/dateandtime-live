@@ -143,6 +143,13 @@
     .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
     .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
     @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* "Did you know?" trivia cards */
+    .did-you-know-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .did-you-know-card { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-period-bg, rgba(92, 74, 175, 0.06)); border-left: 3px solid var(--color-primary, #5b4aaf); border-radius: 6px; }
+    .did-you-know-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .did-you-know-card p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--color-foreground-soft, #49445f); }
+    [data-theme="dark"] .did-you-know-card { background: rgba(120, 102, 212, 0.12); border-left-color: #a78bfa; }
+    [data-theme="dark"] .did-you-know-card p { color: #d6cef5; }
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
@@ -302,7 +309,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">12:50:35<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">1:33:32<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -334,7 +341,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Europe/Istanbul">12:50:35 PM<br>+3 · Saturday</div>
+      <div class="value" data-tz="Europe/Istanbul">1:33:32 PM<br>+3 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -454,11 +461,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 26% humidity</span>
+      <span>💧 27% humidity</span>
       <span>💨 17 mph wind</span>
-      <span>🌡 177°F feels like</span>
+      <span>🌡 172°F feels like</span>
       <span>🕵 UV 7.85</span>
-      <span>📏 911.3 hPa</span>
+      <span>📏 911.4 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -493,37 +500,37 @@
         <a href="/world-time/trkiye/sanliurfa/" class="nearby-card">
           <div class="name">Şanlıurfa</div>
           <div class="meta">126 km · 63 · TR</div>
-          <div class="time" data-tz="Europe/Istanbul">3:50:35<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Istanbul">4:33:32<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/trkiye/antakya/" class="nearby-card">
           <div class="name">Antakya</div>
           <div class="meta">145 km · 31 · TR</div>
-          <div class="time" data-tz="Europe/Istanbul">3:50:35<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Istanbul">4:33:32<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/trkiye/malatya/" class="nearby-card">
           <div class="name">Malatya</div>
           <div class="meta">165 km · 44 · TR</div>
-          <div class="time" data-tz="Europe/Istanbul">3:50:35<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Istanbul">4:33:32<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/trkiye/adana/" class="nearby-card">
           <div class="name">Adana</div>
           <div class="meta">183 km · 81 · TR</div>
-          <div class="time" data-tz="Europe/Istanbul">3:50:35<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Istanbul">4:33:32<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/trkiye/elazig/" class="nearby-card">
           <div class="name">Elazığ</div>
           <div class="meta">242 km · 23 · TR</div>
-          <div class="time" data-tz="Europe/Istanbul">3:50:35<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Istanbul">4:33:32<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/trkiye/mersin/" class="nearby-card">
           <div class="name">Mersin</div>
           <div class="meta">245 km · 32 · TR</div>
-          <div class="time" data-tz="Europe/Istanbul">3:50:35<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Istanbul">4:33:32<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -651,9 +658,28 @@
     </p>
   </section>
 
-    <!-- Section 09: Learn about time zones -->
+    <!-- Section 09: Did you know? (time zone trivia for this city) -->
     <div class="section-head">
-      <h2><span class="num">09</span> · Learn about time zones</h2>
+      <h2><span class="num">09</span> · Did you know?</h2>
+      <a class="more" href="/time-zones/">More facts →</a>
+    </div>
+    <section class="did-you-know-grid" data-did-you-know>
+      
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>About 70 countries use DST, but most countries near the equator don't.</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>The International Date Line is not a straight line — it zigzags around Pacific islands.</p>
+          </div>
+        
+    </section>
+
+    <!-- Section 10: Learn about time zones -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Learn about time zones</h2>
     </div>
     <section class="explore-grid">
       <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
@@ -665,7 +691,7 @@
 
     <!-- Section 10: Today's content -->
     <div class="section-head">
-      <h2><span class="num">10</span> · Today</h2>
+      <h2><span class="num">11</span> · Today</h2>
     </div>
     <section class="explore-grid">
       <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
@@ -677,7 +703,7 @@
 
     <!-- Section 11: More to explore -->
     <div class="section-head">
-      <h2><span class="num">11</span> · More to explore</h2>
+      <h2><span class="num">12</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/trkiye/" class="explore-link"><span class="label">🇹🇷 Türkiye</span>All Türkiye cities</a>

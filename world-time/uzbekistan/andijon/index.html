@@ -143,6 +143,13 @@
     .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
     .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
     @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* "Did you know?" trivia cards */
+    .did-you-know-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .did-you-know-card { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-period-bg, rgba(92, 74, 175, 0.06)); border-left: 3px solid var(--color-primary, #5b4aaf); border-radius: 6px; }
+    .did-you-know-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .did-you-know-card p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--color-foreground-soft, #49445f); }
+    [data-theme="dark"] .did-you-know-card { background: rgba(120, 102, 212, 0.12); border-left-color: #a78bfa; }
+    [data-theme="dark"] .did-you-know-card p { color: #d6cef5; }
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
@@ -302,7 +309,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">12:50:53<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">1:33:49<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -334,7 +341,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Tashkent">12:50:53 PM<br>+5 · Saturday</div>
+      <div class="value" data-tz="Asia/Tashkent">1:33:49 PM<br>+5 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -454,8 +461,8 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 46% humidity</span>
-      <span>💨 3 mph wind</span>
+      <span>💧 60% humidity</span>
+      <span>💨 2 mph wind</span>
       <span>🌡 199°F feels like</span>
       <span>🕵 UV 7.8</span>
       <span>📏 948.9 hPa</span>
@@ -483,37 +490,37 @@
         <a href="/world-time/uzbekistan/namangan/" class="nearby-card">
           <div class="name">Namangan</div>
           <div class="meta">62 km · 06 · UZ</div>
-          <div class="time" data-tz="Asia/Tashkent">5:50:53<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Tashkent">6:33:50<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/uzbekistan/fergana/" class="nearby-card">
           <div class="name">Fergana</div>
           <div class="meta">65 km · 03 · UZ</div>
-          <div class="time" data-tz="Asia/Tashkent">5:50:53<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Tashkent">6:33:50<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/uzbekistan/yunusobod/" class="nearby-card">
           <div class="name">Yunusobod</div>
           <div class="meta">266 km · 13 · UZ</div>
-          <div class="time" data-tz="Asia/Tashkent">5:50:53<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Tashkent">6:33:50<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/uzbekistan/tashkent/" class="nearby-card">
           <div class="name">Tashkent</div>
           <div class="meta">268 km · 13 · UZ</div>
-          <div class="time" data-tz="Asia/Tashkent">5:50:53<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Tashkent">6:33:50<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/uzbekistan/samarkand/" class="nearby-card">
           <div class="name">Samarkand</div>
           <div class="meta">474 km · 10 · UZ</div>
-          <div class="time" data-tz="Asia/Samarkand">5:50:53<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Samarkand">6:33:50<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/uzbekistan/nukus/" class="nearby-card">
           <div class="name">Nukus</div>
           <div class="meta">1075 km · 09 · UZ</div>
-          <div class="time" data-tz="Asia/Samarkand">5:50:53<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Samarkand">6:33:50<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -641,9 +648,28 @@
     </p>
   </section>
 
-    <!-- Section 09: Learn about time zones -->
+    <!-- Section 09: Did you know? (time zone trivia for this city) -->
     <div class="section-head">
-      <h2><span class="num">09</span> · Learn about time zones</h2>
+      <h2><span class="num">09</span> · Did you know?</h2>
+      <a class="more" href="/time-zones/">More facts →</a>
+    </div>
+    <section class="did-you-know-grid" data-did-you-know>
+      
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>Daylight Saving Time was first proposed by Benjamin Franklin in 1784.</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>The first country to adopt DST was Germany in 1916, to save coal during WWI.</p>
+          </div>
+        
+    </section>
+
+    <!-- Section 10: Learn about time zones -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Learn about time zones</h2>
     </div>
     <section class="explore-grid">
       <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
@@ -655,7 +681,7 @@
 
     <!-- Section 10: Today's content -->
     <div class="section-head">
-      <h2><span class="num">10</span> · Today</h2>
+      <h2><span class="num">11</span> · Today</h2>
     </div>
     <section class="explore-grid">
       <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
@@ -667,7 +693,7 @@
 
     <!-- Section 11: More to explore -->
     <div class="section-head">
-      <h2><span class="num">11</span> · More to explore</h2>
+      <h2><span class="num">12</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/uzbekistan/" class="explore-link"><span class="label">🇺🇿 Uzbekistan</span>All Uzbekistan cities</a>

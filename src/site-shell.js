@@ -236,6 +236,155 @@
     highlightActiveNav();
     initMobileNav();
     initDropdowns();
+    injectTodayBar();
+    injectContinueStrip();
+  }
+
+  // ====================================================================
+  // TODAY BAR — persistent strip under the site header on every page.
+  // Shows today's date, day of year, week number, and the user's current
+  // local time. Auto-updates every second. Helps users feel the live
+  // nature of the site and creates a strong "this is real-time data"
+  // signal.
+  // ====================================================================
+  function injectTodayBar() {
+    // Skip pages that already have a richer header (the landing page
+    // has its own hero, and city/state/country pages have their own
+    // hero with the city clock).
+    if (document.querySelector('[data-skip-today-bar]')) return;
+    if (document.getElementById('today-bar')) return;
+    const bar = document.createElement('div');
+    bar.id = 'today-bar';
+    bar.setAttribute('data-today-bar', '1');
+    bar.innerHTML = `
+      <div class="today-bar-inner">
+        <a href="/" class="today-bar-link">
+          <span class="today-bar-icon" aria-hidden="true">📅</span>
+          <span class="today-bar-text">
+            <span class="today-bar-label">Today</span>
+            <span class="today-bar-value" data-today-date>—</span>
+          </span>
+        </a>
+        <span class="today-bar-sep" aria-hidden="true">·</span>
+        <div class="today-bar-stat">
+          <span class="today-bar-label">Day</span>
+          <span class="today-bar-value" data-today-doy>—</span>
+        </div>
+        <span class="today-bar-sep" aria-hidden="true">·</span>
+        <div class="today-bar-stat">
+          <span class="today-bar-label">Week</span>
+          <span class="today-bar-value" data-today-week>—</span>
+        </div>
+        <span class="today-bar-sep" aria-hidden="true">·</span>
+        <div class="today-bar-stat today-bar-time">
+          <span class="today-bar-label">Local</span>
+          <span class="today-bar-value" data-today-time>--:--:--</span>
+        </div>
+        <a href="/onthisday/" class="today-bar-link today-bar-right">
+          <span class="today-bar-text">
+            <span class="today-bar-label">On this day</span>
+            <span class="today-bar-value">3 events today →</span>
+          </span>
+        </a>
+      </div>
+    `;
+    // Insert right after <header>
+    const header = document.querySelector('header.site-header, .site-header, header');
+    if (header && header.parentNode) {
+      header.parentNode.insertBefore(bar, header.nextSibling);
+    } else {
+      document.body.insertBefore(bar, document.body.firstChild);
+    }
+    tickTodayBar();
+    setInterval(tickTodayBar, 1000);
+  }
+
+  function tickTodayBar() {
+    const now = new Date();
+    // Use the user's local timezone (browser default).
+    const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+    const dateStr = now.toLocaleDateString('en-US', dateOpts);
+    // Day of year
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+    // Week number (ISO)
+    const target = new Date(now.valueOf());
+    const dayNr = (now.getDay() + 6) % 7;
+    target.setDate(target.getDate() - dayNr + 3);
+    const firstThursday = target.valueOf();
+    target.setMonth(0, 1);
+    if (target.getDay() !== 4) {
+      target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+    }
+    const weekNum = 1 + Math.ceil((firstThursday - target) / (7 * 24 * 3600 * 1000));
+    // Time
+    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    const elDate = document.querySelector('[data-today-date]');
+    if (elDate) elDate.textContent = dateStr;
+    const elDoy = document.querySelector('[data-today-doy]');
+    if (elDoy) elDoy.textContent = dayOfYear + ' / 365';
+    const elWeek = document.querySelector('[data-today-week]');
+    if (elWeek) elWeek.textContent = weekNum;
+    const elTime = document.querySelector('[data-today-time]');
+    if (elTime) elTime.textContent = timeStr;
+  }
+
+  // ====================================================================
+  // CONTINUE YOUR JOURNEY — 6 cross-page link cards at the bottom of
+  // every page (when there's no existing explore-grid section). Links
+  // to: Today, Holidays, On this day, World time, News, Meeting. The
+  // goal is to keep users in the site by showing what's next.
+  // ====================================================================
+  function injectContinueStrip() {
+    if (document.querySelector('[data-skip-continue]')) return;
+    if (document.getElementById('continue-strip')) return;
+    // Find the main element to append before the footer
+    const main = document.querySelector('main');
+    if (!main) return;
+    const strip = document.createElement('section');
+    strip.id = 'continue-strip';
+    strip.className = 'continue-strip';
+    strip.setAttribute('data-continue-strip', '1');
+    strip.innerHTML = `
+      <div class="continue-strip-inner">
+        <h2 class="continue-strip-title">Continue your journey</h2>
+        <p class="continue-strip-sub">Wherever you are, whatever you need — explore the rest of dateandtime.live.</p>
+        <div class="continue-strip-grid">
+          <a href="/" class="continue-strip-card">
+            <span class="continue-strip-icon" aria-hidden="true">📅</span>
+            <strong>Today</strong>
+            <span>What day is it? Your local time, week, and day of year.</span>
+          </a>
+          <a href="/holidays/" class="continue-strip-card">
+            <span class="continue-strip-icon" aria-hidden="true">🎉</span>
+            <strong>Holidays</strong>
+            <span>Public holidays for 200+ countries, with long weekend finder.</span>
+          </a>
+          <a href="/onthisday/" class="continue-strip-card">
+            <span class="continue-strip-icon" aria-hidden="true">📜</span>
+            <strong>On this day</strong>
+            <span>Historical events that happened today, from 1,000 BC to today.</span>
+          </a>
+          <a href="/world-time/" class="continue-strip-card">
+            <span class="continue-strip-icon" aria-hidden="true">🌍</span>
+            <strong>World time</strong>
+            <span>Live time in 33,945 cities across 250 countries.</span>
+          </a>
+          <a href="/news/" class="continue-strip-card">
+            <span class="continue-strip-icon" aria-hidden="true">📰</span>
+            <strong>News</strong>
+            <span>Latest time zone changes, DST shifts, and clock news.</span>
+          </a>
+          <a href="/meeting/" class="continue-strip-card">
+            <span class="continue-strip-icon" aria-hidden="true">📅</span>
+            <strong>Meeting planner</strong>
+            <span>Find a meeting time that works across time zones.</span>
+          </a>
+        </div>
+      </div>
+    `;
+    main.appendChild(strip);
   }
 
   if (document.readyState === "loading") {

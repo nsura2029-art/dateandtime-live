@@ -337,6 +337,7 @@
 
     try {
       let list = [];
+      let data = {};
       if (state.stateCode && state.country) {
         // State pages: fetch all US cities across multiple pages, then filter
         // by state + minPop client-side. The /cities endpoint's 1,000-result
@@ -357,7 +358,7 @@
         });
         if (!r.ok) throw new Error("popular upstream " + r.status);
         const j = await r.json();
-        const data = j.data || {};
+        data = j.data || {};
         list = data.cities || [];
       }
       state.total = state.stateCode ? list.length : (data?.total != null ? data.total : list.length);
@@ -923,6 +924,7 @@
     setLoadingUI(true);
     try {
       let list = [];
+      let data = {};
       if (state.stateCode && state.country) {
         // Same multi-page fetch as fetchPage for state pages.
         const all = await fetchAllCountryCities(state.aborter.signal);
@@ -939,7 +941,7 @@
         });
         if (!r.ok) throw new Error("popular upstream " + r.status);
         const j = await r.json();
-        const data = j.data || {};
+        data = j.data || {};
         list = data.cities || [];
       }
       state.total = state.stateCode ? list.length : (data?.total != null ? data.total : list.length);

@@ -784,3 +784,99 @@ body.has-mobile-nav-open {
   color: var(--color-primary);
   white-space: nowrap;
 }
+
+/* =====================================================
+   TODAY BAR — persistent strip under the site header.
+   Shows today's date, day-of-year, week, and user's local
+   time. Auto-updates every second.
+   ===================================================== */
+#today-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--color-background-soft);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8125rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.today-bar-inner {
+  max-width: var(--container, 1240px);
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.today-bar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--color-foreground);
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: background 150ms;
+}
+.today-bar-link:hover { background: var(--color-period-bg); text-decoration: none; }
+.today-bar-icon { font-size: 1rem; }
+.today-bar-text { display: flex; flex-direction: column; line-height: 1.2; }
+.today-bar-label { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); font-weight: 600; }
+.today-bar-value { font-size: 0.8125rem; color: var(--color-foreground); font-weight: 600; }
+.today-bar-stat { display: flex; flex-direction: column; line-height: 1.2; }
+.today-bar-time { color: var(--color-primary); }
+.today-bar-time .today-bar-value {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.today-bar-sep { color: var(--color-muted); opacity: 0.4; }
+.today-bar-right { margin-left: auto; }
+[data-theme="dark"] #today-bar { background: rgba(15, 10, 31, 0.92); border-bottom-color: rgba(120, 102, 212, 0.28); }
+@media (max-width: 720px) {
+  .today-bar-sep, .today-bar-right { display: none; }
+  .today-bar-inner { gap: 0.75rem; padding: 0.4rem 1rem; }
+}
+
+/* =====================================================
+   CONTINUE YOUR JOURNEY — 6 cross-page link cards at the
+   bottom of every page. Keeps users in the site.
+   ===================================================== */
+.continue-strip {
+  max-width: var(--container, 1240px);
+  margin: 3rem auto 4rem;
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.continue-strip-inner { text-align: center; }
+.continue-strip-title { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.5rem; }
+.continue-strip-sub { color: var(--color-foreground-soft); margin: 0 0 2rem; font-size: 0.9375rem; }
+.continue-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  text-align: left;
+}
+.continue-strip-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.25rem;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--color-foreground);
+  transition: transform 200ms, border-color 200ms, box-shadow 200ms;
+}
+.continue-strip-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 18px rgba(92, 74, 175, 0.12);
+  text-decoration: none;
+}
+.continue-strip-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+.continue-strip-card strong { font-size: 0.9375rem; font-weight: 700; }
+.continue-strip-card span:last-child { font-size: 0.8125rem; color: var(--color-foreground-soft); line-height: 1.4; }

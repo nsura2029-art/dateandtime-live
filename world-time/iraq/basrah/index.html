@@ -143,6 +143,13 @@
     .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
     .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
     @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* "Did you know?" trivia cards */
+    .did-you-know-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .did-you-know-card { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-period-bg, rgba(92, 74, 175, 0.06)); border-left: 3px solid var(--color-primary, #5b4aaf); border-radius: 6px; }
+    .did-you-know-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .did-you-know-card p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--color-foreground-soft, #49445f); }
+    [data-theme="dark"] .did-you-know-card { background: rgba(120, 102, 212, 0.12); border-left-color: #a78bfa; }
+    [data-theme="dark"] .did-you-know-card p { color: #d6cef5; }
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
@@ -302,7 +309,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">12:50:26<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">1:33:26<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -334,7 +341,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Baghdad">12:50:26 PM<br>+3 · Saturday</div>
+      <div class="value" data-tz="Asia/Baghdad">1:33:26 PM<br>+3 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -456,7 +463,7 @@
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
       <span>💧 7% humidity</span>
       <span>💨 11 mph wind</span>
-      <span>🌡 226°F feels like</span>
+      <span>🌡 224°F feels like</span>
       <span>🕵 UV 8.15</span>
       <span>📏 995 hPa</span>
     </div>
@@ -499,37 +506,37 @@
         <a href="/world-time/iraq/al-basrah-al-qadimah/" class="nearby-card">
           <div class="name">Al Başrah al Qadīmah</div>
           <div class="meta">3 km · 02 · IQ</div>
-          <div class="time" data-tz="Asia/Baghdad">3:50:26<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Baghdad">4:33:26<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/iraq/abu-al-kahsib/" class="nearby-card">
           <div class="name">Abū al-Kahṣīb</div>
           <div class="meta">12 km · 02 · IQ</div>
-          <div class="time" data-tz="Asia/Baghdad">3:50:26<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Baghdad">4:33:26<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/iraq/nasiriyah/" class="nearby-card">
           <div class="name">Nasiriyah</div>
           <div class="meta">158 km · 09 · IQ</div>
-          <div class="time" data-tz="Asia/Baghdad">3:50:26<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Baghdad">4:33:26<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/iraq/al-amarah/" class="nearby-card">
           <div class="name">Al ‘Amārah</div>
           <div class="meta">159 km · 14 · IQ</div>
-          <div class="time" data-tz="Asia/Baghdad">3:50:26<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Baghdad">4:33:26<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/iraq/al-kut/" class="nearby-card">
           <div class="name">Al-Kut</div>
           <div class="meta">290 km · 16 · IQ</div>
-          <div class="time" data-tz="Asia/Baghdad">3:50:26<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Baghdad">4:33:26<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/iraq/al-diwaniyah/" class="nearby-card">
           <div class="name">Al Diwaniyah</div>
           <div class="meta">318 km · 04 · IQ</div>
-          <div class="time" data-tz="Asia/Baghdad">3:50:26<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Baghdad">4:33:26<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -657,9 +664,28 @@
     </p>
   </section>
 
-    <!-- Section 09: Learn about time zones -->
+    <!-- Section 09: Did you know? (time zone trivia for this city) -->
     <div class="section-head">
-      <h2><span class="num">09</span> · Learn about time zones</h2>
+      <h2><span class="num">09</span> · Did you know?</h2>
+      <a class="more" href="/time-zones/">More facts →</a>
+    </div>
+    <section class="did-you-know-grid" data-did-you-know>
+      
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>China spans 5 geographical time zones but uses just one: Beijing Time (UTC+8).</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>India uses a single time zone for the whole country: IST (UTC+5:30).</p>
+          </div>
+        
+    </section>
+
+    <!-- Section 10: Learn about time zones -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Learn about time zones</h2>
     </div>
     <section class="explore-grid">
       <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
@@ -671,7 +697,7 @@
 
     <!-- Section 10: Today's content -->
     <div class="section-head">
-      <h2><span class="num">10</span> · Today</h2>
+      <h2><span class="num">11</span> · Today</h2>
     </div>
     <section class="explore-grid">
       <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
@@ -683,7 +709,7 @@
 
     <!-- Section 11: More to explore -->
     <div class="section-head">
-      <h2><span class="num">11</span> · More to explore</h2>
+      <h2><span class="num">12</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/iraq/" class="explore-link"><span class="label">🇮🇶 Iraq</span>All Iraq cities</a>

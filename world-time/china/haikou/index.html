@@ -143,6 +143,13 @@
     .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
     .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
     @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* "Did you know?" trivia cards */
+    .did-you-know-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .did-you-know-card { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-period-bg, rgba(92, 74, 175, 0.06)); border-left: 3px solid var(--color-primary, #5b4aaf); border-radius: 6px; }
+    .did-you-know-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .did-you-know-card p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--color-foreground-soft, #49445f); }
+    [data-theme="dark"] .did-you-know-card { background: rgba(120, 102, 212, 0.12); border-left-color: #a78bfa; }
+    [data-theme="dark"] .did-you-know-card p { color: #d6cef5; }
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
@@ -302,7 +309,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">12:51:12<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">1:34:07<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -334,7 +341,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Shanghai">12:51:12 PM<br>+8 · Saturday</div>
+      <div class="value" data-tz="Asia/Shanghai">1:34:07 PM<br>+8 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -454,11 +461,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 85% humidity</span>
+      <span>💧 86% humidity</span>
       <span>💨 3 mph wind</span>
-      <span>🌡 204°F feels like</span>
+      <span>🌡 203°F feels like</span>
       <span>🕵 UV 8.4</span>
-      <span>📏 1003 hPa</span>
+      <span>📏 1003.7 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -493,37 +500,37 @@
         <a href="/world-time/china/zhanjiang/" class="nearby-card">
           <div class="name">Zhanjiang</div>
           <div class="meta">133 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">9:34:07<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/maoming/" class="nearby-card">
           <div class="name">Maoming</div>
           <div class="meta">191 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">9:34:07<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/yangjiang/" class="nearby-card">
           <div class="name">Yangjiang</div>
           <div class="meta">263 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">9:34:07<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/qinzhou/" class="nearby-card">
           <div class="name">Qinzhou</div>
           <div class="meta">279 km · 16 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">9:34:07<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/yunfu/" class="nearby-card">
           <div class="name">Yunfu</div>
           <div class="meta">366 km · 30 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">9:34:07<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/china/nanning/" class="nearby-card">
           <div class="name">Nanning</div>
           <div class="meta">374 km · 16 · CN</div>
-          <div class="time" data-tz="Asia/Shanghai">8:51:13<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Shanghai">9:34:07<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -651,9 +658,33 @@
     </p>
   </section>
 
-    <!-- Section 09: Learn about time zones -->
+    <!-- Section 09: Did you know? (time zone trivia for this city) -->
     <div class="section-head">
-      <h2><span class="num">09</span> · Learn about time zones</h2>
+      <h2><span class="num">09</span> · Did you know?</h2>
+      <a class="more" href="/time-zones/">More facts →</a>
+    </div>
+    <section class="did-you-know-grid" data-did-you-know>
+      
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>Shanghai is 1 hour behind Tokyo, 5 hours ahead of London.</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>France has the most time zones of any country (12, due to overseas territories).</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>Russia has 11 time zones — at one point it had only 9, then 11, currently 11 again.</p>
+          </div>
+        
+    </section>
+
+    <!-- Section 10: Learn about time zones -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Learn about time zones</h2>
     </div>
     <section class="explore-grid">
       <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
@@ -665,7 +696,7 @@
 
     <!-- Section 10: Today's content -->
     <div class="section-head">
-      <h2><span class="num">10</span> · Today</h2>
+      <h2><span class="num">11</span> · Today</h2>
     </div>
     <section class="explore-grid">
       <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
@@ -677,7 +708,7 @@
 
     <!-- Section 11: More to explore -->
     <div class="section-head">
-      <h2><span class="num">11</span> · More to explore</h2>
+      <h2><span class="num">12</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/china/" class="explore-link"><span class="label">🇨🇳 China</span>All China cities</a>

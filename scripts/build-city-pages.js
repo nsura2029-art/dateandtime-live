@@ -346,6 +346,96 @@ function cca2ToFlag(cca2) {
   return String.fromCodePoint(...codePoints);
 }
 
+// "Did you know" trivia for city pages, based on the city's IANA timezone.
+// Each fact is short (1 sentence) and tied to a specific timezone or region.
+// Returns 3 facts per city, picked from a pool relevant to the timezone.
+function didYouKnowFor(city, tz) {
+  // General time-zone facts (apply to all cities)
+  const general = [
+    `There are 408 IANA time zones in use today, but only 24 hours in a day.`,
+    `Earth is divided into 24 time zones (15° of longitude each), but politics have created 408.`,
+    `The world's earliest time zone is UTC+14 (Kiribati), the latest is UTC-12 (Baker Island).`,
+    `A 'day' isn't always 24 hours — some days are 23 or 25 hours long due to DST.`,
+    `China spans 5 geographical time zones but uses just one: Beijing Time (UTC+8).`,
+    `India uses a single time zone for the whole country: IST (UTC+5:30).`,
+    `France has the most time zones of any country (12, due to overseas territories).`,
+    `Russia has 11 time zones — at one point it had only 9, then 11, currently 11 again.`,
+    `Daylight Saving Time was first proposed by Benjamin Franklin in 1784.`,
+    `The first country to adopt DST was Germany in 1916, to save coal during WWI.`,
+    `About 70 countries use DST, but most countries near the equator don't.`,
+    `The International Date Line is not a straight line — it zigzags around Pacific islands.`,
+  ];
+  // Timezone-specific facts (tied to the IANA zone)
+  const specific = {
+    "America/New_York": [
+      `New York's time zone was the first standard time in the US (1883).`,
+      `The US Eastern time zone is shared by 17 states plus DC.`,
+      `NYC is the world's busiest financial center — its clock is referenced globally.`,
+    ],
+    "America/Los_Angeles": [
+      `California's time zone is the same as Oregon, Washington, and Nevada.`,
+      `LA is 3 hours behind NYC — that 3-hour gap is called the "coast gap" in TV scheduling.`,
+      `Hollywood's primetime TV schedule is built around Pacific Time.`,
+    ],
+    "America/Chicago": [
+      `Central Time is 1 hour behind Eastern, 1 hour ahead of Mountain.`,
+      `Chicago sits in the middle of the US time zones — fittingly.`,
+      `DST in the US was extended in 2007 to save energy.`,
+    ],
+    "Europe/London": [
+      `The UK uses GMT in winter and BST (British Summer Time) in summer.`,
+      `GMT was the world's time standard until 1972, when UTC replaced it.`,
+      `The Royal Greenwich Observatory sits on the Prime Meridian (0° longitude).`,
+    ],
+    "Europe/Paris": [
+      `Paris is 1 hour ahead of London — they switched to CET in 1911.`,
+      `France used its own time zone (PMT) until 1911, based on Paris local time.`,
+      `France returns to "real" solar time twice a year when DST changes.`,
+    ],
+    "Asia/Tokyo": [
+      `Japan uses a single time zone across the whole country (no DST).`,
+      `Japan Standard Time is 9 hours ahead of UTC — JST = UTC+9.`,
+      `Japan's train system is famous for being on time to the second.`,
+    ],
+    "Asia/Shanghai": [
+      `China uses a single time zone (Beijing Time, UTC+8) despite spanning 5 geographically.`,
+      `Shanghai is 1 hour behind Tokyo, 5 hours ahead of London.`,
+    ],
+    "Asia/Kolkata": [
+      `India uses a single time zone (IST, UTC+5:30) for the whole country.`,
+      `India doesn't use DST — the half-hour offset was a compromise with British India.`,
+    ],
+    "Asia/Dubai": [
+      `The UAE doesn't use DST — Friday is the weekend in Dubai.`,
+      `Gulf Standard Time (GST) is UTC+4.`,
+    ],
+    "Australia/Sydney": [
+      `Australia has 3 time zones and uses DST in some states.`,
+      `Sydney is 10 hours ahead of NYC in standard time, 11 during DST.`,
+    ],
+  };
+  // Timezone offset description
+  const offsetInfo = (() => {
+    try {
+      const date = new Date();
+      const tzStr = date.toLocaleString("en-US", { timeZone: tz, timeZoneName: "short" });
+      const m = tzStr.match(/([A-Z]{2,5}|GMT[+\-]\d+)/);
+      return m ? m[0] : '';
+    } catch (e) { return ''; }
+  })();
+  // Pick 1 specific (if available) + 2 general
+  const specificForTz = specific[tz] || [];
+  const facts = [];
+  if (specificForTz.length) facts.push(specificForTz[Math.floor(Math.random() * specificForTz.length)]);
+  // General facts (deterministic pick based on city id to avoid flicker)
+  const id = (city.id || 0) % general.length;
+  for (let i = 0; i < 2; i++) {
+    const idx = (id + i) % general.length;
+    facts.push(general[idx]);
+  }
+  return { facts, offsetInfo };
+}
+
 function fmtTime(iso, use24 = false) {
   if (!iso) return '';
   const d = new Date(iso);
@@ -703,6 +793,13 @@ function renderTemplate(d) {
     .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
     .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
     @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* "Did you know?" trivia cards */
+    .did-you-know-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .did-you-know-card { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-period-bg, rgba(92, 74, 175, 0.06)); border-left: 3px solid var(--color-primary, #5b4aaf); border-radius: 6px; }
+    .did-you-know-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .did-you-know-card p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--color-foreground-soft, #49445f); }
+    [data-theme="dark"] .did-you-know-card { background: rgba(120, 102, 212, 0.12); border-left-color: #a78bfa; }
+    [data-theme="dark"] .did-you-know-card p { color: #d6cef5; }
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
@@ -935,9 +1032,26 @@ function renderTemplate(d) {
     </div>
     <section>${climateHtml}</section>
 
-    <!-- Section 09: Learn about time zones -->
+    <!-- Section 09: Did you know? (time zone trivia for this city) -->
     <div class="section-head">
-      <h2><span class="num">09</span> · Learn about time zones</h2>
+      <h2><span class="num">09</span> · Did you know?</h2>
+      <a class="more" href="/time-zones/">More facts →</a>
+    </div>
+    <section class="did-you-know-grid" data-did-you-know>
+      ${(() => {
+        const d = didYouKnowFor(c, c.timezone);
+        return d.facts.map(f => `
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>${f}</p>
+          </div>
+        `).join('');
+      })()}
+    </section>
+
+    <!-- Section 10: Learn about time zones -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Learn about time zones</h2>
     </div>
     <section class="explore-grid">
       <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
@@ -949,7 +1063,7 @@ function renderTemplate(d) {
 
     <!-- Section 10: Today's content -->
     <div class="section-head">
-      <h2><span class="num">10</span> · Today</h2>
+      <h2><span class="num">11</span> · Today</h2>
     </div>
     <section class="explore-grid">
       <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
@@ -961,7 +1075,7 @@ function renderTemplate(d) {
 
     <!-- Section 11: More to explore -->
     <div class="section-head">
-      <h2><span class="num">11</span> · More to explore</h2>
+      <h2><span class="num">12</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/${c.countrySlug}/" class="explore-link"><span class="label">${cca2ToFlag(c.countryCode)} ${c.countryName}</span>All ${c.countryName} cities</a>

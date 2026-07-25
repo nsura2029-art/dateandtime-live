@@ -143,6 +143,13 @@
     .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
     .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
     @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* "Did you know?" trivia cards */
+    .did-you-know-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .did-you-know-card { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-period-bg, rgba(92, 74, 175, 0.06)); border-left: 3px solid var(--color-primary, #5b4aaf); border-radius: 6px; }
+    .did-you-know-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .did-you-know-card p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--color-foreground-soft, #49445f); }
+    [data-theme="dark"] .did-you-know-card { background: rgba(120, 102, 212, 0.12); border-left-color: #a78bfa; }
+    [data-theme="dark"] .did-you-know-card p { color: #d6cef5; }
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
@@ -302,7 +309,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">12:50:48<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">1:33:44<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -334,7 +341,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Asia/Kolkata">12:50:48 PM<br>+5.5 · Saturday</div>
+      <div class="value" data-tz="Asia/Kolkata">1:33:44 PM<br>+5.5 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -454,11 +461,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 84% humidity</span>
-      <span>💨 9 mph wind</span>
-      <span>🌡 178°F feels like</span>
+      <span>💧 89% humidity</span>
+      <span>💨 8 mph wind</span>
+      <span>🌡 177°F feels like</span>
       <span>🕵 UV 8.15</span>
-      <span>📏 942.6 hPa</span>
+      <span>📏 942.8 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -483,37 +490,37 @@
         <a href="/world-time/india/pimpri-chinchwad/" class="nearby-card">
           <div class="name">Pimpri-Chinchwad</div>
           <div class="meta">1 km · 16 · IN</div>
-          <div class="time" data-tz="Asia/Kolkata">6:20:48<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Kolkata">7:03:44<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/india/pune/" class="nearby-card">
           <div class="name">Pune</div>
           <div class="meta">13 km · 16 · IN</div>
-          <div class="time" data-tz="Asia/Kolkata">6:20:48<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Kolkata">7:03:44<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/india/navi-mumbai/" class="nearby-card">
           <div class="name">Navi Mumbai</div>
           <div class="meta">95 km · 16 · IN</div>
-          <div class="time" data-tz="Asia/Kolkata">6:20:48<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Kolkata">7:03:44<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/india/kalyan/" class="nearby-card">
           <div class="name">Kalyān</div>
           <div class="meta">99 km · 16 · IN</div>
-          <div class="time" data-tz="Asia/Kolkata">6:20:48<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Kolkata">7:03:44<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/india/dombivali/" class="nearby-card">
           <div class="name">Dombivali</div>
           <div class="meta">101 km · 16 · IN</div>
-          <div class="time" data-tz="Asia/Kolkata">6:20:48<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Kolkata">7:03:44<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/india/thane/" class="nearby-card">
           <div class="name">Thāne</div>
           <div class="meta">109 km · 16 · IN</div>
-          <div class="time" data-tz="Asia/Kolkata">6:20:48<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Asia/Kolkata">7:03:44<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -641,9 +648,33 @@
     </p>
   </section>
 
-    <!-- Section 09: Learn about time zones -->
+    <!-- Section 09: Did you know? (time zone trivia for this city) -->
     <div class="section-head">
-      <h2><span class="num">09</span> · Learn about time zones</h2>
+      <h2><span class="num">09</span> · Did you know?</h2>
+      <a class="more" href="/time-zones/">More facts →</a>
+    </div>
+    <section class="did-you-know-grid" data-did-you-know>
+      
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>India uses a single time zone (IST, UTC+5:30) for the whole country.</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>There are 408 IANA time zones in use today, but only 24 hours in a day.</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>Earth is divided into 24 time zones (15° of longitude each), but politics have created 408.</p>
+          </div>
+        
+    </section>
+
+    <!-- Section 10: Learn about time zones -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Learn about time zones</h2>
     </div>
     <section class="explore-grid">
       <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
@@ -655,7 +686,7 @@
 
     <!-- Section 10: Today's content -->
     <div class="section-head">
-      <h2><span class="num">10</span> · Today</h2>
+      <h2><span class="num">11</span> · Today</h2>
     </div>
     <section class="explore-grid">
       <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
@@ -667,7 +698,7 @@
 
     <!-- Section 11: More to explore -->
     <div class="section-head">
-      <h2><span class="num">11</span> · More to explore</h2>
+      <h2><span class="num">12</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/india/" class="explore-link"><span class="label">🇮🇳 India</span>All India cities</a>

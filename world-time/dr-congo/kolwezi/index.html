@@ -143,6 +143,13 @@
     .data-row .when { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-primary); font-weight: 600; }
     .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
     @media (max-width: 700px) { .explore-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* "Did you know?" trivia cards */
+    .did-you-know-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .did-you-know-card { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-period-bg, rgba(92, 74, 175, 0.06)); border-left: 3px solid var(--color-primary, #5b4aaf); border-radius: 6px; }
+    .did-you-know-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .did-you-know-card p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--color-foreground-soft, #49445f); }
+    [data-theme="dark"] .did-you-know-card { background: rgba(120, 102, 212, 0.12); border-left-color: #a78bfa; }
+    [data-theme="dark"] .did-you-know-card p { color: #d6cef5; }
     .explore-link { padding: 0.75rem; border: 1px solid var(--color-border-soft); border-radius: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--color-foreground-soft); }
     .explore-link:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
     .explore-link .label { display: block; font-size: 0.875rem; margin-bottom: 0.125rem; }
@@ -302,7 +309,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">12:50:42<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">1:33:38<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Saturday, July 25, 2026</div>
         <div class="clock-tz">
@@ -334,7 +341,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Africa/Lubumbashi">12:50:42 PM<br>+2 · Saturday</div>
+      <div class="value" data-tz="Africa/Lubumbashi">1:33:38 PM<br>+2 · Saturday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -454,11 +461,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 24% humidity</span>
+      <span>💧 23% humidity</span>
       <span>💨 9 mph wind</span>
-      <span>🌡 163°F feels like</span>
+      <span>🌡 161°F feels like</span>
       <span>🕵 UV 7.55</span>
-      <span>📏 859.3 hPa</span>
+      <span>📏 858.8 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -499,37 +506,37 @@
         <a href="/world-time/dr-congo/likasi/" class="nearby-card">
           <div class="name">Likasi</div>
           <div class="meta">142 km · 14 · CD</div>
-          <div class="time" data-tz="Africa/Lubumbashi">2:50:42<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Africa/Lubumbashi">3:33:39<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/dr-congo/lubumbashi/" class="nearby-card">
           <div class="name">Lubumbashi</div>
           <div class="meta">243 km · 14 · CD</div>
-          <div class="time" data-tz="Africa/Lubumbashi">2:50:42<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Africa/Lubumbashi">3:33:39<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/dr-congo/mbuji-mayi/" class="nearby-card">
           <div class="name">Mbuji-Mayi</div>
           <div class="meta">549 km · 04 · CD</div>
-          <div class="time" data-tz="Africa/Lubumbashi">2:50:42<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Africa/Lubumbashi">3:33:39<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/dr-congo/kananga/" class="nearby-card">
           <div class="name">Kananga</div>
           <div class="meta">632 km · 23 · CD</div>
-          <div class="time" data-tz="Africa/Lubumbashi">2:50:42<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Africa/Lubumbashi">3:33:39<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/dr-congo/tshikapa/" class="nearby-card">
           <div class="name">Tshikapa</div>
           <div class="meta">701 km · 18 · CD</div>
-          <div class="time" data-tz="Africa/Lubumbashi">2:50:42<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Africa/Lubumbashi">3:33:39<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/dr-congo/uvira/" class="nearby-card">
           <div class="name">Uvira</div>
           <div class="meta">909 km · 12 · CD</div>
-          <div class="time" data-tz="Africa/Lubumbashi">2:50:42<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Africa/Lubumbashi">3:33:39<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -657,9 +664,28 @@
     </p>
   </section>
 
-    <!-- Section 09: Learn about time zones -->
+    <!-- Section 09: Did you know? (time zone trivia for this city) -->
     <div class="section-head">
-      <h2><span class="num">09</span> · Learn about time zones</h2>
+      <h2><span class="num">09</span> · Did you know?</h2>
+      <a class="more" href="/time-zones/">More facts →</a>
+    </div>
+    <section class="did-you-know-grid" data-did-you-know>
+      
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>The first country to adopt DST was Germany in 1916, to save coal during WWI.</p>
+          </div>
+        
+          <div class="did-you-know-card">
+            <div class="did-you-know-icon" aria-hidden="true">💡</div>
+            <p>About 70 countries use DST, but most countries near the equator don't.</p>
+          </div>
+        
+    </section>
+
+    <!-- Section 10: Learn about time zones -->
+    <div class="section-head">
+      <h2><span class="num">10</span> · Learn about time zones</h2>
     </div>
     <section class="explore-grid">
       <a href="/time-zones/what-is/" class="explore-link"><span class="label">⏰ What is a time zone?</span>How Earth is divided into 24 regions</a>
@@ -671,7 +697,7 @@
 
     <!-- Section 10: Today's content -->
     <div class="section-head">
-      <h2><span class="num">10</span> · Today</h2>
+      <h2><span class="num">11</span> · Today</h2>
     </div>
     <section class="explore-grid">
       <a href="/" class="explore-link"><span class="label">📅 Today</span>Today's date, week, day of year</a>
@@ -683,7 +709,7 @@
 
     <!-- Section 11: More to explore -->
     <div class="section-head">
-      <h2><span class="num">11</span> · More to explore</h2>
+      <h2><span class="num">12</span> · More to explore</h2>
     </div>
     <section class="explore-grid">
       <a href="/world-time/dr-congo/" class="explore-link"><span class="label">🇨🇩 DR Congo</span>All DR Congo cities</a>
