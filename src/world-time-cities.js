@@ -40,14 +40,10 @@
     { code: "country",    label: "Country" }
   ];
 
-  // Per-section initial visibility (per user spec: 4-5 for top, 2-3 for region)
+  // Per-section initial visibility (only the "top" section is rendered now;
+  // the continent filter at the top of the section handles region browsing)
   const VISIBLE_PER_SECTION = {
-    top: 5,
-    asia: 3,
-    europe: 3,
-    americas: 3,
-    africa: 3,
-    oceania: 3
+    top: 8
   };
 
   let state = {
@@ -241,6 +237,8 @@
   }
 
   function continentToSection(continent) {
+    // Kept for backward-compat with any legacy code that called this; the
+    // single-section redesign no longer needs it.
     const meta = CONTINENTS.find(c => c.code === continent);
     return meta ? meta.sectionKey : null;
   }
@@ -249,26 +247,11 @@
     const visible = getVisible();
     el("wt-count").textContent = visible.length.toLocaleString();
 
-    // Top section: first N
+    // Single "top" section: first N cities (continent filter narrows visible[])
     const topList = visible.slice(0, VISIBLE_PER_SECTION.top);
     renderGrid("top", topList);
     // Hide top section if no cities
     document.querySelector('[data-section-key="top"]').style.display = topList.length ? "" : "none";
-
-    // By region: bucket cities by section
-    const bySection = { asia: [], europe: [], americas: [], africa: [], oceania: [] };
-    for (const c of visible) {
-      const key = continentToSection(c.continent);
-      if (key && bySection[key]) bySection[key].push(c);
-    }
-    for (const key of Object.keys(bySection)) {
-      const limit = VISIBLE_PER_SECTION[key];
-      const sectionList = bySection[key].slice(0, limit);
-      renderGrid(key, sectionList);
-      // Hide section if empty
-      const sectionEl = document.querySelector(`[data-section-key="${key}"]`);
-      if (sectionEl) sectionEl.style.display = sectionList.length ? "" : "none";
-    }
   }
 
   function renderCard(c) {
