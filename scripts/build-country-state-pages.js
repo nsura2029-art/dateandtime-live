@@ -446,8 +446,11 @@ function main() {
     totalCountries++;
 
     // 2. State pages
+    // URL pattern: /world-time/{country}/state/{state}/
+    // Namespaced to avoid collisions with city slugs
+    // (e.g. /washington/ would be both the US capital city AND the state of Washington)
     for (const s of states) {
-      const stateDir = path.join(countryDir, s.slug);
+      const stateDir = path.join(countryDir, 'state', s.slug);
       fs.mkdirSync(stateDir, { recursive: true });
       const stateHtml = buildPage({
         cca2, countryName: cName, countrySlug,

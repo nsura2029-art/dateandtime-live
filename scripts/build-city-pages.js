@@ -841,7 +841,7 @@ function renderTemplate(d) {
           const stateName = STATE_NAME_LOOKUP[`${c.countryCode}|${c.stateCode}`];
           if (stateName) {
             const stateSlug = stateName.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-            return `<li><a href="/world-time/${c.countrySlug}/${stateSlug}/">${stateName}</a></li>`;
+            return `<li><a href="/world-time/${c.countrySlug}/state/${stateSlug}/">${stateName}</a></li>`;
           }
           return '';
         })()}
@@ -942,7 +942,7 @@ function renderTemplate(d) {
         const stateName = STATE_NAME_LOOKUP[`${c.countryCode}|${c.stateCode}`];
         if (stateName) {
           const stateSlug = stateName.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-          return `<a href="/world-time/${c.countrySlug}/${stateSlug}/" class="explore-link"><span class="label">${stateName}</span>All ${stateName} cities</a>`;
+          return `<a href="/world-time/${c.countrySlug}/state/${stateSlug}/" class="explore-link"><span class="label">${stateName}</span>All ${stateName} cities</a>`;
         }
         return '';
       })()}

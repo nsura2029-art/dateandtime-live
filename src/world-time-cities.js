@@ -233,7 +233,17 @@
     if (cont && cont.api) params.set("continent", cont.api);
     if (state.region) params.set("region", state.region);
     if (state.country) params.set("country", state.country);
-    if (state.stateCode) params.set("state", state.stateCode);
+    // For state pages, use /api/v1/cities (returns top cities by population)
+    // instead of /popular (capped at top-1000 globally). The /popular endpoint
+    // only has 1-6 cities per state because the global top-1000 skews toward
+    // large countries. The /cities endpoint returns top 500 per country, which
+    // gives us 10-200 cities per US state.
+    if (state.stateCode) {
+      // We fetch a bigger set (1000) and filter client-side by state.
+      // This works around the broken server-side state filter.
+      params.set("limit", "1000");
+      return `${API_BASE}/api/v1/cities?${params}`;
+    }
     if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
     if (state.q) params.set("q", state.q);
     // Pagination: page 1 → INITIAL_VISIBLE; page N>1 → PAGE_STEP starting after the accumulated count
@@ -253,7 +263,10 @@
     if (cont && cont.api) params.set("continent", cont.api);
     if (state.region) params.set("region", state.region);
     if (state.country) params.set("country", state.country);
-    if (state.stateCode) params.set("state", state.stateCode);
+    if (state.stateCode) {
+      params.set("limit", "1000");
+      return `${API_BASE}/api/v1/cities?${params}`;
+    }
     if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
     if (state.q) params.set("q", state.q);
     const offset = p === 1 ? 0 : (INITIAL_VISIBLE + (p - 2) * PAGE_STEP);
@@ -279,8 +292,14 @@
       if (!r.ok) throw new Error("popular upstream " + r.status);
       const j = await r.json();
       const data = j.data || {};
-      const list = data.cities || [];
-      state.total = data.total != null ? data.total : list.length;
+      let list = data.cities || [];
+      // Client-side state filter: the /cities endpoint's state filter is
+      // broken, so we filter here for state pages.
+      if (state.stateCode) {
+        const sc = state.stateCode;
+        list = list.filter(c => (c.stateCode || c.state_code) === sc);
+      }
+      state.total = state.stateCode ? list.length : (data.total != null ? data.total : list.length);
 
       if (append) {
         // Append, dedup by id
@@ -448,7 +467,7 @@
       return;
     }
     host.innerHTML = states.map(s => {
-      return `<a href="/world-time/${window.__COUNTRY_SLUG}/${s.slug}/" class="wt-state-tile">${s.name}</a>`;
+      return `<a href="/world-time/${window.__COUNTRY_SLUG}/state/${s.slug}/" class="wt-state-tile">${s.name}</a>`;
     }).join("");
   }
 

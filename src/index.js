@@ -41,6 +41,7 @@ const SLUG_TO_COUNTRY = (() => {
 // Auto-generated from /api/v1/countries (242 entries, compact string).
 // Format: "CC,slug|CC,slug|..." - parsed at runtime.
 import { CC2_COUNTRY_SLUG } from './cc2-country-slug.js';
+import { LEGACY_STATE_MAP } from './legacy-state-map.js';
 const CCA2_TO_COUNTRY_SLUG = (() => {
   const m = {};
   if (CC2_COUNTRY_SLUG && typeof CC2_COUNTRY_SLUG === 'string') {
@@ -541,6 +542,30 @@ export default {
         return new Response(null, { status: 301, headers: { Location: newPath } });
       }
       // Unknown cca2: fall through to ASSETS
+    }
+
+    // State pages: /world-time/{country-name-slug}/{state-slug}/
+    // (LEGACY — migrated to /world-time/{country-name-slug}/state/{state-slug}/
+    // on 2026-07-25.) This pattern was the original state page URL but
+    // collided with city slugs (e.g. /united-states/washington/ would be
+    // both the city AND the state of Washington).
+    const legacyStateMatch = url.pathname.match(/^\/world-time\/([a-z][a-z-]+)\/([a-z][a-z-]+)(\/.*)?\/?$/);
+    if (legacyStateMatch) {
+      const countrySlug = legacyStateMatch[1];
+      const stateSlug = legacyStateMatch[2];
+      const tail = legacyStateMatch[3] || '/';
+      // SKIP if this slug is a city (e.g. /united-states/washington/ is the
+      // city Washington D.C., not the state of Washington). SLUG_TO_COUNTRY
+      // is the parsed 911-entry city→cca2 map from SLUG_DATA.
+      const isCity = SLUG_TO_COUNTRY[stateSlug] !== undefined;
+      if (!isCity && LEGACY_STATE_MAP && LEGACY_STATE_MAP[`${countrySlug}|${stateSlug}`]) {
+        const cleanTail = tail && tail !== '/' && tail !== '' ? tail : '/';
+        const newPath = cleanTail === '/'
+          ? `/world-time/${countrySlug}/state/${stateSlug}/`
+          : `/world-time/${countrySlug}/state/${stateSlug}${cleanTail}`;
+        return new Response(null, { status: 301, headers: { Location: newPath } });
+      }
+      // Not a state (it's a city page) — fall through to ASSETS
     }
 
     // Get the asset (HTML or other) from the [assets] binding.
