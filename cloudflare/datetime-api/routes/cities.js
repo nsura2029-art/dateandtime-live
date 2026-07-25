@@ -146,6 +146,9 @@ async function handleCitiesNearby(env, request) {
 /**
  * GET /api/v1/cities/:id
  * Returns a single city record by ID.
+ *
+ * Proxies to prod (/api/v1/cities/{id}) which has the full 33,945-city DB.
+ * The dev DB only has 190 cities, so most IDs wouldn't be found locally.
  */
 async function handleCityById(env, idStr) {
   const id = parseInt(idStr, 10);
@@ -156,34 +159,29 @@ async function handleCityById(env, idStr) {
     }), { status: 400, headers: CACHE_HEADERS });
   }
 
-  if (!env.OTD_DB) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: { code: 'NO_DB', message: 'Database not available' }
-    }), { status: 503, headers: CACHE_HEADERS });
-  }
-
   try {
-    const result = await env.OTD_DB.prepare(`
-      SELECT * FROM cities WHERE id = ? LIMIT 1
-    `).bind(id).all();
-
-    if (!result.results || result.results.length === 0) {
-      return new Response(JSON.stringify({
+    const target = `https://api.dateandtime.live/api/v1/cities/${id}`;
+    const r = await fetch(target, { headers: { "Accept": "application/json" } });
+    if (!r.ok) {
+      const body = await r.text();
+      return new Response(body || JSON.stringify({
         success: false,
         error: { code: 'NOT_FOUND', message: `No city with id ${id}` }
-      }), { status: 404, headers: CACHE_HEADERS });
+      }), { status: r.status, headers: CACHE_HEADERS });
     }
-
-    return new Response(JSON.stringify({
-      success: true,
-      data: result.results[0]
-    }, null, 2), { headers: CACHE_HEADERS });
+    const body = await r.text();
+    return new Response(body, {
+      status: 200,
+      headers: {
+        ...CACHE_HEADERS,
+        "Cache-Control": "public, max-age=3600, s-maxage=86400"
+      }
+    });
   } catch (err) {
     return new Response(JSON.stringify({
       success: false,
-      error: { code: 'QUERY_FAILED', message: err.message }
-    }), { status: 500, headers: CACHE_HEADERS });
+      error: { code: 'UPSTREAM_FAILED', message: err.message }
+    }), { status: 502, headers: CACHE_HEADERS });
   }
 }
 
@@ -583,6 +581,82 @@ async function handleCitiesPopular(request) {
   }
 }
 
+/**
+ * GET /api/v1/cities/all
+ *
+ * Returns ALL cities in a country, paginating through the prod /api/v1/cities
+ * endpoint to bypass its 1,000-result cap. This is the dev API equivalent
+ * of "give me every city" so state pages can render every city in a state
+ * (e.g. AR has 26 cities but only 8 are in the top-1,000 globally).
+ *
+ * Query params:
+ *   country       - ISO 3166-1 alpha-2 (required, e.g. "US")
+ *   minPopulation - min population filter (optional, applied client-side after)
+ *
+ * Response: { success, data: { cities: [...], total, country } }
+ *
+ * Cached at edge for 1 hour (cities don't change often).
+ */
+async function handleCitiesAll(env, request) {
+  const url = new URL(request.url);
+  const country = (url.searchParams.get("country") || "").toUpperCase();
+  if (!country) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: { code: "BAD_PARAMS", message: "country is required" }
+    }), { status: 400, headers: CACHE_HEADERS });
+  }
+
+  // Proxy to prod /api/v1/cities with pagination, collecting all results.
+  // The prod API caps at 1,000 per call, so we paginate offset=0,1000,2000,3000.
+  const targetBase = "https://api.dateandtime.live/api/v1/cities";
+  const all = [];
+  const seen = new Set();
+  const PAGE = 1000;
+  let total = 0;
+
+  for (let offset = 0; offset < 5000; offset += PAGE) {
+    const target = `${targetBase}?country=${encodeURIComponent(country)}&limit=${PAGE}&offset=${offset}`;
+    try {
+      const r = await fetch(target, { headers: { "Accept": "application/json" } });
+      if (!r.ok) break;
+      const j = await r.json();
+      if (!j.success) break;
+      const cities = (j.data && j.data.cities) || [];
+      if (offset === 0 && j.data && j.data.total) {
+        total = j.data.total;
+      }
+      if (!cities.length) break;
+      for (const c of cities) {
+        if (!seen.has(c.id)) {
+          seen.add(c.id);
+          all.push(c);
+        }
+      }
+      if (cities.length < PAGE) break;
+    } catch (e) {
+      console.error("cities/all: upstream fetch failed", e);
+      break;
+    }
+  }
+
+  return new Response(JSON.stringify({
+    success: true,
+    data: {
+      cities: all,
+      total: total || all.length,
+      count: all.length,
+      country,
+    }
+  }, null, 2), {
+    status: 200,
+    headers: {
+      ...CACHE_HEADERS,
+      "Cache-Control": "public, max-age=3600, s-maxage=86400"
+    }
+  });
+}
+
 export async function handle(env, path, request) {
   // /api/v1/cities/nearby
   const nearbyMatch = path.match(/^\/api\/v1\/cities\/nearby$/);
@@ -602,6 +676,16 @@ export async function handle(env, path, request) {
   const popularMatch = path.match(/^\/api\/v1\/cities\/popular$/);
   if (popularMatch) {
     return handleCitiesPopular(request);
+  }
+
+  // /api/v1/cities/all
+  // Returns ALL cities in a country (bypasses the prod API's 1,000 cap).
+  //   Query params:
+  //     country       - ISO 3166-1 alpha-2 (required, e.g. "US")
+  //     minPopulation - min population filter (optional, applied client-side)
+  const allMatch = path.match(/^\/api\/v1\/cities\/all$/);
+  if (allMatch) {
+    return handleCitiesAll(env, request);
   }
 
   // /api/v1/cities/:id/climate

@@ -308,33 +308,23 @@
     return `${API_BASE}/api/v1/cities/popular?${params}`;
   }
 
-  // Fetch all US cities across multiple pages (the /api/v1/cities endpoint
-  // is capped at 1,000 per call). Used on state pages so we can find every
-  // city in the state, not just the top 1,000 globally.
-  // Returns a flat deduped array of cities.
+  // Fetch all US cities in a single call via the dev-only /api/v1/cities/all
+  // endpoint (which itself paginates the prod /cities endpoint to bypass
+  // its 1,000-result cap). Used on state pages so we can find every city
+  // in the state, not just the top 1,000 globally.
+  // Returns a flat array of cities.
   async function fetchAllCountryCities(signal) {
     const cca2 = state.country;
     if (!cca2) return [];
-    const all = [];
-    const seen = new Set();
-    const PAGE = 1000;
-    for (let offset = 0; offset < 4000; offset += PAGE) {
-      const url = `${API_BASE}/api/v1/cities?country=${encodeURIComponent(cca2)}&limit=${PAGE}&offset=${offset}`;
-      const r = await fetch(url, { signal, headers: { "Accept": "application/json" } });
-      if (!r.ok) break;
-      const j = await r.json();
-      const cities = (j.data && j.data.cities) || [];
-      if (!cities.length) break;
-      for (const c of cities) {
-        if (!seen.has(c.id)) {
-          seen.add(c.id);
-          all.push(c);
-        }
-      }
-      // If we got less than a full page, we're done.
-      if (cities.length < PAGE) break;
+    const url = `${API_BASE}/api/v1/cities/all?country=${encodeURIComponent(cca2)}`;
+    const r = await fetch(url, { signal, headers: { "Accept": "application/json" } });
+    if (!r.ok) {
+      console.error("fetchAllCountryCities: failed", r.status);
+      return [];
     }
-    return all;
+    const j = await r.json();
+    if (!j.success) return [];
+    return (j.data && j.data.cities) || [];
   }
 
   async function fetchPage({ append = false } = {}) {

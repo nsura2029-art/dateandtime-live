@@ -858,7 +858,7 @@ function renderTemplate(d) {
         <h1><span class="name">${c.name}</span></h1>
         <p class="lede">Live local time, time zone, weather, and history for ${c.name}${c.isCapital ? ' (capital city)' : ''} — a city in ${c.countryName} with ${numberFormat(c.population)} people.</p>
         <div class="hero-meta">
-          <span>📍 ${c.latitude.toFixed(4)}°N, ${c.longitude.toFixed(4)}°E</span>
+          <span>📍 ${c.latitude.toFixed(4)}°${c.latitude >= 0 ? 'N' : 'S'}, ${Math.abs(c.longitude).toFixed(4)}°${c.longitude >= 0 ? 'E' : 'W'}</span>
           <span>👥 ${numberFormat(c.population)}</span>
           <span>🌎 ${c.timezone}</span>
           <span>📅 ${fmtDate(new Date().toISOString())}</span>
