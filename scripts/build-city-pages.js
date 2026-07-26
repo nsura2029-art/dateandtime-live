@@ -997,12 +997,12 @@ function renderTemplate(d) {
     </div>
     <section class="stats-inline">${statsHtml}</section>
 
-    <!-- Section 04: OTD -->
+    <!-- Section 04: OTD (date is updated by JS to always show "today" relative to the user) -->
     <div class="section-head">
-      <h2><span class="num">04</span> · On this day (${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })})</h2>
-      <a class="more" href="/onthisday/by-date/${today.getUTCMonth()+1}-${today.getUTCDate()}/">All events →</a>
+      <h2><span class="num">04</span> · On this day (<span data-otd-date>${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>)</h2>
+      <a class="more" href="/onthisday/by-date/${today.getUTCMonth()+1}-${today.getUTCDate()}/" data-otd-link>All events →</a>
     </div>
-    <section class="data-list">${otdHtml}</section>
+    <section class="data-list" data-otd-events data-otd-build-day="${today.getUTCMonth()+1}-${today.getUTCDate()}">${otdHtml}</section>
 
     <!-- Section 05: 7-day weather -->
     <div class="section-head">
@@ -1165,6 +1165,41 @@ function renderTemplate(d) {
         const lonH = lon >= 0 ? 'E' : 'W';
         return Math.abs(lat).toFixed(4) + '°' + latH + ', ' + Math.abs(lon).toFixed(4) + '°' + lonH;
       }
+      function updateOtdForToday() {
+        const now = new Date();
+        const mm = now.getUTCMonth() + 1;
+        const dd = now.getUTCDate();
+        const dateEl = document.querySelector('[data-otd-date]');
+        if (dateEl) dateEl.textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+        const linkEl = document.querySelector('[data-otd-link]');
+        if (linkEl) linkEl.setAttribute('href', '/onthisday/by-date/' + mm + '-' + dd + '/');
+        // Only refetch if the day changed (to avoid 1000s of requests per session)
+        const buildDay = document.querySelector('[data-otd-events]')?.getAttribute('data-otd-build-day');
+        const todayKey = mm + '-' + dd;
+        if (buildDay === todayKey) return; // Same day as build, no need to refetch
+        fetch(API_BASE + '/api/v1/on-this-day/' + todayKey + '?limit=10', { headers: { 'Accept': 'application/json' } })
+          .then(r => r.ok ? r.json() : null)
+          .then(j => {
+            if (!j || !j.success || !j.events) return;
+            const list = document.querySelector('[data-otd-events]');
+            if (!list) return;
+            const events = (j.events || []).slice(0, 3);
+            if (events.length === 0) {
+              list.innerHTML = '<div class="data-list-item"><div class="text">No events on file for today. <a href="/onthisday/by-date/' + todayKey + '/">Check back tomorrow →</a></div></div>';
+              return;
+            }
+            list.innerHTML = events.map(e => {
+              const year = e.year ? '<strong>' + e.year + '</strong> — ' : '';
+              const cat = e.category ? '<span class="otd-cat" data-cat="' + e.category + '">' + e.category + '</span>' : '';
+              return '<div class="data-list-item">' +
+                '<div class="text">' + year + (e.description || e.title || '') + '</div>' +
+                (cat ? '<div class="meta">' + cat + '</div>' : '') +
+              '</div>';
+            }).join('');
+          })
+          .catch(() => { /* keep baked events */ });
+      }
+      updateOtdForToday();
       fetch(API_BASE + '/api/v1/cities/' + CITY_ID, { headers: { 'Accept': 'application/json' } })
         .then(r => r.ok ? r.json() : null)
         .then(j => {

@@ -736,9 +736,9 @@ export default {
       let cityCheck;
       try {
         cityCheck = await env.ASSETS.fetch(
-          new Request(`/world-time/${countrySlug}/${citySlug}/`)
+          new Request(url.origin + `/world-time/${countrySlug}/${citySlug}/`)
         );
-        // Read up to 1 byte to force the body to be fetched.
+        // Read the body to check the size.
         const buf = await cityCheck.arrayBuffer();
         if (buf.byteLength < 12000) {
           // Likely a 404 fallback page. Serve coming-soon.
