@@ -250,6 +250,84 @@ async function handleCityClimate(env, idStr) {
 }
 
 // =============================================================================
+// /api/v1/cities/:id/airports
+//
+// Returns the pre-computed nearest airports for a city. The data lives in
+// the city_airports table (rank 1-5 per city, joined with airports for the
+// IATA / name / coords). Data source: OurAirports (public domain).
+// =============================================================================
+async function handleCityAirports(env, request, idStr) {
+  const id = parseInt(idStr, 10);
+  if (isNaN(id) || id <= 0) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: { code: 'BAD_ID', message: 'Invalid city ID' }
+    }), { status: 400, headers: CACHE_HEADERS });
+  }
+
+  if (!env.OTD_DB) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: { code: 'NO_DB', message: 'Database not available' }
+    }), { status: 503, headers: CACHE_HEADERS });
+  }
+
+  const url = new URL(request.url);
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '5', 10) || 5, 10);
+
+  try {
+    // Single JOIN: city_airports pre-computed ranks × airports registry
+    const result = await env.OTD_DB.prepare(`
+      SELECT
+        ca.rank              AS rank,
+        a.id                 AS airport_id,
+        a.iata               AS iata,
+        a.icao               AS icao,
+        a.name               AS name,
+        a.city               AS city,
+        a.country_code       AS country,
+        a.latitude           AS latitude,
+        a.longitude          AS longitude,
+        a.type               AS type,
+        a.size_rank          AS size_rank,
+        ca.distance_km       AS distance_km
+      FROM city_airports ca
+      JOIN airports a ON ca.airport_id = a.id
+      WHERE ca.city_id = ?
+        AND ca.rank <= ?
+      ORDER BY ca.rank ASC
+    `).bind(id, limit).all();
+
+    const airports = (result.results || []).map(a => ({
+      ...a,
+      // Round distance to 1 decimal for display
+      distance_km: Math.round(a.distance_km * 10) / 10
+    }));
+
+    return new Response(JSON.stringify({
+      success: true,
+      data: {
+        city_id: id,
+        airports,
+        count: airports.length,
+        attribution: 'OurAirports (public domain) — https://ourairports.com/data/'
+      }
+    }, null, 2), {
+      headers: {
+        ...CACHE_HEADERS,
+        'Cache-Control': 'public, max-age=86400, s-maxage=604800'  // 1 day browser, 7 day CDN
+      }
+    });
+  } catch (err) {
+    // If tables don't exist, return empty
+    return new Response(JSON.stringify({
+      success: false,
+      error: { code: 'QUERY_FAILED', message: err.message }
+    }), { status: 500, headers: CACHE_HEADERS });
+  }
+}
+
+// =============================================================================
 // /api/v1/cities/popular
 // =============================================================================
 
@@ -692,6 +770,15 @@ export async function handle(env, path, request) {
   const climateMatch = path.match(/^\/api\/v1\/cities\/(\d+)\/climate$/);
   if (climateMatch) {
     return handleCityClimate(env, climateMatch[1]);
+  }
+
+  // /api/v1/cities/:id/airports
+  // Returns the pre-computed nearest 3-5 airports for a city.
+  //   Query params:
+  //     limit       - max airports (default 5, max 10)
+  const airportsMatch = path.match(/^\/api\/v1\/cities\/(\d+)\/airports$/);
+  if (airportsMatch) {
+    return handleCityAirports(env, request, airportsMatch[1]);
   }
 
   // /api/v1/cities/:id

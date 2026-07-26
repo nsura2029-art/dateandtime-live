@@ -354,6 +354,15 @@ async function fetchAll(city) {
     // news not yet built; skip
   }
 
+  // 10. Nearest airports (pre-computed via /api/v1/cities/{id}/airports)
+  let airports = [];
+  try {
+    const apData = await fetchJson(`${API}/api/v1/cities/${city.id}/airports?limit=5`);
+    airports = (apData?.data?.airports) || [];
+  } catch (e) {
+    // airports table not yet on this env; skip
+  }
+
   return {
     city: c,
     time: t,
@@ -364,7 +373,8 @@ async function fetchAll(city) {
     sun: sunData.data || sunData,
     dst: dstData ? (dstData.data || dstData) : null,
     climate: climateData,
-    news: countryNews
+    news: countryNews,
+    airports: airports
   };
 }
 
@@ -1072,6 +1082,30 @@ function renderTemplate(d) {
       <a class="more" href="/world-time/${c.countrySlug}/${(c.stateCode||'').toLowerCase()}/">All nearby →</a>
     </div>
     <section>${nearbyHtml}</section>
+
+    ${d.airports && d.airports.length > 0 ? `
+    <!-- Section 07b: Airports near {City} -->
+    <div class="section-head">
+      <h2><span class="num">07b</span> · Airports near ${c.name}</h2>
+      <a class="more" href="https://ourairports.com/search?location=${encodeURIComponent(c.name + ', ' + c.countryName)}" rel="noopener">All airports →</a>
+    </div>
+    <section class="airport-cards">
+      ${d.airports.slice(0, 5).map(a => `
+        <article class="airport-card">
+          <div class="airport-card-header">
+            <span class="airport-card-iata">${a.iata || '—'}</span>
+            <span class="airport-card-size airport-card-size-${a.size_rank}">${a.size_rank === 0 ? 'Large' : a.size_rank === 1 ? 'Medium' : 'Small'}</span>
+          </div>
+          <h3 class="airport-card-name">${a.name}</h3>
+          <div class="airport-card-meta">
+            <span class="airport-card-city">${a.city || c.name}</span>
+            <span class="airport-card-country">${a.country}</span>
+          </div>
+          <div class="airport-card-distance">${a.distance_km < 1 ? '< 1 km' : a.distance_km + ' km'} from ${c.name}</div>
+        </article>
+      `).join('')}
+    </section>
+    ` : ''}
 
     <!-- Section 08: Climate year-round -->
     <div class="section-head">
