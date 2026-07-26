@@ -119,6 +119,15 @@
       { slug: "melanesia",         label: "Melanesia",         icon: ICON_WAVE },
       { slug: "micronesia",        label: "Micronesia",        icon: ICON_CORAL },
       { slug: "polynesia",         label: "Polynesia",         icon: ICON_TIKI }
+    ] },
+    { code: "other",   api: "OT",  label: "Other",      icon: ICON_GRID, regions: [
+      // Disputed / observer states, special territories not in main regions
+      { slug: "taiwan",            label: "Taiwan",            icon: ICON_STAR },
+      { slug: "kosovo",            label: "Kosovo",            icon: ICON_OLIVE }
+    ] },
+    { code: "polar",   api: "PL",  label: "Polar",      icon: ICON_MOUNTAIN, regions: [
+      // Antarctic + sub-Antarctic research stations
+      { slug: "antarctica",        label: "Antarctica",        icon: ICON_DIAMOND }
     ] }
   ];
 
