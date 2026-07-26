@@ -213,7 +213,7 @@ function buildPage({ cca2, countryName, countrySlug, stateCode, stateSlug, state
     : `${countryName}`;
 
   const heroSub = isState
-    ? `Live time in <strong>${cityCount} ${stateName} cities</strong>. Real-time updates every second.`
+    ? `Live time in cities across the state. Real-time updates every second.`
     : `Live time in <strong>${cityCount} ${countryName} cities</strong> across <strong>${stateCount} states</strong>. Real-time updates every second.`;
 
   const sectionH2 = isState

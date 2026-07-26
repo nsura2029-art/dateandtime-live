@@ -47,6 +47,27 @@ const buildList = JSON.parse(fs.readFileSync(
 ));
 console.log(`Loaded ${buildList.length} US cities to build`);
 
+// Pre-compute slug collisions: for cities with the same slug, the most-popular
+// one keeps the bare slug, the rest get a state-code suffix.
+// e.g. newport-ri, newport-ky, newport-or (newport, RI keeps "newport")
+const slugOwner = {};  // slug -> city (the canonical one)
+for (const c of buildList) {
+  if (!slugOwner[c.slug] || c.population > slugOwner[c.slug].population) {
+    slugOwner[c.slug] = c;
+  }
+}
+for (const c of buildList) {
+  if (slugOwner[c.slug].id !== c.id) {
+    // Disambiguate: append state code
+    c.canonicalSlug = c.slug;
+    c.slug = c.slug + '-' + (c.stateCode || '').toLowerCase();
+  } else {
+    c.canonicalSlug = c.slug;
+  }
+}
+const collisions = buildList.filter(c => c.canonicalSlug !== c.slug).length;
+console.log(`Slug collisions resolved: ${collisions} cities got state-code suffix`);
+
 // Pre-compute the big-cities pool (pop >= 50K) once — used for "More to explore"
 const bigCitiesPool = buildList
   .filter(x => x.population >= 50000)
@@ -55,6 +76,15 @@ const bigUSPool = buildList
   .filter(x => x.population >= 500000)
   .sort((a, b) => b.population - a.population);
 console.log(`Big cities pool (>=50K): ${bigCitiesPool.length}, major cities (>=500K): ${bigUSPool.length}`);
+
+// Build the "More to explore" list with disambiguated slugs
+// (the bigUSPool may have slug collisions for major cities too)
+const moreToExploreUS = bigUSPool.slice(0, 6).map(x => ({
+  name: x.name,
+  slug: x.slug,  // already disambiguated above
+  pop: x.population,
+  state: x.stateCode
+}));
 
 // Climate estimate by lat (simplified)
 function estimateClimate(lat) {
@@ -94,15 +124,11 @@ function buildPage(c) {
   const stateLink = `/world-time/united-states/state/${c.stateSlug}/`;
   const countryLink = `/world-time/united-states/`;
   const flagUrl = 'https://flagcdn.com/w40/us.png';
+  // Canonical URL: use the disambiguated slug
   const canonicalUrl = `https://dateandtime.live/world-time/united-states/${c.slug}/`;
 
   // Build a list of big US cities as "more to explore" cross-links (top 6 by pop)
-  const moreToExplore = bigUSPool.slice(0, 6).map(x => ({
-    name: x.name,
-    slug: x.slug,
-    pop: x.population,
-    state: x.stateCode
-  }));
+  const moreToExplore = moreToExploreUS;
 
   // HTML template (lite version)
   const html = `<!doctype html>
