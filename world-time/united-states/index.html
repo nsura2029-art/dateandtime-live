@@ -91,7 +91,20 @@
   <section class="tz-hero">
     <div class="container">
       <h1>United States</h1>
-      <p class="tz-subtitle">Live time in <strong>1246 United States cities</strong> across <strong>51 states</strong>. Real-time updates every second.</p>
+      <p class="tz-subtitle">Live time in <strong>15,994 United States cities</strong> across <strong>52 states</strong>. Real-time updates every second.</p>
+    </div>
+  </section>
+
+  <section class="wt-hub-section" id="top-100">
+    <div class="container">
+      <div class="wt-hub-header">
+        <h2>🏆 Top 100 cities in the United States</h2>
+        <span class="wt-hub-count" id="wt-top100-count">Top 100</span>
+      </div>
+      <p class="tz-section-sub">The 100 largest US cities by population. Click any city for live time, weather, holidays, and time zone info.</p>
+      <div class="wt-card-grid wt-card-grid-top100" id="wt-card-grid-top100" data-section="top100" aria-busy="false">
+        <!-- Populated by JS, sorted by population desc, top 100 -->
+      </div>
     </div>
   </section>
 
@@ -632,6 +645,53 @@ const STATE_META = {
 };
 
 window.__STATE_META = STATE_META;</script>
+
+<script>
+// Top 100 US cities — fetch and render in the dedicated section.
+// Uses /api/v1/cities/all to get all US cities, then sorts and slices to top 100.
+(function() {
+  const grid = document.getElementById('wt-card-grid-top100');
+  if (!grid) return;
+  const api = (window.__tdlApi) || '/api';
+  // /all returns 3,407 US cities today; will grow as we add more.
+  fetch(api + '/v1/cities/all?country=US&minPopulation=100000')
+    .then(r => r.json())
+    .then(d => {
+      const cities = (d.data && d.data.cities) || [];
+      // Sort by population desc and take top 100
+      const top100 = cities
+        .sort((a, b) => (b.population || 0) - (a.population || 0))
+        .slice(0, 100);
+      // Render with client-side computed time
+      grid.innerHTML = top100.map(c => {
+        const path = '/world-time/united-states/' + c.slug + '/';
+        const pop = c.population ? c.population.toLocaleString() : '';
+        return '<a class="wt-card" href="' + path + '">' +
+          '<div class="wt-card-flag"><img src="https://flagcdn.com/w40/us.png" alt="" loading="lazy" /></div>' +
+          '<div class="wt-card-time" data-tz="' + c.timezone + '">--:--</div>' +
+          '<div class="wt-card-name">' + c.name + '</div>' +
+          '<div class="wt-card-meta">' + (c.stateCode || '') + (pop ? ' · ' + pop : '') + '</div>' +
+        '</a>';
+      }).join('');
+      grid.setAttribute('aria-busy', 'false');
+      // Update times
+      function updateTimes() {
+        grid.querySelectorAll('.wt-card-time[data-tz]').forEach(el => {
+          try {
+            const tz = el.getAttribute('data-tz');
+            el.textContent = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date());
+          } catch (e) {}
+        });
+      }
+      updateTimes();
+      setInterval(updateTimes, 1000);
+    })
+    .catch(err => {
+      grid.innerHTML = '<p>Failed to load top cities. <a href="/world-time/?country=US">Browse all US cities</a>.</p>';
+    });
+})();
+</script>
+
 <script src="/src/world-time-cities.js" defer></script>
 </body>
 </html>
