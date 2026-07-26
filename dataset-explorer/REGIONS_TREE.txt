@@ -1,0 +1,312 @@
+================================================================================
+DATASET HIERARCHY: Region → Subregion → Country → State → City
+================================================================================
+
+Totals: 5 regions · 22 subregions · 223 countries · 4,266 states · 152,970 cities
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 EUROPE
+   4 subregions · 50 countries · 1,548 states · 75,598 cities
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📍 Western Europe  (9 countries, 23,870 cities)
+      🇦🇹  AT  Austria                        cap: Vienna               states:   9  cities: 2,360
+      🇧🇪  BE  Belgium                        cap: Brussels             states:   3  cities: 549
+      🇫🇷  FR  France                         cap: Paris                states:  99  cities: 10,534
+      🇩🇪  DE  Germany                        cap: Berlin               states:  16  cities: 7,104
+      🇱🇮  LI  Liechtenstein                  cap: Vaduz                states:  11  cities: 11
+      🇱🇺  LU  Luxembourg                     cap: Luxembourg           states:  12  cities: 144
+      🇲🇨  MC  Monaco                         cap: Monaco               states:  17  cities: 17
+      🇳🇱  NL  Netherlands                    cap: Amsterdam            states:  12  cities: 1,644
+      🇨🇭  CH  Switzerland                    cap: Bern                 states:  26  cities: 1,507
+
+  📍 Southern Europe  (15 countries, 22,820 cities)
+      🇦🇱  AL  Albania                        cap: Tirana               states:  12  cities: 143
+      🇦🇩  AD  Andorra                        cap: Andorra la Vella     states:   7  cities: 10
+      🇧🇦  BA  Bosnia and Herzegovina         cap: Sarajevo             states:   3  cities: 232
+      🇭🇷  HR  Croatia                        cap: Zagreb               states:  19  cities: 663
+      🇨🇾  CY  Cyprus                         cap: Nicosia              states:   6  cities: 95
+      🇬🇷  GR  Greece                         cap: Athens               states:  13  cities: 1,103
+      🇮🇹  IT  Italy                          cap: Rome                 states: 107  cities: 9,852
+      🇲🇹  MT  Malta                          cap: Valletta             states:  62  cities: 87
+      🇲🇪  ME  Montenegro                     cap: Podgorica            states:  24  cities: 40
+      🇲🇰  MK  North Macedonia                cap: Skopje               states:  78  cities: 194
+      🇵🇹  PT  Portugal                       cap: Lisbon               states:  20  cities: 1,296
+      🇸🇲  SM  San Marino                     cap: San Marino           states:   9  cities: 9
+      🇷🇸  RS  Serbia                         cap: Belgrade             states:  25  cities: 379
+      🇸🇮  SI  Slovenia                       cap: Ljubljana            states: 202  cities: 312
+      🇪🇸  ES  Spain                          cap: Madrid               states:  50  cities: 8,405
+
+  📍 Eastern Europe  (11 countries, 21,727 cities)
+      🇧🇾  BY  Belarus                        cap: Minsk                states:   6  cities: 329
+      🇧🇬  BG  Bulgaria                       cap: Sofia                states:  28  cities: 504
+      🇨🇿  CZ  Czech Republic                 cap: Prague               states:  14  cities: 1,355
+      🇭🇺  HU  Hungary                        cap: Budapest             states:  20  cities: 1,074
+      🇽🇰  XK  Kosovo                         cap: Pristina             states:   7  cities: 59
+      🇲🇩  MD  Moldova                        cap: Chisinau             states:  36  cities: 72
+      🇵🇱  PL  Poland                         cap: Warsaw               states:  16  cities: 2,810
+      🇷🇴  RO  Romania                        cap: Bucharest            states:  42  cities: 7,949
+      🇷🇺  RU  Russia                         cap: Moscow               states:  81  cities: 5,523
+      🇸🇰  SK  Slovakia                       cap: Bratislava           states:   8  cities: 233
+      🇺🇦  UA  Ukraine                        cap: Kyiv                 states:  27  cities: 1,819
+
+  📍 Northern Europe  (15 countries, 7,181 cities)
+      🇦🇽  AX  Aland Islands                  cap: Mariehamn            states:   2  cities: 12
+      🇩🇰  DK  Denmark                        cap: Copenhagen           states:   5  cities: 430
+      🇪🇪  EE  Estonia                        cap: Tallinn              states:  15  cities: 162
+      🇫🇴  FO  Faroe Islands                  cap: Torshavn             states:   6  cities: 27
+      🇫🇮  FI  Finland                        cap: Helsinki             states:  17  cities: 437
+      🇬🇬  GG  Guernsey                       cap: St Peter Port        states:   4  cities: 5
+      🇮🇸  IS  Iceland                        cap: Reykjavik            states:  52  cities: 73
+      🇮🇪  IE  Ireland                        cap: Dublin               states:   4  cities: 370
+      🇯🇪  JE  Jersey                         cap: Saint Helier         states:  12  cities: 51
+      🇱🇻  LV  Latvia                         cap: Riga                 states:  39  cities: 125
+      🇱🇹  LT  Lithuania                      cap: Vilnius              states:  10  cities: 128
+      🇮🇲  IM  Man (Isle of)                  cap: Douglas, Isle of Man states:   6  cities: 16
+      🇳🇴  NO  Norway                         cap: Oslo                 states:  15  cities: 666
+      🇸🇪  SE  Sweden                         cap: Stockholm            states:  20  cities: 800
+      🇬🇧  GB  United Kingdom                 cap: London               states: 214  cities: 3,879
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 AMERICAS
+   4 subregions · 48 countries · 705 states · 42,562 cities
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📍 Northern America  (6 countries, 27,161 cities)
+      🇧🇲  BM  Bermuda                        cap: Hamilton             states:   8  cities: 9
+      🇨🇦  CA  Canada                         cap: Ottawa               states:  13  cities: 1,080
+      🇬🇱  GL  Greenland                      cap: Nuuk                 states:   5  cities: 18
+      🇲🇽  MX  Mexico                         cap: Ciudad de México     states:  32  cities: 9,321
+      🇵🇲  PM  Saint Pierre and Miquelon      cap: Saint-Pierre         states:   1  cities: 2
+      🇺🇸  US  United States                  cap: Washington           states:  52  cities: 16,731
+
+  📍 South America  (13 countries, 11,361 cities)
+      🇦🇷  AR  Argentina                      cap: Buenos Aires         states:  24  cities: 1,136
+      🇧🇴  BO  Bolivia                        cap: Sucre                states:   9  cities: 228
+      🇧🇷  BR  Brazil                         cap: Brasilia             states:  27  cities: 5,629
+      🇨🇱  CL  Chile                          cap: Santiago             states:  16  cities: 300
+      🇨🇴  CO  Colombia                       cap: Bogotá               states:  33  cities: 1,122
+      🇪🇨  EC  Ecuador                        cap: Quito                states:  24  cities: 114
+      🇬🇫  GF  French Guiana                  cap: Cayenne              states:   1  cities: 22
+      🇬🇾  GY  Guyana                         cap: Georgetown           states:  10  cities: 14
+      🇵🇾  PY  Paraguay                       cap: Asunción             states:  17  cities: 152
+      🇵🇪  PE  Peru                           cap: Lima                 states:  26  cities: 485
+      🇸🇷  SR  Suriname                       cap: Paramaribo           states:   9  cities: 13
+      🇺🇾  UY  Uruguay                        cap: Montevideo           states:  19  cities: 2,010
+      🇻🇪  VE  Venezuela                      cap: Caracas              states:  24  cities: 136
+
+  📍 Caribbean  (22 countries, 2,135 cities)
+      🇦🇬  AG  Antigua and Barbuda            cap: St. John's           states:   6  cities: 9
+      🇦🇼  AW  Aruba                          cap: Oranjestad           states:   1  cities: 12
+      🇧🇧  BB  Barbados                       cap: Bridgetown           states:   7  cities: 7
+      🇧🇶  BQ  Bonaire, Sint Eustatius and Saba cap: Kralendijk           states:   1  cities: 8
+      🇰🇾  KY  Cayman Islands                 cap: George Town          states:   3  cities: 7
+      🇨🇺  CU  Cuba                           cap: Havana               states:  16  cities: 187
+      🇩🇲  DM  Dominica                       cap: Roseau               states:  10  cities: 17
+      🇩🇴  DO  Dominican Republic             cap: Santo Domingo        states:  31  cities: 207
+      🇬🇩  GD  Grenada                        cap: St. George's         states:   7  cities: 7
+      🇬🇵  GP  Guadeloupe                     cap: Basse-Terre          states:   2  cities: 32
+      🇭🇹  HT  Haiti                          cap: Port-au-Prince       states:  10  cities: 124
+      🇯🇲  JM  Jamaica                        cap: Kingston             states:  14  cities: 837
+      🇲🇶  MQ  Martinique                     cap: Fort-de-France       states:   4  cities: 34
+      🇵🇷  PR  Puerto Rico                    cap: San Juan             states:  78  cities: 78
+      🇰🇳  KN  Saint Kitts and Nevis          cap: Basseterre           states:  13  cities: 13
+      🇱🇨  LC  Saint Lucia                    cap: Castries             states:  10  cities: 479
+      🇻🇨  VC  Saint Vincent and the Grenadines cap: Kingstown            states:   6  cities: 9
+      🇧🇱  BL  Saint-Barthelemy               cap: Gustavia             states:   1  cities: 1
+      🇲🇫  MF  Saint-Martin (French part)     cap: Marigot              states:   1  cities: 1
+      🇧🇸  BS  The Bahamas                    cap: Nassau               states:  19  cities: 21
+      🇹🇹  TT  Trinidad and Tobago            cap: Port of Spain        states:  15  cities: 25
+      🇻🇮  VI  Virgin Islands (US)            cap: Charlotte Amalie     states:   3  cities: 20
+
+  📍 Central America  (7 countries, 1,905 cities)
+      🇧🇿  BZ  Belize                         cap: Belmopan             states:   6  cities: 13
+      🇨🇷  CR  Costa Rica                     cap: San Jose             states:   7  cities: 159
+      🇸🇻  SV  El Salvador                    cap: San Salvador         states:  14  cities: 100
+      🇬🇹  GT  Guatemala                      cap: Guatemala City       states:  21  cities: 382
+      🇭🇳  HN  Honduras                       cap: Tegucigalpa          states:  18  cities: 545
+      🇳🇮  NI  Nicaragua                      cap: Managua              states:  17  cities: 155
+      🇵🇦  PA  Panama                         cap: Panama City          states:  14  cities: 551
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 ASIA
+   5 subregions · 49 countries · 1,087 states · 25,343 cities
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📍 South-Eastern Asia  (11 countries, 8,455 cities)
+      🇧🇳  BN  Brunei                         cap: Bandar Seri Begawan  states:   4  cities: 9
+      🇰🇭  KH  Cambodia                       cap: Phnom Penh           states:  24  cities: 107
+      🇮🇩  ID  Indonesia                      cap: Jakarta              states:  38  cities: 799
+      🇱🇦  LA  Laos                           cap: Vientiane            states:  17  cities: 76
+      🇲🇾  MY  Malaysia                       cap: Kuala Lumpur         states:  16  cities: 223
+      🇲🇲  MM  Myanmar                        cap: Nay Pyi Taw          states:  15  cities: 74
+      🇵🇭  PH  Philippines                    cap: Manila               states:  92  cities: 5,357
+      🇸🇬  SG  Singapore                      cap: Singapur             states:   5  cities: 26
+      🇹🇭  TH  Thailand                       cap: Bangkok              states:  77  cities: 1,241
+      🇹🇱  TL  Timor-Leste                    cap: Dili                 states:  13  cities: 55
+      🇻🇳  VN  Vietnam                        cap: Hanoi                states:  34  cities: 488
+
+  📍 Southern Asia  (9 countries, 6,967 cities)
+      🇦🇫  AF  Afghanistan                    cap: Kabul                states:  34  cities: 100
+      🇧🇩  BD  Bangladesh                     cap: Dhaka                states:  64  cities: 64
+      🇧🇹  BT  Bhutan                         cap: Thimphu              states:  20  cities: 57
+      🇮🇳  IN  India                          cap: New Delhi            states:  36  cities: 4,198
+      🇮🇷  IR  Iran                           cap: Tehran               states:  31  cities: 1,847
+      🇲🇻  MV  Maldives                       cap: Male                 states:  17  cities: 21
+      🇳🇵  NP  Nepal                          cap: Kathmandu            states:   7  cities: 77
+      🇵🇰  PK  Pakistan                       cap: Islamabad            states:   7  cities: 456
+      🇱🇰  LK  Sri Lanka                      cap: Colombo              states:  11  cities: 147
+
+  📍 Eastern Asia  (7 countries, 6,283 cities)
+      🇨🇳  CN  China                          cap: Beijing              states:  33  cities: 4,133
+      🇭🇰  HK  Hong Kong S.A.R.               cap: Hong Kong            states:  15  cities: 27
+      🇯🇵  JP  Japan                          cap: Tokyo                states:  47  cities: 1,655
+      🇲🇳  MN  Mongolia                       cap: Ulan Bator           states:  21  cities: 40
+      🇰🇵  KP  North Korea                    cap: Pyongyang            states:  11  cities: 80
+      🇰🇷  KR  South Korea                    cap: Seoul                states:  17  cities: 308
+      🇹🇼  TW  Taiwan                         cap: Taipei               states:  20  cities: 40
+
+  📍 Western Asia  (17 countries, 3,090 cities)
+      🇦🇲  AM  Armenia                        cap: Yerevan              states:  11  cities: 308
+      🇦🇿  AZ  Azerbaijan                     cap: Baku                 states:  67  cities: 180
+      🇧🇭  BH  Bahrain                        cap: Manama               states:   4  cities: 9
+      🇬🇪  GE  Georgia                        cap: Tbilisi              states:  12  cities: 110
+      🇮🇶  IQ  Iraq                           cap: Baghdad              states:  18  cities: 135
+      🇮🇱  IL  Israel                         cap: Jerusalem            states:   6  cities: 150
+      🇯🇴  JO  Jordan                         cap: Amman                states:  12  cities: 82
+      🇰🇼  KW  Kuwait                         cap: Kuwait City          states:   6  cities: 25
+      🇱🇧  LB  Lebanon                        cap: Beirut               states:   8  cities: 26
+      🇴🇲  OM  Oman                           cap: Muscat               states:  10  cities: 28
+      🇵🇸  PS  Palestinian Territory Occupied cap: East Jerusalem       states:  16  cities: 132
+      🇶🇦  QA  Qatar                          cap: Doha                 states:   7  cities: 15
+      🇸🇦  SA  Saudi Arabia                   cap: Riyadh               states:  13  cities: 399
+      🇸🇾  SY  Syria                          cap: Damascus             states:  14  cities: 142
+      🇹🇷  TR  Turkey                         cap: Ankara               states:  81  cities: 980
+      🇦🇪  AE  United Arab Emirates           cap: Abu Dhabi            states:   7  cities: 30
+      🇾🇪  YE  Yemen                          cap: Sanaa                states:  22  cities: 339
+
+  📍 Central Asia  (5 countries, 548 cities)
+      🇰🇿  KZ  Kazakhstan                     cap: Astana               states:  15  cities: 259
+      🇰🇬  KG  Kyrgyzstan                     cap: Bishkek              states:   8  cities: 53
+      🇹🇯  TJ  Tajikistan                     cap: Dushanbe             states:   5  cities: 71
+      🇹🇲  TM  Turkmenistan                   cap: Ashgabat             states:   6  cities: 30
+      🇺🇿  UZ  Uzbekistan                     cap: Tashkent             states:  13  cities: 135
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 OCEANIA
+   4 subregions · 19 countries · 166 states · 4,743 cities
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📍 Australia and New Zealand  (2 countries, 4,307 cities)
+      🇦🇺  AU  Australia                      cap: Canberra             states:   8  cities: 4,147
+      🇳🇿  NZ  New Zealand                    cap: Wellington           states:  17  cities: 160
+
+  📍 Micronesia  (6 countries, 190 cities)
+      🇬🇺  GU  Guam                           cap: Hagatna              states:  18  cities: 25
+      🇰🇮  KI  Kiribati                       cap: Tarawa               states:   3  cities: 37
+      🇲🇭  MH  Marshall Islands               cap: Majuro               states:  24  cities: 26
+      🇫🇲  FM  Micronesia                     cap: Palikir              states:   4  cities: 80
+      🇳🇷  NR  Nauru                          cap: Yaren                states:   7  cities: 7
+      🇵🇼  PW  Palau                          cap: Melekeok             states:  15  cities: 15
+
+  📍 Melanesia  (5 countries, 144 cities)
+      🇫🇯  FJ  Fiji Islands                   cap: Suva                 states:   4  cities: 20
+      🇳🇨  NC  New Caledonia                  cap: Noumea               states:   3  cities: 10
+      🇵🇬  PG  Papua New Guinea               cap: Port Moresby         states:  21  cities: 100
+      🇸🇧  SB  Solomon Islands                cap: Honiara              states:   7  cities: 7
+      🇻🇺  VU  Vanuatu                        cap: Port Vila            states:   5  cities: 7
+
+  📍 Polynesia  (6 countries, 102 cities)
+      🇦🇸  AS  American Samoa                 cap: Pago Pago            states:   3  cities: 14
+      🇵🇫  PF  French Polynesia               cap: Papeete              states:   5  cities: 48
+      🇼🇸  WS  Samoa                          cap: Apia                 states:   8  cities: 20
+      🇹🇴  TO  Tonga                          cap: Nuku'alofa           states:   5  cities: 8
+      🇹🇻  TV  Tuvalu                         cap: Funafuti             states:   6  cities: 9
+      🇼🇫  WF  Wallis and Futuna Islands      cap: Mata Utu             states:   3  cities: 3
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 AFRICA
+   5 subregions · 57 countries · 760 states · 4,724 cities
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📍 Western Africa  (16 countries, 1,400 cities)
+      🇧🇯  BJ  Benin                          cap: Porto-Novo           states:  12  cities: 36
+      🇧🇫  BF  Burkina Faso                   cap: Ouagadougou          states:  13  cities: 92
+      🇨🇻  CV  Cape Verde                     cap: Praia                states:  22  cities: 28
+      🇬🇭  GH  Ghana                          cap: Accra                states:  16  cities: 121
+      🇬🇳  GN  Guinea                         cap: Conakry              states:   7  cities: 54
+      🇬🇼  GW  Guinea-Bissau                  cap: Bissau               states:   9  cities: 15
+      🇨🇮  CI  Ivory Coast                    cap: Yamoussoukro         states:  13  cities: 95
+      🇱🇷  LR  Liberia                        cap: Monrovia             states:  15  cities: 18
+      🇲🇱  ML  Mali                           cap: Bamako               states:   9  cities: 47
+      🇲🇷  MR  Mauritania                     cap: Nouakchott           states:  15  cities: 42
+      🇳🇪  NE  Niger                          cap: Niamey               states:   8  cities: 71
+      🇳🇬  NG  Nigeria                        cap: Abuja                states:  37  cities: 491
+      🇸🇳  SN  Senegal                        cap: Dakar                states:  14  cities: 73
+      🇸🇱  SL  Sierra Leone                   cap: Freetown             states:   5  cities: 91
+      🇬🇲  GM  The Gambia                     cap: Banjul               states:   6  cities: 104
+      🇹🇬  TG  Togo                           cap: Lome                 states:   5  cities: 22
+
+  📍 Eastern Africa  (18 countries, 1,349 cities)
+      🇧🇮  BI  Burundi                        cap: Bujumbura            states:  17  cities: 17
+      🇰🇲  KM  Comoros                        cap: Moroni               states:   3  cities: 88
+      🇩🇯  DJ  Djibouti                       cap: Djibouti             states:   6  cities: 12
+      🇪🇷  ER  Eritrea                        cap: Asmara               states:   6  cities: 11
+      🇪🇹  ET  Ethiopia                       cap: Addis Ababa          states:  13  cities: 144
+      🇰🇪  KE  Kenya                          cap: Nairobi              states:  47  cities: 145
+      🇲🇬  MG  Madagascar                     cap: Antananarivo         states:   1  cities: 9
+      🇲🇼  MW  Malawi                         cap: Lilongwe             states:   3  cities: 61
+      🇲🇺  MU  Mauritius                      cap: Port Louis           states:  12  cities: 168
+      🇾🇹  YT  Mayotte                        cap: Mamoudzou            states:  17  cities: 57
+      🇲🇿  MZ  Mozambique                     cap: Maputo               states:  10  cities: 38
+      🇷🇪  RE  Reunion                        cap: Saint-Denis          states:   4  cities: 24
+      🇷🇼  RW  Rwanda                         cap: Kigali               states:   5  cities: 12
+      🇸🇨  SC  Seychelles                     cap: Victoria             states:   9  cities: 9
+      🇸🇴  SO  Somalia                        cap: Mogadishu            states:  17  cities: 51
+      🇹🇿  TZ  Tanzania                       cap: Dodoma               states:  31  cities: 303
+      🇺🇬  UG  Uganda                         cap: Kampala              states:   4  cities: 91
+      🇿🇼  ZW  Zimbabwe                       cap: Harare               states:  10  cities: 109
+
+  📍 Northern Africa  (6 countries, 968 cities)
+      🇩🇿  DZ  Algeria                        cap: Algiers              states:  48  cities: 293
+      🇪🇬  EG  Egypt                          cap: Cairo                states:  27  cities: 163
+      🇱🇾  LY  Libya                          cap: Tripolis             states:  22  cities: 54
+      🇲🇦  MA  Morocco                        cap: Rabat                states:  12  cities: 222
+      🇸🇩  SD  Sudan                          cap: Khartoum             states:  18  cities: 71
+      🇹🇳  TN  Tunisia                        cap: Tunis                states:  24  cities: 165
+
+  📍 Southern Africa  (7 countries, 559 cities)
+      🇧🇼  BW  Botswana                       cap: Gaborone             states:   9  cities: 75
+      🇸🇿  SZ  Eswatini                       cap: Mbabane              states:   4  cities: 34
+      🇹🇫  TF  French Southern Territories    cap: Port-aux-Francais    states:   5  cities: 5
+      🇱🇸  LS  Lesotho                        cap: Maseru               states:  10  cities: 12
+      🇳🇦  NA  Namibia                        cap: Windhoek             states:  13  cities: 48
+      🇿🇦  ZA  South Africa                   cap: Pretoria             states:   9  cities: 314
+      🇿🇲  ZM  Zambia                         cap: Lusaka               states:  10  cities: 71
+
+  📍 Middle Africa  (10 countries, 448 cities)
+      🇦🇴  AO  Angola                         cap: Luanda               states:  18  cities: 72
+      🇨🇲  CM  Cameroon                       cap: Yaounde              states:  10  cities: 139
+      🇨🇫  CF  Central African Republic       cap: Bangui               states:  17  cities: 42
+      🇹🇩  TD  Chad                           cap: N'Djamena            states:  22  cities: 49
+      🇨🇬  CG  Congo                          cap: Brazzaville          states:  11  cities: 17
+      🇨🇩  CD  Democratic Republic of the Congo cap: Kinshasa             states:  25  cities: 67
+      🇬🇶  GQ  Equatorial Guinea              cap: Malabo               states:   8  cities: 26
+      🇬🇦  GA  Gabon                          cap: Libreville           states:   9  cities: 28
+      🇸🇹  ST  Sao Tome and Principe          cap: Sao Tome             states:   7  cities: 7
+      🇸🇸  SS  South Sudan                    cap: Juba                 states:   1  cities: 1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AMERICAS — note: dataset groups all of Americas under 1 region with 4 subregions
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📍 Northern America: 6 countries, 111 states, 27,161 cities
+  📍 South America: 13 countries, 239 states, 11,361 cities
+  📍 Caribbean: 22 countries, 258 states, 2,135 cities
+  📍 Central America: 7 countries, 97 states, 1,905 cities
+
+================================================================================
+GAP vs OUR DB (dateandtime.live)
+================================================================================
+Region             Dataset       Ours        Gap  Notes
+--------------------------------------------------------------------------------
+Europe             50 ctry                        Major gap: France, Italy, Spain, Romania, Germany
+Asia               49 ctry                        India, China, Japan coverage good; need Philippines, Vietnam more
+Americas           48 ctry                        US biggest gap (10,906 cities); Mexico, Canada, Brazil coverage varies
+Africa             57 ctry                        Light coverage currently
+Oceania            19 ctry                        Australia good; Pacific islands sparse
