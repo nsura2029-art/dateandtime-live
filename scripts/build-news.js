@@ -76,6 +76,109 @@ function formatDate(iso) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+// Map of lowercase country names and key terms → cca2 codes.
+// Used to filter news articles by country on the city page.
+const COUNTRY_TAGS = {
+  'united-states': 'US', 'us': 'US', 'usa': 'US', 'america': 'US',
+  'united-kingdom': 'GB', 'uk': 'GB', 'britain': 'GB', 'england': 'GB',
+  'canada': 'CA', 'canadian': 'CA', 'british-columbia': 'CA', 'ontario': 'CA', 'alberta': 'CA', 'quebec': 'CA',
+  'australia': 'AU', 'australian': 'AU', 'sydney': 'AU', 'melbourne': 'AU',
+  'germany': 'DE', 'german': 'DE', 'berlin': 'DE',
+  'france': 'FR', 'french': 'FR', 'paris': 'FR',
+  'japan': 'JP', 'japanese': 'JP', 'tokyo': 'JP',
+  'china': 'CN', 'chinese': 'CN', 'shanghai': 'CN', 'beijing': 'CN',
+  'india': 'IN', 'indian': 'IN', 'mumbai': 'IN', 'delhi': 'IN', 'kolkata': 'IN',
+  'mexico': 'MX', 'mexican': 'MX',
+  'brazil': 'BR', 'brazilian': 'BR', 'sao-paulo': 'BR',
+  'russia': 'RU', 'russian': 'RU', 'moscow': 'RU',
+  'spain': 'ES', 'spanish': 'ES', 'madrid': 'ES',
+  'italy': 'IT', 'italian': 'IT', 'rome': 'IT',
+  'south-korea': 'KR', 'korea': 'KR', 'korean': 'KR', 'seoul': 'KR',
+  'new-zealand': 'NZ', 'kiwi': 'NZ', 'auckland': 'NZ',
+  'ireland': 'IE', 'irish': 'IE', 'dublin': 'IE',
+  'iceland': 'IS',
+  'portugal': 'PT', 'portuguese': 'PT', 'lisbon': 'PT',
+  'greece': 'GR', 'greek': 'GR', 'athens': 'GR',
+  'netherlands': 'NL', 'dutch': 'NL', 'amsterdam': 'NL',
+  'sweden': 'SE', 'swedish': 'SE', 'stockholm': 'SE',
+  'norway': 'NO', 'norwegian': 'NO', 'oslo': 'NO',
+  'finland': 'FI', 'finnish': 'FI', 'helsinki': 'FI',
+  'denmark': 'DK', 'danish': 'DK', 'copenhagen': 'DK',
+  'poland': 'PL', 'polish': 'PL', 'warsaw': 'PL',
+  'turkey': 'TR', 'turkish': 'TR', 'istanbul': 'TR',
+  'egypt': 'EG', 'egyptian': 'EG', 'cairo': 'EG',
+  'south-africa': 'ZA', 'south-african': 'ZA', 'johannesburg': 'ZA',
+  'nigeria': 'NG', 'nigerian': 'NG', 'lagos': 'NG',
+  'kenya': 'KE', 'kenyan': 'KE', 'nairobi': 'KE',
+  'uae': 'AE', 'emirates': 'AE', 'dubai': 'AE', 'abu-dhabi': 'AE',
+  'saudi-arabia': 'SA', 'saudi': 'SA', 'riyadh': 'SA',
+  'israel': 'IL', 'israeli': 'IL', 'jerusalem': 'IL',
+  'iran': 'IR', 'iranian': 'IR', 'tehran': 'IR',
+  'pakistan': 'PK', 'pakistani': 'PK', 'karachi': 'PK',
+  'indonesia': 'ID', 'indonesian': 'ID', 'jakarta': 'ID',
+  'thailand': 'TH', 'thai': 'TH', 'bangkok': 'TH',
+  'vietnam': 'VN', 'vietnamese': 'VN', 'hanoi': 'VN', 'ho-chi-minh': 'VN',
+  'philippines': 'PH', 'filipino': 'PH', 'manila': 'PH',
+  'malaysia': 'MY', 'malaysian': 'MY', 'kuala-lumpur': 'MY',
+  'singapore': 'SG',
+  'argentina': 'AR', 'argentinian': 'AR', 'buenos-aires': 'AR',
+  'chile': 'CL', 'chilean': 'CL', 'santiago': 'CL',
+  'colombia': 'CO', 'colombian': 'CO', 'bogota': 'CO',
+  'peru': 'PE', 'peruvian': 'PE', 'lima': 'PE',
+  'morocco': 'MA', 'moroccan': 'MA', 'casablanca': 'MA', 'rabat': 'MA',
+  'tunisia': 'TN', 'tunisian': 'TN', 'tunis': 'TN',
+  'algeria': 'DZ', 'algerian': 'DZ', 'algiers': 'DZ',
+  'european-union': 'EU', 'eu': 'EU',
+  'europe': 'EU',  // broad fallback
+  'africa': 'AF',  // broad fallback
+  'asia': 'AS',    // broad fallback
+  'americas': 'AM', // broad fallback
+};
+
+// Build a map: cca2 → articles[] sorted by date desc.
+// Used by city pages to show "News about {Country}".
+function buildCountryNewsMap(articles) {
+  const map = {};
+  for (const a of articles) {
+    const tags = a.tags.map(t => t.toLowerCase().trim());
+    const matched = new Set();
+    for (const tag of tags) {
+      if (COUNTRY_TAGS[tag]) matched.add(COUNTRY_TAGS[tag]);
+    }
+    // Also check the article's slug and title for country keywords
+    const haystack = (a.slug + ' ' + a.title).toLowerCase();
+    for (const [tag, cca2] of Object.entries(COUNTRY_TAGS)) {
+      if (haystack.includes(tag)) matched.add(cca2);
+    }
+    for (const cca2 of matched) {
+      if (!map[cca2]) map[cca2] = [];
+      map[cca2].push({
+        slug: a.slug,
+        title: a.title,
+        excerpt: a.excerpt,
+        published: a.published,
+        category: a.category,
+        url: articleUrl(a),
+        dateLabel: formatDate(a.published)
+      });
+    }
+  }
+  // Sort each country by date desc and limit to 6
+  for (const cca2 of Object.keys(map)) {
+    map[cca2].sort((a, b) => b.published.localeCompare(a.published));
+    map[cca2] = map[cca2].slice(0, 6);
+  }
+  return map;
+}
+
+function buildCountryNewsManifest(articles) {
+  const map = buildCountryNewsMap(articles);
+  const outDir = path.join(ROOT, 'news');
+  fs.writeFileSync(path.join(outDir, 'by-country.json'), JSON.stringify(map, null, 2));
+  const totalCountries = Object.keys(map).length;
+  console.log(`  ✓ /news/by-country.json (${totalCountries} countries, ${articles.length} articles indexed)`);
+}
+
 function isoToYearMonth(iso) {
   return iso.slice(0, 7); // "2026-07"
 }
@@ -783,5 +886,8 @@ buildRss(articles);
 
 console.log('\nUpdating sitemap:');
 updateSitemap(articles);
+
+console.log('\nBuilding country news manifest:');
+buildCountryNewsManifest(articles);
 
 console.log(`\n✅ Done! ${articles.length} articles, ${allTags.size} topics, 3 category pages.`);

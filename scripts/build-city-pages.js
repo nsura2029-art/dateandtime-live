@@ -30,6 +30,7 @@ const CC2_TO_COUNTRY_SLUG = (() => {
 })();
 
 const API = process.env.API || 'https://dev.api.dateandtime.live';
+const BASE = process.env.BASE || 'https://dateandtime.live';
 // Use prod for city data (has all 33,945 cities, dev D1 only has 190)
 const CITY_API = process.env.CITY_API || 'https://api.dateandtime.live';
 
@@ -327,6 +328,32 @@ async function fetchAll(city) {
       .slice(0, 6);
   } catch (e) { console.warn('nearby fetch failed:', e.message); }
 
+  // 9. News about this country (read from content/news + by-country.json)
+  let countryNews = [];
+  try {
+    // First try the static manifest (fast path)
+    const manifestPath = path.join(process.cwd(), 'news', 'by-country.json');
+    let manifest = null;
+    if (fs.existsSync(manifestPath)) {
+      manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    } else {
+      // Build it on the fly from content/news/*.md
+      const { execSync } = require('child_process');
+      try {
+        execSync('node scripts/build-news.js > /dev/null 2>&1', { cwd: process.cwd() });
+        if (fs.existsSync(manifestPath)) {
+          manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        }
+      } catch (e) { /* skip */ }
+    }
+    if (manifest) {
+      countryNews = manifest[c.countryCode] || manifest[c.countryCode.toUpperCase()] || [];
+    }
+    countryNews = (countryNews || []).slice(0, 3);
+  } catch (e) {
+    // news not yet built; skip
+  }
+
   return {
     city: c,
     time: t,
@@ -336,7 +363,8 @@ async function fetchAll(city) {
     nearby: nearbyCities,
     sun: sunData.data || sunData,
     dst: dstData ? (dstData.data || dstData) : null,
-    climate: climateData
+    climate: climateData,
+    news: countryNews
   };
 }
 
@@ -983,6 +1011,26 @@ function renderTemplate(d) {
       <div class="pillbar-row">${pillsHtml}</div>
     </section>
 
+    <!-- DST in {Country} callout card -->
+    <section class="dst-callout" data-dst-callout>
+      <div class="dst-callout-icon">${dst?.dstObserved ? '☀️' : '🌐'}</div>
+      <div class="dst-callout-body">
+        ${(() => {
+          if (dst?.dstObserved && dst?.nextTransition) {
+            const nt = dst.nextTransition;
+            const action = nt.type === 'fall_back' ? 'fall back' : 'spring forward';
+            const before = nt.offsetBefore || offsetStr;
+            const after = nt.offsetAfter || offsetStr;
+            const dateStr = new Date(nt.date + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: c.timezone });
+            return `<div class="dst-callout-title">DST in ${c.countryName}</div>
+              <div class="dst-callout-detail">Current offset: <strong>${before}</strong>. Clocks ${action} to <strong>${after}</strong> on <strong>${dateStr}</strong>. <a href="/time-zones/dst/">DST explained →</a></div>`;
+          }
+          return `<div class="dst-callout-title">No DST in ${c.countryName}</div>
+            <div class="dst-callout-detail">${c.countryName} stays on <strong>${offsetStr}</strong> year-round. <a href="/time-zones/dst/">How DST works →</a></div>`;
+        })()}
+      </div>
+    </section>
+
     <!-- Section 02: TAD-style color blocks -->
     <div class="section-head">
       <h2><span class="num">02</span> · Time, zone, and environment</h2>
@@ -1070,7 +1118,7 @@ function renderTemplate(d) {
       <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>${c.countryName} public holidays</a>
       <a href="/onthisday/" class="explore-link"><span class="label">📜 On this day</span>Historical events on this date</a>
       <a href="/news/timezone/" class="explore-link"><span class="label">📰 News</span>Latest time zone news</a>
-      <a href="/meeting/?with=${d.city.slug}" class="explore-link"><span class="label">📅 Meeting Planner</span>Find a meeting time with ${c.name}</a>
+      <a href="/world-time/meeting/?cities=${c.id}" class="explore-link"><span class="label">📅 Meeting Planner</span>Find a meeting time with ${c.name}</a>
     </section>
 
     <!-- Section 11: More to explore -->
@@ -1089,8 +1137,42 @@ function renderTemplate(d) {
       })()}
       <a href="/time-zones/zone/${c.timezone.toLowerCase()}/" class="explore-link"><span class="label">🕒 ${c.timezone}</span>Time zone hub</a>
       <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
-      <a href="/meeting/?with=${d.city.slug}" class="explore-link"><span class="label">📅 Meeting</span>Plan with ${c.name}</a>
+      <a href="/world-time/meeting/?cities=${c.id}" class="explore-link"><span class="label">📅 Meeting</span>Plan with ${c.name}</a>
     </section>
+
+    <!-- Section 13: Tools for {City} (city-targeted versions of Tools & Converters) -->
+    <div class="section-head">
+      <h2><span class="num">13</span> · Tools for ${c.name}</h2>
+      <a class="more" href="/time-zones/converter/?cities=${c.id}">Open all tools →</a>
+    </div>
+    <section class="explore-grid explore-grid-3col">
+      <a href="/time-zones/converter/?cities=${c.id}" class="explore-link"><span class="label">🔁 Time Zone Converter</span>Convert ${c.timezone} to anywhere</a>
+      <a href="/world-time/meeting/?cities=${c.id}" class="explore-link"><span class="label">📅 Meeting Planner</span>Find overlap with ${c.name}</a>
+      <a href="/world-time/event/?city=${c.id}" class="explore-link"><span class="label">📣 Event Time Announcer</span>Share event times for ${c.name}</a>
+      <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">📆 ${c.countryName} calendar</span>Holidays, long weekends, full year</a>
+      <a href="/" class="explore-link"><span class="label">📅 Today</span>${c.name}'s date, week, day of year</a>
+      <a href="/onthisday/" class="explore-link"><span class="label">📜 On this day</span>What happened on this date</a>
+      <a href="/holidays/${c.countrySlug}/" class="explore-link"><span class="label">🎉 Holidays</span>Upcoming ${c.countryName} holidays</a>
+      <a href="/news/" class="explore-link"><span class="label">📰 News</span>Latest time zone changes & DST shifts</a>
+    </section>
+
+    ${d.news && d.news.length > 0 ? `
+    <!-- Section 14: News about {Country} -->
+    <div class="section-head">
+      <h2><span class="num">14</span> · News about ${c.countryName}</h2>
+      <a class="more" href="/news/?country=${c.countryCode}">All ${c.countryName} news →</a>
+    </div>
+    <section class="news-cards-grid">
+      ${d.news.map(n => `
+        <a class="news-card-mini" href="${n.url}">
+          <span class="news-card-mini-cat">${n.category === 'timezone' ? '🌐' : n.category === 'astronomy' ? '🌌' : '📅'} ${n.category || 'news'}</span>
+          <h3 class="news-card-mini-title">${n.title}</h3>
+          <p class="news-card-mini-excerpt">${n.excerpt}</p>
+          <div class="news-card-mini-date">${n.dateLabel}</div>
+        </a>
+      `).join('')}
+    </section>
+    ` : ''}
   </div>
 
   <footer class="site-footer" role="contentinfo">

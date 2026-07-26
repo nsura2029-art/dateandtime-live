@@ -211,27 +211,36 @@
   <url><loc>https://dateandtime.live/time-zones/in/za/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://dateandtime.live/time-zones/in/zm/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://dateandtime.live/time-zones/in/zw/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  
+  
+  
+  
+  
+  
+  
+  
+  
   <url>
     <loc>https://dateandtime.live/news/</loc>
-    <lastmod>2026-07-20</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://dateandtime.live/news/astronomy/</loc>
-    <lastmod>2026-07-20</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://dateandtime.live/news/timezone/</loc>
-    <lastmod>2026-07-20</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://dateandtime.live/news/calendar/</loc>
-    <lastmod>2026-07-20</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

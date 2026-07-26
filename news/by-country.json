@@ -1,0 +1,35 @@
+{
+  "CA": [
+    {
+      "slug": "british-columbia-permanent-dst",
+      "title": "British Columbia Adopts Permanent Daylight Saving Time",
+      "excerpt": "British Columbia has adopted Permanent Daylight Saving Time. The clock change on March 8, 2026 will be the province's final seasonal time shift.",
+      "published": "2026-07-20",
+      "category": "timezone",
+      "url": "/news/2026/07/british-columbia-permanent-dst/",
+      "dateLabel": "July 20, 2026"
+    }
+  ],
+  "VN": [
+    {
+      "slug": "vietnam-new-public-holiday",
+      "title": "Vietnam Adds New Public Holiday on November 24",
+      "excerpt": "Vietnam is set to add a new paid public holiday on November 24 to promote culture and heritage as the country undergoes rapid economic growth.",
+      "published": "2026-07-20",
+      "category": "calendar",
+      "url": "/news/2026/07/vietnam-new-public-holiday/",
+      "dateLabel": "July 20, 2026"
+    }
+  ],
+  "AS": [
+    {
+      "slug": "vietnam-new-public-holiday",
+      "title": "Vietnam Adds New Public Holiday on November 24",
+      "excerpt": "Vietnam is set to add a new paid public holiday on November 24 to promote culture and heritage as the country undergoes rapid economic growth.",
+      "published": "2026-07-20",
+      "category": "calendar",
+      "url": "/news/2026/07/vietnam-new-public-holiday/",
+      "dateLabel": "July 20, 2026"
+    }
+  ]
+}

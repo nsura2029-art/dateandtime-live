@@ -880,3 +880,97 @@ body.has-mobile-nav-open {
 .continue-strip-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
 .continue-strip-card strong { font-size: 0.9375rem; font-weight: 700; }
 .continue-strip-card span:last-child { font-size: 0.8125rem; color: var(--color-foreground-soft); line-height: 1.4; }
+
+/* ============================================================
+   DST callout (city page) — small contextual banner under pill bar
+   ============================================================ */
+.dst-callout {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1.125rem;
+  margin: 0 0 1.5rem;
+  background: color-mix(in srgb, var(--color-primary, #5b4aaf) 6%, var(--color-card-bg, #fff));
+  border: 1px solid color-mix(in srgb, var(--color-primary, #5b4aaf) 18%, var(--color-border, #e5e3f0));
+  border-left: 3px solid var(--color-primary, #5b4aaf);
+  border-radius: 0 10px 10px 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+.dst-callout-icon { font-size: 1.5rem; flex-shrink: 0; }
+.dst-callout-body { flex: 1; min-width: 0; }
+.dst-callout-title { font-weight: 700; color: var(--color-foreground, #1f1a3a); margin: 0 0 0.125rem; }
+.dst-callout-detail { color: var(--color-foreground-soft, #4a4569); font-size: 0.8125rem; }
+.dst-callout-detail a { color: var(--color-primary, #5b4aaf); text-decoration: none; font-weight: 600; }
+.dst-callout-detail a:hover { text-decoration: underline; }
+
+/* ============================================================
+   News cards (mini) — for "News about {Country}" on city page
+   ============================================================ */
+.news-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 0 0 2rem;
+}
+.news-card-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.125rem 1.25rem 1.25rem;
+  background: var(--color-card-bg, #fff);
+  border: 1px solid var(--color-border, #e5e3f0);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--color-foreground, #1f1a3a);
+  transition: transform 200ms, border-color 200ms, box-shadow 200ms;
+}
+.news-card-mini:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary, #5b4aaf);
+  box-shadow: 0 6px 18px rgba(92, 74, 175, 0.12);
+  text-decoration: none;
+}
+.news-card-mini-cat {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-primary, #5b4aaf);
+  background: color-mix(in srgb, var(--color-primary, #5b4aaf) 10%, transparent);
+  padding: 3px 8px;
+  border-radius: 999px;
+  display: inline-block;
+  width: fit-content;
+}
+.news-card-mini-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+  color: var(--color-foreground, #1f1a3a);
+}
+.news-card-mini-excerpt {
+  font-size: 0.8125rem;
+  color: var(--color-foreground-soft, #4a4569);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.news-card-mini-date {
+  font-size: 0.75rem;
+  color: var(--color-muted, #77718f);
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   Explore grid 3-column variant — for "Tools for {City}" section
+   ============================================================ */
+.explore-grid-3col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}

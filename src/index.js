@@ -577,6 +577,11 @@ export default {
       return new Response(null, { status: 301, headers: { Location: "/" + url.search } });
     }
 
+    // Redirect /meeting/ → /world-time/meeting/ (canonical URL is under world-time/)
+    if (url.pathname === "/meeting" || url.pathname === "/meeting/") {
+      return new Response(null, { status: 301, headers: { Location: "/world-time/meeting/" + url.search } });
+    }
+
     // Per-event detail pages: /onthisday/event/{slug}/
     // The template is a single static file at /onthisday/event/index.html
     // and the JS reads the slug from window.location.pathname.

@@ -309,7 +309,7 @@
       </div>
       <div class="hero-clock">
         <div class="clock-row">
-          <span class="clock-time" id="clockTime">1:35:31<span class="ms">.00</span><span class="ampm">PM</span></span>
+          <span class="clock-time" id="clockTime">2:02:42<span class="ms">.00</span><span class="ampm">PM</span></span>
         </div>
         <div class="clock-date" id="clockDate">Sunday, July 26, 2026</div>
         <div class="clock-tz">
@@ -332,6 +332,15 @@
   </div>
     </section>
 
+    <!-- DST in {Country} callout card -->
+    <section class="dst-callout" data-dst-callout>
+      <div class="dst-callout-icon">☀️</div>
+      <div class="dst-callout-body">
+        <div class="dst-callout-title">DST in France</div>
+              <div class="dst-callout-detail">Current offset: <strong>+02:00</strong>. Clocks fall back to <strong>+01:00</strong> on <strong>October 25, 2026</strong>. <a href="/time-zones/dst/">DST explained →</a></div>
+      </div>
+    </section>
+
     <!-- Section 02: TAD-style color blocks -->
     <div class="section-head">
       <h2><span class="num">02</span> · Time, zone, and environment</h2>
@@ -341,7 +350,7 @@
     <div class="info-block time">
       <div class="icon">🕐</div>
       <div class="label">Current time</div>
-      <div class="value" data-tz="Europe/Paris">1:35:31 PM<br>+2 · Sunday</div>
+      <div class="value" data-tz="Europe/Paris">2:02:42 PM<br>+2 · Sunday</div>
     </div>
     <div class="info-block zone">
       <div class="icon">🕒</div>
@@ -461,11 +470,11 @@
         
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--color-muted);">
-      <span>💧 53% humidity</span>
-      <span>💨 17 mph wind</span>
-      <span>🌡 176°F feels like</span>
+      <span>💧 45% humidity</span>
+      <span>💨 16 mph wind</span>
+      <span>🌡 177°F feels like</span>
       <span>🕵 UV 7.4</span>
-      <span>📏 1007 hPa</span>
+      <span>📏 1006.8 hPa</span>
     </div>
     <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-muted-soft);">Weather data via <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0). Updated every 6 hours.</p>
   </section>
@@ -512,37 +521,37 @@
         <a href="/world-time/france/nice/" class="nearby-card">
           <div class="name">Nice</div>
           <div class="meta">159 km · 93 · FR</div>
-          <div class="time" data-tz="Europe/Paris">3:35:32<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:02:42<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/france/lyon/" class="nearby-card">
           <div class="name">Lyon</div>
           <div class="meta">276 km · 84 · FR</div>
-          <div class="time" data-tz="Europe/Paris">3:35:32<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:02:42<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/france/toulouse/" class="nearby-card">
           <div class="name">Toulouse</div>
           <div class="meta">320 km · 76 · FR</div>
-          <div class="time" data-tz="Europe/Paris">3:35:32<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:02:42<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/france/marne-la-vallee/" class="nearby-card">
           <div class="name">Marne La Vallée</div>
           <div class="meta">651 km · 11 · FR</div>
-          <div class="time" data-tz="Europe/Paris">3:35:32<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:02:42<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/france/paris/" class="nearby-card">
           <div class="name">Paris</div>
           <div class="meta">661 km · 11 · FR</div>
-          <div class="time" data-tz="Europe/Paris">3:35:32<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:02:42<span class="ampm">PM</span></div>
         </a>
       
         <a href="/world-time/france/nantes/" class="nearby-card">
           <div class="name">Nantes</div>
           <div class="meta">696 km · 52 · FR</div>
-          <div class="time" data-tz="Europe/Paris">3:35:32<span class="ampm">PM</span></div>
+          <div class="time" data-tz="Europe/Paris">4:02:42<span class="ampm">PM</span></div>
         </a>
       
     </div>
@@ -715,7 +724,7 @@
       <a href="/holidays/france/" class="explore-link"><span class="label">🎉 Holidays</span>France public holidays</a>
       <a href="/onthisday/" class="explore-link"><span class="label">📜 On this day</span>Historical events on this date</a>
       <a href="/news/timezone/" class="explore-link"><span class="label">📰 News</span>Latest time zone news</a>
-      <a href="/meeting/?with=marseille" class="explore-link"><span class="label">📅 Meeting Planner</span>Find a meeting time with Marseille</a>
+      <a href="/world-time/meeting/?cities=2995469" class="explore-link"><span class="label">📅 Meeting Planner</span>Find a meeting time with Marseille</a>
     </section>
 
     <!-- Section 11: More to explore -->
@@ -727,8 +736,26 @@
       <a href="/world-time/france/state/provence-alpes-cote-d-azur/" class="explore-link"><span class="label">Provence-Alpes-Côte d'Azur</span>All Provence-Alpes-Côte d'Azur cities</a>
       <a href="/time-zones/zone/europe/paris/" class="explore-link"><span class="label">🕒 Europe/Paris</span>Time zone hub</a>
       <a href="/holidays/france/" class="explore-link"><span class="label">🎉 Holidays</span>2026 calendar</a>
-      <a href="/meeting/?with=marseille" class="explore-link"><span class="label">📅 Meeting</span>Plan with Marseille</a>
+      <a href="/world-time/meeting/?cities=2995469" class="explore-link"><span class="label">📅 Meeting</span>Plan with Marseille</a>
     </section>
+
+    <!-- Section 13: Tools for {City} (city-targeted versions of Tools & Converters) -->
+    <div class="section-head">
+      <h2><span class="num">13</span> · Tools for Marseille</h2>
+      <a class="more" href="/time-zones/converter/?cities=2995469">Open all tools →</a>
+    </div>
+    <section class="explore-grid explore-grid-3col">
+      <a href="/time-zones/converter/?cities=2995469" class="explore-link"><span class="label">🔁 Time Zone Converter</span>Convert Europe/Paris to anywhere</a>
+      <a href="/world-time/meeting/?cities=2995469" class="explore-link"><span class="label">📅 Meeting Planner</span>Find overlap with Marseille</a>
+      <a href="/world-time/event/?city=2995469" class="explore-link"><span class="label">📣 Event Time Announcer</span>Share event times for Marseille</a>
+      <a href="/holidays/france/" class="explore-link"><span class="label">📆 France calendar</span>Holidays, long weekends, full year</a>
+      <a href="/" class="explore-link"><span class="label">📅 Today</span>Marseille's date, week, day of year</a>
+      <a href="/onthisday/" class="explore-link"><span class="label">📜 On this day</span>What happened on this date</a>
+      <a href="/holidays/france/" class="explore-link"><span class="label">🎉 Holidays</span>Upcoming France holidays</a>
+      <a href="/news/" class="explore-link"><span class="label">📰 News</span>Latest time zone changes & DST shifts</a>
+    </section>
+
+    
   </div>
 
   <footer class="site-footer" role="contentinfo">
