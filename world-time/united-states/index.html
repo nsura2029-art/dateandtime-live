@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>United States — Current Time &amp; All Cities | dateandtime.live</title>
-  <meta name="description" content="Live current time in United States. 1246 cities across 51 states. Real-time updates every second." />
+  <title>United States — Browse Cities by State | dateandtime.live</title>
+  <meta name="description" content="Live current time in 15,994 United States cities across 52 states. Browse by state or search any city. Real-time updates every second." />
   <meta name="theme-color" content="#5b4aaf" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/world-time/united-states/" />
@@ -95,66 +95,33 @@
     </div>
   </section>
 
-  <section class="wt-hub-section" id="top-100">
+  <section class="wt-hub-section" id="city-search">
     <div class="container">
       <div class="wt-hub-header">
-        <h2>🏆 Top 100 cities in the United States</h2>
-        <span class="wt-hub-count" id="wt-top100-count">Top 100</span>
+        <h2>Find a specific city</h2>
+        <span class="wt-hub-count" id="wt-search-count" hidden></span>
       </div>
-      <p class="tz-section-sub">The 100 largest US cities by population. Click any city for live time, weather, holidays, and time zone info.</p>
-      <div class="wt-card-grid wt-card-grid-top100" id="wt-card-grid-top100" data-section="top100" aria-busy="false">
-        <!-- Populated by JS, sorted by population desc, top 100 -->
-      </div>
-    </div>
-  </section>
+      <p class="tz-section-sub">Search any of the 15,994 US cities by name. Press Enter or scroll for results.</p>
 
-  <section class="wt-hub-section" id="all-cities">
-    <div class="container">
-      <div class="wt-hub-header">
-        <h2>All United States cities</h2>
-        <span class="wt-hub-count" id="wt-count">—</span>
-      </div>
-      <p class="tz-section-sub">Click any city for its full time zone, weather, holidays, and more. Live local time updates every second. The green dot means it&#39;s live.</p>
-
-      <div class="wt-filter-bar">
-        <div class="wt-filter-bar-top">
-          <div class="wt-search">
-            <svg class="wt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="search" id="wt-search-input" class="wt-search-input" placeholder="Search United States cities…" autocomplete="off" spellcheck="false" />
-            <button type="button" class="wt-search-clear" id="wt-search-clear" aria-label="Clear search" hidden>×</button>
-          </div>
-          <label class="wt-sort-wrap">
-            <span class="wt-sort-label">Sort:</span>
-            <select id="wt-sort-select" class="wt-sort-select">
-              <option value="popular">Popular</option>
-              <option value="all">All cities</option>
-              <option value="name">City A–Z</option>
-              <option value="state">By state</option>
-            </select>
-          </label>
-        </div>
+      <div class="wt-search wt-search-lg">
+        <svg class="wt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="wt-city-search" class="wt-search-input" placeholder="Search 15,994 US cities (e.g. Cody, Newport, Springfield…)" autocomplete="off" spellcheck="false" />
+        <button type="button" class="wt-search-clear" id="wt-city-search-clear" aria-label="Clear search" hidden>×</button>
       </div>
 
       <div class="wt-result-bar">
-        <span class="wt-result-count" id="wt-result-count">—</span>
-        <span class="wt-loading" id="wt-loading" hidden>
-          <span class="wt-spinner" aria-hidden="true"></span> Loading…
+        <span class="wt-result-count" id="wt-city-search-result" hidden></span>
+        <span class="wt-loading" id="wt-city-search-loading" hidden>
+          <span class="wt-spinner" aria-hidden="true"></span> Searching…
         </span>
       </div>
 
-      <div class="wt-card-grid" id="wt-card-grid" data-section="cities" aria-busy="false">
+      <div class="wt-card-grid" id="wt-city-search-grid" data-section="city-search" aria-busy="false" hidden>
         <!-- Populated by JS -->
-      </div>
-
-      <div class="wt-load-more-row">
-        <button class="wt-load-more" id="wt-load-more" hidden>
-          Load more <span data-section-remaining>0</span> ↓
-        </button>
-        <span class="wt-page-info" id="wt-page-info" hidden>Page 1</span>
       </div>
     </div>
   </section>
-  
+
   <section class="wt-hub-section wt-states-section">
     <div class="container">
       <h2>Browse United States by state</h2>
@@ -647,48 +614,108 @@ const STATE_META = {
 window.__STATE_META = STATE_META;</script>
 
 <script>
-// Top 100 US cities — fetch and render in the dedicated section.
-// Uses /api/v1/cities/all to get all US cities, then sorts and slices to top 100.
+// City search — search 15,994 US cities by name with debounced live filter.
+// Uses /api/v1/cities/all to get the full US list once, then filters client-side
+// for instant results as the user types.
 (function() {
-  const grid = document.getElementById('wt-card-grid-top100');
-  if (!grid) return;
+  const input = document.getElementById('wt-city-search');
+  const clearBtn = document.getElementById('wt-city-search-clear');
+  const grid = document.getElementById('wt-city-search-grid');
+  const resultCount = document.getElementById('wt-city-search-result');
+  const loading = document.getElementById('wt-city-search-loading');
+  if (!input || !grid) return;
   const api = (window.__tdlApi) || '/api';
-  // /all returns 3,407 US cities today; will grow as we add more.
-  fetch(api + '/v1/cities/all?country=US&minPopulation=100000')
-    .then(r => r.json())
-    .then(d => {
-      const cities = (d.data && d.data.cities) || [];
-      // Sort by population desc and take top 100
-      const top100 = cities
-        .sort((a, b) => (b.population || 0) - (a.population || 0))
-        .slice(0, 100);
-      // Render with client-side computed time
-      grid.innerHTML = top100.map(c => {
-        const path = '/world-time/united-states/' + c.slug + '/';
-        const pop = c.population ? c.population.toLocaleString() : '';
-        return '<a class="wt-card" href="' + path + '">' +
-          '<div class="wt-card-flag"><img src="https://flagcdn.com/w40/us.png" alt="" loading="lazy" /></div>' +
-          '<div class="wt-card-time" data-tz="' + c.timezone + '">--:--</div>' +
-          '<div class="wt-card-name">' + c.name + '</div>' +
-          '<div class="wt-card-meta">' + (c.stateCode || '') + (pop ? ' · ' + pop : '') + '</div>' +
-        '</a>';
-      }).join('');
-      grid.setAttribute('aria-busy', 'false');
-      // Update times
-      function updateTimes() {
-        grid.querySelectorAll('.wt-card-time[data-tz]').forEach(el => {
-          try {
-            const tz = el.getAttribute('data-tz');
-            el.textContent = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date());
-          } catch (e) {}
-        });
-      }
-      updateTimes();
-      setInterval(updateTimes, 1000);
-    })
-    .catch(err => {
-      grid.innerHTML = '<p>Failed to load top cities. <a href="/world-time/?country=US">Browse all US cities</a>.</p>';
+  let allCities = null;
+  let timer = null;
+
+  function fmtPop(n) {
+    if (!n) return '';
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1_000) return (n / 1_000).toFixed(0) + 'K';
+    return String(n);
+  }
+
+  function renderCityCard(c) {
+    const path = '/world-time/united-states/' + c.slug + '/';
+    const pop = c.population ? fmtPop(c.population) : '';
+    return '<a class="wt-card" href="' + path + '">' +
+      '<div class="wt-card-flag"><img src="https://flagcdn.com/w40/us.png" alt="" loading="lazy" /></div>' +
+      '<div class="wt-card-time" data-tz="' + c.timezone + '">--:--</div>' +
+      '<div class="wt-card-name">' + (c.name || '') + '</div>' +
+      '<div class="wt-card-meta">' + (c.stateCode || '') + (pop ? ' · ' + pop : '') + '</div>' +
+    '</a>';
+  }
+
+  function updateTimes() {
+    grid.querySelectorAll('.wt-card-time[data-tz]').forEach(el => {
+      try {
+        const tz = el.getAttribute('data-tz');
+        el.textContent = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date());
+      } catch (e) {}
     });
+  }
+
+  function ensureLoaded() {
+    if (allCities) return Promise.resolve(allCities);
+    loading.hidden = false;
+    return fetch(api + '/v1/cities/all?country=US')
+      .then(r => r.json())
+      .then(d => {
+        allCities = (d.data && d.data.cities) || [];
+        loading.hidden = true;
+        return allCities;
+      })
+      .catch(err => {
+        loading.hidden = true;
+        grid.innerHTML = '<p>Failed to load cities. Please refresh the page.</p>';
+        return [];
+      });
+  }
+
+  function runSearch(q) {
+    q = (q || '').trim().toLowerCase();
+    if (!q) {
+      grid.hidden = true;
+      grid.innerHTML = '';
+      resultCount.hidden = true;
+      clearBtn.hidden = true;
+      return;
+    }
+    clearBtn.hidden = false;
+    ensureLoaded().then(all => {
+      // Filter by name (case-insensitive prefix-match for top relevance)
+      const matches = all
+        .filter(c => c.name && c.name.toLowerCase().includes(q))
+        .sort((a, b) => (b.population || 0) - (a.population || 0))
+        .slice(0, 60);
+      resultCount.hidden = false;
+      resultCount.textContent = matches.length + ' of 15,994 cities match';
+      if (!matches.length) {
+        grid.innerHTML = '<p class="wt-empty">No cities match "' + q + '". Try a different spelling or browse by state below.</p>';
+        grid.hidden = false;
+        return;
+      }
+      grid.innerHTML = matches.map(renderCityCard).join('');
+      grid.hidden = false;
+      updateTimes();
+    });
+  }
+
+  input.addEventListener('input', () => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => runSearch(input.value), 180);
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { input.value = ''; runSearch(''); }
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    runSearch('');
+    input.focus();
+  });
+
+  // Live update times for any rendered cards every second
+  setInterval(updateTimes, 1000);
 })();
 </script>
 

@@ -617,7 +617,20 @@
   position: relative;
   flex: 1 1 320px;
   min-width: 240px;
-  display: flex;
+}
+.wt-search-lg .wt-search-input {
+  padding: 0.95rem 2.8rem 0.95rem 3.0rem;
+  font-size: 1rem;
+}
+.wt-search-lg .wt-search-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  left: 1.0rem;
+}
+.wt-search-lg .wt-search-clear {
+  right: 0.95rem;
+  font-size: 1.2rem;
+}  display: flex;
   align-items: center;
 }
 .wt-search-icon {
@@ -1122,4 +1135,88 @@
   background: rgba(20, 20, 30, 0.78);
   color: #fff;
   padding: 4px 8px;
-  border-r
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2;
+}
+.wt-state-tile-body {
+  padding: 0.875rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+.wt-state-tile-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-foreground, #1f1d2b);
+  line-height: 1.2;
+}
+.wt-state-tile-stats {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-foreground-muted, #6b6781);
+  font-weight: 500;
+}
+.wt-state-tile-cities::before,
+.wt-state-tile-pop::before {
+  margin-right: 0.25rem;
+}
+.wt-state-tile-capital {
+  font-size: 0.75rem;
+  color: var(--color-foreground-muted, #6b6781);
+  font-weight: 500;
+  margin-top: 0.125rem;
+}
+.wt-state-tile-clock {
+  margin-top: 0.375rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary, #5b4aaf);
+  letter-spacing: 0.02em;
+}
+[data-theme="dark"] .wt-state-tile {
+  border-color: rgba(120, 102, 212, 0.28);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+[data-theme="dark"] .wt-state-tile:hover {
+  border-color: var(--color-primary, #7866d4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .wt-state-tile-name {
+  color: #f1eef7;
+}
+[data-theme="dark"] .wt-state-tile-cities,
+[data-theme="dark"] .wt-state-tile-pop,
+[data-theme="dark"] .wt-state-tile-capital {
+  color: #a8a3c2;
+}
+[data-theme="dark"] .wt-state-tile-clock {
+  color: #b3a8ff;
+}
+[data-theme="dark"] .wt-state-tile-img-wrap {
+  background: linear-gradient(135deg, #2a2150 0%, #423784 50%, #6b3a5a 100%);
+}
+
+/* "By state" group header inside the city grid */
+.wt-state-group-header {
+  grid-column: 1 / -1;
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-foreground, #1f1d2b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border, rgba(92, 74, 175, 0.16));
+}
+[data-theme="dark"] .wt-state-group-header {
+  color: #f1eef7;
+  border-bottom-color: rgba(120, 102, 212, 0.28);
+}

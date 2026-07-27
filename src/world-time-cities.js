@@ -1161,7 +1161,8 @@
 
   async function init() {
     const grid = el("wt-card-grid");
-    if (!grid) return; // not the /world-time/ page
+    const stateGrid = el("wt-state-grid");
+    if (!grid && !stateGrid) return; // not a world-time page
 
     readUrl();
     // Sync the controls with the URL state
@@ -1181,6 +1182,9 @@
     tick();
     // If the URL asks for page > 1, we need to fetch pages 1..N sequentially
     // so the user sees the full accumulated list (initial 8 + (p-1)*15 more).
+    // Skip the city fetch entirely if there's no card grid (state-only pages
+    // like the US country page now render only the state grid + city search).
+    if (!grid) return;
     if (state.page > 1) {
       for (let p = 1; p <= state.page; p++) {
         const before = state.cities.length;
