@@ -584,16 +584,25 @@
           filtered = filtered.filter(c => c.unSubregion === subregionName);
         }
       }
-      // Sort by population desc (countries with no population sort last)
+      // Sort: countries with population first (desc), then by name
+      // (dr5hn data has population=null for most, so alphabetical fallback)
       const sorted = filtered
         .map(c => ({
           cca2: c.cca2,
           name: c.name,
           flagEmoji: c.flagEmoji || "",
           population: c.population || 0,
+          hasPopulation: c.population != null,
           slug: c.countrySlug || (c.name || "").toLowerCase().replace(/[^a-z0-9]+/g, '-')
         }))
-        .sort((a, b) => (b.population || 0) - (a.population || 0))
+        .sort((a, b) => {
+          // Countries with population first, sorted by pop desc
+          if (a.hasPopulation && !b.hasPopulation) return -1;
+          if (!a.hasPopulation && b.hasPopulation) return 1;
+          if (a.hasPopulation && b.hasPopulation) return (b.population || 0) - (a.population || 0);
+          // Fall back to alphabetical
+          return a.name.localeCompare(b.name);
+        })
         .slice(0, limit);
       countryCache[cacheKey] = sorted;
       return sorted;
