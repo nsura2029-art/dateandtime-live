@@ -166,23 +166,116 @@
     </svg>`;
   }
 
-  // ---- 5. QUARTZ ----
-  // Digital LCD display with the iconic 1Hz ticking second. 7-segment-style
-  // rendering using rect strokes for a tech feel.
+  // ---- 5. WATER CLOCK (Clepsydra) ----
+  // Ancient timekeeping device with water dripping from an upper chamber
+  // into a lower vessel. The water level in the lower vessel indicates
+  // the hour. Animated drips + a slowly rising water level.
+  function svgWaterClock() {
+    return `<svg viewBox="0 0 200 200" class="clock-svg clock-water" aria-hidden="true">
+      <defs>
+        <linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="currentColor" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="currentColor" stop-opacity="0.4"/>
+        </linearGradient>
+      </defs>
+      <!-- Decorative column / frame (left) -->
+      <rect x="25" y="20" width="8" height="100" fill="currentColor" opacity="0.45"/>
+      <circle cx="29" cy="20" r="6" fill="currentColor" opacity="0.5"/>
+      <!-- Decorative column / frame (right) -->
+      <rect x="167" y="20" width="8" height="100" fill="currentColor" opacity="0.45"/>
+      <circle cx="171" cy="20" r="6" fill="currentColor" opacity="0.5"/>
+      <!-- Top lintel -->
+      <rect x="20" y="14" width="160" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+      <!-- Upper reservoir (water source) -->
+      <path d="M 50 40 L 150 40 L 145 70 L 55 70 Z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+      <!-- Upper water level (animated rising then dropping) -->
+      <rect class="water-upper" x="58" y="60" width="84" height="9" fill="url(#water-grad)" opacity="0.6"/>
+      <!-- Drip hole + spout -->
+      <circle cx="100" cy="72" r="3" fill="currentColor"/>
+      <line x1="100" y1="72" x2="100" y2="92" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+      <!-- Dripping droplets (animated fall) -->
+      <circle class="water-drip water-drip-1" cx="100" cy="78" r="1.8" fill="currentColor" opacity="0.7"/>
+      <circle class="water-drip water-drip-2" cx="100" cy="98" r="1.8" fill="currentColor" opacity="0.7"/>
+      <circle class="water-drip water-drip-3" cx="100" cy="115" r="1.8" fill="currentColor" opacity="0.7"/>
+      <!-- Lower bowl (collects water) -->
+      <path d="M 30 130 Q 30 175 100 180 Q 170 175 170 130 L 155 130 Q 155 168 100 172 Q 45 168 45 130 Z"
+            fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+      <!-- Lower water level (rises as drips accumulate) -->
+      <path class="water-lower" d="M 35 165 Q 35 175 100 178 Q 165 175 165 165 Z"
+            fill="url(#water-grad)" opacity="0.7"/>
+      <!-- Time indicators on the lower bowl (hour marks) -->
+      <line x1="35" y1="140" x2="40" y2="140" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+      <line x1="35" y1="155" x2="40" y2="155" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+      <line x1="35" y1="170" x2="40" y2="170" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+      <line x1="160" y1="140" x2="165" y2="140" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+      <line x1="160" y1="155" x2="165" y2="155" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+      <line x1="160" y1="170" x2="165" y2="170" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+    </svg>`;
+  }
+
+  // ---- 6. QUARTZ (aesthetic gear clock style) ----
+  // Inspired by the Gears Clock kinetic art: visible brass & steel gears
+  // mesh together to drive the hands. The hands themselves are sleek
+  // black spade/lozenge shapes against an aged-bronze dial.
   function svgQuartz() {
     return `<svg viewBox="0 0 200 200" class="clock-svg clock-quartz" aria-hidden="true">
-      <!-- Watch case (rounded rect, LCD style) -->
-      <rect x="20" y="60" width="160" height="80" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-width="2.5"/>
-      <!-- LCD display area -->
-      <rect x="30" y="72" width="140" height="56" rx="4" fill="currentColor" fill-opacity="0.08"/>
-      <!-- Time digits (updated by JS) -->
-      <text class="quartz-time" x="100" y="113" text-anchor="middle" dominant-baseline="central"
-            font-family="ui-monospace, 'SF Mono', monospace" font-size="32" font-weight="700"
-            fill="currentColor" letter-spacing="2">--:--:--</text>
-      <!-- Brand label -->
-      <text x="100" y="78" text-anchor="middle" font-size="6" font-weight="600" letter-spacing="2" fill="currentColor" opacity="0.4">QUARTZ</text>
-      <!-- Side button -->
-      <rect x="178" y="90" width="6" height="20" rx="2" fill="currentColor" opacity="0.4"/>
+      <defs>
+        <radialGradient id="quartz-dial" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="currentColor" stop-opacity="0.18"/>
+          <stop offset="80%" stop-color="currentColor" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="currentColor" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- Outer case -->
+      <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="2" opacity="0.55"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.35"/>
+      <!-- Dial face -->
+      <circle cx="100" cy="100" r="84" fill="url(#quartz-dial)"/>
+      <!-- Roman numerals around the dial -->
+      <text x="100" y="34"  text-anchor="middle" font-size="14" font-weight="600" font-family="serif" fill="currentColor" opacity="0.7">XII</text>
+      <text x="165" y="106" text-anchor="middle" font-size="14" font-weight="600" font-family="serif" fill="currentColor" opacity="0.7">III</text>
+      <text x="100" y="178" text-anchor="middle" font-size="14" font-weight="600" font-family="serif" fill="currentColor" opacity="0.7">VI</text>
+      <text x="35"  y="106" text-anchor="middle" font-size="14" font-weight="600" font-family="serif" fill="currentColor" opacity="0.7">IX</text>
+      <text x="148" y="48"  text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">I</text>
+      <text x="172" y="73"  text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">II</text>
+      <text x="172" y="138" text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">IV</text>
+      <text x="148" y="162" text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">V</text>
+      <text x="52"  y="162" text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">VII</text>
+      <text x="28"  y="138" text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">VIII</text>
+      <text x="28"  y="73"  text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">X</text>
+      <text x="52"  y="48"  text-anchor="middle" font-size="11" font-weight="600" font-family="serif" fill="currentColor" opacity="0.55">XI</text>
+      <!-- Visible gears (aesthetic, like a skeleton clock) -->
+      <g class="quartz-gears" opacity="0.55">
+        <g class="quartz-gear-1" transform="translate(45 50)">
+          <circle r="18" fill="none" stroke="currentColor" stroke-width="1.4"/>
+          <circle r="5" fill="currentColor"/>
+          <line x1="-15" y1="0" x2="15" y2="0" stroke="currentColor" stroke-width="1"/>
+          <line x1="0" y1="-15" x2="0" y2="15" stroke="currentColor" stroke-width="1"/>
+          <line x1="-10.6" y1="-10.6" x2="10.6" y2="10.6" stroke="currentColor" stroke-width="0.7"/>
+          <line x1="-10.6" y1="10.6" x2="10.6" y2="-10.6" stroke="currentColor" stroke-width="0.7"/>
+        </g>
+        <g class="quartz-gear-2" transform="translate(155 145)">
+          <circle r="14" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <circle r="4" fill="currentColor"/>
+          <line x1="-11.5" y1="0" x2="11.5" y2="0" stroke="currentColor" stroke-width="0.9"/>
+          <line x1="0" y1="-11.5" x2="0" y2="11.5" stroke="currentColor" stroke-width="0.9"/>
+        </g>
+        <g class="quartz-gear-3" transform="translate(155 60)">
+          <circle r="9" fill="none" stroke="currentColor" stroke-width="1"/>
+          <circle r="3" fill="currentColor"/>
+          <line x1="-7" y1="0" x2="7" y2="0" stroke="currentColor" stroke-width="0.7"/>
+          <line x1="0" y1="-7" x2="0" y2="7" stroke="currentColor" stroke-width="0.7"/>
+        </g>
+      </g>
+      <!-- Hour hand (short, thick) -->
+      <line class="chrono-hour" x1="100" y1="100" x2="100" y2="60" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      <!-- Minute hand (long, thinner) -->
+      <line class="chrono-minute" x1="100" y1="100" x2="100" y2="35" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Second hand (sweeping) -->
+      <line class="chrono-second" x1="100" y1="115" x2="100" y2="40" stroke="#ff7a59" stroke-width="1.2" stroke-linecap="round" opacity="0.85"/>
+      <!-- Center pin -->
+      <circle cx="100" cy="100" r="3.5" fill="currentColor"/>
+      <circle cx="100" cy="100" r="1.2" fill="#ff7a59"/>
     </svg>`;
   }
 
@@ -219,6 +312,7 @@
     hourglass: svgHourglass,
     pendulum: svgPendulum,
     chrono: svgChronometer,
+    water: svgWaterClock,
     quartz: svgQuartz,
     atomic: svgAtomic
   };
@@ -313,11 +407,40 @@
     }
   }
 
-  // Quartz — digital HH:MM:SS, 1Hz step on the second
+  // Water clock — ambient animation only (the dripping is CSS-driven).
+  // We also slightly animate the lower water level based on the minute
+  // so the bowl fills/drains in 60-second cycles, matching the "drop
+  // counts the hour" mechanic of a real clepsydra.
+  function updateWater(card, t) {
+    const lower = card.querySelector(".water-lower");
+    if (!lower) return;
+    // 60s cycle: water level rises from y=170 to y=145 over 60s, then resets.
+    const cycle = t.second; // 0..59
+    const progress = cycle / 60; // 0..1
+    const yStart = 170;
+    const yEnd = 145;
+    const y = yStart - (yStart - yEnd) * progress;
+    // Build a path with the new y
+    lower.setAttribute("d", `M 35 ${y.toFixed(1)} Q 35 175 100 178 Q 165 175 165 ${y.toFixed(1)} Z`);
+  }
+
+  // Quartz — digital HH:MM:SS, 1Hz step on the second (now uses the
+  // gear-clock aesthetic with visible Roman numerals + sweeping hands)
   function updateQuartz(card, t) {
-    const txt = card.querySelector(".quartz-time");
-    if (txt) {
-      txt.textContent = pad2(t.hour) + ":" + pad2(t.minute) + ":" + pad2(t.second);
+    const hour = card.querySelector(".chrono-hour");
+    const min = card.querySelector(".chrono-minute");
+    const sec = card.querySelector(".chrono-second");
+    if (hour) {
+      const a = ((t.hour % 12) + t.minute / 60) * 30;
+      hour.setAttribute("transform", `rotate(${a} 100 100)`);
+    }
+    if (min) {
+      const a = (t.minute + t.second / 60) * 6;
+      min.setAttribute("transform", `rotate(${a} 100 100)`);
+    }
+    if (sec) {
+      const a = (t.second + t.ms / 1000) * 6;
+      sec.setAttribute("transform", `rotate(${a} 100 100)`);
     }
   }
 
@@ -340,6 +463,7 @@
     hourglass: updateHourglass,
     pendulum: updatePendulum,
     chrono: updateChrono,
+    water: updateWater,
     quartz: updateQuartz,
     atomic: updateAtomic
   };
@@ -356,6 +480,7 @@
     hourglass: { year: "150 BC",   inventor: "Ancient Romans",      power: "Sand & gravity",      news: "/news/2026/07/history-of-timekeeping/" },
     pendulum:  { year: "1656",     inventor: "Christiaan Huygens",  power: "Gravity",             news: "/news/2026/07/pendulum-clock-huygens/" },
     chrono:    { year: "1735",     inventor: "John Harrison",       power: "Spring + balance",    news: "/news/2026/07/marine-chronometer-harrison/" },
+    water:     { year: "16th C. BC", inventor: "Babylonians & Egyptians", power: "Regulated water flow", news: "/news/2026/07/history-of-timekeeping/" },
     quartz:    { year: "1927",     inventor: "Warren Marrison",     power: "Quartz crystal",      news: "/news/2026/07/quartz-revolution-seiko/" },
     atomic:    { year: "1955",     inventor: "Louis Essen (NPL UK)",power: "Cesium-133 atom",     news: "/news/2026/07/atomic-clock-nist/" }
   };

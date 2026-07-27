@@ -275,6 +275,10 @@ function inlineMd(s) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_, alt, url) => {
+      // Markdown image: ![alt](url) — alt is already escaped by escapeHtml
+      return `<img src="${url}" alt="${alt}" loading="lazy" class="news-body-img" />`;
+    })
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
       // External link: open in new tab
       if (url.startsWith('http')) {

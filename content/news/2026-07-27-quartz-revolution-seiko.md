@@ -47,6 +47,10 @@ The Swiss didn't give up. In 1983, the Swiss watch industry consolidated into a 
 
 Today, the Swiss watch industry is back to about 60,000 employees and exports ~$25 billion worth of watches per year. Most of those watches are **quartz** (the affordable end) or **mechanical** (the luxury end, where connoisseurs pay $50,000 for hand-assembled timepieces that are less accurate than a $20 Casio).
 
+![Gears Clock kinetic art — quartz oscillators in every modern device](https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=600&q=80)
+
+*Modern gear clocks are kinetic art for your walls — and a reminder that every digital device depends on a tiny quartz crystal.*
+
 The Quartz Revolution didn't kill the Swiss watch industry — it bifurcated it. Quartz became the everyday default, mechanical became the luxury art form.
 
 ## Silicon Valley's Debt to Quartz

@@ -1674,3 +1674,39 @@
   text-decoration-color: var(--color-primary, #5b4aaf);
   text-underline-offset: 2px;
 }
+
+/* ---- Water clock + aesthetic gear clock styles ---- */
+.wt-clock-water .clock-svg { color: #2c8a8a; }   /* aqua teal */
+[data-theme="dark"] .wt-clock-water .clock-svg { color: #5cd9d9; }
+.wt-clock-quartz .clock-svg { color: #b88214; }   /* aged bronze */
+[data-theme="dark"] .wt-clock-quartz .clock-svg { color: #d4a056; }
+
+/* Water drips fall animation */
+@keyframes waterDrop {
+  0%   { transform: translateY(0);   opacity: 0.8; }
+  80%  { opacity: 0.8; }
+  100% { transform: translateY(50px); opacity: 0; }
+}
+.clock-water .water-drip-1 { animation: waterDrop 1.5s ease-in infinite; }
+.clock-water .water-drip-2 { animation: waterDrop 1.5s ease-in infinite 0.5s; }
+.clock-water .water-drip-3 { animation: waterDrop 1.5s ease-in infinite 1.0s; }
+
+/* Gear rotation animation (quartz gear clock) */
+@keyframes gearSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.clock-quartz .quartz-gear-1 { animation: gearSpin 20s linear infinite; transform-origin: 45px 50px; }
+.clock-quartz .quartz-gear-2 { animation: gearSpin 14s linear infinite reverse; transform-origin: 155px 145px; }
+.clock-quartz .quartz-gear-3 { animation: gearSpin 8s linear infinite; transform-origin: 155px 60px; }
+
+/* ---- News article body images ---- */
+.news-body img.news-body-img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 2rem 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}

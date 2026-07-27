@@ -16,9 +16,13 @@ For most of human history, **knowing what time it was** meant looking up at the 
 
 The oldest known sundials, found in Egyptian tombs, date to **around 3500 BC**. They worked on a simple principle: a vertical stick (the *gnomon*) casts a shadow that moves as the sun arcs across the sky. The Egyptians divided daylight into 12 hours — a system that survives in every analog clock face today.
 
-The sundial had one obvious weakness: it didn't work at night. So **water clocks** (*clepsydrae*) emerged in ancient Babylon and Egypt around 1600 BC. Water dripped from one container to another at a measurable rate; markings on the receiving vessel indicated the hour. The Greek word *hora* ("hour") itself comes from this era.
+The sundial had one obvious weakness: it didn't work at night. So **water clocks** (*clepsydrae*) emerged in ancient Babylon and Egypt around **1600 BC**. Water dripped from one container to another at a measurable rate; markings on the receiving vessel indicated the hour. The Greek word *hora* ("hour") itself comes from this era.
 
-Chinese and Mayan astronomers independently developed their own shadow-based instruments around the same period, often calibrated for religious ceremonies rather than daily life.
+Chinese and Mayan astronomers independently developed their own shadow-based instruments around the same period, often calibrated for religious ceremonies rather than daily life. Water clocks persisted for thousands of years — the Tower of the Winds in Athens (1st century BC) used a clepsydra, and Chinese engineers built elaborate water clocks with mechanical escapements as early as the 8th century AD.
+
+![Ancient water clock (clepsydra) — water dripping from an upper vessel into a lower bowl](https://images.unsplash.com/photo-1564507004663-b6dfb3c824d5?w=600&q=80)
+
+*The water clock was humanity's first attempt to measure time independent of the sun's position.*
 
 ## Mechanical Time (725 AD – 1656 AD)
 
@@ -53,6 +57,15 @@ Modern optical atomic clocks, which use strontium or ytterbium atoms at optical 
 We live in a strange moment. Every smartphone, every bank transaction, every GPS satellite depends on a clock so precise that the word "second" itself has been redefined around it. The mechanical watch on your wrist is a museum piece; the time it shows is computed from atoms oscillating in a vacuum chamber somewhere in Colorado or Paris.
 
 It's been 4,000 years since the first sundial. We've come a long way — and the next leap is just around the corner.
+
+
+
+## See also
+
+- [The fascinating history of clocks (TheGearsClock)](https://www.thegearsclock.com/de/blogs/news/the-fascinating-history-of-clocks-who-invented-the-clock?srsltid=AfmBOopRQw8kIyTJqIfoyeBjKf1C2IFG7lhqEKpXf39aoE4hm_90K_Vg)
+- [Elevate your space with the Gears Clock (kinetic art for your walls)](https://www.thegearsclock.com/de/blogs/news/elevate-your-space-with-the-gears-clock-kinetic-art-for-your-walls)
+- [Live time in the world's most-watched cities](/world-time/)
+- [The pendulum clock and the invention of accurate time](/news/2026/07/pendulum-clock-huygens/)
 
 ## More on Time
 

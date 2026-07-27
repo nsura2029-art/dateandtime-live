@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/world-time.css?v=19" />
   <link rel="stylesheet" href="/src/site-shell.css?v=19" />
-  <link rel="stylesheet" href="/src/tz-hub.css?v=20" />
+  <link rel="stylesheet" href="/src/tz-hub.css?v=21" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -53,7 +53,7 @@
   }
   </script>
   <script src="/src/site-shell.js" defer></script>
-  <script src="/src/hero-clocks.js?v=2" defer></script>
+  <script src="/src/hero-clocks.js?v=3" defer></script>
   <script src="/src/world-time-cities.js?v=19" defer></script>
   <script>
     // Mount the 6-clocks hero section.
@@ -70,15 +70,16 @@
         { name: "Tokyo",        slug: "tokyo",       country: "japan",         tz: "Asia/Tokyo",         clock: "chrono"    }
       ];
 
-      // Build the city list, replacing the 5th slot with the user's city.
+      // Build the city list. The 5th slot is filled with the user's city
+      // (auto-detected via window.__location which the Worker injects from
+      // Cloudflare's IP geolocation data). If the user is already in one
+      // of the 4 fixed cities, we replace that one with the user's own
+      // record so the same city doesn't show up twice.
       function buildCities() {
         const loc = window.__location;
         let userCity = null;
         if (loc && loc.city && loc.countryName) {
-          // The Worker injects cca2 + slugs via window.__location, but the
-          // city slug needs to match an existing page. Use a small map of
-          // common cities; fall back to a best-guess slug.
-          const cca2 = (loc.countryCode || "").toUpperCase();
+          // Map common IANA timezones to our country pages
           const TZ_TO_COUNTRY = {
             "America/New_York": "united-states", "America/Chicago": "united-states",
             "America/Denver": "united-states", "America/Los_Angeles": "united-states",
@@ -95,24 +96,28 @@
           };
           const country = TZ_TO_COUNTRY[loc.timezone];
           if (country) {
-            // Build a likely slug from the city name
             const slug = String(loc.city).toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
             userCity = {
               name: loc.city,
               slug: slug,
               country: country,
               tz: loc.timezone,
-              clock: "quartz",
+              clock: "water",   // 5th slot now uses the water clock
               isUser: true
             };
           }
         }
-        // Fallback if we can't detect the user city
         if (!userCity) {
-          userCity = { name: "London", slug: "london", country: "united-kingdom", tz: "Europe/London", clock: "quartz", isUser: true };
+          // Fallback when geo lookup fails — use a non-conflicting city
+          userCity = { name: "Paris", slug: "paris", country: "france", tz: "Europe/Paris", clock: "water", isUser: true };
         }
+        // De-duplicate: if the user is in one of the 4 fixed cities, drop
+        // that fixed entry so the user city appears once (with the "You" badge).
+        const filtered = DEFAULT_CITIES.filter(c =>
+          !(c.country === userCity.country && c.slug === userCity.slug)
+        );
         return [
-          ...DEFAULT_CITIES,
+          ...filtered,
           userCity,
           { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
         ];
