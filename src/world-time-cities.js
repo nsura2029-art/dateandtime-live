@@ -73,17 +73,15 @@
   const ICON_STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L14 9 L20 9 L15 13 L17 19 L12 15 L7 19 L9 13 L4 9 L10 9 Z"/></svg>';
   const ICON_PYRAMID = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L22 21 L2 21 Z"/><path d="M8 21 L12 13 L16 21"/></svg>';
 
-  // Continent metadata. continent code → URL/API value, label, icon,
-  // and sub-region list (slugs that the API understands for that continent).
-  // Sub-region slugs match the API's `?region=` param. The Americas
-  // intentionally have an empty list — the API data is messy (NA/SA
-  // territories sit under continent=XX), so we show "All Americas" only.
+  // Region metadata. region code → URL/API value, label, icon,
+  // and sub-region list (slugs that the API understands for that region).
+  // Sub-region slugs match the API's `?region=` param. Sorted alphabetically
+  // by label so the user can scan top-to-bottom.
   //
-  // Each continent + sub-region gets a unique inline SVG icon (24×24, single
+  // Each region + sub-region gets a unique inline SVG icon (24×24, single
   // path, currentColor) instead of a generic globe emoji — helps the user
   // recognize regions at a glance and adds visual variety to the filter bar.
   const CONTINENTS = [
-    { code: "all",      api: null, label: "All",        icon: ICON_GRID, regions: [] },
     { code: "africa",   api: "AF",  label: "Africa",     icon: ICON_AFRICA, regions: [
       { slug: "northern-africa",   label: "Northern Africa",  icon: ICON_DESERT },
       { slug: "western-africa",    label: "Western Africa",   icon: ICON_TREE },
@@ -91,6 +89,7 @@
       { slug: "eastern-africa",    label: "Eastern Africa",   icon: ICON_MOUNTAIN },
       { slug: "southern-africa",   label: "Southern Africa",  icon: ICON_DIAMOND }
     ] },
+    { code: "all",      api: null, label: "All",        icon: ICON_GRID, regions: [] },
     { code: "asia",     api: "AS",  label: "Asia",       icon: ICON_ASIA, regions: [
       { slug: "eastern-asia",       label: "Eastern Asia",       icon: ICON_TEMPLE },
       { slug: "south-eastern-asia", label: "South-Eastern Asia", icon: ICON_PALM },
@@ -107,12 +106,9 @@
       { slug: "eastern-europe",    label: "Eastern Europe",    icon: ICON_ONION }
     ] },
     { code: "namerica", api: "NA",  label: "N. America", icon: ICON_NAMERICA, regions: [
-      { slug: "north-america",     label: "United States",     icon: ICON_STAR },
+      { slug: "north-america",     label: "Northern America",  icon: ICON_STAR },
       { slug: "central-america",   label: "Central America",   icon: ICON_PYRAMID },
       { slug: "caribbean",         label: "Caribbean",         icon: ICON_PALM }
-    ] },
-    { code: "samerica", api: "SA",  label: "S. America", icon: ICON_SAMERICA, regions: [
-      { slug: "south-america",     label: "South America",     icon: ICON_TREE }
     ] },
     { code: "oceania",  api: "OC",  label: "Oceania",    icon: ICON_OCEANIA, regions: [
       { slug: "australia-and-new-zealand", label: "Australia & NZ", icon: ICON_KANGAROO },
@@ -120,14 +116,8 @@
       { slug: "micronesia",        label: "Micronesia",        icon: ICON_CORAL },
       { slug: "polynesia",         label: "Polynesia",         icon: ICON_TIKI }
     ] },
-    { code: "other",   api: "OT",  label: "Other",      icon: ICON_GRID, regions: [
-      // Disputed / observer states, special territories not in main regions
-      { slug: "taiwan",            label: "Taiwan",            icon: ICON_STAR },
-      { slug: "kosovo",            label: "Kosovo",            icon: ICON_OLIVE }
-    ] },
-    { code: "polar",   api: "PL",  label: "Polar",      icon: ICON_MOUNTAIN, regions: [
-      // Antarctic + sub-Antarctic research stations
-      { slug: "antarctica",        label: "Antarctica",        icon: ICON_DIAMOND }
+    { code: "samerica", api: "SA",  label: "S. America", icon: ICON_SAMERICA, regions: [
+      { slug: "south-america",     label: "South America",     icon: ICON_TREE }
     ] }
   ];
 
@@ -144,6 +134,13 @@
   ];
 
   // =============== State ===============
+
+  // Cache for countries by sub-region slug, populated lazily as the user
+  // drills down. Key: "region:{slug}" → array of {cca2, name, flagEmoji}.
+  // Cache for states by country, populated lazily.
+  // Key: "country:{cca2}" → array of {code, name}.
+  const countryCache = Object.create(null);
+  const stateCache = Object.create(null);
 
   const state = {
     continent: "all",
@@ -256,24 +253,21 @@
     // per country, sorted by population). /popular only has 35 US cities in
     // its curated top-1000 set, which is too few for country pages.
     if (state.country) {
-      // For state pages: don't use minPopulation (the /cities endpoint only
-      // applies it on the first page — offset > 0 ignores the filter, so we'd
-      // miss the smaller-population cities in the state). We fetch all US
-      // cities across multiple pages and filter by state + minPop client-side.
+      // For state pages: /cities doesn't support the state param, so we use
+      // /all to get all country cities, then filter by state client-side
+      // (this matches the state page's own fetchAllCountryCities flow).
       if (state.stateCode) {
-        params.set("limit", "1000");
-        // No minPopulation param — we filter client-side after multi-page fetch.
-      } else {
-        // Per-country minPopulation (set by the build script via window.__MIN_POPULATION).
-        // US uses 40,000 to cover all 51 states; small countries use 0.
-        const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
-        if (minPop > 0) params.set("minPopulation", String(minPop));
-        // Country page: paginate via offset.
-        const offset = state.page === 1 ? 0 : (INITIAL_VISIBLE + (state.page - 2) * PAGE_STEP);
-        const limit = state.page === 1 ? INITIAL_VISIBLE : PAGE_STEP;
-        params.set("offset", String(offset));
-        params.set("limit", String(limit));
+        return `${API_BASE}/api/v1/cities/all?country=${encodeURIComponent(state.country)}`;
       }
+      // Per-country minPopulation (set by the build script via window.__MIN_POPULATION).
+      // US uses 40,000 to cover all 51 states; small countries use 0.
+      const minPop = (typeof window !== 'undefined' && window.__MIN_POPULATION) || 0;
+      if (minPop > 0) params.set("minPopulation", String(minPop));
+      // Country page: paginate via offset.
+      const offset = state.page === 1 ? 0 : (INITIAL_VISIBLE + (state.page - 2) * PAGE_STEP);
+      const limit = state.page === 1 ? INITIAL_VISIBLE : PAGE_STEP;
+      params.set("offset", String(offset));
+      params.set("limit", String(limit));
       return `${API_BASE}/api/v1/cities?${params}`;
     }
     if (state.sort && state.sort !== "popular") params.set("sort", state.sort);
@@ -438,11 +432,12 @@
     if (state.continent === code) return;
     state.continent = code;
     state.region = null;     // reset region when continent changes
+    state.country = null;    // reset country when continent changes
+    state.stateCode = null;  // reset state when continent changes
     state.page = 1;
     state.cities = [];
     state.total = 0;          // reset total too so the Load more text is correct
-    renderContinentPills();
-    renderRegionPills();
+    renderContinentPills(); renderRegionPills(); renderCountryPills(); renderStateSelect();
     updateLoadMoreUI();
     updateResultCountUI();
     pushUrl();
@@ -452,14 +447,178 @@
   function setRegion(slug) {
     if (state.region === slug) return;
     state.region = slug || null;
+    state.country = null;    // reset country when region changes
+    state.stateCode = null;  // reset state when region changes
     state.page = 1;
     state.cities = [];
     state.total = 0;
     renderRegionPills();
+    renderCountryPills();
+    renderStateSelect();
     updateLoadMoreUI();
     updateResultCountUI();
     pushUrl();
     fetchPage({ append: false });
+  }
+
+  // =============== Country cascade ===============
+  // When a sub-region is selected, fetch its countries and render as pills.
+  // Cached in countryCache so repeat selections are instant.
+
+  function setCountry(cca2) {
+    if (state.country === cca2) return;
+    state.country = cca2 || null;
+    state.stateCode = null;  // reset state when country changes
+    state.page = 1;
+    state.cities = [];
+    state.total = 0;
+    renderCountryPills();
+    renderStateSelect();
+    updateLoadMoreUI();
+    updateResultCountUI();
+    pushUrl();
+    fetchPage({ append: false });
+  }
+
+  function setStateCode(code) {
+    if (state.stateCode === code) return;
+    state.stateCode = code || null;
+    state.page = 1;
+    state.cities = [];
+    state.total = 0;
+    renderStateSelect();
+    updateLoadMoreUI();
+    updateResultCountUI();
+    pushUrl();
+    fetchPage({ append: false });
+  }
+
+  async function fetchCountriesForRegion(slug) {
+    const cacheKey = "region:" + slug;
+    if (countryCache[cacheKey]) return countryCache[cacheKey];
+    // Map region slug → UN sub-region name (case-sensitive, must match API)
+    const SUBREGION_NAMES = {
+      "northern-africa": "Northern Africa", "western-africa": "Western Africa",
+      "middle-africa": "Middle Africa", "eastern-africa": "Eastern Africa",
+      "southern-africa": "Southern Africa",
+      "eastern-asia": "Eastern Asia", "south-eastern-asia": "South-Eastern Asia",
+      "southern-asia": "Southern Asia", "central-asia": "Central Asia",
+      "western-asia": "Western Asia",
+      "western-europe": "Western Europe", "northern-europe": "Northern Europe",
+      "southern-europe": "Southern Europe", "central-europe": "Central Europe",
+      "southeast-europe": "Southeast Europe", "eastern-europe": "Eastern Europe",
+      "north-america": "Northern America", "central-america": "Central America",
+      "caribbean": "Caribbean",
+      "south-america": "South America",
+      "australia-and-new-zealand": "Australia and New Zealand",
+      "melanesia": "Melanesia", "micronesia": "Micronesia", "polynesia": "Polynesia"
+    };
+    const subregionName = SUBREGION_NAMES[slug];
+    if (!subregionName) return [];
+    try {
+      const r = await fetch(`${API_BASE}/v1/countries?limit=300`);
+      const j = await r.json();
+      const all = (j.data && j.data.countries) || [];
+      const list = all
+        .filter(c => c.unSubregion === subregionName)
+        .map(c => ({
+          cca2: c.cca2,
+          name: c.name,
+          flagEmoji: c.flagEmoji || "",
+          slug: c.countrySlug || (c.name || "").toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      countryCache[cacheKey] = list;
+      return list;
+    } catch (e) {
+      console.warn("fetchCountriesForRegion failed", e);
+      return [];
+    }
+  }
+
+  async function renderCountryPills() {
+    const host = el("wt-country-pills");
+    const row = el("wt-country-row");
+    if (!host || !row) return;
+    if (!state.region || state.region === "all") {
+      row.hidden = true;
+      host.innerHTML = "";
+      return;
+    }
+    row.hidden = false;
+    host.innerHTML = '<span class="wt-cascading-loading">Loading countries…</span>';
+    const countries = await fetchCountriesForRegion(state.region);
+    if (!countries.length) {
+      host.innerHTML = '<span class="wt-empty">No countries in this sub-region.</span>';
+      return;
+    }
+    // Highlight active country
+    host.innerHTML = countries.map(c => {
+      const active = state.country === c.cca2 ? " is-active" : "";
+      const flag = c.flagEmoji || "";
+      return `<button type="button" class="wt-pill wt-pill-country${active}" data-country="${c.cca2}"><span class="wt-pill-flag">${flag}</span><span class="wt-pill-label">${escapeHtml(c.name)}</span></button>`;
+    }).join("");
+    host.querySelectorAll(".wt-pill").forEach(btn => {
+      btn.addEventListener("click", () => setCountry(btn.dataset.country));
+    });
+  }
+
+  // =============== State cascade ===============
+  // When a country is selected, fetch its states and render as a scrollable
+  // dropdown. Uses native <select size="6"> for accessibility + native scrollbar.
+
+  async function fetchStatesForCountry(cca2) {
+    const cacheKey = "country:" + cca2;
+    if (stateCache[cacheKey]) return stateCache[cacheKey];
+    try {
+      const r = await fetch(`${API_BASE}/v1/countries/${cca2}/states`);
+      const j = await r.json();
+      const list = (j.data && j.data.states) || [];
+      const sorted = list
+        .map(s => ({ code: s.code, name: s.name }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      stateCache[cacheKey] = sorted;
+      return sorted;
+    } catch (e) {
+      console.warn("fetchStatesForCountry failed", e);
+      return [];
+    }
+  }
+
+  async function renderStateSelect() {
+    const host = el("wt-state-select-wrap");
+    const row = el("wt-state-row");
+    if (!host || !row) return;
+    if (!state.country) {
+      row.hidden = true;
+      host.innerHTML = "";
+      return;
+    }
+    row.hidden = false;
+    host.innerHTML = '<span class="wt-cascading-loading">Loading states…</span>';
+    const states = await fetchStatesForCountry(state.country);
+    if (!states.length) {
+      host.innerHTML = '<span class="wt-empty">No states in this country.</span>';
+      return;
+    }
+    // Build a scrollable dropdown (size=6) so the scrollbar is visible.
+    let html = `<label class="wt-state-label">State: <select id="wt-state-select" class="wt-state-select" size="6" aria-label="Filter by state">`;
+    html += `<option value="">All states</option>`;
+    for (const s of states) {
+      const sel = state.stateCode === s.code ? " selected" : "";
+      html += `<option value="${s.code}"${sel}>${escapeHtml(s.name)}</option>`;
+    }
+    html += `</select></label>`;
+    html += `<button type="button" class="wt-pill wt-pill-clear" data-clear-state>× Clear</button>`;
+    host.innerHTML = html;
+    const sel = el("wt-state-select");
+    if (sel) {
+      sel.addEventListener("change", () => setStateCode(sel.value || null));
+    }
+    const clearBtn = host.querySelector("[data-clear-state]");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => setStateCode(null));
+    }
   }
 
   function setSort(code) {
@@ -804,8 +963,7 @@
     if (sortSelect) sortSelect.value = "popular";
     const clear = el("wt-search-clear");
     if (clear) clear.hidden = true;
-    renderContinentPills();
-    renderRegionPills();
+    renderContinentPills(); renderRegionPills(); renderCountryPills(); renderStateSelect();
     pushUrl();
     fetchPage({ append: false });
   }
@@ -901,8 +1059,7 @@
     const sortSel = el("wt-sort-select");
     if (sortSel) sortSel.value = state.sort;
 
-    renderContinentPills();
-    renderRegionPills();
+    renderContinentPills(); renderRegionPills(); renderCountryPills(); renderStateSelect();
     renderStateGrid();
     wireSearch();
     wireSort();
