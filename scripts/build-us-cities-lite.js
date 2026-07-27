@@ -112,6 +112,12 @@ function buildPage(c) {
   const climate = estimateClimate(c.latitude);
   const climateStr = JSON.stringify(climate);
 
+  // Capital-style today bar data (caller-side compute)
+  // The today bar shows the local time + city; for the lite template we
+  // pre-compute placeholder text that JS will replace with the live time.
+  const tzEncoded = encodeURIComponent(c.timezone);
+  const todayBarTimeId = 'todayBarTime';
+
   // Top 6 closest big cities (pop >= 50K) from the pre-computed pool
   const nearby = bigCitiesPool
     .filter(x => x.id !== c.id)
@@ -184,6 +190,15 @@ function buildPage(c) {
         <li aria-current="page">${c.name}</li>
       </ol>
     </nav>
+
+    <!-- Today bar (sticky under site header) -->
+    <div class="today-bar">
+      <div class="container today-bar-inner">
+        <span class="today-bar-time" id="${todayBarTimeId}" data-tz="${c.timezone}">--:--</span>
+        <span class="today-bar-city">in ${c.name}, ${stateName}</span>
+        <a href="/world-time/meeting/?cities=${c.id}" class="today-bar-link">Schedule a meeting →</a>
+      </div>
+    </div>
 
     <!-- Hero: Live clock -->
     <section class="city-hero" data-tz="${c.timezone}" data-lat="${c.latitude}" data-lon="${c.longitude}">
@@ -319,6 +334,36 @@ ${moreToExplore.map(x => `        <a href="/world-time/united-states/${x.slug}/"
     </section>
   </main>
 
+  <!-- Continue your journey strip -->
+  <section class="continue-strip">
+    <div class="container continue-strip-inner">
+      <h2>Continue your journey</h2>
+      <div class="continue-strip-grid">
+        <a class="continue-strip-card" href="/world-time/">
+          <span class="continue-strip-icon">🕐</span>
+          <div>
+            <div class="continue-strip-title">World time</div>
+            <div class="continue-strip-sub">Live clock for 15,994 US cities + 33,945 worldwide</div>
+          </div>
+        </a>
+        <a class="continue-strip-card" href="/holidays/">
+          <span class="continue-strip-icon">🎉</span>
+          <div>
+            <div class="continue-strip-title">US holidays</div>
+            <div class="continue-strip-sub">Federal + state holidays, long weekends</div>
+          </div>
+        </a>
+        <a class="continue-strip-card" href="/world-time/meeting/?cities=${c.id}">
+          <span class="continue-strip-icon">📅</span>
+          <div>
+            <div class="continue-strip-title">Meeting planner</div>
+            <div class="continue-strip-sub">Find overlap with ${c.name}</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <footer class="site-footer">
     <div class="container">
       <p>dateandtime.live — Current time in ${c.name}, ${stateName}, United States (${c.timezone})</p>
@@ -331,6 +376,20 @@ ${moreToExplore.map(x => `        <a href="/world-time/united-states/${x.slug}/"
   <script>
   // Live clock for the city — uses Intl.DateTimeFormat with the city's IANA tz
   (function() {
+    // Today bar time
+    var tbTime = document.getElementById('${todayBarTimeId}');
+    if (tbTime) {
+      function updateTodayBar() {
+        try {
+          var tz = tbTime.getAttribute('data-tz');
+          var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
+          tbTime.textContent = fmt.format(new Date());
+        } catch (e) {}
+      }
+      updateTodayBar();
+      setInterval(updateTodayBar, 1000);
+    }
+
     var hero = document.querySelector('.city-hero');
     var clock = document.getElementById('cityClock');
     var dateEl = document.getElementById('cityDate');
