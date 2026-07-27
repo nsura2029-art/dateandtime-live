@@ -109,12 +109,15 @@ function generateComingSoonPage(countrySlug, citySlug) {
   <title>${cityName}, ${countryName} — Current Time | dateandtime.live</title>
   <meta name="description" content="Live time, time zone, and weather for ${cityName}, ${countryName}. Coming soon to dateandtime.live.">
   <meta name="robots" content="index, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="canonical" href="https://dateandtime.live/world-time/${countrySlug}/${citySlug}/">
-  <link rel="stylesheet" href="/src/site-shell.css">
-  <link rel="stylesheet" href="/src/tz-hub.css">
+  <link rel="stylesheet" href="/src/site-shell.css" />
+  <link rel="stylesheet" href="/src/tz-hub.css" />
   <style>
-    .coming-soon { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
-    .coming-soon h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.5rem; }
+    .coming-soon { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .coming-soon h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.5rem; line-height: 1.1; }
     .coming-soon .badge { display: inline-block; background: linear-gradient(135deg, #7866d4 0%, #ff7a59 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.5rem; }
     .coming-soon .lede { font-size: 1.125rem; color: var(--color-foreground-soft); margin-bottom: 2rem; line-height: 1.6; }
     .coming-soon .live-time { font-family: var(--font-mono); font-size: 2.5rem; font-weight: 700; color: var(--color-primary); padding: 1.5rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 12px; text-align: center; margin-bottom: 2rem; }
@@ -131,108 +134,163 @@ function generateComingSoonPage(countrySlug, citySlug) {
     .coming-soon .country-link { display: inline-block; margin-top: 2rem; padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; }
     .coming-soon .country-link:hover { background: var(--color-primary-dark); text-decoration: none; }
     [data-theme="dark"] .coming-soon .live-time { color: #b3a8ff; }
+    /* Continue-strip variant (matches site-wide layout) */
+    .continue-strip { margin-top: 3rem; }
   </style>
 </head>
 <body class="shell-page">
   <header class="site-header">
-    <div class="site-header-inner">
-      <a href="/" class="site-logo">
-        <span class="logo-mark" aria-hidden="true">T</span>
+    <div class="container header-row">
+      <a href="/" class="logo" aria-label="dateandtime.live home">
+        <span class="logo-mark">T</span>
         <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
       </a>
       <nav class="nav-main" aria-label="Main">
-        <a href="/" class="nav-link">Today</a>
+        <a href="/" class="nav-link"><span class="now-dot" aria-hidden="true"></span>Today</a>
         <a href="/holidays/" class="nav-link">Holidays</a>
         <a href="/onthisday/" class="nav-link">On this day</a>
-        <a href="/meeting/" class="nav-link">Meeting finder</a>
-        <a href="/world-time/" class="nav-link nav-active">World time</a>
-        <a href="/time-zones/" class="nav-link">Timezone</a>
-        <a href="/news/" class="nav-link">News</a>
+        <a href="/world-time/meeting/" class="nav-link">Meeting</a>
+        <a href="/world-time/" class="nav-link active">World time</a>
       </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" data-theme-btn="light" aria-label="Light mode" aria-pressed="true">☀️</button>
+        <button class="theme-toggle" data-theme-btn="dark" aria-label="Dark mode" aria-pressed="false">🌙</button>
+      </div>
     </div>
   </header>
 
-  <main class="coming-soon">
-    <div class="badge">Coming Soon</div>
-    <h1>${cityName}, ${countryName}</h1>
-    <p class="lede">We're building the full time zone page for <strong>${cityName}</strong>. The static page isn't ready yet, but here's what we have so far — plus a few ways you can help.</p>
+  <!-- Today bar (sticky under site header) — same as city pages -->
+  <div class="today-bar">
+    <div class="container today-bar-inner">
+      <span class="today-bar-time" id="todayBarTime">--:--</span>
+      <span class="today-bar-label">Local time (placeholder)</span>
+      <a class="today-bar-cta" href="/world-time/meeting/?q=${encodeURIComponent(cityName)}">Plan a meeting →</a>
+    </div>
+  </div>
 
-    <div class="live-time" id="live-time">--:--:--</div>
-    <script>
-      // Show the user's current time as a placeholder. The live city-specific
-      // clock will be added once the city is in our DB.
-      (function() {
-        const el = document.getElementById('live-time');
-        if (!el) return;
-        const tick = () => {
-          const now = new Date();
-          const fmt = new Intl.DateTimeFormat('en-US', {
-            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-          });
-          el.textContent = fmt.format(now);
-        };
-        tick();
-        setInterval(tick, 1000);
-      })();
-    </script>
+  <main class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/world-time/">World time</a></li>
+        <li><a href="/world-time/${countrySlug}/">${countryName}</a></li>
+        <li aria-current="page">${cityName}</li>
+      </ol>
+    </nav>
 
-    <h2 style="margin-top:2rem;font-size:1.125rem;">Help us build this page</h2>
-    <div class="feedback-grid">
-      <a href="/feedback/?type=city&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
-        <div class="icon">📍</div>
-        <h3>Suggest the city</h3>
-        <p>Tell us the exact coordinates and time zone of ${cityName}.</p>
-      </a>
-      <a href="/feedback/?type=info&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
-        <div class="icon">ℹ️</div>
-        <h3>Tell us more</h3>
-        <p>Share history, alternate names, or local facts.</p>
-      </a>
-      <a href="/feedback/?type=notify&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
-        <div class="icon">🔔</div>
-        <h3>Notify me</h3>
-        <p>Get an email when this page goes live.</p>
-      </a>
+    <div class="coming-soon">
+      <div class="badge">Coming Soon</div>
+      <h1>${cityName}, ${countryName}</h1>
+      <p class="lede">We're building the full time zone page for <strong>${cityName}</strong>. The static page isn't ready yet, but here's what we have so far — plus a few ways you can help.</p>
+
+      <div class="live-time" id="live-time">--:--:--</div>
+      <script>
+        // Show the user's current time as a placeholder. The live city-specific
+        // clock will be added once the city is in our DB.
+        (function() {
+          const el = document.getElementById('live-time');
+          if (!el) return;
+          const tick = () => {
+            const now = new Date();
+            const fmt = new Intl.DateTimeFormat('en-US', {
+              hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+            });
+            el.textContent = fmt.format(now);
+          };
+          tick();
+          setInterval(tick, 1000);
+        })();
+      </script>
+
+      <h2 style="margin-top:2rem;font-size:1.125rem;">Help us build this page</h2>
+      <div class="feedback-grid">
+        <a href="/feedback/?type=city&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
+          <div class="icon">📍</div>
+          <h3>Suggest the city</h3>
+          <p>Tell us the exact coordinates and time zone of ${cityName}.</p>
+        </a>
+        <a href="/feedback/?type=info&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
+          <div class="icon">ℹ️</div>
+          <h3>Tell us more</h3>
+          <p>Share history, alternate names, or local facts.</p>
+        </a>
+        <a href="/feedback/?type=notify&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
+          <div class="icon">🔔</div>
+          <h3>Notify me</h3>
+          <p>Get an email when this page goes live.</p>
+        </a>
+      </div>
+
+      <h2 style="margin-top:2rem;font-size:1.125rem;">While you wait, learn about time zones</h2>
+      <div class="links-grid">
+        <a href="/time-zones/what-is/" class="link-card"><span class="label">Learn</span>What is a time zone?</a>
+        <a href="/time-zones/dst/" class="link-card"><span class="label">Learn</span>Daylight Saving Time</a>
+        <a href="/time-zones/converter/" class="link-card"><span class="label">Tool</span>Time Zone Converter</a>
+        <a href="/time-zones/utc/" class="link-card"><span class="label">Learn</span>UTC & GMT</a>
+        <a href="/meeting/" class="link-card"><span class="label">Tool</span>Meeting Planner</a>
+        <a href="/globe/" class="link-card"><span class="label">Tool</span>World Clock Globe</a>
+      </div>
+
+      <h2 style="margin-top:2rem;font-size:1.125rem;">Today, on this day, and holidays</h2>
+      <div class="links-grid">
+        <a href="/" class="link-card"><span class="label">Today</span>What day is it?</a>
+        <a href="/onthisday/" class="link-card"><span class="label">On this day</span>Historical events today</a>
+        <a href="/holidays/${countrySlug}/" class="link-card"><span class="label">Holidays</span>${countryName} public holidays</a>
+        <a href="/news/timezone/" class="link-card"><span class="label">News</span>Latest time zone news</a>
+        <a href="/news/astronomy/" class="link-card"><span class="label">News</span>Astronomy & celestial events</a>
+        <a href="/news/calendar/" class="link-card"><span class="label">News</span>Calendar changes</a>
+      </div>
+
+      <a href="${countryUrl}" class="country-link">Browse all ${countryName} cities →</a>
     </div>
 
-    <h2 style="margin-top:2rem;font-size:1.125rem;">While you wait, learn about time zones</h2>
-    <div class="links-grid">
-      <a href="/time-zones/what-is/" class="link-card"><span class="label">Learn</span>What is a time zone?</a>
-      <a href="/time-zones/dst/" class="link-card"><span class="label">Learn</span>Daylight Saving Time</a>
-      <a href="/time-zones/converter/" class="link-card"><span class="label">Tool</span>Time Zone Converter</a>
-      <a href="/time-zones/utc/" class="link-card"><span class="label">Learn</span>UTC & GMT</a>
-      <a href="/meeting/" class="link-card"><span class="label">Tool</span>Meeting Planner</a>
-      <a href="/globe/" class="link-card"><span class="label">Tool</span>World Clock Globe</a>
-    </div>
-
-    <h2 style="margin-top:2rem;font-size:1.125rem;">Today, on this day, and holidays</h2>
-    <div class="links-grid">
-      <a href="/" class="link-card"><span class="label">Today</span>What day is it?</a>
-      <a href="/onthisday/" class="link-card"><span class="label">On this day</span>Historical events today</a>
-      <a href="/holidays/${countrySlug}/" class="link-card"><span class="label">Holidays</span>${countryName} public holidays</a>
-      <a href="/news/timezone/" class="link-card"><span class="label">News</span>Latest time zone news</a>
-      <a href="/news/astronomy/" class="link-card"><span class="label">News</span>Astronomy & celestial events</a>
-      <a href="/news/calendar/" class="link-card"><span class="label">News</span>Calendar changes</a>
-    </div>
-
-    <a href="${countryUrl}" class="country-link">Browse all ${countryName} cities →</a>
+    <!-- Continue your journey strip (matches city pages) -->
+    <section class="continue-strip" aria-label="Continue your journey">
+      <h2 class="continue-strip-title">Continue your journey</h2>
+      <div class="continue-strip-grid">
+        <a class="continue-strip-card" href="/world-time/">
+          <span class="continue-strip-icon" aria-hidden="true">🌐</span>
+          <span class="continue-strip-card-title">World Time Hub</span>
+          <span class="continue-strip-card-sub">Browse 1,000+ cities by region & country</span>
+        </a>
+        <a class="continue-strip-card" href="/time-zones/">
+          <span class="continue-strip-icon" aria-hidden="true">🕐</span>
+          <span class="continue-strip-card-title">All Time Zones</span>
+          <span class="continue-strip-card-sub">408 IANA zones, UTC offsets, DST rules</span>
+        </a>
+        <a class="continue-strip-card" href="/meeting/">
+          <span class="continue-strip-icon" aria-hidden="true">📅</span>
+          <span class="continue-strip-card-title">Meeting Planner</span>
+          <span class="continue-strip-card-sub">Find times that work for everyone</span>
+        </a>
+      </div>
+    </section>
   </main>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="site-footer-inner">
-      <p>© 2026 <a href="/">dateandtime.live</a> · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones">IANA</a> · <a href="https://www.geonames.org/">GeoNames</a> · <a href="https://date.nager.at/">Nager.Date</a></p>
-      <nav class="site-footer-nav" aria-label="Site links">
-        <a href="/">Home</a>
-        <a href="/holidays/">Holidays</a>
-        <a href="/onthisday/">On this day</a>
-        <a href="/world-time/">World time</a>
-        <a href="/time-zones/">Time zones</a>
-        <a href="/news/">News</a>
-        <a href="/meeting/">Meeting</a>
-      </nav>
+  <footer class="site-footer">
+    <div class="container">
+      <p>dateandtime.live — ${cityName}, ${countryName} (coming soon)</p>
+      <p>Data: GeoNames (CC BY 4.0) · Open-Meteo (CC BY 4.0) · IANA Time Zone Database</p>
+      <p><a href="/about/">About</a> · <a href="/editorial-policy/">Editorial Policy</a> · <a href="/contact/">Contact</a></p>
     </div>
   </footer>
   <script src="/src/site-shell.js" defer></script>
+  <script>
+    // Wire up the today-bar clock to user's local time (placeholder).
+    (function() {
+      var tbTime = document.getElementById('todayBarTime');
+      if (!tbTime) return;
+      function tick() {
+        try {
+          var now = new Date();
+          var fmt = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+          tbTime.textContent = fmt.format(now);
+        } catch (e) {}
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
 </body>
 </html>`;
 }
