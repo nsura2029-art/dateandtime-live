@@ -285,18 +285,19 @@ function inlineMd(s) {
 }
 
 function categoryLabel(cat) {
-  return { astronomy: 'Astronomy', timezone: 'Time Zone', calendar: 'Calendar' }[cat] || cat;
+  return { astronomy: 'Astronomy', timezone: 'Time Zone', calendar: 'Calendar', time: 'Time' }[cat] || cat;
 }
 
 function categoryEmoji(cat) {
-  return { astronomy: '🌌', timezone: '🌐', calendar: '📅' }[cat] || '📰';
+  return { astronomy: '🌌', timezone: '🌐', calendar: '📅', time: '⏳' }[cat] || '📰';
 }
 
 function categoryColor(cat) {
   return {
     astronomy: '#7c3aed',
     timezone: '#0ea5e9',
-    calendar: '#f59e0b'
+    calendar: '#f59e0b',
+    time: '#0d9488'      /* teal — distinct from existing 3 */
   }[cat] || '#5b4aaf';
 }
 
@@ -678,6 +679,7 @@ function buildIndexHtml(articles) {
     <a href="/news/astronomy/" class="news-tab">🌌 Astronomy</a>
     <a href="/news/timezone/" class="news-tab">🌐 Time Zone</a>
     <a href="/news/calendar/" class="news-tab">📅 Calendar</a>
+    <a href="/news/time/" class="news-tab">⏳ Time</a>
   </nav>
 </section>
 <section>
@@ -874,7 +876,7 @@ articles.forEach(a => buildArticleHtml(a, articles));
 
 console.log('\nBuilding index pages:');
 buildIndexHtml(articles);
-['astronomy', 'timezone', 'calendar'].forEach(cat => buildCategoryHtml(articles, cat));
+['astronomy', 'timezone', 'calendar', 'time'].forEach(cat => buildCategoryHtml(articles, cat));
 
 console.log('\nBuilding topic pages:');
 const allTags = new Set();

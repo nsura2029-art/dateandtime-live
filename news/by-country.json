@@ -1,4 +1,26 @@
 {
+  "NL": [
+    {
+      "slug": "pendulum-clock-huygens",
+      "title": "The Pendulum Clock and the Invention of Accurate Time",
+      "excerpt": "In 1656, a 27-year-old Dutch scientist watched a chandelier swing and invented the most accurate clock the world had ever seen.",
+      "published": "2026-07-27",
+      "category": "time",
+      "url": "/news/2026/07/pendulum-clock-huygens/",
+      "dateLabel": "July 27, 2026"
+    }
+  ],
+  "JP": [
+    {
+      "slug": "quartz-revolution-seiko",
+      "title": "The Quartz Revolution: How Seiko's 1969 Astron Rewrote Time",
+      "excerpt": "In 1969, a Japanese watchmaker released the first quartz wristwatch. Within a decade, the Swiss watch industry — centuries old — was in ruins.",
+      "published": "2026-07-27",
+      "category": "time",
+      "url": "/news/2026/07/quartz-revolution-seiko/",
+      "dateLabel": "July 27, 2026"
+    }
+  ],
   "CA": [
     {
       "slug": "british-columbia-permanent-dst",
