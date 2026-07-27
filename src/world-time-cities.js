@@ -541,7 +541,7 @@
     const subregionName = SUBREGION_NAMES[slug];
     if (!subregionName) return [];
     try {
-      const r = await fetch(`${API_BASE}/v1/countries?limit=300`);
+      const r = await fetch(`${API_BASE}/api/v1/countries?limit=300`);
       const j = await r.json();
       const all = (j.data && j.data.countries) || [];
       const list = all
@@ -580,7 +580,7 @@
     const cacheKey = `filter:${continent || 'all'}|${region || 'all'}|${limit}`;
     if (countryCache[cacheKey]) return countryCache[cacheKey];
     try {
-      const r = await fetch(`${API_BASE}/v1/countries?limit=300`);
+      const r = await fetch(`${API_BASE}/api/v1/countries?limit=300`);
       const j = await r.json();
       const all = (j.data && j.data.countries) || [];
       // Filter by continent code (lowercase, e.g. "namerica") — look up UN region name
@@ -678,7 +678,7 @@
     const cacheKey = "country:" + cca2;
     if (stateCache[cacheKey]) return stateCache[cacheKey];
     try {
-      const r = await fetch(`${API_BASE}/v1/countries/${cca2}/states`);
+      const r = await fetch(`${API_BASE}/api/v1/countries/${cca2}/states`);
       const j = await r.json();
       const list = (j.data && j.data.states) || [];
       const sorted = list
