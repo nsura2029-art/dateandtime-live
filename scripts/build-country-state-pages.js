@@ -25,6 +25,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { buildHeader, buildFooter } = require('./site-chrome.js');
 
 // Load US state metadata (used to bake the real per-state city count into
 // the state page hero, e.g. "26 Washington cities" instead of a placeholder).
@@ -281,44 +282,10 @@ function buildPage({ cca2, countryName, countrySlug, stateCode, stateSlug, state
   </script>
 </head>
 <body class="shell-page">
-<header class="site-header">
-  <div class="container header-row">
-    <a href="/" class="logo" aria-label="dateandtime.live home">
-      <span class="logo-mark">T</span>
-      <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
-    </a>
-    <nav class="nav-main" aria-label="Main">
-      <a href="/today/" class="nav-link"><span class="now-dot" aria-hidden="true"></span>Today</a>
-      <a href="/holidays/" class="nav-link">Holidays</a>
-      <a href="/onthisday/" class="nav-link">On this day</a>
-      <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
-      <div class="nav-item has-dropdown">
-        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-          <span class="nav-icon" aria-hidden="true">🕐</span>World time
-          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="nav-dropdown" role="menu">
-          <a href="/world-time/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
-            <span class="dropdown-desc">Live current time in 33,945 cities</span>
-          </a>
-          <a href="/world-time/${countrySlug}/" class="dropdown-item ${isCountry ? 'is-active' : ''}" role="menuitem" ${isCountry ? 'aria-current="page"' : ''}>
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🌍</span>${escapeHtml(countryName)}</span>
-            <span class="dropdown-desc">All ${countryName} cities</span>
-          </a>
-        </div>
-      </div>
-      <a href="/time-zones/" class="nav-link"><span class="nav-icon" aria-hidden="true">🌐</span>Timezone</a>
-      <a href="/news/" class="nav-link">News</a>
-    </nav>
-    <div class="header-actions">
-      <button class="theme-toggle" data-theme-btn aria-label="Toggle theme">
-        <span data-theme-icon-light>☀️</span>
-        <span data-theme-icon-dark>🌙</span>
-      </button>
-    </div>
-  </div>
-</header>
+${buildHeader(
+  isState ? `/world-time/${countrySlug}/state/${stateSlug}/` : `/world-time/${countrySlug}/`,
+  isCountry ? { slug: countrySlug, name: countryName, href: `/world-time/${countrySlug}/` } : null
+)}
 
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <div class="container">
@@ -418,26 +385,9 @@ function buildPage({ cca2, countryName, countrySlug, stateCode, stateSlug, state
   </section>
 </main>
 
-<footer class="site-footer">
-  <div class="container site-footer-inner">
-    <p>© 2026 <a href="/">dateandtime.live</a> · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones">IANA</a> · <a href="https://www.geonames.org/">GeoNames</a> · <a href="https://date.nager.at/">Nager.Date</a> · <a href="https://en.wikipedia.org/">Wikipedia</a></p>
-    <p class="footer-links">
-      <a href="/">Home</a> ·
-      <a href="/holidays/">Holidays</a> ·
-      <a href="/onthisday/">On this day</a> ·
-      <a href="/world-time/">World Time</a> ·
-      <a href="/time-zones/">Time Zones</a> ·
-      <a href="/news/">News</a>
-    </p>
-    <p class="footer-legal">
-      <a href="/legal/privacy/">Privacy</a> ·
-      <a href="/legal/terms/">Terms</a> ·
-      <a href="/legal/cookies/">Cookies</a> ·
-      <a href="#" data-cc="show-prefs">Cookie preferences</a> ·
-      <a href="/legal/ccpa/">Do Not Sell or Share My Personal Information (CCPA)</a>
-    </p>
-  </div>
-</footer>
+${buildFooter(
+  isState ? `${stateName}, ${countryName} — current times & DST` : `${countryName} — all cities & time zones`
+)}
 
 <script src="/src/site-shell.js" defer></script>
 ${autoInitScript(cca2, stateCode, stateSlug, stateName, countryName, countrySlug, states)}

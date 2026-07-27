@@ -93,12 +93,205 @@ function humanizeSlug(slug) {
     .join(" ");
 }
 
+// Display-name lookup for cities whose ASCII slugs lose their diacritics.
+// Slugs must remain ASCII-only for clean URLs (SEO + readability), but the
+// humanized title should show the proper Unicode: "medell-n" → "Medellín",
+// not "Medell N". This is a curated list of well-known cities that benefit
+// from diacritics; new entries can be added here without code changes.
+const CITY_DISPLAY_NAMES = {
+  // Spanish/Portuguese diacritics
+  "medell-n": "Medellín",
+  "bogot-": "Bogotá",
+  "bogota": "Bogotá",
+  "cartagena": "Cartagena",
+  "cali": "Cali",
+  "panam-": "Panamá",
+  "panama-city": "Panama City",
+  "lima": "Lima",
+  "quito": "Quito",
+  "santiago": "Santiago",
+  "valpara-so": "Valparaíso",
+  "valparaiso": "Valparaíso",
+  "asunci-n": "Asunción",
+  "sao-paulo": "São Paulo",
+  "s-o-paulo": "São Paulo",
+  "sao-luis": "São Luís",
+  "sao-gon-alo": "São Gonçalo",
+  "sao-bernardo-do-campo": "São Bernardo do Campo",
+  "rio-de-janeiro": "Rio de Janeiro",
+  "bel-em": "Belém",
+  "belem": "Belém",
+  "bel-horizonte": "Belo Horizonte",
+  "belo-horizonte": "Belo Horizonte",
+  "bras-lia": "Brasília",
+  "sao-tom-de-bras-lia": "São Tomé de Brasília",
+  "goi-nia": "Goiânia",
+  "goiania": "Goiânia",
+  "curitiba": "Curitiba",
+  "s-o-lu-s": "São Luís",
+  "macei-": "Maceió",
+  "maceio": "Maceió",
+  "cuiab-": "Cuiabá",
+  "cuiaba": "Cuiabá",
+  "porto-alegre": "Porto Alegre",
+  "recife": "Recife",
+  "manaus": "Manaus",
+  "bel-n": "Belén",
+  "san-juan": "San Juan",
+  // French diacritics
+  "montr-al": "Montréal",
+  "montreal": "Montréal",
+  "qu-bec": "Québec",
+  "quebec": "Québec",
+  "havana": "La Habana",
+  "la-habana": "La Habana",
+  "c-te": "Côte",
+  "c-te-d-ivoire": "Côte d'Ivoire",
+  "abidjan": "Abidjan",
+  "libreville": "Libreville",
+  "brazzaville": "Brazzaville",
+  "kinchasa": "Kinshasa",
+  "kinshasa": "Kinshasa",
+  // German
+  "m-nchen": "München",
+  "munchen": "München",
+  "n- rnberg": "Nürnberg",
+  "nurnberg": "Nürnberg",
+  "k-ln": "Köln",
+  "koln": "Köln",
+  "frankfurt-am-main": "Frankfurt am Main",
+  // Italian
+  "roma": "Roma",
+  "milano": "Milano",
+  "napoli": "Napoli",
+  "torino": "Torino",
+  "palermo": "Palermo",
+  "venezia": "Venezia",
+  "firenze": "Firenze",
+  "bologna": "Bologna",
+  "verona": "Verona",
+  "genova": "Genova",
+  "reggio-calabria": "Reggio Calabria",
+  "reggio-emilia": "Reggio Emilia",
+  "trieste": "Trieste",
+  "cagliari": "Cagliari",
+  // Nordic
+  "k-benhavn": "København",
+  "kobenhavn": "København",
+  "copenhagen": "Copenhagen",
+  "g-teborg": "Göteborg",
+  "goteborg": "Göteborg",
+  "gothenburg": "Gothenburg",
+  "reykjav-k": "Reykjavík",
+  "reykjavik": "Reykjavík",
+  "stokkh-ms": "Stockholm",
+  "stockholm": "Stockholm",
+  // Eastern European
+  "praha": "Praha",
+  "prague": "Praha",
+  "warszawa": "Warszawa",
+  "warsaw": "Warsaw",
+  "krak-w": "Kraków",
+  "krakow": "Kraków",
+  "gda-sk": "Gdańsk",
+  "gdansk": "Gdańsk",
+  "wroc-aw": "Wrocław",
+  "wroclaw": "Wrocław",
+  "ł-d": "Łódź",
+  "budapest": "Budapest",
+  "bucuresti": "București",
+  "bucharest": "București",
+  "timisoara": "Timișoara",
+  "cluj-napoca": "Cluj-Napoca",
+  "ia-i": "Iași",
+  "iasi": "Iași",
+  "t-rgu-mure": "Târgu Mureș",
+  "belgrade": "Belgrade",
+  "beograd": "Beograd",
+  "zagreb": "Zagreb",
+  "ljubljana": "Ljubljana",
+  "bratislava": "Bratislava",
+  // Greek / Cyrillic
+  "ath-na": "Athína",
+  "athens": "Athens",
+  "thessalon-ki": "Thessaloníki",
+  "thessaloniki": "Thessaloníki",
+  "sofia": "Sofia",
+  "minsk": "Minsk",
+  "k-yiv": "Kyiv",
+  "kyiv": "Kyiv",
+  "kiev": "Kyiv",
+  "kharkiv": "Kharkiv",
+  "lviv": "Lviv",
+  "odessa": "Odesa",
+  // Asian
+  "t-ky-": "Tōkyō",
+  "tokyo": "Tokyo",
+  "-saka": "Ōsaka",
+  "osaka": "Osaka",
+  "ky-to": "Kyōto",
+  "kyoto": "Kyoto",
+  "k-be": "Kōbe",
+  "kobe": "Kobe",
+  "hiroshima": "Hiroshima",
+  "nagoya": "Nagoya",
+  "sapporo": "Sapporo",
+  "fukuoka": "Fukuoka",
+  "sendai": "Sendai",
+  "beijing": "Beijing",
+  "shanghai": "Shanghai",
+  "guangzhou": "Guangzhou",
+  "shenzhen": "Shenzhen",
+  "chengdu": "Chengdu",
+  "hangzhou": "Hangzhou",
+  "xian": "Xi'an",
+  "hong-kong": "Hong Kong",
+  "taipei": "Taipei",
+  "kaohsiung": "Kaohsiung",
+  "bangkok": "Bangkok",
+  "singapore": "Singapore",
+  "kuala-lumpur": "Kuala Lumpur",
+  "jakarta": "Jakarta",
+  "manila": "Manila",
+  "hanoi": "Hanoi",
+  "ho-chi-minh-city": "Ho Chi Minh City",
+  "saigon": "Saigon",
+  // Middle East
+  "al-quahira": "Al-Qāhirah",
+  "cairo": "Cairo",
+  "al-qahirah": "Al-Qāhirah",
+  "tehran": "Tehran",
+  "tehran-: "Tehran", // for variants with extra hyphen
+  "esfah-n": "Eşfahān",
+  "isfahan": "Isfahan",
+  // Turkish
+  "istanbul": "İstanbul",
+  "izmir": "İzmir",
+  // Other common ones
+  "z-rich": "Zürich",
+  "zurich": "Zürich",
+  "gen-ve": "Genève",
+  "geneva": "Geneva",
+  "m-nster": "Münster",
+  "m-nster-bezirk": "Münster",
+};
+
+// Get a city display name from a slug, falling back to humanizeSlug.
+function cityDisplayName(slug) {
+  if (!slug) return "";
+  if (CITY_DISPLAY_NAMES[slug]) return CITY_DISPLAY_NAMES[slug];
+  // Try a few transformations: maybe the slug dropped a diacritic character
+  // that we want to add back via the lookup
+  return humanizeSlug(slug);
+}
+
 // "Coming Soon" page for city URLs that don't have a pre-built static page.
 // We pre-build 911 cities; the DB has 33,945. When a user visits an unmapped
 // city, serve this page with: live time in the user's tz (we don't know
 // the city's tz yet), 3 feedback CTAs, and 6 contextual backlinks.
 function generateComingSoonPage(countrySlug, citySlug) {
-  const cityName = humanizeSlug(citySlug);
+  const cityName = cityDisplayName(citySlug);
+  const displayName = cityName;  // proper Unicode (e.g. "Medellín")
   const countryName = humanizeSlug(countrySlug);
   const countryUrl = `/world-time/${countrySlug}/`;
   return `<!DOCTYPE html>
@@ -146,18 +339,119 @@ function generateComingSoonPage(countrySlug, citySlug) {
         <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
       </a>
       <nav class="nav-main" aria-label="Main">
-        <a href="/" class="nav-link"><span class="now-dot" aria-hidden="true"></span>Today</a>
+        <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
         <a href="/holidays/" class="nav-link">Holidays</a>
         <a href="/onthisday/" class="nav-link">On this day</a>
-        <a href="/world-time/meeting/" class="nav-link">Meeting</a>
-        <a href="/world-time/" class="nav-link active">World time</a>
+        <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+        <div class="nav-item has-dropdown">
+          <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="nav-icon" aria-hidden="true">🕐</span>World time
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/world-time/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
+              <span class="dropdown-desc">Live current time in 33,945 cities</span>
+            </a>
+            <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
+              <span class="dropdown-desc">Find meeting times across time zones</span>
+            </a>
+            <a href="/world-time/event/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
+              <span class="dropdown-desc">Show local times for a global event</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-label">Learn</div>
+            <a href="/world-time/about/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">💡</span>What is a World Clock?</span>
+              <span class="dropdown-desc">How live world clocks work</span>
+            </a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/time-zones/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
+              <span class="dropdown-desc">Browse all 408 time zones</span>
+            </a>
+            <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
+              <span class="dropdown-desc">Time difference calculator</span>
+            </a>
+            <a href="/time-zones/in/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🗺️</span>Time Zones in [Country]</span>
+              <span class="dropdown-desc">All countries and their zones</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-label">Learn</div>
+            <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+              <span class="dropdown-desc">UTC, offsets, and the prime meridian</span>
+            </a>
+            <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
+              <span class="dropdown-desc">Spring forward, fall back</span>
+            </a>
+            <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span>
+              <span class="dropdown-desc">The world's time standard</span>
+            </a>
+          </div>
+        </div>
+        <a href="/news/" class="nav-link">News</a>
       </nav>
       <div class="header-actions">
-        <button class="theme-toggle" data-theme-btn="light" aria-label="Light mode" aria-pressed="true">☀️</button>
-        <button class="theme-toggle" data-theme-btn="dark" aria-label="Dark mode" aria-pressed="false">🌙</button>
+        <div class="theme-toggle" role="group" aria-label="Theme">
+          <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+        <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <span class="nav-toggle-icon" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
       </div>
     </div>
   </header>
+
+  <div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+  <aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+    <div class="mobile-nav-header">
+      <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+        <span class="logo-mark">T</span>
+        <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+      </a>
+      <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <nav class="mobile-nav-list" aria-label="Mobile main">
+      <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+      <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+      <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+      <div class="mobile-nav-section">World time</div>
+      <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+      <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+      <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
+      <div class="mobile-nav-section">Timezone</div>
+      <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
+      <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
+      <a href="/time-zones/in/" class="mobile-nav-link mobile-nav-sub">Time Zones in [Country]</a>
+      <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
+      <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+      <a href="/news/" class="mobile-nav-link">News</a>
+    </nav>
+  </aside>
 
   <!-- Today bar (sticky under site header) — same as city pages -->
   <div class="today-bar">
@@ -267,11 +561,27 @@ function generateComingSoonPage(countrySlug, citySlug) {
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>dateandtime.live — ${cityName}, ${countryName} (coming soon)</p>
-      <p>Data: GeoNames (CC BY 4.0) · Open-Meteo (CC BY 4.0) · IANA Time Zone Database</p>
-      <p><a href="/about/">About</a> · <a href="/editorial-policy/">Editorial Policy</a> · <a href="/contact/">Contact</a></p>
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live — ${displayName}, ${countryName} (coming soon) ·
+        33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
     </div>
   </footer>
   <script src="/src/site-shell.js" defer></script>

@@ -9,6 +9,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { buildHeader, buildFooter } = require('./site-chrome.js');
 
 // Slugify function (kept simple, matches existing conventions)
 function slugify(name) {
@@ -159,25 +160,7 @@ function buildPage(c) {
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"${c.name}","address":{"@type":"PostalAddress","addressRegion":"${c.stateCode}","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":${c.latitude},"longitude":${c.longitude}},"timeZone":"${c.timezone}","url":"${canonicalUrl}","population":{"@type":"QuantitativeValue","value":${c.population}}}</script>
 </head>
 <body class="shell-page">
-  <header class="site-header">
-    <div class="container header-row">
-      <a href="/" class="logo" aria-label="dateandtime.live home">
-        <span class="logo-mark">T</span>
-        <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
-      </a>
-      <nav class="nav-main" aria-label="Main">
-        <a href="/" class="nav-link"><span class="now-dot" aria-hidden="true"></span>Today</a>
-        <a href="/holidays/" class="nav-link">Holidays</a>
-        <a href="/onthisday/" class="nav-link">On this day</a>
-        <a href="/world-time/meeting/" class="nav-link">Meeting</a>
-        <a href="/world-time/" class="nav-link active">World time</a>
-      </nav>
-      <div class="header-actions">
-        <button class="theme-toggle" data-theme-btn="light" aria-label="Light mode" aria-pressed="true">☀️</button>
-        <button class="theme-toggle" data-theme-btn="dark" aria-label="Dark mode" aria-pressed="false">🌙</button>
-      </div>
-    </div>
-  </header>
+  ${buildHeader('/world-time/united-states/')}
 
   <main class="container">
     <!-- Breadcrumb -->
@@ -364,13 +347,7 @@ ${moreToExplore.map(x => `        <a href="/world-time/united-states/${x.slug}/"
     </div>
   </section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>dateandtime.live — Current time in ${c.name}, ${stateName}, United States (${c.timezone})</p>
-      <p>Data: GeoNames (CC BY 4.0) · Open-Meteo (CC BY 4.0) · IANA Time Zone Database</p>
-      <p><a href="/about/">About</a> · <a href="/editorial-policy/">Editorial Policy</a> · <a href="/contact/">Contact</a></p>
-    </div>
-  </footer>
+  ${buildFooter(`Current time in ${c.name}, ${stateName}, United States (${c.timezone})`)}
 
   <script src="/src/site-shell.js" defer></script>
   <script>
