@@ -641,12 +641,34 @@ window.__STATE_META = STATE_META;</script>
     // Short keys (n=name, s=slug, sc=stateCode, p=pop, tz=timezone)
     const path = '/world-time/united-states/' + c.s + '/';
     const pop = c.p ? fmtPop(c.p) : '';
-    return '<a class="wt-card" href="' + path + '">' +
-      '<div class="wt-card-flag"><img src="https://flagcdn.com/w40/us.png" alt="" loading="lazy" /></div>' +
-      '<div class="wt-card-time" data-tz="' + c.tz + '">--:--</div>' +
-      '<div class="wt-card-name">' + (c.n || '') + '</div>' +
-      '<div class="wt-card-meta">' + (c.sc || '') + (pop ? ' · ' + pop : '') + '</div>' +
+    // Compute short timezone label (e.g. "EST", "PDT", "CET") from IANA tz
+    const tzShort = shortTz(c.tz);
+    return '<a class="wt-card wt-card-search" href="' + path + '">' +
+      '<div class="wt-card-search-top">' +
+        '<div class="wt-card-time" data-tz="' + c.tz + '">--:--</div>' +
+        '<div class="wt-card-flag"><img src="https://flagcdn.com/w40/us.png" alt="" loading="lazy" width="32" height="22" /></div>' +
+      '</div>' +
+      '<div class="wt-card-name">' + (c.n || '') + ' <span class="wt-card-state">' + (c.sc || '') + '</span></div>' +
+      '<div class="wt-card-meta">' +
+        (pop ? '<span class="wt-card-pop">' + pop + '</span>' : '') +
+        (tzShort ? '<span class="wt-card-meta-sep">·</span><span class="wt-card-tz-label">' + tzShort + '</span>' : '') +
+      '</div>' +
     '</a>';
+  }
+
+  // Short timezone label like "EST" from "America/New_York". Falls back to
+  // the city part of the IANA id (e.g. "Tokyo") when no short label is found.
+  function shortTz(iana) {
+    if (!iana) return '';
+    try {
+      const d = new Date();
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: iana, timeZoneName: 'short'
+      }).formatToParts(d);
+      const p = parts.find(x => x.type === 'timeZoneName');
+      if (p && p.value) return p.value;
+    } catch (e) {}
+    return iana.split('/').pop().replace(/_/g, ' ');
   }
 
   function updateTimes() {

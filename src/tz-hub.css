@@ -529,6 +529,101 @@
   color: var(--color-foreground-soft, #6b6585);
   margin-top: 0.4rem;
 }
+
+/* ---- Search result card (US country page) ----
+   A more structured layout than the default wt-card:
+   - Top row: large live time (left) + small flag (right)
+   - Middle: city name + state code badge
+   - Bottom: pop + short TZ label, separated by middot
+*/
+.wt-card-search {
+  text-align: left;
+  padding: 0.875rem 0.95rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100%;
+}
+.wt-card-search-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 1.6rem;
+}
+.wt-card-search .wt-card-time {
+  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--color-foreground, #49445f);
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.wt-card-search .wt-card-flag {
+  position: static;          /* override absolute positioning */
+  width: 28px;
+  height: 19px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #fff;
+}
+.wt-card-search .wt-card-flag img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.wt-card-search .wt-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-foreground, #49445f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  margin: 0;
+}
+.wt-card-search .wt-card-state {
+  display: inline-block;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-primary, #5b4aaf);
+  background: var(--color-primary-soft, rgba(92, 74, 175, 0.10));
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+.wt-card-search .wt-card-meta {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--color-foreground-soft, #6b6585);
+  margin-top: 0;
+  font-weight: 500;
+}
+.wt-card-search .wt-card-pop {
+  font-weight: 600;
+}
+.wt-card-search .wt-card-tz-label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.6875rem;
+  color: var(--color-muted, #77718f);
+  letter-spacing: 0.02em;
+}
+.wt-card-search .wt-card-meta-sep {
+  color: var(--color-muted-soft, #9a92b0);
+  font-weight: 400;
+}
 .wt-card-tz {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 0.6875rem;
