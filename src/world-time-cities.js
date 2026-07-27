@@ -121,8 +121,6 @@
       { slug: "micronesia",        label: "Micronesia",        icon: ICON_CORAL,    tz: "UTC+10 to +12" },
       { slug: "polynesia",         label: "Polynesia",         icon: ICON_TIKI,     tz: "UTC−11 to +14" }
     ] },
-    { code: "other",    api: "OT",  label: "Other",      icon: ICON_GRID,     tz: "Various", regions: [] },
-    { code: "polar",    api: "PL",  label: "Polar",      icon: ICON_MOUNTAIN, tz: "UTC−12 to +14", regions: [] },
     { code: "samerica", api: "SA",  label: "S. America", icon: ICON_SAMERICA, tz: "UTC−5 to −2", regions: [
       { slug: "south-america",     label: "South America",     icon: ICON_TREE, tz: "UTC−5 to −2" }
     ] }
@@ -592,11 +590,6 @@
       // Filter by continent code (lowercase, e.g. "namerica") — look up UN region name
       let filtered = all;
       if (continent && continent !== "all") {
-        // For "other" and "polar", the API doesn't have those — show none.
-        if (continent === "other" || continent === "polar") {
-          countryCache[cacheKey] = [];
-          return [];
-        }
         // Look up the API code for this continent (e.g. "namerica" → "NA")
         const cont = CONTINENTS.find(c => c.code === continent);
         const apiCode = cont && cont.api;
@@ -645,16 +638,20 @@
 
   async function renderCountryPills() {
     const host = el("wt-country-pills");
-    const row = el("wt-country-row");
-    if (!host || !row) return;
+    const col = el("wt-cascade-col-country");
+    const cascade = el("wt-cascade");
+    const countEl = el("wt-country-count");
+    if (!host || !col) return;
     // Show country pills whenever a continent is selected (not just sub-region)
     // — gives users a clear drill-down even if they skip the sub-region step.
     if (!state.continent || state.continent === "all") {
-      row.hidden = true;
+      col.hidden = true;
+      if (cascade) cascade.hidden = true;
       host.innerHTML = "";
       return;
     }
-    row.hidden = false;
+    if (cascade) cascade.hidden = false;
+    col.hidden = false;
     host.innerHTML = '<span class="wt-cascading-loading">Loading countries…</span>';
     const countries = await fetchCountriesForFilter({
       continent: state.continent,
@@ -663,10 +660,13 @@
     });
     if (!countries.length) {
       host.innerHTML = '<span class="wt-empty">No countries in this region.</span>';
+      if (countEl) countEl.textContent = "0";
       return;
     }
-    // Highlight active country
-    host.innerHTML = countries.map(c => {
+    if (countEl) countEl.textContent = countries.length;
+    // Highlight active country + sort alphabetically
+    const sorted = [...countries].sort((a, b) => a.name.localeCompare(b.name));
+    host.innerHTML = sorted.map(c => {
       const active = state.country === c.cca2 ? " is-active" : "";
       const flag = c.flagEmoji || "";
       return `<button type="button" class="wt-pill wt-pill-country${active}" data-country="${c.cca2}"><span class="wt-pill-flag">${flag}</span><span class="wt-pill-label">${escapeHtml(c.name)}</span></button>`;
@@ -677,8 +677,9 @@
   }
 
   // =============== State cascade ===============
-  // When a country is selected, fetch its states and render as a scrollable
-  // dropdown. Uses native <select size="6"> for accessibility + native scrollbar.
+  // When a country is selected, fetch its states and render as a pill list
+  // (matching the country-pill style for visual consistency in the side-by-side
+  // cascade layout). Each state pill is a button with optional capital badge.
 
   async function fetchStatesForCountry(cca2) {
     const cacheKey = "country:" + cca2;
@@ -688,7 +689,7 @@
       const j = await r.json();
       const list = (j.data && j.data.states) || [];
       const sorted = list
-        .map(s => ({ code: s.code, name: s.name }))
+        .map(s => ({ code: s.code, name: s.name, native: s.native || s.name, type: s.type || null }))
         .sort((a, b) => a.name.localeCompare(b.name));
       stateCache[cacheKey] = sorted;
       return sorted;
@@ -699,39 +700,36 @@
   }
 
   async function renderStateSelect() {
-    const host = el("wt-state-select-wrap");
-    const row = el("wt-state-row");
-    if (!host || !row) return;
+    const host = el("wt-state-pills");
+    const col = el("wt-state-col");
+    const countEl = el("wt-state-count");
+    if (!host || !col) return;
     if (!state.country) {
-      row.hidden = true;
+      col.hidden = true;
       host.innerHTML = "";
       return;
     }
-    row.hidden = false;
+    col.hidden = false;
     host.innerHTML = '<span class="wt-cascading-loading">Loading states…</span>';
     const states = await fetchStatesForCountry(state.country);
     if (!states.length) {
       host.innerHTML = '<span class="wt-empty">No states in this country.</span>';
+      if (countEl) countEl.textContent = "0";
       return;
     }
-    // Build a scrollable dropdown (size=6) so the scrollbar is visible.
-    let html = `<label class="wt-state-label">State: <select id="wt-state-select" class="wt-state-select" size="6" aria-label="Filter by state">`;
-    html += `<option value="">All states</option>`;
+    if (countEl) countEl.textContent = states.length;
+
+    // "All states" reset pill + each state as a pill (matching country style)
+    let html = `<button type="button" class="wt-pill wt-pill-state${!state.stateCode ? " is-active" : ""}" data-state-code=""><span class="wt-pill-label">All states</span></button>`;
     for (const s of states) {
-      const sel = state.stateCode === s.code ? " selected" : "";
-      html += `<option value="${s.code}"${sel}>${escapeHtml(s.name)}</option>`;
+      const active = state.stateCode === s.code ? " is-active" : "";
+      const code = s.code || "";
+      html += `<button type="button" class="wt-pill wt-pill-state${active}" data-state-code="${escapeHtml(code)}" title="${escapeHtml(s.native)}"><span class="wt-pill-label">${escapeHtml(s.name)}</span><span class="wt-pill-code">${escapeHtml(code)}</span></button>`;
     }
-    html += `</select></label>`;
-    html += `<button type="button" class="wt-pill wt-pill-clear" data-clear-state>× Clear</button>`;
     host.innerHTML = html;
-    const sel = el("wt-state-select");
-    if (sel) {
-      sel.addEventListener("change", () => setStateCode(sel.value || null));
-    }
-    const clearBtn = host.querySelector("[data-clear-state]");
-    if (clearBtn) {
-      clearBtn.addEventListener("click", () => setStateCode(null));
-    }
+    host.querySelectorAll(".wt-pill-state").forEach(btn => {
+      btn.addEventListener("click", () => setStateCode(btn.dataset.stateCode || null));
+    });
   }
 
   function setSort(code) {
