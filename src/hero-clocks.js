@@ -345,35 +345,64 @@
   };
 
   // ===========================================================================
+  // Clock intro metadata (from the Timeline of Time Keepers)
+  // year: human-readable, e.g. "~3500 BC", "1656", "1955"
+  // inventor: who built the first one
+  // power: what makes it tick
+  // news: link to the relevant news article
+  // ===========================================================================
+  const CLOCK_INTRO = {
+    sundial:   { year: "~3500 BC", inventor: "Ancient Egyptians",   power: "Sunlight",            news: "/news/2026/07/history-of-timekeeping/" },
+    hourglass: { year: "150 BC",   inventor: "Ancient Romans",      power: "Sand & gravity",      news: "/news/2026/07/history-of-timekeeping/" },
+    pendulum:  { year: "1656",     inventor: "Christiaan Huygens",  power: "Gravity",             news: "/news/2026/07/pendulum-clock-huygens/" },
+    chrono:    { year: "1735",     inventor: "John Harrison",       power: "Spring + balance",    news: "/news/2026/07/marine-chronometer-harrison/" },
+    quartz:    { year: "1927",     inventor: "Warren Marrison",     power: "Quartz crystal",      news: "/news/2026/07/quartz-revolution-seiko/" },
+    atomic:    { year: "1955",     inventor: "Louis Essen (NPL UK)",power: "Cesium-133 atom",     news: "/news/2026/07/atomic-clock-nist/" }
+  };
+
+  // ===========================================================================
   // Render the section
   // ===========================================================================
 
   function buildHeroClocksSection(cities) {
-    // cities: [{ name, slug, country, tz, clock }, ...]
+    // cities: [{ name, slug, country, tz, clock, isUser? }, ...]
     const cards = cities.map(c => {
       const renderer = SVG_RENDERERS[c.clock];
       const svg = renderer ? renderer() : "";
       const path = c.country
         ? `/world-time/${c.country.toLowerCase().replace(/\s+/g, "-")}/${c.slug}/`
         : `/world-time/${c.slug}/`;
-      return `<a class="wt-clock wt-clock-${c.clock}" href="${path}" data-tz="${c.tz}" aria-label="Live clock for ${c.name}">
-        <div class="wt-clock-face">${svg}</div>
-        <div class="wt-clock-info">
-          <div class="wt-clock-name">${c.name}</div>
-          <div class="wt-clock-tz">${c.tz}</div>
-          <div class="wt-clock-time" data-clock-ms>
-            <span class="wt-clock-hms" data-hms>--:--:--</span><span class="wt-clock-ms-sep" data-ms-sep>.</span><span class="wt-clock-ms" data-ms>---</span>
+      const intro = CLOCK_INTRO[c.clock] || {};
+      // The "Read the story" link goes BELOW the card (so the whole card
+      // is the city page, and the small link is to the history article).
+      // We close the </a> early so the link isn't inside the city link.
+      return `<div class="wt-clock-wrap">
+        <a class="wt-clock wt-clock-${c.clock}" href="${path}" data-tz="${c.tz}" aria-label="Live clock for ${c.name}">
+          <div class="wt-clock-face">${svg}</div>
+          <div class="wt-clock-info">
+            <div class="wt-clock-name">${c.name}${c.isUser ? ' <span class="wt-clock-you">You</span>' : ""}</div>
+            <div class="wt-clock-tz">${c.tz}</div>
+            <div class="wt-clock-time" data-clock-ms>
+              <span class="wt-clock-hms" data-hms>--:--:--</span><span class="wt-clock-ms-sep" data-ms-sep>.</span><span class="wt-clock-ms" data-ms>---</span>
+            </div>
+            <div class="wt-clock-offset" data-offset>UTC</div>
           </div>
-          <div class="wt-clock-offset" data-offset>UTC</div>
+        </a>
+        <div class="wt-clock-intro">
+          <span class="wt-clock-year">${intro.year || ""}</span>
+          <span class="wt-clock-dot" aria-hidden="true">·</span>
+          <span class="wt-clock-inventor">${intro.inventor || ""}</span>
         </div>
-      </a>`;
+        <div class="wt-clock-power">Powered by ${intro.power || ""}</div>
+        ${intro.news ? `<a class="wt-clock-story" href="${intro.news}">Read the story →</a>` : ""}
+      </div>`;
     }).join("");
 
     return `<section class="wt-hub-section wt-hero-clocks-section" id="hero-clocks">
       <div class="container">
         <div class="wt-hub-header">
           <h2>Six cities, six timekeepers</h2>
-          <span class="wt-hub-sub">From a 4,000-year-old sundial to a NIST atomic clock — live, in real time.</span>
+          <span class="wt-hub-sub">From a <strong>~3500 BC</strong> sundial to a <strong>1955</strong> atomic clock — live, in real time. Each clock face shows the actual local time in its city, with millisecond precision.</span>
         </div>
         <div class="wt-clock-grid">
           ${cards}

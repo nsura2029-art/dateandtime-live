@@ -185,36 +185,6 @@
   <!-- Mount point for the 6-clocks hero section (populated by /src/hero-clocks.js) -->
   <div id="hero-clocks-mount"></div>
 
-  <!-- Latest in Time news (3 latest from the new /news/time/ category) -->
-  <section class="wt-hub-section wt-news-section" id="time-news">
-    <div class="container">
-      <div class="wt-hub-header">
-        <h2>Latest in Time</h2>
-        <a class="wt-news-all" href="/news/time/">All Time articles →</a>
-      </div>
-      <div class="wt-news-grid">
-        <a class="wt-news-card" href="/news/2026/07/history-of-timekeeping/">
-          <span class="wt-news-cat" style="background:#0d9488">⏳ Time</span>
-          <h3>The history of timekeeping</h3>
-          <p>A 4,000-year tour of how humans learned to measure time — from Egyptian sundials to NIST's cesium-133 atomic clock.</p>
-          <span class="wt-news-cta">Read the overview →</span>
-        </a>
-        <a class="wt-news-card" href="/news/2026/07/atomic-clock-nist/">
-          <span class="wt-news-cat" style="background:#0d9488">⏳ Time</span>
-          <h3>NIST atomic clock keeps US official time</h3>
-          <p>The cesium-133 transition at the heart of UTC(NIST) keeps every phone, bank, and power grid on the same beat. Source: <a href="/world-time/united-states/boulder/">Boulder, CO</a>.</p>
-          <span class="wt-news-cta">Read on →</span>
-        </a>
-        <a class="wt-news-card" href="/news/2026/07/quartz-revolution-seiko/">
-          <span class="wt-news-cat" style="background:#0d9488">⏳ Time</span>
-          <h3>Quartz revolution and Silicon Valley precision</h3>
-          <p>How the 1969 quartz wristwatch rewrote accuracy standards — and how every <a href="/world-time/united-states/cupertino/">Cupertino</a>-made device still depends on a quartz oscillator.</p>
-          <span class="wt-news-cta">See the impact →</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
   <section class="wt-hub-section" id="all-cities">
     <div class="container">
       <div class="wt-hub-header">
@@ -754,21 +724,37 @@ const STATE_META = {
 };
 
 window.__STATE_META = STATE_META;</script>
-<script src="/src/hero-clocks.js?v=1" defer></script>
+<script src="/src/hero-clocks.js?v=2" defer></script>
 <script src="/src/world-time-cities.js" defer></script>
 <script>
-  // Mount the 6-clocks hero section (US cities).
+  // Mount the 6-clocks hero section (US cities, with user-city slot).
   (function() {
+    const US_DEFAULT = [
+      { name: "New York",     slug: "new-york",     country: "united-states", tz: "America/New_York",    clock: "sundial"   },
+      { name: "Los Angeles",  slug: "los-angeles",  country: "united-states", tz: "America/Los_Angeles", clock: "hourglass" },
+      { name: "Philadelphia", slug: "philadelphia", country: "united-states", tz: "America/New_York",    clock: "pendulum"  },
+      { name: "Cupertino",    slug: "cupertino",    country: "united-states", tz: "America/Los_Angeles", clock: "chrono"    }
+    ];
+    function buildCities() {
+      const loc = window.__location;
+      let userCity = null;
+      // Only auto-detect if user is in the US (this is a US-focused page)
+      if (loc && loc.countryCode === "US" && loc.city) {
+        const slug = String(loc.city).toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+        userCity = { name: loc.city, slug, country: "united-states", tz: loc.timezone, clock: "quartz", isUser: true };
+      }
+      if (!userCity) {
+        userCity = { name: "New York", slug: "new-york", country: "united-states", tz: "America/New_York", clock: "quartz", isUser: true };
+      }
+      return [
+        ...US_DEFAULT,
+        userCity,
+        { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
+      ];
+    }
     function tryMount() {
       if (window.MountHeroClocks) {
-        window.MountHeroClocks([
-          { name: "Phoenix", slug: "phoenix", country: "united-states", tz: "America/Phoenix", clock: "sundial" },
-          { name: "Mesa", slug: "mesa", country: "united-states", tz: "America/Phoenix", clock: "hourglass" },
-          { name: "Philadelphia", slug: "philadelphia", country: "united-states", tz: "America/New_York", clock: "pendulum" },
-          { name: "Boston", slug: "boston", country: "united-states", tz: "America/New_York", clock: "chrono" },
-          { name: "Cupertino", slug: "cupertino", country: "united-states", tz: "America/Los_Angeles", clock: "quartz" },
-          { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
-        ], "#hero-clocks-mount");
+        window.MountHeroClocks(buildCities(), "#hero-clocks-mount");
       } else {
         setTimeout(tryMount, 50);
       }

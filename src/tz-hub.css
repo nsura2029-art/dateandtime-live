@@ -1614,3 +1614,63 @@
   margin: 0;
 }
 .wt-news-section .wt-hub-sub { display: none; }  /* hidden in favor of "all" link */
+
+/* ---- Hero clocks: intro + news story link (NEW) ---- */
+.wt-clock-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.wt-clock-wrap .wt-clock { margin-bottom: 0; }
+.wt-clock-you {
+  display: inline-block;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--color-primary, #5b4aaf);
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+.wt-clock-intro {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-foreground-soft, #6b6585);
+  padding: 0 0.25rem;
+  flex-wrap: wrap;
+}
+.wt-clock-year {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+  color: var(--color-primary, #5b4aaf);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.wt-clock-dot { opacity: 0.5; }
+.wt-clock-inventor { font-weight: 500; }
+.wt-clock-power {
+  font-size: 0.75rem;
+  color: var(--color-muted, #77718f);
+  font-style: italic;
+  padding: 0 0.25rem;
+}
+.wt-clock-story {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary, #5b4aaf);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem 0;
+  border-top: 1px solid var(--color-border-soft, rgba(92, 74, 175, 0.1));
+  margin-top: 0.25rem;
+}
+.wt-clock-story:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--color-primary, #5b4aaf);
+  text-underline-offset: 2px;
+}

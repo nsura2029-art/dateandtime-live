@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/world-time.css?v=19" />
   <link rel="stylesheet" href="/src/site-shell.css?v=19" />
-  <link rel="stylesheet" href="/src/tz-hub.css?v=19" />
+  <link rel="stylesheet" href="/src/tz-hub.css?v=20" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -53,21 +53,74 @@
   }
   </script>
   <script src="/src/site-shell.js" defer></script>
-  <script src="/src/hero-clocks.js?v=1" defer></script>
+  <script src="/src/hero-clocks.js?v=2" defer></script>
   <script src="/src/world-time-cities.js?v=19" defer></script>
   <script>
     // Mount the 6-clocks hero section.
     (function() {
+      // Default city list (6 clocks). The 5th slot is filled with the
+      // user's current city (auto-detected via window.__location which
+      // the Worker injects from Cloudflare's IP geolocation data).
+      // The 6th slot is Boulder (NIST atomic clock) — the modern gold
+      // standard of timekeeping.
+      const DEFAULT_CITIES = [
+        { name: "New York",     slug: "new-york",    country: "united-states", tz: "America/New_York",    clock: "sundial"   },
+        { name: "Los Angeles",  slug: "los-angeles", country: "united-states", tz: "America/Los_Angeles", clock: "hourglass" },
+        { name: "London",       slug: "london",      country: "united-kingdom",tz: "Europe/London",      clock: "pendulum"  },
+        { name: "Tokyo",        slug: "tokyo",       country: "japan",         tz: "Asia/Tokyo",         clock: "chrono"    }
+      ];
+
+      // Build the city list, replacing the 5th slot with the user's city.
+      function buildCities() {
+        const loc = window.__location;
+        let userCity = null;
+        if (loc && loc.city && loc.countryName) {
+          // The Worker injects cca2 + slugs via window.__location, but the
+          // city slug needs to match an existing page. Use a small map of
+          // common cities; fall back to a best-guess slug.
+          const cca2 = (loc.countryCode || "").toUpperCase();
+          const TZ_TO_COUNTRY = {
+            "America/New_York": "united-states", "America/Chicago": "united-states",
+            "America/Denver": "united-states", "America/Los_Angeles": "united-states",
+            "America/Phoenix": "united-states", "America/Toronto": "canada",
+            "Europe/London": "united-kingdom", "Europe/Paris": "france",
+            "Europe/Berlin": "germany", "Europe/Madrid": "spain",
+            "Europe/Rome": "italy", "Europe/Amsterdam": "netherlands",
+            "Asia/Tokyo": "japan", "Asia/Singapore": "singapore",
+            "Asia/Shanghai": "china", "Asia/Hong_Kong": "hong-kong",
+            "Australia/Sydney": "australia", "Pacific/Auckland": "new-zealand",
+            "Asia/Kolkata": "india", "Asia/Dubai": "united-arab-emirates",
+            "America/Mexico_City": "mexico", "America/Sao_Paulo": "brazil",
+            "America/Argentina/Buenos_Aires": "argentina"
+          };
+          const country = TZ_TO_COUNTRY[loc.timezone];
+          if (country) {
+            // Build a likely slug from the city name
+            const slug = String(loc.city).toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+            userCity = {
+              name: loc.city,
+              slug: slug,
+              country: country,
+              tz: loc.timezone,
+              clock: "quartz",
+              isUser: true
+            };
+          }
+        }
+        // Fallback if we can't detect the user city
+        if (!userCity) {
+          userCity = { name: "London", slug: "london", country: "united-kingdom", tz: "Europe/London", clock: "quartz", isUser: true };
+        }
+        return [
+          ...DEFAULT_CITIES,
+          userCity,
+          { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
+        ];
+      }
+
       function tryMount() {
         if (window.MountHeroClocks) {
-          window.MountHeroClocks([
-            { name: "Cairo", slug: "cairo", country: "egypt", tz: "Africa/Cairo", clock: "sundial" },
-            { name: "Rome", slug: "rome", country: "italy", tz: "Europe/Rome", clock: "hourglass" },
-            { name: "London", slug: "london", country: "united-kingdom", tz: "Europe/London", clock: "pendulum" },
-            { name: "Greenwich", slug: "greenwich", country: "united-kingdom", tz: "Europe/London", clock: "chrono" },
-            { name: "Tokyo", slug: "tokyo", country: "japan", tz: "Asia/Tokyo", clock: "quartz" },
-            { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
-          ], "#hero-clocks-mount");
+          window.MountHeroClocks(buildCities(), "#hero-clocks-mount");
         } else {
           setTimeout(tryMount, 50);
         }
@@ -229,36 +282,6 @@
 
   <!-- Mount point for the 6-clocks hero section (populated by /src/hero-clocks.js) -->
   <div id="hero-clocks-mount"></div>
-
-  <!-- Latest in Time news (3 latest from the new /news/time/ category) -->
-  <section class="wt-hub-section wt-news-section" id="time-news">
-    <div class="container">
-      <div class="wt-hub-header">
-        <h2>Latest in Time</h2>
-        <a class="wt-news-all" href="/news/time/">All Time articles →</a>
-      </div>
-      <div class="wt-news-grid">
-        <a class="wt-news-card" href="/news/2026/07/history-of-timekeeping/">
-          <span class="wt-news-cat" style="background:#0d9488">⏳ Time</span>
-          <h3>The history of timekeeping</h3>
-          <p>A 4,000-year tour of how humans learned to measure time — from Egyptian sundials to NIST's cesium-133 atomic clock.</p>
-          <span class="wt-news-cta">Read the overview →</span>
-        </a>
-        <a class="wt-news-card" href="/news/2026/07/atomic-clock-nist/">
-          <span class="wt-news-cat" style="background:#0d9488">⏳ Time</span>
-          <h3>How the atomic clock defines your phone</h3>
-          <p>The cesium-133 transition at the heart of UTC(NIST) keeps every phone, bank, and power grid on the same beat. Here's how it works.</p>
-          <span class="wt-news-cta">Read on →</span>
-        </a>
-        <a class="wt-news-card" href="/news/2026/07/pendulum-clock-huygens/">
-          <span class="wt-news-cat" style="background:#0d9488">⏳ Time</span>
-          <h3>The pendulum clock and the invention of accurate time</h3>
-          <p>In 1656, a 27-year-old Dutch scientist watched a chandelier swing and invented the most accurate clock the world had ever seen.</p>
-          <span class="wt-news-cta">See the story →</span>
-        </a>
-      </div>
-    </div>
-  </section>
 
   <!-- City cards (server-side filter + search + sort + paginated Load more) -->
   <section class="wt-hub-section" id="all-cities">
