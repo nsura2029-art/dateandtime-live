@@ -351,6 +351,7 @@
   .wt-city-grid { grid-template-columns: repeat(5, 1fr); }
 }
 
+.wt-city-empty {
   padding: 2rem;
   color: var(--tz-muted, #77718f);
 }
@@ -630,7 +631,9 @@
 .wt-search-lg .wt-search-clear {
   right: 0.95rem;
   font-size: 1.2rem;
-}  display: flex;
+}
+.wt-search {
+  display: flex;
   align-items: center;
 }
 .wt-search-icon {
