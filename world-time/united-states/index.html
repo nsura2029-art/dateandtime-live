@@ -615,8 +615,10 @@ window.__STATE_META = STATE_META;</script>
 
 <script>
 // City search — search 15,994 US cities by name with debounced live filter.
-// Uses /api/v1/cities/all to get the full US list once, then filters client-side
-// for instant results as the user types.
+// Loads the slim search index from /data/us-cities-search.json once (1.2 MB
+// gzipped to ~300 KB on the wire), then filters client-side for instant
+// results. This is the same dataset as the lite city pages, so every
+// searchable city has a working detail page.
 (function() {
   const input = document.getElementById('wt-city-search');
   const clearBtn = document.getElementById('wt-city-search-clear');
@@ -624,11 +626,8 @@ window.__STATE_META = STATE_META;</script>
   const resultCount = document.getElementById('wt-city-search-result');
   const loading = document.getElementById('wt-city-search-loading');
   if (!input || !grid) return;
-  // Cross-origin API. The dev API Worker is on a separate host from the
-  // landing Worker, so we can't use a relative path (would 404 on the
-  // landing Worker's /api/* routes, which only proxy to specific endpoints).
-  const API_BASE = 'https://datetime-api-dev.nsura2029.workers.dev';
   let allCities = null;
+  let loadPromise = null;
   let timer = null;
 
   function fmtPop(n) {
@@ -639,13 +638,14 @@ window.__STATE_META = STATE_META;</script>
   }
 
   function renderCityCard(c) {
-    const path = '/world-time/united-states/' + c.slug + '/';
-    const pop = c.population ? fmtPop(c.population) : '';
+    // Short keys (n=name, s=slug, sc=stateCode, p=pop, tz=timezone)
+    const path = '/world-time/united-states/' + c.s + '/';
+    const pop = c.p ? fmtPop(c.p) : '';
     return '<a class="wt-card" href="' + path + '">' +
       '<div class="wt-card-flag"><img src="https://flagcdn.com/w40/us.png" alt="" loading="lazy" /></div>' +
-      '<div class="wt-card-time" data-tz="' + c.timezone + '">--:--</div>' +
-      '<div class="wt-card-name">' + (c.name || '') + '</div>' +
-      '<div class="wt-card-meta">' + (c.stateCode || '') + (pop ? ' · ' + pop : '') + '</div>' +
+      '<div class="wt-card-time" data-tz="' + c.tz + '">--:--</div>' +
+      '<div class="wt-card-name">' + (c.n || '') + '</div>' +
+      '<div class="wt-card-meta">' + (c.sc || '') + (pop ? ' · ' + pop : '') + '</div>' +
     '</a>';
   }
 
@@ -660,19 +660,25 @@ window.__STATE_META = STATE_META;</script>
 
   function ensureLoaded() {
     if (allCities) return Promise.resolve(allCities);
+    if (loadPromise) return loadPromise;
     loading.hidden = false;
-    return fetch(API_BASE + '/api/v1/cities/all?country=US')
-      .then(r => r.json())
+    loadPromise = fetch('/data/us-cities-search.json')
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
       .then(d => {
-        allCities = (d.data && d.data.cities) || [];
+        allCities = d || [];
         loading.hidden = true;
         return allCities;
       })
       .catch(err => {
         loading.hidden = true;
         grid.innerHTML = '<p>Failed to load cities. Please refresh the page.</p>';
+        console.error('us-cities-search.json failed:', err);
         return [];
       });
+    return loadPromise;
   }
 
   function runSearch(q) {
@@ -686,11 +692,9 @@ window.__STATE_META = STATE_META;</script>
     }
     clearBtn.hidden = false;
     ensureLoaded().then(all => {
-      // Filter by name (case-insensitive prefix-match for top relevance)
-      const matches = all
-        .filter(c => c.name && c.name.toLowerCase().includes(q))
-        .sort((a, b) => (b.population || 0) - (a.population || 0))
-        .slice(0, 60);
+      // Filter by name (case-insensitive substring match). Result already
+      // sorted by pop desc in the source file, so we keep the order.
+      const matches = all.filter(c => c.n && c.n.toLowerCase().includes(q)).slice(0, 60);
       resultCount.hidden = false;
       resultCount.textContent = matches.length + ' of 15,994 cities match';
       if (!matches.length) {
