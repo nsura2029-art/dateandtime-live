@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>United States — Browse Cities by State | dateandtime.live</title>
-  <meta name="description" content="Live current time in 15,994 United States cities across 52 states. Browse by state or search any city. Real-time updates every second." />
+  <title>United States — Current Time &amp; All Cities | dateandtime.live</title>
+  <meta name="description" content="Live current time in United States. 1246 cities across 51 states. Real-time updates every second." />
   <meta name="theme-color" content="#5b4aaf" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://dateandtime.live/world-time/united-states/" />
@@ -37,43 +37,130 @@
 </head>
 <body class="shell-page">
 <header class="site-header">
-  <div class="container header-row">
-    <a href="/" class="logo" aria-label="dateandtime.live home">
-      <span class="logo-mark">T</span>
-      <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
-    </a>
-    <nav class="nav-main" aria-label="Main">
-      <a href="/today/" class="nav-link"><span class="now-dot" aria-hidden="true"></span>Today</a>
-      <a href="/holidays/" class="nav-link">Holidays</a>
-      <a href="/onthisday/" class="nav-link">On this day</a>
-      <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
-      <div class="nav-item has-dropdown">
-        <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-          <span class="nav-icon" aria-hidden="true">🕐</span>World time
-          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="nav-dropdown" role="menu">
-          <a href="/world-time/" class="dropdown-item" role="menuitem">
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
-            <span class="dropdown-desc">Live current time in 33,945 cities</span>
-          </a>
-          <a href="/world-time/united-states/" class="dropdown-item is-active" role="menuitem" aria-current="page">
-            <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🌍</span>United States</span>
-            <span class="dropdown-desc">All United States cities</span>
-          </a>
+    <div class="container header-row">
+      <a href="/" class="logo" aria-label="dateandtime.live home">
+        <span class="logo-mark">T</span>
+        <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+      </a>
+      <nav class="nav-main" aria-label="Main">
+        <a href="#" class="nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+        <a href="/holidays/" class="nav-link">Holidays</a>
+        <a href="/onthisday/" class="nav-link">On this day</a>
+        <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+        <div class="nav-item has-dropdown">
+          <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">🕐</span>World time
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/world-time/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🕐</span>The World Clock</span>
+              <span class="dropdown-desc">Live current time in 33,945 cities</span>
+            </a>
+            <a href="/world-time/united-states/" class="dropdown-item active" role="menuitem" aria-current="page">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">🌍</span>United States</span>
+              <span class="dropdown-desc">All United States cities</span>
+            </a>
+            <a href="/world-time/meeting/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📅</span>Meeting Planner</span>
+              <span class="dropdown-desc">Find meeting times across time zones</span>
+            </a>
+            <a href="/world-time/event/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">📣</span>Event Time Announcer</span>
+              <span class="dropdown-desc">Show local times for a global event</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-label">Learn</div>
+            <a href="/world-time/about/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon world" aria-hidden="true">💡</span>What is a World Clock?</span>
+              <span class="dropdown-desc">How live world clocks work</span>
+            </a>
+          </div>
         </div>
+        <div class="nav-item has-dropdown">
+          <button class="nav-link nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="nav-icon" aria-hidden="true">🌐</span>Timezone
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/time-zones/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🌐</span>Time Zones</span>
+              <span class="dropdown-desc">Browse all 408 time zones</span>
+            </a>
+            <a href="/time-zones/converter/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🔄</span>Time Zone Converter</span>
+              <span class="dropdown-desc">Time difference calculator</span>
+            </a>
+            <a href="/time-zones/in/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🗺️</span>Time Zones in [Country]</span>
+              <span class="dropdown-desc">All countries and their zones</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-label">Learn</div>
+            <a href="/time-zones/what-is/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">💡</span>What is a Time Zone?</span>
+              <span class="dropdown-desc">UTC, offsets, and the prime meridian</span>
+            </a>
+            <a href="/time-zones/dst/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">⏰</span>Daylight Saving Time</span>
+              <span class="dropdown-desc">Spring forward, fall back</span>
+            </a>
+            <a href="/time-zones/utc/" class="dropdown-item" role="menuitem">
+              <span class="dropdown-title"><span class="dropdown-icon tz" aria-hidden="true">🛰️</span>UTC &amp; GMT</span>
+              <span class="dropdown-desc">The world's time standard</span>
+            </a>
+          </div>
+        </div>
+        <a href="/news/" class="nav-link">News</a>
+      </nav>
+      <div class="header-actions">
+        <div class="theme-toggle" role="group" aria-label="Theme">
+          <button data-theme-btn="light" aria-pressed="true" aria-label="Light mode" title="Light mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button data-theme-btn="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+        <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <span class="nav-toggle-icon" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
       </div>
-      <a href="/time-zones/" class="nav-link"><span class="nav-icon" aria-hidden="true">🌐</span>Timezone</a>
-      <a href="/news/" class="nav-link">News</a>
-    </nav>
-    <div class="header-actions">
-      <button class="theme-toggle" data-theme-btn aria-label="Toggle theme">
-        <span data-theme-icon-light>☀️</span>
-        <span data-theme-icon-dark>🌙</span>
+    </div>
+  </header>
+
+  <div class="mobile-nav-backdrop" data-nav-backdrop hidden></div>
+  <aside class="mobile-nav" id="mobile-nav" data-mobile-nav aria-label="Mobile navigation" hidden>
+    <div class="mobile-nav-header">
+      <a href="/" class="mobile-nav-logo" aria-label="dateandtime.live home">
+        <span class="logo-mark">T</span>
+        <span class="logo-text"><span class="logo-text-domain">dateandtime</span><span class="logo-text-tld">.live</span></span>
+      </a>
+      <button class="mobile-nav-close" data-nav-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-  </div>
-</header>
+    <nav class="mobile-nav-list" aria-label="Mobile main">
+      <a href="#" class="mobile-nav-link" title="Today page — coming soon"><span class="now-dot" aria-hidden="true"></span>Today</a>
+      <a href="/holidays/" class="mobile-nav-link">Holidays</a>
+      <a href="/onthisday/" class="mobile-nav-link">On this day</a>
+      <a href="/world-time/meeting/" class="mobile-nav-link">Meeting finder</a>
+      <div class="mobile-nav-section">World time</div>
+      <a href="/world-time/" class="mobile-nav-link mobile-nav-sub">The World Clock</a>
+      <a href="/world-time/united-states/" class="mobile-nav-link mobile-nav-sub">United States</a>
+      <a href="/world-time/meeting/" class="mobile-nav-link mobile-nav-sub">Meeting Planner</a>
+      <a href="/world-time/event/" class="mobile-nav-link mobile-nav-sub">Event Time Announcer</a>
+      <div class="mobile-nav-section">Timezone</div>
+      <a href="/time-zones/" class="mobile-nav-link mobile-nav-sub">Time Zones</a>
+      <a href="/time-zones/converter/" class="mobile-nav-link mobile-nav-sub">Time Zone Converter</a>
+      <a href="/time-zones/in/" class="mobile-nav-link mobile-nav-sub">Time Zones in [Country]</a>
+      <a href="/time-zones/what-is/" class="mobile-nav-link mobile-nav-sub">What is a Time Zone?</a>
+      <a href="/time-zones/dst/" class="mobile-nav-link mobile-nav-sub">Daylight Saving Time</a>
+      <a href="/news/" class="mobile-nav-link">News</a>
+    </nav>
+  </aside>
 
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <div class="container">
@@ -95,33 +182,104 @@
     </div>
   </section>
 
-  <section class="wt-hub-section" id="city-search">
+  <!-- Mount point for the 6-clocks hero section (populated by /src/hero-clocks.js) -->
+  <div id="hero-clocks-mount"></div>
+
+  <!-- News / Time history strip (US-focused) -->
+  <section class="wt-hub-section wt-news-section" id="time-news">
     <div class="container">
       <div class="wt-hub-header">
-        <h2>Find a specific city</h2>
-        <span class="wt-hub-count" id="wt-search-count" hidden></span>
+        <h2>Time, clocks & time zones — in the news</h2>
+        <span class="wt-hub-sub">Curated stories on how America measures and lives with time.</span>
       </div>
-      <p class="tz-section-sub">Search any of the 15,994 US cities by name. Press Enter or scroll for results.</p>
-
-      <div class="wt-search wt-search-lg">
-        <svg class="wt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="search" id="wt-city-search" class="wt-search-input" placeholder="Search 15,994 US cities (e.g. Cody, Newport, Springfield…)" autocomplete="off" spellcheck="false" />
-        <button type="button" class="wt-search-clear" id="wt-city-search-clear" aria-label="Clear search" hidden>×</button>
-      </div>
-
-      <div class="wt-result-bar">
-        <span class="wt-result-count" id="wt-city-search-result" hidden></span>
-        <span class="wt-loading" id="wt-city-search-loading" hidden>
-          <span class="wt-spinner" aria-hidden="true"></span> Searching…
-        </span>
-      </div>
-
-      <div class="wt-card-grid" id="wt-city-search-grid" data-section="city-search" aria-busy="false" hidden>
-        <!-- Populated by JS -->
+      <div class="wt-news-grid">
+        <a class="wt-news-card" href="/time-zones/what-is/">
+          <div class="wt-news-icon" aria-hidden="true">🕰️</div>
+          <h3>The history of timekeeping in America</h3>
+          <p>From sundials in colonial gardens to the atomic clock in <a href="/world-time/united-states/boulder/">Boulder, CO</a>. Understand the <a href="/time-zones/what-is/">fundamentals of time zones</a> and why <a href="/time-zones/utc/">UTC</a> rules them all.</p>
+          <span class="wt-news-cta">Read the overview →</span>
+        </a>
+        <a class="wt-news-card" href="/time-zones/utc/">
+          <div class="wt-news-icon" aria-hidden="true">⚛️</div>
+          <h3>NIST atomic clock keeps US official time</h3>
+          <p>The cesium-133 transition at the heart of <a href="/time-zones/utc/">UTC(NIST)</a> keeps every phone, bank, and power grid on the same beat. Visit the source in <a href="/world-time/united-states/boulder/">Boulder</a>.</p>
+          <span class="wt-news-cta">Explore UTC →</span>
+        </a>
+        <a class="wt-news-card" href="/time-zones/dst/">
+          <div class="wt-news-icon" aria-hidden="true">☀️</div>
+          <h3>Daylight Saving Time: the American debate</h3>
+          <p>From Benjamin Franklin's 1784 essay to today's state-by-state push to end clock changes. Check <a href="/time-zones/dst/">DST rules by state</a> and the <a href="/time-zones/in/">time zones in your country</a>.</p>
+          <span class="wt-news-cta">Learn about DST →</span>
+        </a>
+        <a class="wt-news-card" href="/world-time/united-states/california/">
+          <div class="wt-news-icon" aria-hidden="true">💎</div>
+          <h3>Quartz revolution and Silicon Valley precision</h3>
+          <p>How the 1969 quartz wristwatch rewrote accuracy standards — and how every <a href="/world-time/united-states/cupertino/">Cupertino</a>-made device still depends on a quartz oscillator.</p>
+          <span class="wt-news-cta">See the impact →</span>
+        </a>
+        <a class="wt-news-card" href="/world-time/united-states/philadelphia/">
+          <div class="wt-news-icon" aria-hidden="true">⏳</div>
+          <h3>Pendulum to chronometer: the longitude story</h3>
+          <p>How Huygens' 1656 pendulum clock and Harrison's 1735 marine chronometer gave us Greenwich Mean Time. The first US pendulum factory opened in <a href="/world-time/united-states/philadelphia/">Philadelphia</a> in the 1790s.</p>
+          <span class="wt-news-cta">Read on →</span>
+        </a>
+        <a class="wt-news-card" href="/time-zones/in/">
+          <div class="wt-news-icon" aria-hidden="true">🌍</div>
+          <h3>From 4 time zones to 9: the US patchwork</h3>
+          <p>The US spans 9 standard zones (not counting DST shifts) plus several unofficial ones. Browse <a href="/time-zones/in/">all US zones</a> from Atlantic to Chamorro.</p>
+          <span class="wt-news-cta">Browse US time zones →</span>
+        </a>
       </div>
     </div>
   </section>
 
+  <section class="wt-hub-section" id="all-cities">
+    <div class="container">
+      <div class="wt-hub-header">
+        <h2>All United States cities</h2>
+        <span class="wt-hub-count" id="wt-count">—</span>
+      </div>
+      <p class="tz-section-sub">Click any city for its full time zone, weather, holidays, and more. Live local time updates every second. The green dot means it&#39;s live.</p>
+
+      <div class="wt-filter-bar">
+        <div class="wt-filter-bar-top">
+          <div class="wt-search">
+            <svg class="wt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="wt-search-input" class="wt-search-input" placeholder="Search United States cities…" autocomplete="off" spellcheck="false" />
+            <button type="button" class="wt-search-clear" id="wt-search-clear" aria-label="Clear search" hidden>×</button>
+          </div>
+          <label class="wt-sort-wrap">
+            <span class="wt-sort-label">Sort:</span>
+            <select id="wt-sort-select" class="wt-sort-select">
+              <option value="popular">Popular</option>
+              <option value="all">All cities</option>
+              <option value="name">City A–Z</option>
+              <option value="state">By state</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="wt-result-bar">
+        <span class="wt-result-count" id="wt-result-count">—</span>
+        <span class="wt-loading" id="wt-loading" hidden>
+          <span class="wt-spinner" aria-hidden="true"></span> Loading…
+        </span>
+      </div>
+
+      <div class="wt-card-grid" id="wt-card-grid" data-section="cities" aria-busy="false">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="wt-load-more-row">
+        <button class="wt-load-more" id="wt-load-more" hidden>
+          Load more <span data-section-remaining>0</span> ↓
+        </button>
+        <span class="wt-page-info" id="wt-page-info" hidden>Page 1</span>
+      </div>
+    </div>
+  </section>
+  
   <section class="wt-hub-section wt-states-section">
     <div class="container">
       <h2>Browse United States by state</h2>
@@ -160,26 +318,28 @@
   </section>
 </main>
 
-<footer class="site-footer">
-  <div class="container site-footer-inner">
-    <p>© 2026 <a href="/">dateandtime.live</a> · 33,945 cities · 408 time zones · 1,600+ holidays · Data: <a href="https://www.iana.org/time-zones">IANA</a> · <a href="https://www.geonames.org/">GeoNames</a> · <a href="https://date.nager.at/">Nager.Date</a> · <a href="https://en.wikipedia.org/">Wikipedia</a></p>
-    <p class="footer-links">
-      <a href="/">Home</a> ·
-      <a href="/holidays/">Holidays</a> ·
-      <a href="/onthisday/">On this day</a> ·
-      <a href="/world-time/">World Time</a> ·
-      <a href="/time-zones/">Time Zones</a> ·
-      <a href="/news/">News</a>
-    </p>
-    <p class="footer-legal">
-      <a href="/legal/privacy/">Privacy</a> ·
-      <a href="/legal/terms/">Terms</a> ·
-      <a href="/legal/cookies/">Cookies</a> ·
-      <a href="#" data-cc="show-prefs">Cookie preferences</a> ·
-      <a href="/legal/ccpa/">Do Not Sell or Share My Personal Information (CCPA)</a>
-    </p>
-  </div>
-</footer>
+<footer class="site-footer" role="contentinfo">
+    <div class="site-footer-inner">
+      <nav class="site-footer-nav" aria-label="Site links">
+        <a href="/">Home</a>
+        <a href="/holidays/">Holidays</a>
+        <a href="/onthisday/">On this day</a>
+        <a href="/about/">About</a>
+        <a href="/editorial-policy/">Editorial policy</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="mailto:hello@dateandtime.live">Contact</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
+      <p class="site-footer-meta">
+        © 2026 dateandtime.live — United States — all cities & time zones · 33,945 cities · 408 time zones · 1,600+ holidays ·
+        Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
+      </p>
+      <p class="site-footer-meta">
+        <a href="#" data-action="do-not-sell">Do Not Sell or Share My Personal Information</a> (CCPA)
+      </p>
+    </div>
+  </footer>
 
 <script src="/src/site-shell.js" defer></script>
 
@@ -612,142 +772,27 @@ const STATE_META = {
 };
 
 window.__STATE_META = STATE_META;</script>
-
-<script>
-// City search — search 15,994 US cities by name with debounced live filter.
-// Loads the slim search index from /data/us-cities-search.json once (1.2 MB
-// gzipped to ~300 KB on the wire), then filters client-side for instant
-// results. This is the same dataset as the lite city pages, so every
-// searchable city has a working detail page.
-(function() {
-  const input = document.getElementById('wt-city-search');
-  const clearBtn = document.getElementById('wt-city-search-clear');
-  const grid = document.getElementById('wt-city-search-grid');
-  const resultCount = document.getElementById('wt-city-search-result');
-  const loading = document.getElementById('wt-city-search-loading');
-  if (!input || !grid) return;
-  let allCities = null;
-  let loadPromise = null;
-  let timer = null;
-
-  function fmtPop(n) {
-    if (!n) return '';
-    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
-    if (n >= 1_000) return (n / 1_000).toFixed(0) + 'K';
-    return String(n);
-  }
-
-  function renderCityCard(c) {
-    // Short keys (n=name, s=slug, sc=stateCode, p=pop, tz=timezone)
-    const path = '/world-time/united-states/' + c.s + '/';
-    const pop = c.p ? fmtPop(c.p) : '';
-    // Compute short timezone label (e.g. "EST", "PDT", "CET") from IANA tz
-    const tzShort = shortTz(c.tz);
-    return '<a class="wt-card wt-card-search" href="' + path + '">' +
-      '<div class="wt-card-search-top">' +
-        '<div class="wt-card-time" data-tz="' + c.tz + '">--:--</div>' +
-        '<div class="wt-card-flag"><img src="https://flagcdn.com/w40/us.png" alt="" loading="lazy" width="32" height="22" /></div>' +
-      '</div>' +
-      '<div class="wt-card-name">' + (c.n || '') + ' <span class="wt-card-state">' + (c.sc || '') + '</span></div>' +
-      '<div class="wt-card-meta">' +
-        (pop ? '<span class="wt-card-pop">' + pop + '</span>' : '') +
-        (tzShort ? '<span class="wt-card-meta-sep">·</span><span class="wt-card-tz-label">' + tzShort + '</span>' : '') +
-      '</div>' +
-    '</a>';
-  }
-
-  // Short timezone label like "EST" from "America/New_York". Falls back to
-  // the city part of the IANA id (e.g. "Tokyo") when no short label is found.
-  function shortTz(iana) {
-    if (!iana) return '';
-    try {
-      const d = new Date();
-      const parts = new Intl.DateTimeFormat('en-US', {
-        timeZone: iana, timeZoneName: 'short'
-      }).formatToParts(d);
-      const p = parts.find(x => x.type === 'timeZoneName');
-      if (p && p.value) return p.value;
-    } catch (e) {}
-    return iana.split('/').pop().replace(/_/g, ' ');
-  }
-
-  function updateTimes() {
-    grid.querySelectorAll('.wt-card-time[data-tz]').forEach(el => {
-      try {
-        const tz = el.getAttribute('data-tz');
-        el.textContent = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date());
-      } catch (e) {}
-    });
-  }
-
-  function ensureLoaded() {
-    if (allCities) return Promise.resolve(allCities);
-    if (loadPromise) return loadPromise;
-    loading.hidden = false;
-    loadPromise = fetch('/data/us-cities-search.json')
-      .then(r => {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(d => {
-        allCities = d || [];
-        loading.hidden = true;
-        return allCities;
-      })
-      .catch(err => {
-        loading.hidden = true;
-        grid.innerHTML = '<p>Failed to load cities. Please refresh the page.</p>';
-        console.error('us-cities-search.json failed:', err);
-        return [];
-      });
-    return loadPromise;
-  }
-
-  function runSearch(q) {
-    q = (q || '').trim().toLowerCase();
-    if (!q) {
-      grid.hidden = true;
-      grid.innerHTML = '';
-      resultCount.hidden = true;
-      clearBtn.hidden = true;
-      return;
-    }
-    clearBtn.hidden = false;
-    ensureLoaded().then(all => {
-      // Filter by name (case-insensitive substring match). Result already
-      // sorted by pop desc in the source file, so we keep the order.
-      const matches = all.filter(c => c.n && c.n.toLowerCase().includes(q)).slice(0, 60);
-      resultCount.hidden = false;
-      resultCount.textContent = matches.length + ' of 15,994 cities match';
-      if (!matches.length) {
-        grid.innerHTML = '<p class="wt-empty">No cities match "' + q + '". Try a different spelling or browse by state below.</p>';
-        grid.hidden = false;
-        return;
-      }
-      grid.innerHTML = matches.map(renderCityCard).join('');
-      grid.hidden = false;
-      updateTimes();
-    });
-  }
-
-  input.addEventListener('input', () => {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => runSearch(input.value), 180);
-  });
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') { input.value = ''; runSearch(''); }
-  });
-  clearBtn.addEventListener('click', () => {
-    input.value = '';
-    runSearch('');
-    input.focus();
-  });
-
-  // Live update times for any rendered cards every second
-  setInterval(updateTimes, 1000);
-})();
-</script>
-
+<script src="/src/hero-clocks.js?v=1" defer></script>
 <script src="/src/world-time-cities.js" defer></script>
+<script>
+  // Mount the 6-clocks hero section (US cities).
+  (function() {
+    function tryMount() {
+      if (window.MountHeroClocks) {
+        window.MountHeroClocks([
+          { name: "Phoenix", slug: "phoenix", country: "united-states", tz: "America/Phoenix", clock: "sundial" },
+          { name: "Mesa", slug: "mesa", country: "united-states", tz: "America/Phoenix", clock: "hourglass" },
+          { name: "Philadelphia", slug: "philadelphia", country: "united-states", tz: "America/New_York", clock: "pendulum" },
+          { name: "Boston", slug: "boston", country: "united-states", tz: "America/New_York", clock: "chrono" },
+          { name: "Cupertino", slug: "cupertino", country: "united-states", tz: "America/Los_Angeles", clock: "quartz" },
+          { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
+        ], "#hero-clocks-mount");
+      } else {
+        setTimeout(tryMount, 50);
+      }
+    }
+    tryMount();
+  })();
+</script>
 </body>
 </html>

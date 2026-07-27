@@ -15,9 +15,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/src/world-time.css?v=18" />
-  <link rel="stylesheet" href="/src/site-shell.css?v=18" />
-  <link rel="stylesheet" href="/src/tz-hub.css?v=18" />
+  <link rel="stylesheet" href="/src/world-time.css?v=19" />
+  <link rel="stylesheet" href="/src/site-shell.css?v=19" />
+  <link rel="stylesheet" href="/src/tz-hub.css?v=19" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -53,7 +53,28 @@
   }
   </script>
   <script src="/src/site-shell.js" defer></script>
-  <script src="/src/world-time-cities.js?v=18" defer></script>
+  <script src="/src/hero-clocks.js?v=1" defer></script>
+  <script src="/src/world-time-cities.js?v=19" defer></script>
+  <script>
+    // Mount the 6-clocks hero section.
+    (function() {
+      function tryMount() {
+        if (window.MountHeroClocks) {
+          window.MountHeroClocks([
+            { name: "Cairo", slug: "cairo", country: "egypt", tz: "Africa/Cairo", clock: "sundial" },
+            { name: "Rome", slug: "rome", country: "italy", tz: "Europe/Rome", clock: "hourglass" },
+            { name: "London", slug: "london", country: "united-kingdom", tz: "Europe/London", clock: "pendulum" },
+            { name: "Greenwich", slug: "greenwich", country: "united-kingdom", tz: "Europe/London", clock: "chrono" },
+            { name: "Tokyo", slug: "tokyo", country: "japan", tz: "Asia/Tokyo", clock: "quartz" },
+            { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
+          ], "#hero-clocks-mount");
+        } else {
+          setTimeout(tryMount, 50);
+        }
+      }
+      tryMount();
+    })();
+  </script>
   <script>
     // Inject a full ItemList schema once the popular cities load.
     // The city grid is JS-rendered; we hydrate schema.org markup the same way
@@ -203,6 +224,57 @@
     <div class="container">
       <h1>The World Clock</h1>
       <p class="tz-subtitle">Live current time in <strong>33,945 cities</strong> across <strong>408 time zones</strong>. Real-time updates every second.</p>
+    </div>
+  </section>
+
+  <!-- Mount point for the 6-clocks hero section (populated by /src/hero-clocks.js) -->
+  <div id="hero-clocks-mount"></div>
+
+  <!-- News / Time history strip -->
+  <section class="wt-hub-section wt-news-section" id="time-news">
+    <div class="container">
+      <div class="wt-hub-header">
+        <h2>Time, clocks & time zones — in the news</h2>
+        <span class="wt-hub-sub">Curated stories on how we measure and live with time.</span>
+      </div>
+      <div class="wt-news-grid">
+        <a class="wt-news-card" href="/time-zones/what-is/">
+          <div class="wt-news-icon" aria-hidden="true">🕰️</div>
+          <h3>The history of timekeeping</h3>
+          <p>From sundials to atomic clocks — a 4,000-year tour of how humans learned to measure time. Understand the <a href="/time-zones/what-is/">fundamentals of time zones</a> and why <a href="/time-zones/utc/">UTC</a> rules them all.</p>
+          <span class="wt-news-cta">Read the overview →</span>
+        </a>
+        <a class="wt-news-card" href="/time-zones/utc/">
+          <div class="wt-news-icon" aria-hidden="true">⚛️</div>
+          <h3>How the atomic clock defines your phone</h3>
+          <p>The cesium-133 transition at the heart of every <a href="/time-zones/utc/">UTC tick</a>. NIST's clock in <a href="/world-time/united-states/boulder/">Boulder, CO</a> keeps the US official time.</p>
+          <span class="wt-news-cta">Explore UTC →</span>
+        </a>
+        <a class="wt-news-card" href="/world-time/united-kingdom/">
+          <div class="wt-news-icon" aria-hidden="true">⏳</div>
+          <h3>Pendulum to chronometer: the longitude story</h3>
+          <p>How Huygens' 1656 pendulum clock and Harrison's 1735 marine chronometer gave us Greenwich Mean Time. Visit <a href="/world-time/united-kingdom/">UK cities</a> and the prime meridian.</p>
+          <span class="wt-news-cta">Read on →</span>
+        </a>
+        <a class="wt-news-card" href="/time-zones/dst/">
+          <div class="wt-news-icon" aria-hidden="true">☀️</div>
+          <h3>Daylight Saving Time: a brief, bizarre history</h3>
+          <p>From Benjamin Franklin's joke to the modern DST debate. Check <a href="/time-zones/dst/">DST rules by country</a> and the <a href="/time-zones/in/">time zones in your country</a>.</p>
+          <span class="wt-news-cta">Learn about DST →</span>
+        </a>
+        <a class="wt-news-card" href="/world-time/japan/">
+          <div class="wt-news-icon" aria-hidden="true">💎</div>
+          <h3>Quartz revolution: Seiko's 1969 Astron</h3>
+          <p>How a 1969 wristwatch rewrote accuracy standards. Compare with <a href="/world-time/japan/">Tokyo time</a> and the rise of precision tech in <a href="/world-time/united-states/cupertino/">Cupertino</a>.</p>
+          <span class="wt-news-cta">See the impact →</span>
+        </a>
+        <a class="wt-news-card" href="/time-zones/in/">
+          <div class="wt-news-icon" aria-hidden="true">🌍</div>
+          <h3>Why we have 408 time zones</h3>
+          <p>Time zones aren't 24 stripes — they're a political, geographic, and historical patchwork. Browse <a href="/time-zones/in/">all countries</a> and their IANA zones.</p>
+          <span class="wt-news-cta">Browse time zones →</span>
+        </a>
+      </div>
     </div>
   </section>
 

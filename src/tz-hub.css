@@ -1318,3 +1318,261 @@
   color: #f1eef7;
   border-bottom-color: rgba(120, 102, 212, 0.28);
 }
+
+/* ==========================================================================
+   Hero clocks section — 6 historical timekeeping styles, one per city
+   ========================================================================== */
+.wt-hero-clocks-section {
+  background: linear-gradient(180deg, transparent 0%, var(--color-bg-soft, rgba(92, 74, 175, 0.03)) 100%);
+  padding: 2.5rem 0 1.5rem;
+}
+.wt-hero-clocks-section .wt-hub-header h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+.wt-hero-clocks-section .wt-hub-sub {
+  display: block;
+  color: var(--color-foreground-soft, #6b6585);
+  font-size: 0.9375rem;
+  margin: 0;
+}
+.wt-clock-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+@media (max-width: 900px) {
+  .wt-clock-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .wt-clock-grid { grid-template-columns: 1fr; }
+}
+.wt-clock {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-card-bg, #fff);
+  border: 1px solid var(--color-border, rgba(92, 74, 175, 0.16));
+  border-radius: 14px;
+  padding: 1rem 1.25rem 0.875rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  overflow: hidden;
+  position: relative;
+}
+.wt-clock:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(92, 74, 175, 0.16);
+  border-color: var(--color-primary, #5b4aaf);
+  text-decoration: none;
+}
+.wt-clock-face {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary, #5b4aaf);
+  background: var(--color-bg-soft, rgba(92, 74, 175, 0.04));
+  border-radius: 10px;
+  margin-bottom: 0.875rem;
+  position: relative;
+  overflow: hidden;
+}
+.wt-clock-face .clock-svg {
+  width: 90%;
+  height: 90%;
+  max-width: 200px;
+  max-height: 200px;
+  display: block;
+}
+.wt-clock-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: center;
+}
+.wt-clock-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-foreground, #2a2540);
+  line-height: 1.2;
+}
+.wt-clock-tz {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+  font-size: 0.6875rem;
+  color: var(--color-muted, #77718f);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wt-clock-time {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-foreground, #2a2540);
+  margin-top: 0.25rem;
+  letter-spacing: 0.01em;
+}
+.wt-clock-ms {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.65;
+}
+.wt-clock-ms-sep {
+  opacity: 0.5;
+}
+.wt-clock-offset {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-primary, #5b4aaf);
+  background: var(--color-primary-soft, rgba(92, 74, 175, 0.10));
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  align-self: center;
+  margin-top: 0.15rem;
+}
+
+/* Clock-specific tweaks */
+.wt-clock-sundial .clock-svg { color: #b08040; }     /* warm bronze */
+.wt-clock-hourglass .clock-svg { color: #7866d4; }   /* royal purple */
+.wt-clock-pendulum .clock-svg { color: #5b4aaf; }    /* brand */
+.wt-clock-chrono .clock-svg { color: #2a2540; }      /* dark navy */
+.wt-clock-quartz .clock-svg { color: #2a8a72; }      /* teal */
+.wt-clock-atomic .clock-svg { color: #00d4aa; }      /* mint glow */
+
+/* Dark mode tints */
+[data-theme="dark"] .wt-clock-sundial .clock-svg { color: #d4a574; }
+[data-theme="dark"] .wt-clock-hourglass .clock-svg { color: #a99aff; }
+[data-theme="dark"] .wt-clock-pendulum .clock-svg { color: #b3a8ff; }
+[data-theme="dark"] .wt-clock-chrono .clock-svg { color: #f1eef7; }
+[data-theme="dark"] .wt-clock-quartz .clock-svg { color: #5cd4b3; }
+[data-theme="dark"] .wt-clock-atomic .clock-svg { color: #4de0bc; }
+
+/* Pendulum swing — CSS keyframes only (not time-driven) */
+@keyframes pendulumSwing {
+  0%   { transform: rotate(-15deg); }
+  50%  { transform: rotate(15deg); }
+  100% { transform: rotate(-15deg); }
+}
+.clock-pendulum .pendulum-swing {
+  transform-origin: 100px 80px;
+  animation: pendulumSwing 1.4s ease-in-out infinite;
+}
+
+/* Hourglass sand fall — ambient particles */
+@keyframes hgFall1 { 0% { transform: translateY(0); opacity: 0.7; } 100% { transform: translateY(70px); opacity: 0; } }
+@keyframes hgFall2 { 0% { transform: translateY(0); opacity: 0.7; } 100% { transform: translateY(70px); opacity: 0; } }
+@keyframes hgFall3 { 0% { transform: translateY(0); opacity: 0.7; } 100% { transform: translateY(70px); opacity: 0; } }
+@keyframes hgFall4 { 0% { transform: translateY(0); opacity: 0.7; } 100% { transform: translateY(70px); opacity: 0; } }
+.clock-hourglass .hg-p1 { animation: hgFall1 1.0s linear infinite; }
+.clock-hourglass .hg-p2 { animation: hgFall2 1.0s linear infinite 0.25s; }
+.clock-hourglass .hg-p3 { animation: hgFall3 1.0s linear infinite 0.5s; }
+.clock-hourglass .hg-p4 { animation: hgFall4 1.0s linear infinite 0.75s; }
+.clock-hourglass .hg-stream {
+  animation: hgStreamFade 1s ease-in infinite;
+}
+@keyframes hgStreamFade { 0% { opacity: 0.6; } 50% { opacity: 0.9; } 100% { opacity: 0.6; } }
+
+/* Hourglass flip — every 30s the masks swap (top drains, bottom fills) */
+@keyframes hgDrain {
+  0%, 49% { transform: scaleY(1); }
+  50%, 99% { transform: scaleY(0); }
+  100% { transform: scaleY(1); }
+}
+@keyframes hgFill {
+  0%, 49% { transform: scaleY(0); transform-origin: bottom; }
+  50%, 99% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.clock-hourglass .hg-top-mask { animation: hgDrain 30s steps(1) infinite; }
+.clock-hourglass .hg-bottom-mask { animation: hgFill 30s steps(1) infinite; }
+
+/* Atomic pulse — the cesium-133 reference tick */
+@keyframes atomicTick {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.clock-atomic .atomic-pulse { animation: atomicTick 1s ease-in-out infinite; }
+
+/* ==========================================================================
+   News / Time-history section (world-time hub + country pages)
+   ========================================================================== */
+.wt-news-section {
+  padding-top: 1rem;
+  padding-bottom: 2.5rem;
+}
+.wt-news-section .wt-hub-header h2 {
+  font-size: clamp(1.375rem, 2.8vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+.wt-news-section .wt-hub-sub {
+  display: block;
+  color: var(--color-foreground-soft, #6b6585);
+  font-size: 0.9375rem;
+}
+.wt-news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+@media (max-width: 900px) { .wt-news-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 540px) { .wt-news-grid { grid-template-columns: 1fr; } }
+.wt-news-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem 1.25rem 1.125rem;
+  background: var(--color-card-bg, #fff);
+  border: 1px solid var(--color-border, rgba(92, 74, 175, 0.16));
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 200ms, box-shadow 200ms, border-color 200ms;
+}
+.wt-news-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary, #5b4aaf);
+  box-shadow: 0 8px 24px rgba(92, 74, 175, 0.14);
+  text-decoration: none;
+}
+.wt-news-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.wt-news-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-foreground, #2a2540);
+  margin: 0;
+  line-height: 1.25;
+}
+.wt-news-card p {
+  font-size: 0.8125rem;
+  color: var(--color-foreground-soft, #6b6585);
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+.wt-news-card p a {
+  color: var(--color-primary, #5b4aaf);
+  text-decoration: underline;
+  text-decoration-color: var(--color-primary-soft, rgba(92, 74, 175, 0.3));
+  text-underline-offset: 2px;
+}
+.wt-news-card p a:hover { text-decoration-color: var(--color-primary, #5b4aaf); }
+.wt-news-cta {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary, #5b4aaf);
+  margin-top: 0.25rem;
+}
