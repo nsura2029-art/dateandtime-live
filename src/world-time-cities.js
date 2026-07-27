@@ -518,26 +518,8 @@
   async function fetchCountriesForRegion(slug) {
     const cacheKey = "region:" + slug;
     if (countryCache[cacheKey]) return countryCache[cacheKey];
-    // Map region slug → UN sub-region name (case-sensitive, must match API).
-    // NOTE: the API uses "North America" (NOT "Northern America") for the US/
-    // Canada/Mexico sub-region. Wrong case = no countries match = "No countries
-    // in this region" empty state.
-    const SUBREGION_NAMES = {
-      "northern-africa": "Northern Africa", "western-africa": "Western Africa",
-      "middle-africa": "Middle Africa", "eastern-africa": "Eastern Africa",
-      "southern-africa": "Southern Africa",
-      "eastern-asia": "Eastern Asia", "south-eastern-asia": "South-Eastern Asia",
-      "southern-asia": "Southern Asia", "central-asia": "Central Asia",
-      "western-asia": "Western Asia",
-      "western-europe": "Western Europe", "northern-europe": "Northern Europe",
-      "southern-europe": "Southern Europe", "central-europe": "Central Europe",
-      "southeast-europe": "Southeast Europe", "eastern-europe": "Eastern Europe",
-      "north-america": "North America", "central-america": "Central America",
-      "caribbean": "Caribbean",
-      "south-america": "South America",
-      "australia-and-new-zealand": "Australia and New Zealand",
-      "melanesia": "Melanesia", "micronesia": "Micronesia", "polynesia": "Polynesia"
-    };
+    // SUBREGION_NAMES is now hoisted to module scope (see above) so it's
+    // accessible here AND in fetchCountriesForFilter.
     const subregionName = SUBREGION_NAMES[slug];
     if (!subregionName) return [];
     try {
@@ -560,6 +542,30 @@
       return [];
     }
   }
+
+  // Map region slug → UN sub-region name (case-sensitive, must match API).
+  // NOTE: the API uses "North America" (NOT "Northern America") for the US/
+  // Canada/Mexico sub-region. Wrong case = no countries match = "No countries
+  // in this region" empty state.
+  // Hoisted to module scope so it's accessible by both fetchCountriesForRegion
+  // (legacy) and fetchCountriesForFilter (new). Without hoisting, the new
+  // function gets "SUBREGION_NAMES is not defined" ReferenceError.
+  const SUBREGION_NAMES = {
+    "northern-africa": "Northern Africa", "western-africa": "Western Africa",
+    "middle-africa": "Middle Africa", "eastern-africa": "Eastern Africa",
+    "southern-africa": "Southern Africa",
+    "eastern-asia": "Eastern Asia", "south-eastern-asia": "South-Eastern Asia",
+    "southern-asia": "Southern Asia", "central-asia": "Central Asia",
+    "western-asia": "Western Asia",
+    "western-europe": "Western Europe", "northern-europe": "Northern Europe",
+    "southern-europe": "Southern Europe", "central-europe": "Central Europe",
+    "southeast-europe": "Southeast Europe", "eastern-europe": "Eastern Europe",
+    "north-america": "North America", "central-america": "Central America",
+    "caribbean": "Caribbean",
+    "south-america": "South America",
+    "australia-and-new-zealand": "Australia and New Zealand",
+    "melanesia": "Melanesia", "micronesia": "Micronesia", "polynesia": "Polynesia"
+  };
 
   // Map CONTINENTS api code → UN region name.
   // Both namerica + samerica map to "Americas" (UN M49); the sub-region slug
