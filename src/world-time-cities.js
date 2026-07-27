@@ -73,53 +73,75 @@
   const ICON_STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L14 9 L20 9 L15 13 L17 19 L12 15 L7 19 L9 13 L4 9 L10 9 Z"/></svg>';
   const ICON_PYRAMID = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L22 21 L2 21 Z"/><path d="M8 21 L12 13 L16 21"/></svg>';
 
-  // Region metadata. region code → URL/API value, label, icon,
-  // and sub-region list (slugs that the API understands for that region).
-  // Sub-region slugs match the API's `?region=` param. Sorted alphabetically
-  // by label so the user can scan top-to-bottom.
+  // Region metadata. region code → URL/API value, label, icon, and
+  // sub-region list. The "tz" field shows the dominant UTC offset range
+  // for the region (e.g. "UTC+0 to +4" for Africa) — helps users pick a
+  // region without first clicking into it.
   //
-  // Each region + sub-region gets a unique inline SVG icon (24×24, single
-  // path, currentColor) instead of a generic globe emoji — helps the user
-  // recognize regions at a glance and adds visual variety to the filter bar.
-  const CONTINENTS = [
-    { code: "africa",   api: "AF",  label: "Africa",     icon: ICON_AFRICA, regions: [
-      { slug: "northern-africa",   label: "Northern Africa",  icon: ICON_DESERT },
-      { slug: "western-africa",    label: "Western Africa",   icon: ICON_TREE },
-      { slug: "middle-africa",     label: "Middle Africa",    icon: ICON_RIVER },
-      { slug: "eastern-africa",    label: "Eastern Africa",   icon: ICON_MOUNTAIN },
-      { slug: "southern-africa",   label: "Southern Africa",  icon: ICON_DIAMOND }
+  // Sub-region slugs match the API's `?region=` param. Each region +
+  // sub-region gets a unique inline SVG icon (24×24, single path,
+  // currentColor) instead of a generic globe emoji — helps the user
+  // recognize regions at a glance and adds visual variety to the filter
+  // bar.
+  //
+  // The list is sorted alphabetically (with "All" pinned first) and
+  // sub-regions within each region are also alphabetical.
+  const CONTINENTS_RAW = [
+    { code: "africa",   api: "AF",  label: "Africa",     icon: ICON_AFRICA, tz: "UTC−1 to +4", regions: [
+      { slug: "eastern-africa",    label: "Eastern Africa",   icon: ICON_MOUNTAIN, tz: "UTC+2 to +4" },
+      { slug: "middle-africa",     label: "Middle Africa",    icon: ICON_RIVER,    tz: "UTC+0 to +2" },
+      { slug: "northern-africa",   label: "Northern Africa",  icon: ICON_DESERT,   tz: "UTC+0 to +2" },
+      { slug: "southern-africa",   label: "Southern Africa",  icon: ICON_DIAMOND,  tz: "UTC+1 to +3" },
+      { slug: "western-africa",    label: "Western Africa",   icon: ICON_TREE,     tz: "UTC−1 to +1" }
     ] },
-    { code: "all",      api: null, label: "All",        icon: ICON_GRID, regions: [] },
-    { code: "asia",     api: "AS",  label: "Asia",       icon: ICON_ASIA, regions: [
-      { slug: "eastern-asia",       label: "Eastern Asia",       icon: ICON_TEMPLE },
-      { slug: "south-eastern-asia", label: "South-Eastern Asia", icon: ICON_PALM },
-      { slug: "southern-asia",      label: "Southern Asia",      icon: ICON_LOTUS },
-      { slug: "central-asia",       label: "Central Asia",       icon: ICON_STEPPE },
-      { slug: "western-asia",       label: "Western Asia",       icon: ICON_DOME }
+    { code: "all",      api: null, label: "All",        icon: ICON_GRID, tz: "All time zones", regions: [] },
+    { code: "asia",     api: "AS",  label: "Asia",       icon: ICON_ASIA, tz: "UTC+2 to +12", regions: [
+      { slug: "central-asia",       label: "Central Asia",       icon: ICON_STEPPE, tz: "UTC+5 to +6" },
+      { slug: "eastern-asia",       label: "Eastern Asia",       icon: ICON_TEMPLE, tz: "UTC+7 to +9" },
+      { slug: "south-eastern-asia", label: "South-Eastern Asia", icon: ICON_PALM,   tz: "UTC+6:30 to +9" },
+      { slug: "southern-asia",      label: "Southern Asia",      icon: ICON_LOTUS,  tz: "UTC+5 to +6:30" },
+      { slug: "western-asia",       label: "Western Asia",       icon: ICON_DOME,   tz: "UTC+2 to +5" }
     ] },
-    { code: "europe",   api: "EU",  label: "Europe",     icon: ICON_EUROPE, regions: [
-      { slug: "western-europe",    label: "Western Europe",    icon: ICON_CASTLE },
-      { slug: "northern-europe",   label: "Northern Europe",   icon: ICON_VIKING },
-      { slug: "southern-europe",   label: "Southern Europe",   icon: ICON_OLIVE },
-      { slug: "central-europe",    label: "Central Europe",    icon: ICON_CLOCK },
-      { slug: "southeast-europe",  label: "Southeast Europe",  icon: ICON_BRIDGE },
-      { slug: "eastern-europe",    label: "Eastern Europe",    icon: ICON_ONION }
+    { code: "europe",   api: "EU",  label: "Europe",     icon: ICON_EUROPE, tz: "UTC−1 to +5", regions: [
+      { slug: "central-europe",    label: "Central Europe",    icon: ICON_CLOCK,   tz: "UTC+1 to +2" },
+      { slug: "eastern-europe",    label: "Eastern Europe",    icon: ICON_ONION,   tz: "UTC+2 to +5" },
+      { slug: "northern-europe",   label: "Northern Europe",   icon: ICON_VIKING,  tz: "UTC0 to +3" },
+      { slug: "southern-europe",   label: "Southern Europe",   icon: ICON_OLIVE,   tz: "UTC0 to +3" },
+      { slug: "southeast-europe",  label: "Southeast Europe",  icon: ICON_BRIDGE,  tz: "UTC+1 to +3" },
+      { slug: "western-europe",    label: "Western Europe",    icon: ICON_CASTLE,  tz: "UTC−1 to +2" }
     ] },
-    { code: "namerica", api: "NA",  label: "N. America", icon: ICON_NAMERICA, regions: [
-      { slug: "north-america",     label: "Northern America",  icon: ICON_STAR },
-      { slug: "central-america",   label: "Central America",   icon: ICON_PYRAMID },
-      { slug: "caribbean",         label: "Caribbean",         icon: ICON_PALM }
+    { code: "namerica", api: "NA",  label: "N. America", icon: ICON_NAMERICA, tz: "UTC−10 to −4", regions: [
+      { slug: "caribbean",         label: "Caribbean",         icon: ICON_PALM,    tz: "UTC−4 to −5" },
+      { slug: "central-america",   label: "Central America",   icon: ICON_PYRAMID, tz: "UTC−6" },
+      { slug: "north-america",     label: "Northern America",  icon: ICON_STAR,    tz: "UTC−10 to −4" }
     ] },
-    { code: "oceania",  api: "OC",  label: "Oceania",    icon: ICON_OCEANIA, regions: [
-      { slug: "australia-and-new-zealand", label: "Australia & NZ", icon: ICON_KANGAROO },
-      { slug: "melanesia",         label: "Melanesia",         icon: ICON_WAVE },
-      { slug: "micronesia",        label: "Micronesia",        icon: ICON_CORAL },
-      { slug: "polynesia",         label: "Polynesia",         icon: ICON_TIKI }
+    { code: "oceania",  api: "OC",  label: "Oceania",    icon: ICON_OCEANIA, tz: "UTC+8 to +14", regions: [
+      { slug: "australia-and-new-zealand", label: "Australia & NZ", icon: ICON_KANGAROO, tz: "UTC+8 to +13" },
+      { slug: "melanesia",         label: "Melanesia",         icon: ICON_WAVE,     tz: "UTC+10 to +11" },
+      { slug: "micronesia",        label: "Micronesia",        icon: ICON_CORAL,    tz: "UTC+10 to +12" },
+      { slug: "polynesia",         label: "Polynesia",         icon: ICON_TIKI,     tz: "UTC−11 to +14" }
     ] },
-    { code: "samerica", api: "SA",  label: "S. America", icon: ICON_SAMERICA, regions: [
-      { slug: "south-america",     label: "South America",     icon: ICON_TREE }
+    { code: "other",    api: "OT",  label: "Other",      icon: ICON_GRID,     tz: "Various", regions: [] },
+    { code: "polar",    api: "PL",  label: "Polar",      icon: ICON_MOUNTAIN, tz: "UTC−12 to +14", regions: [] },
+    { code: "samerica", api: "SA",  label: "S. America", icon: ICON_SAMERICA, tz: "UTC−5 to −2", regions: [
+      { slug: "south-america",     label: "South America",     icon: ICON_TREE, tz: "UTC−5 to −2" }
     ] }
   ];
+
+  // Sort: "All" pinned first, then alphabetical by label.
+  // Sub-regions within each region are also alphabetical.
+  const CONTINENTS = (() => {
+    return [...CONTINENTS_RAW]
+      .sort((a, b) => {
+        if (a.code === "all") return -1;
+        if (b.code === "all") return 1;
+        return a.label.localeCompare(b.label);
+      })
+      .map(c => ({
+        ...c,
+        regions: [...c.regions].sort((a, b) => a.label.localeCompare(b.label))
+      }));
+  })();
 
   // Sort options for the city grid.
   //   "all"      — single alphabetical list (no grouping). Default on hub page.
@@ -496,7 +518,10 @@
   async function fetchCountriesForRegion(slug) {
     const cacheKey = "region:" + slug;
     if (countryCache[cacheKey]) return countryCache[cacheKey];
-    // Map region slug → UN sub-region name (case-sensitive, must match API)
+    // Map region slug → UN sub-region name (case-sensitive, must match API).
+    // NOTE: the API uses "North America" (NOT "Northern America") for the US/
+    // Canada/Mexico sub-region. Wrong case = no countries match = "No countries
+    // in this region" empty state.
     const SUBREGION_NAMES = {
       "northern-africa": "Northern Africa", "western-africa": "Western Africa",
       "middle-africa": "Middle Africa", "eastern-africa": "Eastern Africa",
@@ -507,7 +532,7 @@
       "western-europe": "Western Europe", "northern-europe": "Northern Europe",
       "southern-europe": "Southern Europe", "central-europe": "Central Europe",
       "southeast-europe": "Southeast Europe", "eastern-europe": "Eastern Europe",
-      "north-america": "Northern America", "central-america": "Central America",
+      "north-america": "North America", "central-america": "Central America",
       "caribbean": "Caribbean",
       "south-america": "South America",
       "australia-and-new-zealand": "Australia and New Zealand",
@@ -791,7 +816,8 @@
     if (!host) return;
     host.innerHTML = CONTINENTS.map(c => {
       const active = state.continent === c.code ? " is-active" : "";
-      return `<button type="button" class="wt-pill${active}" data-continent="${c.code}"><span class="wt-pill-icon" aria-hidden="true">${c.icon}</span><span class="wt-pill-label">${c.label}</span></button>`;
+      const tz = c.tz ? `<span class="wt-pill-tz">${c.tz}</span>` : "";
+      return `<button type="button" class="wt-pill${active}" data-continent="${c.code}"><span class="wt-pill-icon" aria-hidden="true">${c.icon}</span><span class="wt-pill-label-block"><span class="wt-pill-label">${c.label}</span>${tz}</span></button>`;
     }).join("");
     host.querySelectorAll(".wt-pill").forEach(btn => {
       btn.addEventListener("click", () => setContinent(btn.dataset.continent));
@@ -886,7 +912,8 @@
     row.hidden = false;
     host.innerHTML = regions.map(r => {
       const active = state.region === r.slug ? " is-active" : "";
-      return `<button type="button" class="wt-pill wt-pill-sub${active}" data-region="${r.slug}"><span class="wt-pill-icon" aria-hidden="true">${r.icon}</span><span class="wt-pill-label">${r.label}</span></button>`;
+      const tz = r.tz ? `<span class="wt-pill-tz">${r.tz}</span>` : "";
+      return `<button type="button" class="wt-pill wt-pill-sub${active}" data-region="${r.slug}"><span class="wt-pill-icon" aria-hidden="true">${r.icon}</span><span class="wt-pill-label-block"><span class="wt-pill-label">${r.label}</span>${tz}</span></button>`;
     }).join("");
     host.querySelectorAll(".wt-pill").forEach(btn => {
       btn.addEventListener("click", () => setRegion(btn.dataset.region));
