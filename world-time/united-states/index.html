@@ -624,7 +624,10 @@ window.__STATE_META = STATE_META;</script>
   const resultCount = document.getElementById('wt-city-search-result');
   const loading = document.getElementById('wt-city-search-loading');
   if (!input || !grid) return;
-  const api = (window.__tdlApi) || '/api';
+  // Cross-origin API. The dev API Worker is on a separate host from the
+  // landing Worker, so we can't use a relative path (would 404 on the
+  // landing Worker's /api/* routes, which only proxy to specific endpoints).
+  const API_BASE = 'https://datetime-api-dev.nsura2029.workers.dev';
   let allCities = null;
   let timer = null;
 
@@ -658,7 +661,7 @@ window.__STATE_META = STATE_META;</script>
   function ensureLoaded() {
     if (allCities) return Promise.resolve(allCities);
     loading.hidden = false;
-    return fetch(api + '/v1/cities/all?country=US')
+    return fetch(API_BASE + '/api/v1/cities/all?country=US')
       .then(r => r.json())
       .then(d => {
         allCities = (d.data && d.data.cities) || [];
