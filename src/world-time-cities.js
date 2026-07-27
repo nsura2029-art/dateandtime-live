@@ -536,20 +536,93 @@
     }
   }
 
+  // Map CONTINENTS api code → UN region name.
+  // Both namerica + samerica map to "Americas" (UN M49); the sub-region slug
+  // (e.g. "north-america" vs "south-america") further filters.
+  const CONTINENT_UN_NAMES = {
+    "AF": "Africa", "AS": "Asia", "EU": "Europe", "OC": "Oceania", "AN": "Antarctic",
+    "NA": "Americas", "SA": "Americas"
+  };
+
+  /**
+   * Fetch countries for the current filter (continent + optional sub-region).
+   * Used by the cascading country pills. Returns up to 60 countries sorted by
+   * population desc (so the most important ones appear first).
+   *
+   * Cache key: "filter:{continent}|{region}|{limit}"
+   */
+  async function fetchCountriesForFilter({ continent, region, limit = 60 }) {
+    const cacheKey = `filter:${continent || 'all'}|${region || 'all'}|${limit}`;
+    if (countryCache[cacheKey]) return countryCache[cacheKey];
+    try {
+      const r = await fetch(`${API_BASE}/v1/countries?limit=300`);
+      const j = await r.json();
+      const all = (j.data && j.data.countries) || [];
+      // Filter by continent code (lowercase, e.g. "namerica") — look up UN region name
+      let filtered = all;
+      if (continent && continent !== "all") {
+        // For "other" and "polar", the API doesn't have those — show none.
+        if (continent === "other" || continent === "polar") {
+          countryCache[cacheKey] = [];
+          return [];
+        }
+        // Look up the API code for this continent (e.g. "namerica" → "NA")
+        const cont = CONTINENTS.find(c => c.code === continent);
+        const apiCode = cont && cont.api;
+        if (apiCode) {
+          const unName = CONTINENT_UN_NAMES[apiCode];
+          if (unName) {
+            // For Americas, accept unRegion === "Americas" regardless of NA/SA split
+            filtered = filtered.filter(c => c.unRegion === unName);
+          }
+        }
+      }
+      // Further filter by sub-region (slug → name)
+      if (region && region !== "all" && continent !== "all") {
+        const subregionName = SUBREGION_NAMES[region];
+        if (subregionName) {
+          filtered = filtered.filter(c => c.unSubregion === subregionName);
+        }
+      }
+      // Sort by population desc (countries with no population sort last)
+      const sorted = filtered
+        .map(c => ({
+          cca2: c.cca2,
+          name: c.name,
+          flagEmoji: c.flagEmoji || "",
+          population: c.population || 0,
+          slug: c.countrySlug || (c.name || "").toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        }))
+        .sort((a, b) => (b.population || 0) - (a.population || 0))
+        .slice(0, limit);
+      countryCache[cacheKey] = sorted;
+      return sorted;
+    } catch (e) {
+      console.warn("fetchCountriesForFilter failed", e);
+      return [];
+    }
+  }
+
   async function renderCountryPills() {
     const host = el("wt-country-pills");
     const row = el("wt-country-row");
     if (!host || !row) return;
-    if (!state.region || state.region === "all") {
+    // Show country pills whenever a continent is selected (not just sub-region)
+    // — gives users a clear drill-down even if they skip the sub-region step.
+    if (!state.continent || state.continent === "all") {
       row.hidden = true;
       host.innerHTML = "";
       return;
     }
     row.hidden = false;
     host.innerHTML = '<span class="wt-cascading-loading">Loading countries…</span>';
-    const countries = await fetchCountriesForRegion(state.region);
+    const countries = await fetchCountriesForFilter({
+      continent: state.continent,
+      region: state.region,
+      limit: 60
+    });
     if (!countries.length) {
-      host.innerHTML = '<span class="wt-empty">No countries in this sub-region.</span>';
+      host.innerHTML = '<span class="wt-empty">No countries in this region.</span>';
       return;
     }
     // Highlight active country
