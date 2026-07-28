@@ -333,10 +333,10 @@
     var section = document.createElement('section');
     section.className = 'city-search-bar';
     section.innerHTML = `
-      <label class="city-search-label" for="citySearchInput">Search another US city</label>
+      <label class="city-search-label" for="citySearchInput">Search 33,945 cities worldwide</label>
       <div class="city-search-wrap">
         <svg class="city-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input type="search" id="citySearchInput" class="city-search-input" placeholder="Type a city name (e.g. Boston, Portland, San Diego)…" autocomplete="off" />
+        <input type="search" id="citySearchInput" class="city-search-input" placeholder="Type a city name (e.g. Madrid, Tokyo, Rio de Janeiro)…" autocomplete="off" />
         <div class="city-search-results" id="citySearchResults" hidden></div>
       </div>
     `;
@@ -363,21 +363,38 @@
     function loadCities() {
       if (cities) return Promise.resolve(cities);
       if (citiesLoading) return citiesLoading;
-      citiesLoading = fetch('/data/us-cities-search.json')
-        .then(function(r) { return r.json(); })
-        .then(function(d) { cities = d; return d; })
-        .catch(function() { cities = []; return []; });
+      // Fetch both: the global city index (all 33,945 cities) + the
+      // country-code-to-slug map (242 entries, ~4KB).
+      citiesLoading = Promise.all([
+        fetch('/data/global-cities-search.json').then(function(r) { return r.json(); }).catch(function() { return []; }),
+        fetch('/data/cc2-country-slug.json').then(function(r) { return r.json(); }).catch(function() { return {}; })
+      ]).then(function(arr) {
+        cities = arr[0] || [];
+        countrySlug = arr[1] || {};
+        return cities;
+      });
       return citiesLoading;
+    }
+    var countrySlug = null;
+    function buildHref(m) {
+      // US city → /world-time/united-states/{slug}/
+      // Other city → /world-time/{country-slug}/{city-slug}/ (coming-soon page)
+      if (m.c === 'US') return '/world-time/united-states/' + m.s + '/';
+      var cslug = countrySlug && countrySlug[m.c];
+      if (cslug) return '/world-time/' + cslug + '/' + m.s + '/';
+      return '/world-time/';
     }
     function search(q) {
       if (!q || q.length < 2) return [];
       var qLower = q.toLowerCase();
       var matches = [];
+      // Prefix matches first
       for (var i = 0; i < cities.length && matches.length < 5; i++) {
         var c = cities[i];
         var n = (c.n || '').toLowerCase();
         if (n.indexOf(qLower) === 0) matches.push(c);
       }
+      // Then substring matches
       if (matches.length < 5) {
         for (var j = 0; j < cities.length && matches.length < 5; j++) {
           var n2 = (cities[j].n || '').toLowerCase();
@@ -395,9 +412,10 @@
         return;
       }
       results.innerHTML = matches.map(function(m) {
-        return '<a class="city-search-result" href="/world-time/united-states/' + m.s + '/">'
+        var meta = (m.cn || '') + (m.sc ? ' · ' + m.sc : '') + (m.p ? ' · ' + m.p : '');
+        return '<a class="city-search-result" href="' + buildHref(m) + '" data-href="' + buildHref(m) + '">'
           + '<span class="city-search-result-name">' + escapeHtml(m.n) + '</span>'
-          + '<span class="city-search-result-meta">' + escapeHtml(m.sc || '') + ' · ' + escapeHtml(m.p || '') + '</span>'
+          + '<span class="city-search-result-meta">' + escapeHtml(meta) + '</span>'
           + '</a>';
       }).join('');
       results.hidden = false;

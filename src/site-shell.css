@@ -1090,19 +1090,28 @@ body.has-mobile-nav-open {
   position: sticky;
   top: 56px; /* site header is 56px tall */
   z-index: 50;
-  background: var(--color-bg, #ffffff);
+  /* Solid background in both modes so text is always readable.
+     Slight tint for visual separation from the page content. */
+  background: var(--color-bg-soft, #f4f2fb);
   font-size: 0.8125rem;
-  color: var(--color-muted, #6b6580);
+  color: var(--color-foreground-soft, #49445f);
   margin: 0;
   padding: 0.625rem 0;
   border-bottom: 1px solid var(--color-border, #e5e2f0);
+}
+[data-theme="dark"] .breadcrumb {
+  background: rgba(20, 15, 40, 0.92);
+  color: rgba(232, 226, 248, 0.85);
+  border-bottom-color: rgba(120, 102, 212, 0.28);
 }
 .breadcrumb ol { display: flex; flex-wrap: wrap; gap: 0.25rem; list-style: none; padding: 0; margin: 0; }
 .breadcrumb li { display: inline; }
 .breadcrumb li + li::before { content: '›'; margin: 0 0.4rem; opacity: 0.5; }
 .breadcrumb a { color: var(--color-link, #5b4aaf); }
 .breadcrumb a:hover { text-decoration: underline; }
+[data-theme="dark"] .breadcrumb a { color: rgba(168, 152, 232, 0.95); }
 .breadcrumb [aria-current="page"] { color: var(--color-foreground, #1f1a3a); font-weight: 600; }
+[data-theme="dark"] .breadcrumb [aria-current="page"] { color: rgba(255, 255, 255, 0.95); }
 
 /* City hero (lite) — centered, with rich content (live clock, meta, flag) */
 /* =====================================================
@@ -1115,7 +1124,7 @@ body.has-mobile-nav-open {
   padding: 1.5rem 0 1.5rem;
   border-bottom: 1px solid var(--color-border-soft, rgba(92, 74, 175, 0.12));
   margin-bottom: 1rem;
-  text-align: left;
+  text-align: center;
 }
 .city-hero-grid {
   display: grid;
@@ -1130,15 +1139,26 @@ body.has-mobile-nav-open {
   .city-hero-grid { grid-template-columns: 1fr; gap: 1.5rem; }
 }
 
-/* LEFT: clock + data */
-.city-clock-block h1 {
+/* LEFT: clock + data — H1 + location on one row, centered (per user feedback) */
+.city-hero-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.5rem 1rem;
+  margin: 0 0 1.25rem;
+  text-align: center;
+}
+.city-hero-title-row h1 {
   font-size: var(--t-hero);
   font-weight: var(--t-w-hero);
   letter-spacing: var(--t-ls-hero);
   line-height: var(--t-lh-hero);
-  margin: 0 0 0.25rem;
+  margin: 0;
   color: var(--color-foreground, #1f1a3a);
-  text-align: left;
+}
+@media (max-width: 560px) {
+  .city-hero-title-row { flex-direction: column; align-items: center; gap: 0.25rem; }
 }
 .city-hero-loc {
   font-size: var(--t-eyebrow);
@@ -1385,18 +1405,32 @@ body.has-mobile-nav-open {
 .fact-value.mono, .mono { font-family: var(--font-mono, monospace); }
 .fact-value a { color: var(--color-link, #5b4aaf); }
 
-/* City section */
+/* City section — uses the worldtime page's page-section-header pattern
+   for consistency: eyebrow chip + h2 + sub text + meta row, all centered */
 .city-section { margin: 2.5rem 0; }
 .city-section h2 {
-  font-size: clamp(1.25rem, 2vw, 1.5rem);
-  font-weight: 800;
-  letter-spacing: -0.015em;
-  margin: 0 auto 1rem;
+  font-size: var(--t-h2, clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem));
+  font-weight: var(--t-w-h2, 700);
+  letter-spacing: var(--t-ls-h2, -0.015em);
+  line-height: var(--t-lh-h2, 1.25);
+  margin: 0 auto 0.5rem;
   color: var(--color-foreground, #1f1a3a);
   text-align: center;
   max-width: 56rem;
 }
-.city-section > p { text-align: center; max-width: 42rem; margin-left: auto; margin-right: auto; }
+.city-section .section-eyebrow {
+  display: inline-block;
+  font-size: var(--t-eyebrow, 0.6875rem);
+  font-weight: var(--t-w-eyebrow, 600);
+  text-transform: uppercase;
+  letter-spacing: var(--t-ls-eyebrow, 0.05em);
+  color: var(--color-primary, #5b4aaf);
+  background: var(--color-bg-soft, rgba(92, 74, 175, 0.08));
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  margin: 0 0 0.5rem;
+}
+.city-section > p { text-align: center; max-width: 42rem; margin-left: auto; margin-right: auto; color: var(--color-foreground-soft, #49445f); }
 
 /* Sun cards (lite) */
 .sun-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }

@@ -193,6 +193,16 @@ function cityAsciiNameToSlug(asciiName) {
     .replace(/^-+|-+$/g, '');
 }
 
+// City slug overrides — maps an "incorrect" auto-generated slug to the
+// canonical one we ship in the lite build. This handles cases like
+// "new-york-city" (the auto-generated slug from "New York City") which
+// the lite template maps to "new-york" via SLUG_OVERRIDES. Without this
+// redirect, /world-time/united-states/new-york-city/ would fall through
+// to the coming-soon page and show the OLD layout.
+const CITY_SLUG_OVERRIDES = {
+  "new-york-city": "new-york",
+};
+
 // Find a city in a list by its URL slug. Returns the city object or null.
 function findCityBySlug(cities, slug) {
   if (!cities || !slug) return null;
@@ -492,7 +502,7 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="canonical" href="https://dateandtime.live/world-time/${countrySlug}/${citySlug}/">
-  <link rel="stylesheet" href="/src/site-shell.css?v=8" />
+  <link rel="stylesheet" href="/src/site-shell.css?v=9" />
   <link rel="stylesheet" href="/src/tz-hub.css?v=23" />
   <style>
     .coming-soon { max-width: 1240px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
@@ -1435,8 +1445,21 @@ export default {
     // links, and a feedback form so users can suggest we add the city.
     const comingSoonMatch = url.pathname.match(/^\/world-time\/([a-z][a-z0-9-]+)\/([a-z][a-z0-9-]+)\/?$/);
     if (comingSoonMatch) {
-      const countrySlug = comingSoonMatch[1];
-      const citySlug = comingSoonMatch[2];
+      let countrySlug = comingSoonMatch[1];
+      let citySlug = comingSoonMatch[2];
+
+      // 301 redirect for city slug overrides (e.g. new-york-city → new-york).
+      // The lite build uses SLUG_OVERRIDES to canonicalize the slug, but
+      // the Worker doesn't have access to that map at runtime. Without
+      // this redirect, /world-time/united-states/new-york-city/ falls
+      // through to the coming-soon page and shows the OLD layout.
+      const canonicalSlug = CITY_SLUG_OVERRIDES[citySlug];
+      if (canonicalSlug) {
+        return new Response(null, {
+          status: 301,
+          headers: { Location: `/world-time/${countrySlug}/${canonicalSlug}/` }
+        });
+      }
       // Try the static asset. CF Pages returns 200 with HTML for both
       // existing and non-existing files (the 404 body for missing ones
       // is small ~8KB; existing pages are 30-50KB). Use body length
