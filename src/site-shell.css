@@ -5,8 +5,10 @@
    ===================================================== */
 
 :root {
+  /* === COLOR TOKENS === */
   --color-primary: #5b4aaf;
   --color-primary-fg: #ffffff;
+  --color-primary-soft: rgba(92, 74, 175, 0.10);
   --color-foreground: #49445f;
   --color-foreground-soft: #6b6585;
   --color-muted: #77718f;
@@ -15,10 +17,61 @@
   --color-border-soft: rgba(92, 74, 175, 0.08);
   --color-background: #ffffff;
   --color-background-soft: #faf8ff;
+  --color-background-tint: #f5f1ff;
   --color-logo-gradient: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
   --color-button-primary: linear-gradient(135deg, #5b4aaf 0%, #8b5cf6 50%, #c084fc 100%);
   --color-period-bg: rgba(92, 74, 175, 0.06);
   --color-card-bg: #ffffff;
+  --color-card-border: rgba(92, 74, 175, 0.12);
+  --color-card-border-hover: rgba(92, 74, 175, 0.32);
+  --color-card-shadow: 0 1px 2px rgba(26, 16, 60, 0.04), 0 1px 3px rgba(26, 16, 60, 0.06);
+  --color-card-shadow-hover: 0 4px 12px rgba(92, 74, 175, 0.10), 0 2px 4px rgba(26, 16, 60, 0.06);
+  --color-shadow-color: 26, 16, 60;
+
+  /* === TYPE TOKENS — single source of truth for the design system ===
+     Hero is 2x H2. H2 is 1.4x body. Weight steps 800 → 700 → 600 → 400.
+     Tracking tightens as size grows (-0.025em → -0.02em → -0.015em → -0.01em). */
+  --t-display:   clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);  /* 36-56px (homepage only) */
+  --t-hero:      clamp(1.75rem, 1.4rem + 1vw, 2.25rem);    /* 28-36px (all other heroes) */
+  --t-h2:        clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem); /* 20-26px (section) */
+  --t-h3:        1.0625rem;                                /* 17px (card title) */
+  --t-body:      1rem;                                     /* 16px */
+  --t-small:     0.875rem;                                 /* 14px */
+  --t-caption:   0.75rem;                                  /* 12px */
+  --t-eyebrow:   0.6875rem;                                /* 11px (uppercase chip) */
+
+  --t-w-display: 800; --t-ls-display: -0.025em; --t-lh-display: 1.05;
+  --t-w-hero:    800; --t-ls-hero:    -0.02em;  --t-lh-hero:    1.1;
+  --t-w-h2:      700; --t-ls-h2:      -0.015em; --t-lh-h2:      1.25;
+  --t-w-h3:      600; --t-ls-h3:      -0.01em;  --t-lh-h3:      1.3;
+  --t-w-body:    400;
+  --t-w-small:   400;
+  --t-w-caption: 600; --t-ls-caption: 0.04em;  --t-lh-caption: 1.4;
+  --t-w-eyebrow: 700; --t-ls-eyebrow: 0.18em;
+
+  --t-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --t-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  /* === SPACING TOKENS (4px base) === */
+  --space-1:  0.25rem;   /* 4px */
+  --space-2:  0.5rem;    /* 8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px */
+  --space-5:  1.5rem;    /* 24px */
+  --space-6:  2rem;      /* 32px */
+  --space-7:  2.5rem;    /* 40px */
+  --space-8:  3rem;      /* 48px */
+  --space-10: 4rem;      /* 64px */
+  --space-12: 5rem;      /* 80px */
+
+  /* === RADIUS TOKENS === */
+  --radius-sm:  0.375rem;  /* 6px */
+  --radius-md:  0.625rem;  /* 10px */
+  --radius-lg:  0.875rem;  /* 14px */
+  --radius-xl:  1.125rem;  /* 18px */
+  --radius-pill: 999px;
+
+  /* === SHELL TOKENS === */
   --shell-header-h: 64px;
   --container: 1240px;
 }
@@ -26,6 +79,7 @@
 [data-theme="dark"] {
   --color-primary: #a78bfa;
   --color-primary-fg: #0f0a1f;
+  --color-primary-soft: rgba(167, 139, 250, 0.14);
   --color-foreground: #ede9fe;
   --color-foreground-soft: #d6cef5;
   --color-muted: #a599c5;
@@ -34,10 +88,16 @@
   --color-border-soft: rgba(167, 139, 250, 0.10);
   --color-background: #0f0820;
   --color-background-soft: #16092e;
+  --color-background-tint: #1f1140;
   --color-logo-gradient: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
   --color-button-primary: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #f97316 100%);
   --color-period-bg: rgba(167, 139, 250, 0.08);
   --color-card-bg: #1a0e2e;
+  --color-card-border: rgba(167, 139, 250, 0.16);
+  --color-card-border-hover: rgba(167, 139, 250, 0.40);
+  --color-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.20), 0 1px 3px rgba(0, 0, 0, 0.30);
+  --color-card-shadow-hover: 0 4px 12px rgba(167, 139, 250, 0.16), 0 2px 4px rgba(0, 0, 0, 0.30);
+  --color-shadow-color: 0, 0, 0;
 }
 
 * { box-sizing: border-box; }
@@ -1240,3 +1300,224 @@ body.has-mobile-nav-open {
 .continue-strip-title { font-weight: 700; color: var(--color-foreground, #1f1a3a); }
 .continue-strip-sub { font-size: 0.8125rem; color: var(--color-muted, #6b6580); margin-top: 0.25rem; }
 
+
+/* =====================================================
+   DESIGN SYSTEM — Page Hero + Page Section
+   Used by every page for consistent rhythm. Tokens above
+   are the single source of truth. Light + dark theme both
+   work via the same class names.
+   ===================================================== */
+
+/* === PAGE HERO === */
+.page-hero {
+  position: relative;
+  padding: clamp(2rem, 4vw, 3rem) 0 clamp(2rem, 4vw, 2.5rem);
+  background:
+    linear-gradient(180deg, var(--color-primary-soft) 0%, transparent 100%),
+    var(--color-background);
+  border-bottom: 1px solid var(--color-border-soft);
+  overflow: hidden;
+  isolation: isolate;
+}
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--color-primary) 12%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--color-primary) 8%, transparent) 0%, transparent 50%);
+  pointer-events: none;
+  opacity: 0.7;
+  z-index: -1;
+}
+.page-hero > .container { position: relative; z-index: 1; }
+
+/* Eyebrow — small uppercase chip with optional live dot */
+.page-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--t-eyebrow);
+  font-weight: var(--t-w-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: var(--t-ls-eyebrow);
+  color: var(--color-primary);
+  margin: 0 0 0.75rem;
+  line-height: 1.2;
+}
+.page-hero-eyebrow .dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 24%, transparent);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Title — the H1. Default size is HERO tier. */
+.page-hero-title {
+  font-size: var(--t-hero);
+  font-weight: var(--t-w-hero);
+  letter-spacing: var(--t-ls-hero);
+  line-height: var(--t-lh-hero);
+  color: var(--color-foreground);
+  margin: 0 0 0.75rem;
+  max-width: 56rem;
+}
+/* Display variant — for the homepage only. */
+.page-hero--display .page-hero-title {
+  font-size: var(--t-display);
+  font-weight: var(--t-w-display);
+  letter-spacing: var(--t-ls-display);
+  line-height: var(--t-lh-display);
+  max-width: 60rem;
+}
+
+/* Subtitle — softer, narrower */
+.page-hero-subtitle {
+  font-size: clamp(0.9375rem, 0.85rem + 0.3vw, 1.0625rem);
+  line-height: 1.55;
+  color: var(--color-foreground-soft);
+  margin: 0 0 var(--space-5);
+  max-width: 42rem;
+}
+.page-hero-subtitle strong { color: var(--color-foreground); font-weight: 700; }
+
+/* Stat strip — the 2-4 big numbers row */
+.page-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5) var(--space-7);
+  margin-top: var(--space-5);
+}
+.page-hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+.page-hero-stat-num {
+  font-family: var(--t-font-mono);
+  font-size: clamp(1.5rem, 1.2rem + 0.8vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+}
+.page-hero-stat-label {
+  font-size: var(--t-caption);
+  color: var(--color-foreground-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  margin-top: 0.125rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .page-hero { padding: 1.5rem 0 1.75rem; }
+  .page-hero-stats { gap: var(--space-4) var(--space-5); }
+  .page-hero-stat-num { font-size: 1.375rem; }
+}
+
+/* === PAGE SECTION === */
+.page-section {
+  padding: clamp(2rem, 4vw, 3rem) 0;
+}
+.page-section + .page-section { padding-top: clamp(1rem, 2vw, 1.5rem); }
+
+.page-section-header {
+  margin-bottom: var(--space-5);
+  max-width: 56rem;
+}
+.page-section-eyebrow {
+  display: inline-block;
+  font-size: var(--t-eyebrow);
+  font-weight: var(--t-w-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: var(--t-ls-eyebrow);
+  color: var(--color-primary);
+  margin: 0 0 0.5rem;
+}
+.page-section-title {
+  font-size: var(--t-h2);
+  font-weight: var(--t-w-h2);
+  letter-spacing: var(--t-ls-h2);
+  line-height: var(--t-lh-h2);
+  color: var(--color-foreground);
+  margin: 0 0 0.5rem;
+}
+.page-section-subtitle {
+  font-size: clamp(0.875rem, 0.82rem + 0.2vw, 0.9375rem);
+  line-height: 1.55;
+  color: var(--color-foreground-soft);
+  margin: 0;
+  max-width: 42rem;
+}
+
+/* Header variants — eyebrow + title + count on right */
+.page-section-header--with-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.page-section-header--with-meta .page-section-title-block { flex: 1 1 auto; min-width: 0; }
+.page-section-header--with-meta .page-section-count {
+  font-size: var(--t-small);
+  color: var(--color-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* === CARD === */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 1rem 1.125rem;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--color-card-shadow);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  min-width: 0;
+}
+.card:hover {
+  border-color: var(--color-card-border-hover);
+  box-shadow: var(--color-card-shadow-hover);
+  transform: translateY(-1px);
+}
+.card-title {
+  font-size: var(--t-h3);
+  font-weight: var(--t-w-h3);
+  letter-spacing: var(--t-ls-h3);
+  line-height: var(--t-lh-h3);
+  color: var(--color-foreground);
+  margin: 0;
+}
+.card-label {
+  display: inline-block;
+  font-size: var(--t-eyebrow);
+  font-weight: var(--t-w-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: var(--t-ls-eyebrow);
+  color: var(--color-primary);
+  margin: 0;
+}
+.card-sub {
+  font-size: var(--t-small);
+  color: var(--color-foreground-soft);
+  line-height: 1.4;
+  margin: 0;
+}
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+.card-link:hover { text-decoration: none; }
