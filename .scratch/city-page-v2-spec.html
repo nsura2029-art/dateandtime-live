@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>City page v2 — design spec</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f7f7fa;
+    --bg-tint: #f0f0f7;
+    --fg: #1a1830;
+    --fg-soft: #5c5878;
+    --muted: #8a869c;
+    --border: #e5e3ee;
+    --border-soft: #efedf6;
+    --primary: #6c5ce7;
+    --primary-soft: #efeffd;
+    --green: #2dbe7e;
+    --green-soft: #e7f7ee;
+    --red: #e14b4b;
+    --red-soft: #fdecec;
+    --amber: #f59e0b;
+    --amber-soft: #fef3c7;
+    --blue: #3b82f6;
+    --blue-soft: #dbeafe;
+    --teal: #0d9488;
+    --teal-soft: #ccfbf1;
+    --pink: #ec4899;
+    --pink-soft: #fce7f3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+    background: var(--bg-soft);
+    color: var(--fg);
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    line-height: 1.55;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+  }
+  h1 {
+    font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin: 0.75rem 0 0.5rem;
+  }
+  .sub { color: var(--fg-soft); font-size: 1rem; max-width: 56rem; }
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 2.5rem 0 0.5rem;
+  }
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 1.5rem 0 0.5rem;
+  }
+  code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    background: var(--bg-tint);
+    padding: 0.0625rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.875em;
+  }
+  .new-section {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+  .new-section + .new-section { margin-top: 1rem; }
+  .new-section h3 {
+    margin-top: 0;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .new-section .why {
+    background: var(--green-soft);
+    color: var(--green);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+  }
+  .new-section .cost {
+    background: var(--amber-soft);
+    color: var(--amber);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+  }
+
+  /* Mockup styles */
+  .mock {
+    background: var(--bg-soft);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+  .mock-label {
+    font-size: 0.6875rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  /* Search bar mockup */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(108, 92, 231, 0.06);
+    max-width: 480px;
+    position: relative;
+  }
+  .search-bar svg { color: var(--muted); flex-shrink: 0; }
+  .search-bar input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 0.9375rem;
+    background: transparent;
+    color: var(--fg);
+  }
+  .search-bar .kbd {
+    background: var(--bg-tint);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 0.125rem 0.375rem;
+    font-size: 0.6875rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .search-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+    z-index: 10;
+  }
+  .search-result {
+    padding: 0.625rem 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
+  }
+  .search-result:last-child { border-bottom: 0; }
+  .search-result:hover { background: var(--primary-soft); }
+  .search-result .flag { font-size: 1rem; }
+  .search-result .name { font-weight: 600; }
+  .search-result .meta { color: var(--muted); font-size: 0.75rem; margin-left: auto; }
+
+  /* Time zone visual */
+  .tz-year {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    background: var(--border-soft);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0.75rem 0;
+  }
+  .tz-month {
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--fg-soft);
+    background: var(--bg);
+  }
+  .tz-month.est { background: #dbeafe; color: #1e40af; font-weight: 700; }
+  .tz-month.edt { background: #fef3c7; color: #92400e; font-weight: 700; }
+  .tz-month.cst { background: #e7f7ee; color: #166534; font-weight: 700; }
+  .tz-month.cdt { background: #fce7f3; color: #be185d; font-weight: 700; }
+  .tz-month strong { display: block; font-size: 0.875rem; }
+
+  /* Hero mockup */
+  .hero-mock {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 1rem;
+    align-items: center;
+  }
+  .clock-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .analog-clock {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 2px solid var(--border);
+    margin: 0 auto 0.75rem;
+    position: relative;
+  }
+  .analog-clock::before {
+    content: "";
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30%;
+    background: var(--fg);
+    transform-origin: 50% 100%;
+    border-radius: 1px;
+  }
+  .analog-clock::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 35%;
+    height: 2px;
+    background: var(--primary);
+    transform-origin: 0 0;
+    border-radius: 1px;
+  }
+  .clock-num { position: absolute; font-size: 0.75rem; color: var(--fg-soft); font-weight: 600; }
+  .clock-num.n12 { top: 4px; left: 50%; transform: translateX(-50%); }
+  .clock-num.n3 { top: 50%; right: 6px; transform: translateY(-50%); }
+  .clock-num.n6 { bottom: 4px; left: 50%; transform: translateX(-50%); }
+  .clock-num.n9 { top: 50%; left: 6px; transform: translateY(-50%); }
+  .clock-card .time { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+  .clock-card .ampm { font-size: 0.875rem; color: var(--primary); font-weight: 700; vertical-align: super; }
+  .clock-card .date { color: var(--fg-soft); font-size: 0.8125rem; margin-top: 0.25rem; }
+
+  .tz-info {
+    text-align: left;
+  }
+  .tz-info .meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 0.875rem;
+  }
+  .tz-info .meta-row:last-child { border-bottom: 0; }
+  .tz-info .meta-row strong { color: var(--fg-soft); font-weight: 600; }
+  .tz-info .meta-row a { color: var(--primary); text-decoration: none; }
+
+  .map-card {
+    background: linear-gradient(135deg, #c9e5ff 0%, #a4d4ff 50%, #d4e8c4 100%);
+    border-radius: 14px;
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-card .pin {
+    position: absolute;
+    bottom: 30%;
+    right: 35%;
+    width: 16px;
+    height: 16px;
+    background: var(--red);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .map-card .pin::after {
+    content: "";
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 8px; height: 8px;
+    background: var(--bg);
+    border-radius: 50%;
+  }
+
+  /* DST countdown */
+  .dst-countdown {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+  }
+  .dst-card {
+    background: linear-gradient(135deg, var(--amber-soft) 0%, #fff7e0 100%);
+    border: 1px solid #f5d97c;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .dst-card .label { font-size: 0.75rem; color: var(--amber); text-transform: uppercase; font-weight: 700; }
+  .dst-card .date { font-size: 1.5rem; font-weight: 800; color: var(--amber); margin: 0.25rem 0; }
+  .dst-card .change { font-size: 0.875rem; color: var(--fg); }
+  .dst-card .time { font-size: 0.75rem; color: var(--fg-soft); margin-top: 0.25rem; }
+
+  /* Section matrix */
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th, td { padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border-soft); text-align: left; }
+  th { background: var(--bg-soft); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-soft); font-weight: 700; }
+  td.y { color: var(--green); font-weight: 700; }
+  td.n { color: var(--muted); }
+  td.p { color: var(--amber); font-weight: 600; }
+
+  .priority-p1 { background: var(--red-soft); }
+  .priority-p2 { background: var(--amber-soft); }
+  .priority-p3 { background: var(--green-soft); }
+
+  .prio-pill {
+    display: inline-block;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+  }
+  .prio-pill.p1 { background: var(--red); color: white; }
+  .prio-pill.p2 { background: var(--amber); color: white; }
+  .prio-pill.p3 { background: var(--green); color: white; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <span class="eyebrow">Design spec · city page v2</span>
+  <h1>City page v2 — informative, beautiful, hooky</h1>
+  <p class="sub">
+    Reimagining the city page around timeanddate.com's three "Time/General", "Time Zone", and "DST Changes" tabs as the baseline, then pushing further with our design language, more density, and more internal linking to educational + news content.
+  </p>
+
+  <h2>Quick wins to add right now</h2>
+
+  <div class="new-section">
+    <h3>1. City search bar (sticky)</h3>
+    <p>
+      The single highest-value addition. timeanddate.com has a city search at the top of every city page. We have one on the world-time hub but not on individual city pages. This lets users pivot to any of the 33,945 cities in 1 keystroke.
+    </p>
+    <div class="mock">
+      <div class="mock-label">Search bar mockup</div>
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input value="Tampa" placeholder="Search 33,945 cities…" />
+        <span class="kbd">⌘K</span>
+      </div>
+      <div class="search-dropdown" style="position: static; margin-top: 0.5rem; box-shadow: none; border: 1px solid var(--border-soft);">
+        <div class="search-result">
+          <span class="flag">🇺🇸</span>
+          <span class="name">Tampa</span>
+          <span class="meta">FL · America/New_York</span>
+        </div>
+        <div class="search-result">
+          <span class="flag">🇨🇺</span>
+          <span class="name">Tampico</span>
+          <span class="meta">PE · America/Lima</span>
+        </div>
+        <div class="search-result">
+          <span class="flag">🇫🇮</span>
+          <span class="name">Tampere</span>
+          <span class="meta">FI · Europe/Helsinki</span>
+        </div>
+      </div>
+    </div>
+    <div class="why">
+      <strong>Why:</strong> Massive engagement lift. Right now if a user lands on Tampa and wants to check NYC, they have to navigate up to the hub. 1-key search → instantly on a new page.
+    </div>
+    <div class="cost">
+      <strong>Cost:</strong> We already have <code>data/us-cities-search.json</code> for the US. Add <code>data/world-cities-search.json</code> for global. ~2-3 hours to wire up.
+    </div>
+  </div>
+
+  <div class="new-section">
+    <h3>2. Enhanced hero — analog clock + map + richer meta</h3>
+    <p>Replace the current "stat card" row with a more dashboard-style hero. Three columns: analog clock, rich meta, country map.</p>
+    <div class="mock">
+      <div class="mock-label">Hero mockup</div>
+      <div class="hero-mock">
+        <div class="clock-card">
+          <div class="analog-clock">
+            <span class="clock-num n12">12</span>
+            <span class="clock-num n3">3</span>
+            <span class="clock-num n6">6</span>
+            <span class="clock-num n9">9</span>
+          </div>
+          <div class="time">10:23<span class="ampm">AM</span></div>
+          <div class="date">Tuesday, July 28, 2026</div>
+          <div style="font-size: 0.75rem; color: var(--primary); margin-top: 0.5rem; font-weight: 600;">EDT — Eastern Daylight</div>
+        </div>
+        <div class="tz-info" style="padding: 0.5rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 14px;">
+          <div class="meta-row"><strong>Country</strong><a>United States</a></div>
+          <div class="meta-row"><strong>State</strong><a>Florida (FL)</a></div>
+          <div class="meta-row"><strong>Lat / Long</strong><span>27°57′N / 82°28′W</span></div>
+          <div class="meta-row"><strong>Elevation</strong><span>5 m</span></div>
+          <div class="meta-row"><strong>Population</strong><span>384,959</span></div>
+          <div class="meta-row"><strong>Area codes</strong><span>813, 727</span></div>
+          <div class="meta-row"><strong>Currency</strong><span>USD $</span></div>
+          <div class="meta-row"><strong>Languages</strong><span>English, Spanish</span></div>
+          <div class="meta-row"><strong>Country code</strong><span>+1</span></div>
+        </div>
+        <div class="map-card">
+          <div class="pin"></div>
+        </div>
+      </div>
+    </div>
+    <div class="why">
+      <strong>Why:</strong> Higher information density, more aesthetic, more "dashboard" feel. The map+clock combo is a signature timeanddate look we can match and beat.
+    </div>
+    <div class="cost">
+      <strong>Cost:</strong> Need elevation (1 source), area codes (dr5hn has them), lat/lon DMS conversion (we have decimal). Map: use Leaflet with OpenStreetMap or a static pin. ~4-6 hours.
+    </div>
+  </div>
+
+  <div class="new-section">
+    <h3>3. Time Zone section — the year strip + history table</h3>
+    <p>The single most engaging timeanddate widget is the 12-month strip showing EST/EDT blocks. Combined with a 10-year change history table, this is where users get genuinely educated.</p>
+    <div class="mock">
+      <div class="mock-label">Year strip mockup (current year)</div>
+      <div class="tz-year">
+        <div class="tz-month est">EST<strong>UTC-5</strong></div>
+        <div class="tz-month est">EST<strong>UTC-5</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month edt">EDT<strong>UTC-4</strong></div>
+        <div class="tz-month est">EST<strong>UTC-5</strong></div>
+        <div class="tz-month est">EST<strong>UTC-5</strong></div>
+      </div>
+    </div>
+    <div class="why">
+      <strong>Why:</strong> Makes the DST change visceral. Users "see" the year at a glance.
+    </div>
+    <div class="cost">
+      <strong>Cost:</strong> Pure CSS grid + a small JS function to detect which abbreviation is active per month. We already have <code>dst_transitions</code> in our DB (1,560 rows, 312 tzs × 5 years). ~3-4 hours.
+    </div>
+  </div>
+
+  <div class="new-section">
+    <h3>4. DST countdown section</h3>
+    <p>Big visual countdown to the next clock change. Animated clock face that shows the direction of the change (forward 1h or back 1h).</p>
+    <div class="mock">
+      <div class="mock-label">DST countdown mockup</div>
+      <div class="dst-countdown">
+        <div class="dst-card">
+          <div class="label">Next change</div>
+          <div class="date">NOV 1</div>
+          <div class="change">1 hour back</div>
+          <div class="time">Sun, Nov 1, 2026 · 2:00 am</div>
+        </div>
+        <div>
+          <h4 style="margin: 0 0 0.5rem;">What happens at 2:00 am on Nov 1?</h4>
+          <p style="color: var(--fg-soft); font-size: 0.875rem; margin: 0 0 0.75rem;">
+            Clocks in Tampa will be set <strong>back 1 hour</strong> from 2:00 am to 1:00 am local time. Sunrise and sunset will be about 1 hour earlier. Tampa returns to <strong>EST — Eastern Standard Time</strong> (UTC-5).
+          </p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a style="font-size: 0.8125rem; padding: 0.25rem 0.625rem; background: var(--primary-soft); color: var(--primary); border-radius: 6px; text-decoration: none;">DST 2026: Your Guide to the Clock Change →</a>
+            <a style="font-size: 0.8125rem; padding: 0.25rem 0.625rem; background: var(--blue-soft); color: var(--blue); border-radius: 6px; text-decoration: none;">History of Daylight Saving Time →</a>
+            <a style="font-size: 0.8125rem; padding: 0.25rem 0.625rem; background: var(--amber-soft); color: var(--amber); border-radius: 6px; text-decoration: none;">About EST — Eastern Standard Time →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why">
+      <strong>Why:</strong> Massive SEO + engagement. "When does DST end 2026" is a top search. We have the data, just need to surface it beautifully.
+    </div>
+    <div class="cost">
+      <strong>Cost:</strong> Same <code>dst_transitions</code> table. Pull next 1 + previous 1 + show countdown. Cross-link to news articles we already have. ~3 hours.
+    </div>
+  </div>
+
+  <h2>Full new section ordering</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Section</th>
+        <th>Us now</th>
+        <th>them (TAD)</th>
+        <th>v2 plan</th>
+        <th>Priority</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>City search bar (sticky)</td>
+        <td class="n">—</td>
+        <td class="y">✓</td>
+        <td>Add. 33K cities, fuzzy match, keyboard ⌘K</td>
+        <td><span class="prio-pill p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Hero (clock + flag + city)</td>
+        <td class="y">✓</td>
+        <td class="y">✓</td>
+        <td>Add analog clock + country map. Keep our design.</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Quick facts (population, state, coords)</td>
+        <td class="y">✓</td>
+        <td class="y">✓</td>
+        <td>Expand: + elevation, area code, currency, languages, country code</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>DST in {Country} callout</td>
+        <td class="p">partial</td>
+        <td class="y">✓</td>
+        <td>Replace with full DST countdown section (next change, history, "why")</td>
+        <td><span class="prio-pill p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Time Zone — current + offset</td>
+        <td class="p">partial (IANA badge)</td>
+        <td class="y">✓</td>
+        <td>Full section: abbreviation + offset + year strip + "About this TZ" link</td>
+        <td><span class="prio-pill p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Time change history table</td>
+        <td class="n">—</td>
+        <td class="y">✓ (5+ years)</td>
+        <td>Add. 10 years past + 5 future. From <code>dst_transitions</code></td>
+        <td><span class="prio-pill p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Sunrise / sunset / solar noon / day length</td>
+        <td class="y">✓</td>
+        <td class="y">✓</td>
+        <td>Add: sun direction (° from N), altitude, distance, day change vs yesterday</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Moon phase + rise/set</td>
+        <td class="n">—</td>
+        <td class="y">✓</td>
+        <td>Add. 8 phases visual + rise/set + age. Compute from solar API or suncalc.js</td>
+        <td><span class="prio-pill p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>High/low tides (coastal cities only)</td>
+        <td class="n">—</td>
+        <td class="y">✓</td>
+        <td>Add. NOAA API for US coastal cities. Hide for inland.</td>
+        <td><span class="prio-pill p3">P3</span></td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>7-day weather (with extras)</td>
+        <td class="y">✓</td>
+        <td class="y">✓ (richer)</td>
+        <td>Add: feels-like, wind, humidity, pressure, station name</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Climate year-round</td>
+        <td class="y">✓</td>
+        <td class="n">—</td>
+        <td>Keep. We win here.</td>
+        <td><span class="prio-pill p3">P3</span></td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Did you know? (TZ trivia)</td>
+        <td class="p">rich only</td>
+        <td class="n">—</td>
+        <td>Port to lite. We win.</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Today (week, day of year)</td>
+        <td class="p">rich only</td>
+        <td class="y">partial</td>
+        <td>Port to lite. Cross-link to /today/</td>
+        <td><span class="prio-pill p3">P3</span></td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Cities near (with distance)</td>
+        <td class="n">—</td>
+        <td class="y">✓</td>
+        <td>Add. Haversine sort, top 5 nearest. From <code>airports.py</code> spatial index</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>Airports near (IATA, size)</td>
+        <td class="p">rich only</td>
+        <td class="y">✓</td>
+        <td>Port to lite. We have the data + API endpoint.</td>
+        <td><span class="prio-pill p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td>News about {Country}</td>
+        <td class="p">rich only</td>
+        <td class="n">—</td>
+        <td>Port to lite. We win.</td>
+        <td><span class="prio-pill p1">P1</span></td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td>Learn about time zones (4 cards)</td>
+        <td class="p">rich only</td>
+        <td class="y">✓</td>
+        <td>Port to lite. Link to /topics/time-zones/ and news articles</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td>On this day (history)</td>
+        <td class="p">rich only</td>
+        <td class="n">—</td>
+        <td>Port to lite. 50 events from Wikipedia</td>
+        <td><span class="prio-pill p3">P3</span></td>
+      </tr>
+      <tr>
+        <td>19</td>
+        <td>Tools for {City} (8 cards)</td>
+        <td class="y">✓</td>
+        <td class="p">partial</td>
+        <td>Add: "Set as home" (personalize), "Compare with...", "Email me DST changes"</td>
+        <td><span class="prio-pill p2">P2</span></td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td>Continue your journey (6 cross-link cards)</td>
+        <td class="y">✓</td>
+        <td class="n">—</td>
+        <td>Keep. Add 1-2 cards: "DST news", "Latest time zone changes"</td>
+        <td><span class="prio-pill p3">P3</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Educational / news link opportunities (the user hooks)</h2>
+
+  <p>Every section should have at least one cross-link to a longer-form article. We have these already:</p>
+  <ul>
+    <li><code>/news/time/</code> — 6 long-form Time category articles</li>
+    <li><code>/topics/time-zones/</code> — hub for TZ content</li>
+    <li><code>/on-this-day/</code> — 50 curated historical events</li>
+    <li><code>/today/</code> — current week, day, holiday list</li>
+    <li><code>/holidays/</code> — public holidays + long weekends</li>
+  </ul>
+
+  <h3>Per-section link plan</h3>
+  <table>
+    <thead>
+      <tr><th>City page section</th><th>Cross-link to</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Hero / clock</td><td><a>"What is a time zone?" → /topics/time-zones/</a></td></tr>
+      <tr><td>DST countdown</td><td><a>"DST 2026: Your Guide" → /news/time/</a> · <a>"About {Abbr}" → /topics/time-zones/</a></td></tr>
+      <tr><td>Time change history</td><td><a>"Spring Forward, Summer Time" → /news/time/</a> · <a>"DST News" → /news/time/</a></td></tr>
+      <tr><td>Sunrise/sunset</td><td><a>"History of timekeeping" → /news/time/</a></td></tr>
+      <tr><td>Moon</td><td><a>"Lunar calendar" → /on-this-day/</a></td></tr>
+      <tr><td>7-day weather</td><td><a>"Climate year-round" → self-link</a></td></tr>
+      <tr><td>Did you know?</td><td><a>Inline 3-fact block, deterministic per city</a></td></tr>
+      <tr><td>Today</td><td><a>"What day is it?" → /today/</a> · <a>"On this day" → /on-this-day/</a></td></tr>
+      <tr><td>Cities near</td><td><a>"All Florida cities" → /world-time/united-states/state/florida/</a></td></tr>
+      <tr><td>Airports</td><td><a>"Plan a meeting" → /world-time/meeting/?cities=...</a></td></tr>
+      <tr><td>News about {Country}</td><td><a>"All {Country} news" → /news/by-country.json</a></td></tr>
+      <tr><td>Learn about TZ</td><td><a>4 cross-link cards to /topics/time-zones/ + news</a></td></tr>
+      <tr><td>On this day</td><td><a>"More events" → /on-this-day/</a></td></tr>
+      <tr><td>Tools for {City}</td><td><a>8 tools, all with pre-filled ?cities={id}</a></td></tr>
+      <tr><td>Continue</td><td><a>6 cross-link cards, including news + DST guide</a></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Premium design language</h2>
+
+  <p>What "premium" means in this context — patterns from Linear, Vercel, Stripe, Apple Human Interface Guidelines:</p>
+  <ul>
+    <li><strong>Color-coded card categories</strong> — TZ (blue), DST (amber), Astronomy (purple), Weather (sky), Tides (teal), Calendar (pink), News (indigo). Each section feels distinct.</li>
+    <li><strong>Real icons (SVG, not emoji)</strong> — Lucide or Phosphor outline icons. Consistent stroke width, optical balance.</li>
+    <li><strong>Subtle gradients on top of solid colors</strong> — Hero has gradient bg, cards are flat. Sections alternate between bordered and tinted.</li>
+    <li><strong>Animated clock widgets</strong> — smooth ticking analog clock, countdown clocks for DST changes, animated moon phase</li>
+    <li><strong>Numbered data viz</strong> — sparklines, ring charts for moon phase, vertical bars for climate, year-strip for DST</li>
+    <li><strong>Pull-quote treatment</strong> for educational content</li>
+    <li><strong>Hover micro-interactions</strong> on every card (lift, color shift, arrow slide)</li>
+    <li><strong>Better typography hierarchy</strong> — display, hero, h2, h3, body, small, eyebrow, caption — already in design system</li>
+    <li><strong>Real whitespace</strong> — generous padding, section breaks, breathing room</li>
+  </ul>
+
+  <h2>User hooks (engagement loops)</h2>
+
+  <ol>
+    <li><strong>"Set as home"</strong> — Personalize the page. Shows "X hours from {Home city}" everywhere. Stored in localStorage.</li>
+    <li><strong>"Email me when DST changes"</strong> — Sign up form, no account needed. Stored in D1, sent via email (post-launch, need email infra).</li>
+    <li><strong>"Compare with..."</strong> — Inline comparison row: 2-3 cities side-by-side, see time diff live.</li>
+    <li><strong>"Tell us what's missing"</strong> — Feedback widget per city. (Already have <code>feedback_votes</code> in D1.)</li>
+    <li><strong>"Share this page"</strong> — Copy link + Twitter share with pre-filled text + iMessage/SMS on mobile</li>
+    <li><strong>"Save for later"</strong> — Bookmark icon. Could be a personalized dashboard later.</li>
+    <li><strong>"Plan a meeting here"</strong> — Pre-filled meeting planner with this city as one side</li>
+    <li><strong>"Travel to {City}"</strong> — Jet-lag helper: "If you arrive at 9pm local, your body thinks it's..." (home city stored in localStorage)</li>
+  </ol>
+
+  <h2>Implementation roadmap</h2>
+
+  <table>
+    <thead>
+      <tr><th>Milestone</th><th>Sections</th><th>Effort</th><th>Impact</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>M1 (this week)</strong></td>
+        <td>City search bar + DST countdown + Time Zone section + history table</td>
+        <td>~10 hrs</td>
+        <td>Huge SEO + engagement</td>
+      </tr>
+      <tr>
+        <td><strong>M2 (next week)</strong></td>
+        <td>Enhanced hero (analog clock + map) + expanded quick facts (elevation, area code)</td>
+        <td>~8 hrs</td>
+        <td>Visual upgrade + data density</td>
+      </tr>
+      <tr>
+        <td><strong>M3 (week 3)</strong></td>
+        <td>Moon + tides (US coastal) + weather extras</td>
+        <td>~10 hrs</td>
+        <td>Closes the biggest content gaps</td>
+      </tr>
+      <tr>
+        <td><strong>M4 (week 4)</strong></td>
+        <td>Port rich-template sections to lite (Did you know, Today, OTD, Airports, News, Learn) + Cities near with distance</td>
+        <td>~8 hrs</td>
+        <td>Closes parity with TAD + our unique edges</td>
+      </tr>
+      <tr>
+        <td><strong>M5 (week 5)</strong></td>
+        <td>User hooks: Set as home, Compare, Email alerts, Share</td>
+        <td>~12 hrs</td>
+        <td>Engagement loops, retention</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top: 2rem; padding: 1rem; background: var(--primary-soft); border-radius: 10px; color: var(--primary); font-size: 0.875rem;">
+    <strong>Recommended next step:</strong> ship M1 (city search + DST + Time Zone) first. It's the highest-ROI change, ~10 hours of work, and would close the biggest TAD parity gap while showing off our design system. Want me to start?
+  </p>
+
+</div>
+</body>
+</html>

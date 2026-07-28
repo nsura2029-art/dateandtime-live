@@ -183,6 +183,8 @@
         <span class="meta-item"><strong>IANA:</strong> America/Los_Angeles</span>
         <span class="meta-item" id="utcOffset">UTC --</span>
         <span class="meta-item" id="dstStatus">—</span>
+        <span class="meta-item" id="tzAbbr">—</span>
+        <a class="meta-item meta-item--link" href="/time/zones/pst/" id="tzPageLink" style="display: none;">About <span id="tzAbbrText">PST</span> →</a>
       </div>
     </section>
 
@@ -372,6 +374,7 @@
   </footer>
 
   <script src="/src/site-shell.js" defer></script>
+  <script>window.IANA_TO_ABBR = {"America/New_York":"EST","America/Chicago":"CST","America/Denver":"MST","America/Phoenix":"MST","America/Los_Angeles":"PST","America/Anchorage":"AKST","America/Juneau":"AKST","America/Sitka":"AKST","America/Nome":"AKST","America/Yakutat":"AKST","America/Metlakatla":"AKST","America/Adak":"HST","Pacific/Honolulu":"HST","America/Indiana/Indianapolis":"EST","America/Indiana/Marengo":"EST","America/Indiana/Petersburg":"EST","America/Indiana/Vevay":"EST","America/Indiana/Vincennes":"EST","America/Indiana/Winamac":"EST","America/Indiana/Knox":"CST","America/Indiana/Tell_City":"CST","America/Kentucky/Louisville":"EST","America/Kentucky/Monticello":"EST","America/Detroit":"EST","America/Menominee":"CST","America/Boise":"MST","America/North_Dakota/Beulah":"CST","America/North_Dakota/Center":"CST","America/North_Dakota/New_Salem":"CST"};</script>
   <script>
   // Live clock for the city — uses Intl.DateTimeFormat with the city's IANA tz
   (function() {
@@ -394,10 +397,15 @@
     var dateEl = document.getElementById('cityDate');
     var offsetEl = document.getElementById('utcOffset');
     var dstEl = document.getElementById('dstStatus');
+    var abbrEl = document.getElementById('tzAbbr');
+    var tzLinkEl = document.getElementById('tzPageLink');
     if (!hero || !clock) return;
     var tz = hero.getAttribute('data-tz');
     var lat = parseFloat(hero.getAttribute('data-lat'));
     var lon = parseFloat(hero.getAttribute('data-lon'));
+
+    // Static abbreviation from IANA → US TZ abbr (e.g. EST, EDT, CST...)
+    var staticAbbr = (window.IANA_TO_ABBR && window.IANA_TO_ABBR[tz]) || null;
 
     function update() {
       try {
@@ -432,10 +440,34 @@
         var julOff = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' }).formatToParts(new Date(now.getFullYear(), 6, 1));
         var jOff = janOff.find(function(p) { return p.type === 'timeZoneName'; }).value;
         var lOff = julOff.find(function(p) { return p.type === 'timeZoneName'; }).value;
-        if (jOff === lOff) {
-          dstEl.textContent = 'No DST';
-        } else {
+        var dstObserved = jOff !== lOff;
+        if (dstObserved) {
           dstEl.textContent = 'DST observed';
+        } else {
+          dstEl.textContent = 'No DST';
+        }
+
+        // Try to get the live abbreviation (e.g. "EDT" for America/New_York in summer)
+        var abbrFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' });
+        var abbrParts = abbrFmt.formatToParts(now);
+        var liveAbbr = '';
+        for (var ap of abbrParts) {
+          if (ap.type === 'timeZoneName') liveAbbr = ap.value;
+        }
+        if (abbrEl) {
+          abbrEl.textContent = liveAbbr || staticAbbr || '';
+        }
+        // Show "About {abbr} →" link
+        if (tzLinkEl && liveAbbr && IANA_TO_ABBR && IANA_TO_ABBR[tz]) {
+          var currentAbbr = IANA_TO_ABBR[tz];
+          // If DST is in effect and we have a daylight version, prefer that
+          if (dstObserved && (currentAbbr === 'EST' || currentAbbr === 'CST' || currentAbbr === 'MST' || currentAbbr === 'PST' || currentAbbr === 'AKST')) {
+            currentAbbr = currentAbbr.replace('ST', 'DT');
+          }
+          tzLinkEl.href = '/time/zones/' + currentAbbr.toLowerCase() + '/';
+          tzLinkEl.style.display = '';
+          var abbrTextEl = document.getElementById('tzAbbrText');
+          if (abbrTextEl) abbrTextEl.textContent = currentAbbr;
         }
       } catch (e) { /* ignore */ }
     }

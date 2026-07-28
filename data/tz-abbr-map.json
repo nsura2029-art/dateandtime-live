@@ -1,0 +1,237 @@
+{
+  "_comment": "US timezone abbreviation map. Each abbreviation maps to IANA timezone(s), offset, and metadata for educational TZ pages. Built 2026-07-28 from data.timeanddatepro-full D1.",
+  "_built": "2026-07-28",
+  "abbrs": {
+    "EST": {
+      "name": "Eastern Standard Time",
+      "offset": "-05:00",
+      "offsetHours": -5,
+      "iana": "America/New_York",
+      "isDst": false,
+      "observesDst": true,
+      "summary": "Eastern Standard Time (EST) is the standard time for the Eastern time zone during non-DST months. It is 5 hours behind Coordinated Universal Time (UTC−5).",
+      "longName": "Eastern Standard Time",
+      "color": "blue",
+      "states": ["CT", "DE", "FL", "GA", "IN (most)", "KY (east)", "ME", "MD", "MA", "MI (most)", "NH", "NJ", "NY", "NC", "OH", "PA", "RI", "SC", "VT", "VA", "WV", "DC"],
+      "countries": ["United States (east)", "Canada (Ontario, Quebec)", "Bahamas", "Cuba", "Haiti", "Jamaica", "Cayman Islands", "Turks and Caicos"],
+      "majorCities": [
+        { "name": "New York City", "state": "NY", "population": 8804190, "slug": "new-york-city" },
+        { "name": "Philadelphia", "state": "PA", "population": 1573916, "slug": "philadelphia" },
+        { "name": "Boston", "state": "MA", "population": 654776, "slug": "boston" },
+        { "name": "Atlanta", "state": "GA", "population": 498715, "slug": "atlanta" },
+        { "name": "Miami", "state": "FL", "population": 442241, "slug": "miami" },
+        { "name": "Toronto", "state": "ON", "population": 2794356, "slug": "toronto" },
+        { "name": "Montreal", "state": "QC", "population": 1762949, "slug": "montreal" }
+      ]
+    },
+    "EDT": {
+      "name": "Eastern Daylight Time",
+      "offset": "-04:00",
+      "offsetHours": -4,
+      "iana": "America/New_York",
+      "isDst": true,
+      "observesDst": true,
+      "summary": "Eastern Daylight Time (EDT) is the daylight saving time for the Eastern time zone. It is 4 hours behind UTC (UTC−4). Active from mid-March to early November in most of the Eastern zone.",
+      "longName": "Eastern Daylight Time",
+      "color": "blue",
+      "states": ["Same as EST (summer time)"],
+      "countries": ["Same as EST (summer time)"],
+      "majorCities": [
+        { "name": "New York City", "state": "NY", "population": 8804190, "slug": "new-york-city" },
+        { "name": "Philadelphia", "state": "PA", "population": 1573916, "slug": "philadelphia" },
+        { "name": "Boston", "state": "MA", "population": 654776, "slug": "boston" },
+        { "name": "Atlanta", "state": "GA", "population": 498715, "slug": "atlanta" },
+        { "name": "Miami", "state": "FL", "population": 442241, "slug": "miami" }
+      ]
+    },
+    "CST": {
+      "name": "Central Standard Time",
+      "offset": "-06:00",
+      "offsetHours": -6,
+      "iana": "America/Chicago",
+      "isDst": false,
+      "observesDst": true,
+      "summary": "Central Standard Time (CST) is the standard time for the Central time zone during non-DST months. It is 6 hours behind UTC (UTC−6). 1 hour behind EST.",
+      "longName": "Central Standard Time",
+      "color": "green",
+      "states": ["AL", "AR", "IL", "IA", "KS (most)", "KY (west)", "LA", "MN", "MS", "MO", "ND (most)", "OK", "SD (east)", "TN (west)", "TX (most)", "WI", "NE (east)"],
+      "countries": ["United States (central)", "Canada (Manitoba, Saskatchewan)", "Mexico (most)"],
+      "majorCities": [
+        { "name": "Chicago", "state": "IL", "population": 2664452, "slug": "chicago" },
+        { "name": "Houston", "state": "TX", "population": 2314157, "slug": "houston" },
+        { "name": "San Antonio", "state": "TX", "population": 1526656, "slug": "san-antonio" },
+        { "name": "Dallas", "state": "TX", "population": 1326087, "slug": "dallas" },
+        { "name": "Fort Worth", "state": "TX", "population": 1008106, "slug": "fort-worth" },
+        { "name": "Austin", "state": "TX", "population": 974447, "slug": "austin" },
+        { "name": "Mexico City", "state": "CMX", "population": 9209944, "slug": "mexico-city" }
+      ]
+    },
+    "CDT": {
+      "name": "Central Daylight Time",
+      "offset": "-05:00",
+      "offsetHours": -5,
+      "iana": "America/Chicago",
+      "isDst": true,
+      "observesDst": true,
+      "summary": "Central Daylight Time (CDT) is the daylight saving time for the Central time zone. It is 5 hours behind UTC (UTC−5). Active from mid-March to early November.",
+      "longName": "Central Daylight Time",
+      "color": "green",
+      "states": ["Same as CST (summer time)"],
+      "countries": ["Same as CST (summer time)"],
+      "majorCities": [
+        { "name": "Chicago", "state": "IL", "population": 2664452, "slug": "chicago" },
+        { "name": "Houston", "state": "TX", "population": 2314157, "slug": "houston" },
+        { "name": "Dallas", "state": "TX", "population": 1326087, "slug": "dallas" },
+        { "name": "Austin", "state": "TX", "population": 974447, "slug": "austin" }
+      ]
+    },
+    "MST": {
+      "name": "Mountain Standard Time",
+      "offset": "-07:00",
+      "offsetHours": -7,
+      "iana": "America/Denver",
+      "isDst": false,
+      "observesDst": true,
+      "summary": "Mountain Standard Time (MST) is the standard time for the Mountain time zone. It is 7 hours behind UTC (UTC−7). 1 hour behind CST, 2 hours behind EST. Note: Arizona (except Navajo Nation) stays on MST year-round.",
+      "longName": "Mountain Standard Time",
+      "color": "amber",
+      "states": ["AZ (year-round, no DST)", "CO", "ID (south)", "MT", "NM", "UT", "WY", "ND (southwest)", "SD (west)", "OR (east)", "NE (west)"],
+      "countries": ["United States (mountain)", "Canada (Alberta, BC east)", "Mexico (Chihuahua, Sonora)"],
+      "majorCities": [
+        { "name": "Denver", "state": "CO", "population": 729019, "slug": "denver" },
+        { "name": "Phoenix", "state": "AZ", "population": 1650070, "slug": "phoenix" },
+        { "name": "El Paso", "state": "TX", "population": 678815, "slug": "el-paso" },
+        { "name": "Albuquerque", "state": "NM", "population": 564559, "slug": "albuquerque" },
+        { "name": "Salt Lake City", "state": "UT", "population": 200133, "slug": "salt-lake-city" }
+      ]
+    },
+    "MDT": {
+      "name": "Mountain Daylight Time",
+      "offset": "-06:00",
+      "offsetHours": -6,
+      "iana": "America/Denver",
+      "isDst": true,
+      "observesDst": true,
+      "summary": "Mountain Daylight Time (MDT) is the daylight saving time for the Mountain time zone. It is 6 hours behind UTC (UTC−6). Active from mid-March to early November. Arizona does NOT observe MDT — it stays on MST year-round.",
+      "longName": "Mountain Daylight Time",
+      "color": "amber",
+      "states": ["CO", "ID (south)", "MT", "NM", "UT", "WY (DST-observing; not Arizona)"],
+      "countries": ["United States (Mountain, DST-observing)", "Canada (Alberta DST)", "Mexico (Chihuahua DST)"],
+      "majorCities": [
+        { "name": "Denver", "state": "CO", "population": 729019, "slug": "denver" },
+        { "name": "Albuquerque", "state": "NM", "population": 564559, "slug": "albuquerque" },
+        { "name": "Salt Lake City", "state": "UT", "population": 200133, "slug": "salt-lake-city" }
+      ]
+    },
+    "PST": {
+      "name": "Pacific Standard Time",
+      "offset": "-08:00",
+      "offsetHours": -8,
+      "iana": "America/Los_Angeles",
+      "isDst": false,
+      "observesDst": true,
+      "summary": "Pacific Standard Time (PST) is the standard time for the Pacific time zone. It is 8 hours behind UTC (UTC−8). 3 hours behind EST. Active in winter months on the US West Coast.",
+      "longName": "Pacific Standard Time",
+      "color": "purple",
+      "states": ["CA", "WA", "OR (most)", "NV", "ID (north)"],
+      "countries": ["United States (Pacific coast)", "Canada (BC, Yukon)"],
+      "majorCities": [
+        { "name": "Los Angeles", "state": "CA", "population": 3820914, "slug": "los-angeles" },
+        { "name": "San Diego", "state": "CA", "population": 1404452, "slug": "san-diego" },
+        { "name": "San Jose", "state": "CA", "population": 997368, "slug": "san-jose" },
+        { "name": "San Francisco", "state": "CA", "population": 805301, "slug": "san-francisco" },
+        { "name": "Seattle", "state": "WA", "population": 737015, "slug": "seattle" },
+        { "name": "Portland", "state": "OR", "population": 630880, "slug": "portland" },
+        { "name": "Las Vegas", "state": "NV", "population": 660929, "slug": "las-vegas" },
+        { "name": "Vancouver", "state": "BC", "population": 662248, "slug": "vancouver" }
+      ]
+    },
+    "PDT": {
+      "name": "Pacific Daylight Time",
+      "offset": "-07:00",
+      "offsetHours": -7,
+      "iana": "America/Los_Angeles",
+      "isDst": true,
+      "observesDst": true,
+      "summary": "Pacific Daylight Time (PDT) is the daylight saving time for the Pacific time zone. It is 7 hours behind UTC (UTC−7). Active from mid-March to early November.",
+      "longName": "Pacific Daylight Time",
+      "color": "purple",
+      "states": ["Same as PST (summer time)"],
+      "countries": ["Same as PST (summer time)"],
+      "majorCities": [
+        { "name": "Los Angeles", "state": "CA", "population": 3820914, "slug": "los-angeles" },
+        { "name": "San Diego", "state": "CA", "population": 1404452, "slug": "san-diego" },
+        { "name": "San Francisco", "state": "CA", "population": 805301, "slug": "san-francisco" },
+        { "name": "Seattle", "state": "WA", "population": 737015, "slug": "seattle" },
+        { "name": "Portland", "state": "OR", "population": 630880, "slug": "portland" },
+        { "name": "Las Vegas", "state": "NV", "population": 660929, "slug": "las-vegas" }
+      ]
+    },
+    "AKST": {
+      "name": "Alaska Standard Time",
+      "offset": "-09:00",
+      "offsetHours": -9,
+      "iana": "America/Anchorage",
+      "isDst": false,
+      "observesDst": true,
+      "summary": "Alaska Standard Time (AKST) is the standard time for most of Alaska. It is 9 hours behind UTC (UTC−9). 1 hour behind HST, 4 hours behind EST.",
+      "longName": "Alaska Standard Time",
+      "color": "teal",
+      "states": ["AK (most)"],
+      "countries": ["United States (Alaska)"],
+      "majorCities": [
+        { "name": "Anchorage", "state": "AK", "population": 289600, "slug": "anchorage" },
+        { "name": "Fairbanks", "state": "AK", "population": 32519, "slug": "fairbanks" },
+        { "name": "Juneau", "state": "AK", "population": 32255, "slug": "juneau" }
+      ]
+    },
+    "AKDT": {
+      "name": "Alaska Daylight Time",
+      "offset": "-08:00",
+      "offsetHours": -8,
+      "iana": "America/Anchorage",
+      "isDst": true,
+      "observesDst": true,
+      "summary": "Alaska Daylight Time (AKDT) is the daylight saving time for most of Alaska. It is 8 hours behind UTC (UTC−8). Active from mid-March to early November.",
+      "longName": "Alaska Daylight Time",
+      "color": "teal",
+      "states": ["AK (most, summer time)"],
+      "countries": ["United States (Alaska, summer time)"],
+      "majorCities": [
+        { "name": "Anchorage", "state": "AK", "population": 289600, "slug": "anchorage" },
+        { "name": "Fairbanks", "state": "AK", "population": 32519, "slug": "fairbanks" }
+      ]
+    },
+    "HST": {
+      "name": "Hawaii Standard Time",
+      "offset": "-10:00",
+      "offsetHours": -10,
+      "iana": "Pacific/Honolulu",
+      "isDst": false,
+      "observesDst": false,
+      "summary": "Hawaii Standard Time (HST) is the standard time for Hawaii. It is 10 hours behind UTC (UTC−10). Hawaii does NOT observe daylight saving time — it stays on HST year-round.",
+      "longName": "Hawaii Standard Time",
+      "color": "pink",
+      "states": ["HI"],
+      "countries": ["United States (Hawaii)"],
+      "majorCities": [
+        { "name": "Honolulu", "state": "HI", "population": 350964, "slug": "honolulu" },
+        { "name": "Hilo", "state": "HI", "population": 45705, "slug": "hilo" },
+        { "name": "Kailua", "state": "HI", "population": 40513, "slug": "kailua" }
+      ]
+    }
+  },
+  "related": {
+    "EST": ["EDT", "CST", "PST", "HST", "AKST", "UTC"],
+    "EDT": ["EST", "CDT", "PDT", "HDT", "AKDT", "UTC"],
+    "CST": ["CDT", "EST", "MST", "PST", "UTC"],
+    "CDT": ["CST", "EDT", "MDT", "PDT", "UTC"],
+    "MST": ["MDT", "CST", "PST", "AKST", "UTC"],
+    "MDT": ["MST", "CDT", "PDT", "AKDT", "UTC"],
+    "PST": ["PDT", "MST", "AKST", "HST", "UTC"],
+    "PDT": ["PST", "MDT", "AKDT", "UTC"],
+    "AKST": ["AKDT", "PST", "HST", "UTC"],
+    "AKDT": ["AKST", "PDT", "HST", "UTC"],
+    "HST": ["AKST", "PST", "UTC"]
+  }
+}

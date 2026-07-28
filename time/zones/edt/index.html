@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Eastern Daylight Time (EDT) — -04:00 · dateandtime.live</title>
+<meta name="description" content="Eastern Daylight Time (EDT) is the daylight saving time for the Eastern time zone. It is 4 hours behind UTC (UTC−4). Active from mid-March to early November in most of the Eastern zone." />
+<meta name="theme-color" content="#5b4aaf" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="canonical" href="https://dateandtime.live/time/zones/edt/" />
+<meta property="og:title" content="Eastern Daylight Time (EDT) — -04:00" />
+<meta property="og:description" content="Eastern Daylight Time (EDT) is the daylight saving time for the Eastern time zone. It is 4 hours behind UTC (UTC−4). Active from mid-March to early November in most of the Eastern zone." />
+<meta property="og:url" content="https://dateandtime.live/time/zones/edt/" />
+<meta property="og:type" content="og:type" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/src/site-shell.css?v=3" />
+<link rel="stylesheet" href="/src/tz-hub.css?v=23" />
+
+<style>
+.tz-page { max-width: 1240px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+.tz-page-hero {
+  text-align: center;
+  padding: 3rem 1.5rem 2.5rem;
+  background: var(--tz-bg);
+  border-bottom: 1px solid var(--tz-border-soft);
+  margin-bottom: 2.5rem;
+}
+.tz-page-hero .tz-page-eyebrow {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background: var(--tz-primary-soft);
+  color: var(--tz-primary);
+  margin-bottom: 0.5rem;
+}
+.tz-page-hero h1 {
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0.5rem 0;
+  color: var(--tz-fg);
+}
+.tz-page-hero .tz-page-iana {
+  color: var(--tz-fg-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9375rem;
+  margin: 0.25rem 0 1.5rem;
+}
+.tz-page-clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: var(--tz-primary-soft);
+  border: 1px solid color-mix(in srgb, var(--tz-primary) 25%, transparent);
+  border-radius: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--tz-primary);
+}
+.tz-page-clock .ampm {
+  font-size: 1rem;
+  color: var(--tz-primary-soft);
+  font-weight: 700;
+  background: var(--tz-primary);
+  padding: 0.125rem 0.5rem;
+  border-radius: 6px;
+  margin-left: 0.5rem;
+}
+.tz-page-meta {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: var(--tz-fg-soft);
+}
+.tz-page-meta .pill {
+  background: var(--tz-primary-soft);
+  color: var(--tz-primary);
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.tz-page-meta .pill.dst-yes { background: var(--tz-secondary-soft, #fff3d9); color: #b08a18; }
+.tz-page-meta .pill.dst-no { background: #fdecec; color: #b22b2b; }
+
+.tz-section { padding: 2.5rem 0; border-bottom: 1px solid var(--tz-border-soft); }
+.tz-section:last-child { border-bottom: 0; }
+.tz-section-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.tz-section-header h2 {
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+  color: var(--tz-fg);
+}
+.tz-section-header p {
+  color: var(--tz-fg-soft);
+  margin: 0;
+}
+
+.tz-body {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.tz-body h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  margin: 2.5rem 0 0.75rem;
+  color: var(--tz-fg);
+}
+.tz-body p { margin: 0 0 1rem; line-height: 1.7; }
+.tz-body strong { color: var(--tz-fg); font-weight: 700; }
+.tz-body ul { padding-left: 1.5rem; }
+.tz-body li { margin-bottom: 0.5rem; line-height: 1.6; }
+.tz-body a { color: var(--tz-primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+.tz-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+.tz-table th, .tz-table td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--tz-border-soft);
+  text-align: left;
+}
+.tz-table th { background: var(--tz-primary-soft); font-weight: 700; }
+.tz-table tr:nth-child(even) { background: var(--tz-bg-soft); }
+
+.tz-year-strip {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2px;
+  background: var(--tz-border-soft);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0.5rem 0 1rem;
+}
+.tz-year-cell {
+  padding: 0.5rem 0.25rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  background: var(--tz-bg);
+  color: var(--tz-fg-soft);
+  position: relative;
+}
+.tz-year-cell.standard { background: color-mix(in srgb, var(--tz-primary) 12%, white); color: var(--tz-primary); font-weight: 700; }
+.tz-year-cell.daylight { background: #fff3d9; color: #b08a18; font-weight: 700; }
+.tz-year-cell.no-dst { background: var(--tz-bg-soft); }
+.tz-year-cell .month { display: block; font-size: 0.625rem; }
+.tz-year-cell .abbr { display: block; font-weight: 800; font-size: 0.75rem; }
+.tz-year-cell .offset { display: block; font-size: 0.625rem; opacity: 0.7; }
+.tz-year-cell.current { box-shadow: inset 0 0 0 2px var(--tz-primary); }
+
+.tz-cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  max-width: 880px;
+  margin: 0 auto;
+}
+.tz-city-card {
+  padding: 1rem;
+  background: var(--tz-bg);
+  border: 1px solid var(--tz-border-soft);
+  border-radius: 10px;
+  text-align: center;
+}
+.tz-city-name { font-weight: 700; }
+.tz-city-name a { color: var(--tz-fg); text-decoration: none; }
+.tz-city-name a:hover { color: var(--tz-primary); }
+.tz-city-state { color: var(--tz-fg-soft); font-size: 0.8125rem; margin-left: 0.25rem; }
+.tz-city-clock { font-size: 1.25rem; font-weight: 800; color: var(--tz-primary); margin: 0.5rem 0 0.25rem; }
+.tz-city-meta { font-size: 0.6875rem; color: var(--tz-fg-soft); }
+
+.tz-dst-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  max-width: 880px;
+  margin: 0 auto;
+}
+@media (max-width: 700px) { .tz-dst-grid { grid-template-columns: 1fr; } }
+.tz-dst-col h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tz-fg-soft);
+  margin: 0 0 0.5rem;
+}
+.tz-dst-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--tz-bg-soft);
+  border-radius: 6px;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+}
+.tz-dst-row.next { background: color-mix(in srgb, var(--tz-primary) 12%, white); border: 1px solid var(--tz-primary); font-weight: 700; }
+.tz-dst-row .date { color: var(--tz-fg); }
+.tz-dst-row .change { color: var(--tz-fg-soft); font-size: 0.8125rem; }
+
+.tz-related {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.tz-related-pill {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 0.625rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  background: var(--tz-bg-soft);
+  border: 1px solid var(--tz-border-soft);
+  transition: all 0.15s;
+}
+.tz-related-pill:hover {
+  border-color: var(--tz-primary);
+  background: var(--tz-primary-soft);
+}
+.tz-related-pill strong {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--tz-primary);
+  display: block;
+}
+.tz-related-pill span {
+  font-size: 0.75rem;
+  color: var(--tz-fg-soft);
+  margin-top: 0.125rem;
+}
+
+.tz-cta {
+  background: linear-gradient(135deg, var(--tz-primary-soft) 0%, color-mix(in srgb, var(--tz-primary) 8%, white) 100%);
+  border: 1px solid var(--tz-primary);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 3rem;
+}
+.tz-cta h3 { margin: 0 0 0.5rem; }
+.tz-cta p { color: var(--tz-fg-soft); margin: 0 0 1rem; }
+.tz-cta a {
+  display: inline-block;
+  padding: 0.625rem 1.25rem;
+  background: var(--tz-primary);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  margin: 0 0.25rem;
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Eastern Daylight Time (EDT)",
+  "description": "Eastern Daylight Time (EDT) is the daylight saving time for the Eastern time zone. It is 4 hours behind UTC (UTC−4). Active from mid-March to early November in most of the Eastern zone.",
+  "url": "https://dateandtime.live/time/zones/edt/",
+  "mainEntity": {
+    "@type": "FAQPage",
+    "mainEntity": []
+  }
+}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="/">
+    <span class="logo-icon">T</span>
+    <span class="logo-text">dateandtime.<span class="logo-live">live</span></span>
+  </a>
+  <nav class="site-nav">
+    <a href="/today/" class="nav-link">Today</a>
+    <a href="/holidays/" class="nav-link">Holidays</a>
+    <a href="/on-this-day/" class="nav-link">On this day</a>
+    <a href="/world-time/meeting/" class="nav-link">Meeting finder</a>
+    <a href="/world-time/" class="nav-link active">World time</a>
+    <a href="/world-clock/timezone/" class="nav-link">Timezone</a>
+    <a href="/news/" class="nav-link">News</a>
+  </nav>
+  <div class="site-actions">
+    <button data-theme-btn="light" class="theme-toggle" aria-label="Switch theme">🌗</button>
+  </div>
+</header>
+
+<main class="tz-page">
+
+  <section class="tz-page-hero">
+    <span class="tz-page-eyebrow">Time zone · UTC -04:00</span>
+    <h1>Eastern Daylight Time (EDT)</h1>
+    <div class="tz-page-iana">America/New_York</div>
+    <div class="tz-page-clock" id="tzPageClock" data-iana="America/New_York">
+      <span class="time-hm">--:--</span>
+      <span class="time-sec">:--</span>
+      <span class="ampm">DST</span>
+    </div>
+    <div class="tz-page-meta">
+      <span><strong>UTC -04:00</strong></span>
+      <span class="pill dst-yes">Daylight saving in effect</span>
+      <span><strong>5</strong> major cities</span>
+    </div>
+  </section>
+
+  <!-- Major cities (live clocks) -->
+  <section class="tz-section">
+    <header class="tz-section-header">
+      <h2>Current time in major EDT cities</h2>
+      <p>Live local time in the largest cities using Eastern Daylight Time. All clocks update every second.</p>
+    </header>
+    <div class="tz-cities-grid">
+      
+    <div class="tz-city-card">
+      <div class="tz-city-name">
+        <a href="/world-time/united-states/new-york-city/">New York City</a>
+        <span class="tz-city-state">NY</span>
+      </div>
+      <div class="tz-city-clock mono" data-iana="America/New_York" data-label="New York City">--:--:--</div>
+      <div class="tz-city-meta">8,804,190 people</div>
+    </div>
+  
+    <div class="tz-city-card">
+      <div class="tz-city-name">
+        <a href="/world-time/united-states/philadelphia/">Philadelphia</a>
+        <span class="tz-city-state">PA</span>
+      </div>
+      <div class="tz-city-clock mono" data-iana="America/New_York" data-label="Philadelphia">--:--:--</div>
+      <div class="tz-city-meta">1,573,916 people</div>
+    </div>
+  
+    <div class="tz-city-card">
+      <div class="tz-city-name">
+        <a href="/world-time/united-states/boston/">Boston</a>
+        <span class="tz-city-state">MA</span>
+      </div>
+      <div class="tz-city-clock mono" data-iana="America/New_York" data-label="Boston">--:--:--</div>
+      <div class="tz-city-meta">654,776 people</div>
+    </div>
+  
+    <div class="tz-city-card">
+      <div class="tz-city-name">
+        <a href="/world-time/united-states/atlanta/">Atlanta</a>
+        <span class="tz-city-state">GA</span>
+      </div>
+      <div class="tz-city-clock mono" data-iana="America/New_York" data-label="Atlanta">--:--:--</div>
+      <div class="tz-city-meta">498,715 people</div>
+    </div>
+  
+    <div class="tz-city-card">
+      <div class="tz-city-name">
+        <a href="/world-time/united-states/miami/">Miami</a>
+        <span class="tz-city-state">FL</span>
+      </div>
+      <div class="tz-city-clock mono" data-iana="America/New_York" data-label="Miami">--:--:--</div>
+      <div class="tz-city-meta">442,241 people</div>
+    </div>
+  
+    </div>
+  </section>
+
+  <!-- DST behavior -->
+  
+  <section class="tz-section">
+    <header class="tz-section-header">
+      <h2>EDT DST schedule</h2>
+      <p>When does EDT start and end? Here's the year at a glance and the next 5 clock changes.</p>
+    </header>
+    <div class="tz-year-strip"><div class="tz-year-cell standard ">
+      <span class="month">Jan</span>
+      <span class="abbr">EST</span>
+      <span class="offset">std</span>
+    </div><div class="tz-year-cell standard ">
+      <span class="month">Feb</span>
+      <span class="abbr">EST</span>
+      <span class="offset">std</span>
+    </div><div class="tz-year-cell daylight ">
+      <span class="month">Mar</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell daylight ">
+      <span class="month">Apr</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell daylight ">
+      <span class="month">May</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell daylight ">
+      <span class="month">Jun</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell daylight current">
+      <span class="month">Jul</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell daylight ">
+      <span class="month">Aug</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell daylight ">
+      <span class="month">Sep</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell daylight ">
+      <span class="month">Oct</span>
+      <span class="abbr">EDT</span>
+      <span class="offset">+1h</span>
+    </div><div class="tz-year-cell standard ">
+      <span class="month">Nov</span>
+      <span class="abbr">EST</span>
+      <span class="offset">std</span>
+    </div><div class="tz-year-cell standard ">
+      <span class="month">Dec</span>
+      <span class="abbr">EST</span>
+      <span class="offset">std</span>
+    </div></div>
+    <div class="tz-dst-grid">
+    <div class="tz-dst-col">
+      <h4>Past 5 changes</h4>
+      
+    <div class="tz-dst-row">
+      <span class="date">Sun, Mar 8 · 2026</span>
+      <span class="change">+1h (forward)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Nov 2 · 2025</span>
+      <span class="change">−1h (back)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Mar 9 · 2025</span>
+      <span class="change">+1h (forward)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Nov 3 · 2024</span>
+      <span class="change">−1h (back)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Mar 10 · 2024</span>
+      <span class="change">+1h (forward)</span>
+    </div>
+  
+    </div>
+    <div class="tz-dst-col">
+      <h4>Next 5 changes</h4>
+      
+    <div class="tz-dst-row next">
+      <span class="date">Sun, Nov 1 · 2026 (next)</span>
+      <span class="change">−1h (back)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Mar 14 · 2027</span>
+      <span class="change">+1h (forward)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Nov 7 · 2027</span>
+      <span class="change">−1h (back)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Mar 12 · 2028</span>
+      <span class="change">+1h (forward)</span>
+    </div>
+  
+    <div class="tz-dst-row">
+      <span class="date">Sun, Nov 5 · 2028</span>
+      <span class="change">−1h (back)</span>
+    </div>
+  
+    </div>
+  </div>
+  </section>
+  
+
+  <!-- Article body -->
+  <section class="tz-section">
+    <header class="tz-section-header">
+      <h2>About Eastern Daylight Time</h2>
+    </header>
+    <div class="tz-body">
+      <p><strong>EDT — Eastern Daylight Time</strong> is the daylight saving time for the Eastern time zone in the United States. It is <strong>4 hours behind Coordinated Universal Time (UTC−4)</strong>.</p>
+<p>If it&#39;s noon in London (UTC/GMT), it&#39;s 8:00 am in New York City during EDT. The clocks are set 1 hour ahead of standard time to take advantage of longer daylight hours in the evening.</p>
+<p>EDT is the &quot;summer&quot; version of Eastern time. From mid-March to early November, the Eastern time zone uses EDT. The rest of the year (early November to mid-March), it switches back to <strong>EST — Eastern Standard Time (UTC−5)</strong>.</p>
+<h2>When is EDT in effect?</h2>
+<p>EDT runs from the second Sunday in March through the first Sunday in November. In 2026, that&#39;s <strong>March 8 to November 1</strong>.</p>
+<table class="tz-table">
+<thead><tr><th>Year</th><th>Spring forward (EST → EDT)</th><th>Fall back (EDT → EST)</th></tr></thead>
+<tbody></tbody></table>
+<p>|---|---|---|</p>
+<table class="tz-table">
+<thead><tr><th>2026</th><th>Sun, Mar 8 at 2:00 am</th><th>Sun, Nov 1 at 2:00 am</th></tr></thead>
+<tbody><tr><td>2028</td><td>Sun, Mar 12 at 2:00 am</td><td>Sun, Nov 5 at 2:00 am</td></tr></tbody></table>
+<p>At 2:00 am local time on the spring forward date, clocks jump directly to 3:00 am. The hour from 2:00 to 3:00 am does not exist on that day.</p>
+<h2>Where is EDT used?</h2>
+<p>The same places that use EST in winter switch to EDT in summer. That includes 17 US states fully or mostly, plus DC, plus parts of Indiana, Kentucky, Michigan, and Tennessee. In Canada, Ontario and Quebec observe EDT. So do the Bahamas, Cuba, Haiti, Jamaica, the Cayman Islands, and the Turks and Caicos.</p>
+<h2>Major cities in the EDT zone</h2>
+<ul>
+<li><strong>New York City</strong> — 8.8 million people</li>
+<li><strong>Philadelphia</strong> — 1.6 million</li>
+<li><strong>Boston</strong> — 675,000</li>
+<li><strong>Atlanta</strong> — 499,000</li>
+<li><strong>Miami</strong> — 442,000</li>
+<li><strong>Toronto</strong> — 2.8 million (Canada)</li>
+<li><strong>Washington, DC</strong></li>
+</ul>
+<h2>Why daylight saving time?</h2>
+<p>The idea behind DST is to shift daylight hours. By moving the clock forward 1 hour in spring, sunset happens 1 hour later in the evening (e.g., 8 pm instead of 7 pm), giving people more daylight after work or school.</p>
+<p>DST was first proposed by Benjamin Franklin in 1784 (in a satirical letter to a Paris journal). Germany was the first country to adopt it nationally in 1916, to save coal during World War I. The US followed in 1918.</p>
+<p>Today, daylight saving time is observed in most of the US, Canada, Mexico (most), and Europe. It is NOT observed in Arizona (except the Navajo Nation) or Hawaii.</p>
+<h2>EDT compared to other time zones</h2>
+<ul>
+<li><strong>1 hour ahead of CDT</strong> (Central Daylight Time, UTC−5)</li>
+<li><strong>2 hours ahead of MDT</strong> (Mountain Daylight Time, UTC−6)</li>
+<li><strong>3 hours ahead of PDT</strong> (Pacific Daylight Time, UTC−7)</li>
+<li><strong>4 hours ahead of AKDT</strong> (Alaska Daylight Time, UTC−8)</li>
+<li><strong>5 hours ahead of HDT</strong> (Hawaii-Aleutian Daylight Time, UTC−9, only observed in Adak, Alaska)</li>
+</ul>
+<h2>Frequently asked questions</h2>
+<p><strong>Q: What does EDT stand for?</strong> A: Eastern Daylight Time. It&#39;s the daylight saving time version of Eastern time, UTC−4, used in summer.</p>
+<p><strong>Q: Is EDT the same as New York time?</strong> A: Only in summer. New York observes EDT (UTC−4) in summer and EST (UTC−5) in winter.</p>
+<p><strong>Q: When does EDT start in 2026?</strong> A: Sunday, March 8, 2026, at 2:00 am. Clocks spring forward to 3:00 am.</p>
+<p><strong>Q: When does EDT end in 2026?</strong> A: Sunday, November 1, 2026, at 2:00 am. Clocks fall back to 1:00 am, returning to EST.</p>
+<p><strong>Q: Is daylight saving time being abolished?</strong> A: As of 2026, no. The &quot;Sunshine Protection Act&quot; has been proposed multiple times in the US Congress but has not passed. Some states (e.g., California, Florida) have voted to make DST permanent if federal law changes.</p>
+<h2>Related links</h2>
+<ul>
+<li><a href="/time/zones/est/">About EST — Eastern Standard Time</a></li>
+<li><a href="/time/zones/cdt/">About CDT — Central Daylight Time</a></li>
+<li><a href="/news/2026/07/daylight-saving-time-history/">DST 2026: Your Guide to the Clock Change</a></li>
+<li><a href="/news/2026/07/daylight-saving-time-history/">History of Daylight Saving Time</a></li>
+<li><a href="/world-time/united-states/new-york-city/">Current time in New York City</a></li>
+</ul>
+
+    </div>
+  </section>
+
+  <!-- Related zones -->
+  <section class="tz-section">
+    <header class="tz-section-header">
+      <h2>Compare to other time zones</h2>
+      <p>Quick links to other US and global time zone abbreviations.</p>
+    </header>
+    <div class="tz-related">
+      <a class="tz-related-pill tz-related-pill--blue" href="/time/zones/est/">
+      <strong>EST</strong>
+      <span>-05:00 · Eastern Time</span>
+    </a><a class="tz-related-pill tz-related-pill--green" href="/time/zones/cdt/">
+      <strong>CDT</strong>
+      <span>-05:00 · Central Time</span>
+    </a><a class="tz-related-pill tz-related-pill--purple" href="/time/zones/pdt/">
+      <strong>PDT</strong>
+      <span>-07:00 · Pacific Time</span>
+    </a><a class="tz-related-pill tz-related-pill--teal" href="/time/zones/akdt/">
+      <strong>AKDT</strong>
+      <span>-08:00 · Alaska Time</span>
+    </a>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="tz-cta">
+    <h3>Need to schedule across time zones?</h3>
+    <p>Try our meeting planner — find a time that works for everyone.</p>
+    <a href="/world-time/meeting/?cities=5128581">Plan a meeting</a>
+    <a href="/world-time/" style="background: var(--tz-bg); color: var(--tz-primary); border: 1px solid var(--tz-primary);">Browse all cities</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>© 2026 dateandtime.live · Live time in 33,945 cities · Data: <a href="/topics/time-zones/">timeanddatepro</a></p>
+  </div>
+</footer>
+
+<script src="/src/site-shell.js" defer></script>
+<script>
+// Live clock — updates every second for the hero + all city cards
+(function() {
+  function updateClocks() {
+    const now = new Date();
+    // Hero clock
+    const hero = document.getElementById('tzPageClock');
+    if (hero) {
+      try {
+        const iana = hero.dataset.iana;
+        const fmt = new Intl.DateTimeFormat('en-US', {
+          timeZone: iana,
+          hour: 'numeric', minute: '2-digit', second: '2-digit',
+          hour12: true
+        });
+        const parts = fmt.formatToParts(now);
+        const hm = parts.find(p => p.type === 'hour').value + ':' + parts.find(p => p.type === 'minute').value;
+        const sec = parts.find(p => p.type === 'second').value;
+        hero.querySelector('.time-hm').textContent = hm;
+        hero.querySelector('.time-sec').textContent = ':' + sec;
+      } catch(e) {}
+    }
+    // City cards
+    document.querySelectorAll('.tz-city-clock').forEach(el => {
+      try {
+        const iana = el.dataset.iana;
+        const fmt = new Intl.DateTimeFormat('en-US', {
+          timeZone: iana,
+          hour: 'numeric', minute: '2-digit', second: '2-digit',
+          hour12: true
+        });
+        el.textContent = fmt.format(now);
+      } catch(e) {}
+    });
+  }
+  updateClocks();
+  setInterval(updateClocks, 1000);
+})();
+</script>
+
+</body>
+</html>

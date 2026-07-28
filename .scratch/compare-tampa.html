@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Tampa page — us vs timeanddate.com</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f7f7fa;
+    --bg-tint: #f0f0f7;
+    --fg: #1a1830;
+    --fg-soft: #5c5878;
+    --muted: #8a869c;
+    --border: #e5e3ee;
+    --border-soft: #efedf6;
+    --primary: #6c5ce7;
+    --primary-soft: #efeffd;
+    --green: #2dbe7e;
+    --green-soft: #e7f7ee;
+    --red: #e14b4b;
+    --red-soft: #fdecec;
+    --amber: #f59e0b;
+    --amber-soft: #fef3c7;
+    --blue: #3b82f6;
+    --blue-soft: #dbeafe;
+    --teal: #0d9488;
+    --teal-soft: #ccfbf1;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+    background: var(--bg-soft);
+    color: var(--fg);
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    line-height: 1.55;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+  }
+  h1 {
+    font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin: 0.75rem 0 0.5rem;
+  }
+  .sub {
+    color: var(--fg-soft);
+    font-size: 1rem;
+    max-width: 56rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .col {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem 1.5rem 1.25rem;
+  }
+  .col h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .col .src {
+    color: var(--muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+  }
+  .col.us { border-top: 4px solid var(--primary); }
+  .col.tad { border-top: 4px solid var(--teal); }
+  .badge {
+    display: inline-block;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+    vertical-align: middle;
+  }
+  .badge.us { background: var(--primary-soft); color: var(--primary); }
+  .badge.tad { background: var(--teal-soft); color: var(--teal); }
+  .badge.gray { background: var(--bg-tint); color: var(--fg-soft); }
+  .badge.green { background: var(--green-soft); color: var(--green); }
+  .badge.amber { background: var(--amber-soft); color: var(--amber); }
+  .badge.red { background: var(--red-soft); color: var(--red); }
+  .section-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .section-list li {
+    padding: 0.625rem 0.75rem;
+    background: var(--bg-soft);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    line-height: 1.45;
+  }
+  .section-list li.us-only {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .section-list li.tad-only {
+    background: var(--teal-soft);
+    color: var(--teal);
+    font-weight: 600;
+  }
+  .section-list li .check {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 4px;
+    background: var(--green);
+    color: white;
+    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+  }
+  .section-list li .check.no { background: var(--muted); }
+  .section-list li .name { flex: 1; }
+  .section-list li .note {
+    font-size: 0.75rem;
+    color: var(--fg-soft);
+    margin-top: 0.125rem;
+    font-weight: 400;
+  }
+  .section-list li.us-only .note { color: var(--primary); opacity: 0.85; }
+  .section-list li.tad-only .note { color: var(--teal); opacity: 0.85; }
+
+  .compare-table {
+    margin-top: 2rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .compare-table h2 {
+    padding: 1.25rem 1.5rem 0.5rem;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+  .compare-table .src {
+    padding: 0 1.5rem 0.75rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    text-align: left;
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid var(--border-soft);
+    font-size: 0.875rem;
+    vertical-align: top;
+  }
+  th {
+    background: var(--bg-soft);
+    font-weight: 700;
+    color: var(--fg-soft);
+    text-transform: uppercase;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+  }
+  th:first-child { width: 28%; }
+  th:nth-child(2) { width: 20%; text-align: center; }
+  th:nth-child(3) { width: 20%; text-align: center; }
+  th:nth-child(4) { width: 32%; }
+  td.yes { text-align: center; }
+  td.no { text-align: center; color: var(--muted); }
+  td.partial { text-align: center; color: var(--amber); }
+  .ico {
+    display: inline-block;
+    width: 1.25rem; height: 1.25rem;
+    border-radius: 4px;
+    line-height: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: white;
+    text-align: center;
+  }
+  .ico.y { background: var(--green); }
+  .ico.n { background: var(--muted); }
+  .ico.p { background: var(--amber); }
+  td.t-name { font-weight: 600; }
+
+  .verdict {
+    margin-top: 2rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+  }
+  .verdict h2 { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 800; }
+  .verdict p { margin: 0.5rem 0; color: var(--fg-soft); }
+  .verdict-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+  @media (max-width: 900px) { .verdict-grid { grid-template-columns: repeat(2, 1fr); } }
+  .verdict-stat {
+    padding: 1rem;
+    background: var(--bg-soft);
+    border-radius: 10px;
+    text-align: center;
+  }
+  .verdict-stat .num {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+  }
+  .verdict-stat .label {
+    font-size: 0.75rem;
+    color: var(--fg-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.25rem;
+  }
+
+  .takeaways {
+    margin-top: 2rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+  }
+  .takeaways h2 { margin: 0 0 0.75rem; font-size: 1.25rem; font-weight: 800; }
+  .takeaways-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 900px) { .takeaways-grid { grid-template-columns: 1fr; } }
+  .takeaway {
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+  }
+  .takeaway.win { background: var(--green-soft); border-color: transparent; }
+  .takeaway.lose { background: var(--red-soft); border-color: transparent; }
+  .takeaway.even { background: var(--amber-soft); border-color: transparent; }
+  .takeaway h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .takeaway p { margin: 0; font-size: 0.8125rem; line-height: 1.5; color: var(--fg-soft); }
+  .takeaway.win h3 { color: var(--green); }
+  .takeaway.lose h3 { color: var(--red); }
+  .takeaway.even h3 { color: var(--amber); }
+  .takeaway ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .takeaway li { font-size: 0.8125rem; color: var(--fg-soft); margin-bottom: 0.25rem; }
+
+  .note-box {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--primary-soft);
+    border-radius: 10px;
+    color: var(--primary);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+  .note-box strong { color: var(--primary); }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <span class="eyebrow">Honest comparison</span>
+  <h1>Tampa, Florida — us vs timeanddate.com</h1>
+  <p class="sub">
+    I scraped our <a href="https://tdp-landing-dev.nsura2029.workers.dev/world-time/united-states/tampa/" target="_blank">/world-time/united-states/tampa/</a>
+    page and compared it section-by-section against
+    <a href="https://www.timeanddate.com/worldclock/usa/tampa" target="_blank">timeanddate.com/worldclock/usa/tampa</a>
+    (blocked their bot but I got full content from search snippets and their FAQ docs).
+    Here's what I found.
+  </p>
+
+  <div class="verdict">
+    <h2>TL;DR</h2>
+    <p>
+      <strong>Timeanddate.com has 18-20 dashboard widgets on a city page.</strong> We have
+      <strong>6 sections + a 4-card meta row</strong> on the lite template (which Tampa uses), or
+      <strong>~13 sections</strong> on the rich template (which only 1 US page uses today: /new-york-city/).
+    </p>
+    <p>
+      Our hero is better (live ms-precision clock, IANA timezone, no clutter), our city is faster
+      (no ads, no 2MB of tracking), but they win on sheer <em>data density</em> — moon, tides,
+      DST history, phone codes, neighbor cities, distance, currency, elevation, and a country map.
+    </p>
+    <div class="verdict-grid">
+      <div class="verdict-stat">
+        <div class="num">6</div>
+        <div class="label">Our Tampa sections</div>
+      </div>
+      <div class="verdict-stat">
+        <div class="num">~18</div>
+        <div class="label">Their Tampa widgets</div>
+      </div>
+      <div class="verdict-stat">
+        <div class="num">20 KB</div>
+        <div class="label">Our page size</div>
+      </div>
+      <div class="verdict-stat">
+        <div class="num">~600 KB+</div>
+        <div class="label">Their page size (ads + widgets)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col us">
+      <h2><span class="badge us">dateandtime.live</span> Tampa page</h2>
+      <div class="src">https://tdp-landing-dev.nsura2029.workers.dev/world-time/united-states/tampa/</div>
+      <ul class="section-list">
+        <li><span class="check">✓</span><div class="name"><strong>Hero</strong> — flag (40px), h1 "Current time in Tampa", eyebrow "Florida · United States", live ms-precision clock, IANA + UTC offset + DST badge<span class="note">No ad, no clutter, ~120px tall total</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Quick facts</strong> — 4 stat cards: Population (8.8M — wait that's NYC; Tampa is 384K), State (New York for NYC / Florida for Tampa), Country (US), Coordinates (lat/lon)<span class="note">No elevation, no phone code, no postal code</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Sunrise & sunset</strong> — sunrise, solar noon, sunset, day length<span class="note">No direction (↑ 86° East), no altitude</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>7-day weather</strong> — today + 6 days, hi/lo, emoji, Open-Meteo (CC BY 4.0)<span class="note">No "feels like", no wind, no humidity, no pressure, no station name</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Climate year-round</strong> — 12-month chart with hi/lo bars<span class="note">Lat-derived model, not real climate normals</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>More to explore</strong> — 6 cross-links to NYC, LA, Chicago, etc.<span class="note">Static list, not "cities near Tampa"</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Tools for Tampa</strong> — 6 tools: Meeting planner, Time zone converter, US holidays, On this day, All US cities, All Florida cities</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Continue your journey</strong> — 6 cross-link cards (Today, Holidays, OTD, World time, News, Meeting)</div></li>
+      </ul>
+    </div>
+
+    <div class="col tad">
+      <h2><span class="badge tad">timeanddate.com</span> Tampa page</h2>
+      <div class="src">https://www.timeanddate.com/worldclock/usa/tampa (sources: FAQ + search snippets)</div>
+      <ul class="section-list">
+        <li><span class="check">✓</span><div class="name"><strong>Hero (fullscreen mode)</strong> — analog clock, country/state, lat/lon, elevation, link to fullscreen + popup window<span class="note">Click analog clock to go fullscreen</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>4 tabs</strong> — Weather, Time Zone, DST Changes, Sun & Moon<span class="note">Sub-pages under each tab</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Search field</strong> — switch to any city, supports ZIP/postal codes<span class="note">ZIP support for US + Canada</span></div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Country map with city pin</strong> — shows Tampa in country, click → Time Zone Map</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Time Zone box</strong> — current TZ + UTC offset, DST-aware</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>DST boxes</strong> — past + upcoming DST switches for Tampa</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Difference box</strong> — time diff from user's home (set your location)</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Weather (full)</strong> — current temp, "feels like", hi/lo forecast, wind direction+speed, station name (Tampa, Peter O Knight Airport), latest report time, visibility, pressure, humidity, dew point</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Sunrise</strong> — time + direction (↑ 86° East), click for date picker</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Sunset</strong> — time + direction (↑ 274° West)</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Day length</strong> — duration, change vs yesterday</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Sun position</strong> — Sun in South: 1:35 pm, Altitude: 64.9°, Distance: 92.665M mi</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Moon</strong> — 75.0%, rise 2:41 pm, set 4:02 am</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Moon phases</strong> — previous (First Quarter, Mar 25), next (Full Moon, Apr 1)</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>High Tide / Low Tide</strong> — 2 highs, 2 lows (Tampa is coastal, this is unique value)</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Calendar (middle column)</strong> — current month, "Create calendar..." link, Upcoming Holidays list</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Sun & Moon sub-pages</strong> — Sun & Moon today, Sunrise/set times, Moonrise/set, Moon phases, Eclipses, Planet visibility</div></li>
+        <li class="tad-only"><span class="check">✓</span><div class="name"><strong>Astronomy extras</strong> — planet visibility, eclipse calendar, solstice/equinox dates</div></li>
+        <li><span class="check">✓</span><div class="name"><strong>Ads</strong> — sidebar + leaderboard (multiple ad slots)</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="compare-table">
+    <h2>Feature-by-feature matrix</h2>
+    <div class="src">Tampa-specific. "—" = not present. "Partial" = we have a simpler version.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Us (Tampa)</th>
+          <th>timeanddate.com</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="t-name">Live local time</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both have it. Ours: ms-precision, no seconds loading flash. Theirs: analog clock widget.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Date display</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Equal. "Tuesday, July 28, 2026" both ways.</td>
+        </tr>
+        <tr>
+          <td class="t-name">IANA timezone</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td>We show "America/New_York" explicitly. They hide it.</td>
+        </tr>
+        <tr>
+          <td class="t-name">UTC offset</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="partial"><span class="ico p">~</span></td>
+          <td>We: "UTC -4" inline. Them: buried in Time Zone tab.</td>
+        </tr>
+        <tr>
+          <td class="t-name">DST status</td>
+          <td class="partial"><span class="ico p">~</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>We: "DST observed" badge. Them: full DST switch history (past + upcoming).</td>
+        </tr>
+        <tr>
+          <td class="t-name">Sunrise time</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both have it. We: clean. Them: + compass direction (↑ 86° E).</td>
+        </tr>
+        <tr>
+          <td class="t-name">Sunset time</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both have it. Same as sunrise.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Solar noon</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both have it. Them: includes "Sun in South" altitude.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Day length</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Equal. Ours: "13h 24m". Theirs: same + change vs yesterday.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Sun direction / altitude</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They have ↑ 86° E, altitude 64.9°, distance 92.665M mi.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Moon phase + rise/set</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Big miss. They have 75.0% waxing, rise 2:41 pm, set 4:02 am.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Moon phase calendar</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They have full-year moon phase calendar with named full moons (Worm Moon, etc).</td>
+        </tr>
+        <tr>
+          <td class="t-name">Eclipses</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They have an eclipse sub-page.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Tides (high/low)</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Big miss for coastal cities. They have 2 highs + 2 lows.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Planet visibility</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Niche but they have it.</td>
+        </tr>
+        <tr>
+          <td class="t-name">7-day weather</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both have it. Ours: clean. Theirs: feels-like, wind, humidity, pressure, visibility, dew point, station name.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Climate year-round</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td>We have a 12-month chart. They link to a separate climate page.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Population</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td>Ours: stat card. Theirs: not on the city page.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Coordinates (lat/lon)</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Equal. They show as "27°57'N / 82°28'W" — we show decimal. Both fine.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Elevation</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Theirs: "5 m" for Tampa. We don't have it.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Country</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both.</td>
+        </tr>
+        <tr>
+          <td class="t-name">State (FL)</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both show "Florida (FL)".</td>
+        </tr>
+        <tr>
+          <td class="t-name">Phone / area code</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Theirs: 813, 727, etc. We don't have area codes.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Postal / ZIP code</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Theirs has ZIP search. We have city slug search.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Currency</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Theirs: USD, $ symbol. We don't have it (US-only, makes sense for us).</td>
+        </tr>
+        <tr>
+          <td class="t-name">Country map with city pin</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They have an interactive map. We have a static flag image.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Neighbor cities</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They have a "Cities near Tampa" with distances. We have "More to explore" but it's static cross-country, not "near Tampa".</td>
+        </tr>
+        <tr>
+          <td class="t-name">Distance from your location</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They: "Difference box" with km/mi from your home. We: nothing.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Calendar widget (current month)</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They show the current month in middle column.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Upcoming holidays</td>
+          <td class="partial"><span class="ico p">~</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>We link to holidays page. They show top 3-5 holidays inline.</td>
+        </tr>
+        <tr>
+          <td class="t-name">On this day (events)</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td>We have it as a tool. They don't show on city page.</td>
+        </tr>
+        <tr>
+          <td class="t-name">News about country</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td>We have 3 news articles inline. They don't.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Airports near city</td>
+          <td class="partial"><span class="ico p">~</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Rich template has it. Lite template (Tampa) doesn't. They: full airport info with IATA, distances, delay status.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Cross-links to tools</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="partial"><span class="ico p">~</span></td>
+          <td>We: 6 explicit tool cards. They: scattered links + nav tabs.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Meeting planner link</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both have it.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Time zone converter link</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both have it.</td>
+        </tr>
+        <tr>
+          <td class="t-name">DST full history page</td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>They have a DST tab with past+future switches.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Page weight</td>
+          <td class="yes">~20 KB</td>
+          <td class="partial">~600 KB+</td>
+          <td>Ours is 30x lighter. Theirs: ads, heavy widgets, third-party trackers.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Light + dark theme</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="no"><span class="ico n">—</span></td>
+          <td>We have a real theme toggle. They have a single light theme.</td>
+        </tr>
+        <tr>
+          <td class="t-name">SEO structured data (JSON-LD)</td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td class="yes"><span class="ico y">✓</span></td>
+          <td>Both. Ours: City + FAQ schema. Theirs: City + BreadcrumbList.</td>
+        </tr>
+        <tr>
+          <td class="t-name">Ads</td>
+          <td class="yes">None (clean)</td>
+          <td class="partial">Heavy (sidebar + leaderboard)</td>
+          <td>We: zero. Them: 4+ ad slots per page.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="takeaways">
+    <h2>Where we win, where they win, where it's a draw</h2>
+    <div class="takeaways-grid">
+      <div class="takeaway win">
+        <h3>✓ We win</h3>
+        <ul>
+          <li><strong>Speed</strong> — 20KB vs 600KB+ page weight, no ads, no trackers</li>
+          <li><strong>Hero</strong> — clean ms-precision clock, IANA, UTC offset, DST badge in one place</li>
+          <li><strong>Modern design</strong> — light + dark theme, real design tokens, no clutter</li>
+          <li><strong>News about country</strong> — they don't show on city page</li>
+          <li><strong>Climate chart</strong> — 12-month visual, they have no equivalent on the page</li>
+          <li><strong>City population</strong> — visible stat card, they don't have it</li>
+        </ul>
+      </div>
+      <div class="takeaway lose">
+        <h3>✗ We lose</h3>
+        <ul>
+          <li><strong>Astronomy depth</strong> — moon, eclipses, planet visibility, sun altitude, sun distance</li>
+          <li><strong>Tides</strong> — they have 2 highs + 2 lows for coastal cities</li>
+          <li><strong>DST history</strong> — past + upcoming switches inline</li>
+          <li><strong>Country map</strong> — interactive pin + zoom to TZ map</li>
+          <li><strong>Neighbor cities</strong> — with distance from your location</li>
+          <li><strong>Phone / area code</strong> — 813 for Tampa, etc.</li>
+          <li><strong>Calendar widget</strong> — current month inline</li>
+          <li><strong>Sun direction</strong> — ↑ 86° E, 64.9° altitude</li>
+          <li><strong>ZIP code search</strong> — they support US + Canada ZIPs</li>
+        </ul>
+      </div>
+      <div class="takeaway even">
+        <h3>~ Both / contextual</h3>
+        <ul>
+          <li><strong>Sunrise/sunset/day length</strong> — both have it, they add compass direction</li>
+          <li><strong>7-day weather</strong> — both have it, theirs is denser (feels-like, wind, humidity, etc.)</li>
+          <li><strong>Time zone + DST</strong> — we show IANA + UTC, they show full history</li>
+          <li><strong>Cross-link tools</strong> — both have them, just structured differently</li>
+          <li><strong>Holiday links</strong> — we link to holidays page, they show top 5 inline</li>
+          <li><strong>SEO</strong> — both have JSON-LD structured data</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>Context on the lite template:</strong> Tampa (and the other 15,993 US city pages) uses the
+    <em>lite</em> template — built statically with inline data, no API calls at runtime, ~20KB per page.
+    The <em>rich</em> template (which adds Did you know?, Today, Cities near, Airports, News, Learn,
+    On this day, etc. for a total of ~13 sections) is only used on 1 page today:
+    <a href="https://tdp-landing-dev.nsura2029.workers.dev/world-time/united-states/new-york-city/" target="_blank">/world-time/united-states/new-york-city/</a>.
+    The "Port rich content to lite template" task is queued for after launch.
+  </div>
+
+</div>
+</body>
+</html>
