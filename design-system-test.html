@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design System Test — dateandtime.live</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/site-shell.css" />
+  <style>
+    body { margin: 0; }
+    .demo-controls {
+      position: fixed; top: 1rem; right: 1rem; z-index: 100;
+      display: flex; gap: 0.5rem;
+    }
+    .demo-controls button {
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: var(--color-card-bg);
+      color: var(--color-foreground);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .demo-controls button.active { background: var(--color-primary); color: var(--color-primary-fg); border-color: var(--color-primary); }
+  </style>
+</head>
+<body class="shell-page">
+  <div class="demo-controls">
+    <button onclick="document.documentElement.dataset.theme='light'; document.querySelectorAll('.demo-controls button').forEach(b => b.classList.toggle('active', b.dataset.theme==='light'))" data-theme="light" class="active">Light</button>
+    <button onclick="document.documentElement.dataset.theme='dark'; document.querySelectorAll('.demo-controls button').forEach(b => b.classList.toggle('active', b.dataset.theme==='dark'))" data-theme="dark">Dark</button>
+  </div>
+
+  <main>
+    <!-- DISPLAY HERO (homepage) -->
+    <section class="page-hero page-hero--display">
+      <div class="container">
+        <p class="page-hero-eyebrow"><span class="dot"></span>Live · Updates every second</p>
+        <h1 class="page-hero-title">Current time in 33,945 cities worldwide</h1>
+        <p class="page-hero-subtitle">The world's most complete time zone resource. Live clocks, weather, holidays, and DST rules for every city we cover.</p>
+        <div class="page-hero-stats">
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">33,945</span>
+            <span class="page-hero-stat-label">cities</span>
+          </div>
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">408</span>
+            <span class="page-hero-stat-label">time zones</span>
+          </div>
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">242</span>
+            <span class="page-hero-stat-label">countries</span>
+          </div>
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">15,994</span>
+            <span class="page-hero-stat-label">US cities live</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LARGE HERO (regular page) -->
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-hero-eyebrow"><span class="dot"></span>Country · 11 time zones</p>
+        <h1 class="page-hero-title">United States</h1>
+        <p class="page-hero-subtitle">Live time in <strong>15,994 US cities</strong> across <strong>52 states</strong>. Real-time updates every second.</p>
+        <div class="page-hero-stats">
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">15,994</span>
+            <span class="page-hero-stat-label">cities</span>
+          </div>
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">52</span>
+            <span class="page-hero-stat-label">states &amp; DC</span>
+          </div>
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">11</span>
+            <span class="page-hero-stat-label">time zones</span>
+          </div>
+          <div class="page-hero-stat">
+            <span class="page-hero-stat-num">329M</span>
+            <span class="page-hero-stat-label">people</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPACT HERO (single-content page) -->
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-hero-eyebrow">City · Kings County</p>
+        <h1 class="page-hero-title">Brooklyn, New York</h1>
+        <p class="page-hero-subtitle">Live local time, weather, and holidays for Brooklyn.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 1 — with hairline border-top separating from the previous section -->
+    <section class="page-section">
+      <div class="container">
+        <div class="page-section-header page-section-header--with-meta">
+          <div class="page-section-title-block">
+            <p class="page-section-eyebrow">Browse</p>
+            <h2 class="page-section-title">Browse cities by location</h2>
+            <p class="page-section-subtitle">Drill down by region → sub-region → country → state. Live local time updates every second.</p>
+          </div>
+          <span class="page-section-count">1,000 cities</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
+          <a class="card card-link" href="#">
+            <span class="card-label">US</span>
+            <h3 class="card-title">New York City</h3>
+            <p class="card-sub">Live time, weather, holidays, sunrise &amp; sunset.</p>
+          </a>
+          <a class="card card-link" href="#">
+            <span class="card-label">GB</span>
+            <h3 class="card-title">London</h3>
+            <p class="card-sub">Live time, weather, holidays, sunrise &amp; sunset.</p>
+          </a>
+          <a class="card card-link" href="#">
+            <span class="card-label">JP</span>
+            <h3 class="card-title">Tokyo</h3>
+            <p class="card-sub">Live time, weather, holidays, sunrise &amp; sunset.</p>
+          </a>
+          <a class="card card-link" href="#">
+            <span class="card-label">AU</span>
+            <h3 class="card-title">Sydney</h3>
+            <p class="card-sub">Live time, weather, holidays, sunrise &amp; sunset.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 — same flat look, separated only by the hairline -->
+    <section class="page-section">
+      <div class="container">
+        <div class="page-section-header page-section-header--with-meta">
+          <div class="page-section-title-block">
+            <p class="page-section-eyebrow">Tools</p>
+            <h2 class="page-section-title">World Time Tools</h2>
+            <p class="page-section-subtitle">Time tools for every need.</p>
+          </div>
+          <span class="page-section-count">8 tools</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
+          <a class="card card-link" href="#">
+            <span class="card-label">Tool</span>
+            <h3 class="card-title">Meeting Planner</h3>
+            <p class="card-sub">Find meeting times that work for everyone across cities.</p>
+          </a>
+          <a class="card card-link" href="#">
+            <span class="card-label">Tool</span>
+            <h3 class="card-title">Time Zone Converter</h3>
+            <p class="card-sub">Time difference calculator for any two zones.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 — flat, just the line -->
+    <section class="page-section">
+      <div class="container">
+        <div class="page-section-header">
+          <p class="page-section-eyebrow">Learn</p>
+          <h2 class="page-section-title">Learn about time zones</h2>
+          <p class="page-section-subtitle">From the prime meridian to the leap second.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
+          <a class="card card-link" href="#">
+            <span class="card-label">Learn</span>
+            <h3 class="card-title">What is a time zone?</h3>
+            <p class="card-sub">UTC offsets and the prime meridian.</p>
+          </a>
+          <a class="card card-link" href="#">
+            <span class="card-label">Learn</span>
+            <h3 class="card-title">Daylight Saving Time</h3>
+            <p class="card-sub">Spring forward, fall back — who does it?</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

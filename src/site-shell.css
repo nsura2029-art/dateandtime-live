@@ -1310,27 +1310,10 @@ body.has-mobile-nav-open {
 
 /* === PAGE HERO === */
 .page-hero {
-  position: relative;
   padding: clamp(2rem, 4vw, 3rem) 0 clamp(2rem, 4vw, 2.5rem);
-  background:
-    linear-gradient(180deg, var(--color-primary-soft) 0%, transparent 100%),
-    var(--color-background);
+  background: var(--color-background);
   border-bottom: 1px solid var(--color-border-soft);
-  overflow: hidden;
-  isolation: isolate;
 }
-.page-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--color-primary) 12%, transparent) 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--color-primary) 8%, transparent) 0%, transparent 50%);
-  pointer-events: none;
-  opacity: 0.7;
-  z-index: -1;
-}
-.page-hero > .container { position: relative; z-index: 1; }
 
 /* Eyebrow — small uppercase chip with optional live dot */
 .page-hero-eyebrow {
@@ -1427,8 +1410,9 @@ body.has-mobile-nav-open {
 /* === PAGE SECTION === */
 .page-section {
   padding: clamp(2rem, 4vw, 3rem) 0;
+  border-top: 1px solid var(--color-border-soft);
 }
-.page-section + .page-section { padding-top: clamp(1rem, 2vw, 1.5rem); }
+.page-section:first-of-type { border-top: 0; }
 
 .page-section-header {
   margin-bottom: var(--space-5);
