@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css?v=6" />
+<link rel="stylesheet" href="/src/site-shell.css?v=9" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"Brownlee Park","address":{"@type":"PostalAddress","addressRegion":"MI","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":42.31893,"longitude":-85.14249},"timeZone":"America/Detroit","url":"https://dateandtime.live/world-time/united-states/brownlee-park/","population":{"@type":"QuantitativeValue","value":2108}}</script>
 </head>
 <body class="shell-page">
@@ -165,27 +165,32 @@
       <div class="city-hero-grid">
         <!-- LEFT: live clock + digital time + data table -->
         <div class="city-clock-block">
-          <h1>Current time in Brownlee Park</h1>
-          <div class="city-hero-loc">
-            <span class="state">Michigan</span> · <span class="country">United States</span>
+          <!-- H1 + location on one row, centered (per user feedback 2026-07-28) -->
+          <div class="city-hero-title-row">
+            <h1>Current time in Brownlee Park</h1>
+            <div class="city-hero-loc">
+              <span class="state">Michigan</span> · <span class="country">United States</span>
+            </div>
           </div>
           <div class="city-clock-row">
+            <!-- Analog clock with hardcoded colors so it's visible in both light and dark mode -->
             <svg class="city-clock-face" viewBox="0 0 200 200" id="cityClockFace" data-tz="America/Detroit" aria-label="Analog clock">
-              <circle cx="100" cy="100" r="95" fill="var(--color-bg-soft, #f4f2fb)" stroke="var(--color-border, #e5e2f0)" stroke-width="2" />
+              <circle cx="100" cy="100" r="95" fill="#f4f2fb" stroke="#cdc8e0" stroke-width="2" />
               <g id="clockTicks"></g>
-              <line id="clockHour" x1="100" y1="100" x2="100" y2="55" stroke="var(--color-foreground, #1f1a3a)" stroke-width="4" stroke-linecap="round" />
-              <line id="clockMinute" x1="100" y1="100" x2="100" y2="35" stroke="var(--color-foreground, #1f1a3a)" stroke-width="3" stroke-linecap="round" />
-              <line id="clockSecond" x1="100" y1="100" x2="100" y2="25" stroke="var(--color-primary, #5b4aaf)" stroke-width="1.5" stroke-linecap="round" />
-              <circle cx="100" cy="100" r="4" fill="var(--color-foreground, #1f1a3a)" />
+              <line id="clockHour" x1="100" y1="100" x2="100" y2="55" stroke="#1f1a3a" stroke-width="4" stroke-linecap="round" />
+              <line id="clockMinute" x1="100" y1="100" x2="100" y2="35" stroke="#1f1a3a" stroke-width="3" stroke-linecap="round" />
+              <line id="clockSecond" x1="100" y1="100" x2="100" y2="25" stroke="#5b4aaf" stroke-width="1.5" stroke-linecap="round" />
+              <circle cx="100" cy="100" r="4" fill="#1f1a3a" />
             </svg>
             <div class="city-time-block">
+              <!-- 2-digit hours (06:26:11 instead of 6:26:11) -->
               <div class="city-time-digits" id="cityClock" data-tz="America/Detroit">
                 <span class="time-hm">--:--</span>
                 <span class="time-sec">--</span>
                 <span class="time-ampm"></span>
               </div>
               <div class="time-date" id="cityDate">--</div>
-              <a class="fullscreen-link" href="/world-time/united-states/brownlee-park/fullscreen/">⛶ Fullscreen</a>
+              <!-- Fullscreen link removed per user feedback 2026-07-28 -->
             </div>
           </div>
           <!-- Data table — Country/State/Coordinates/Elevation/Currency/Languages/Code -->
@@ -571,7 +576,8 @@
     function update() {
       try {
         var now = new Date();
-        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+        // 2-digit hours: '06:26:11 PM' instead of '6:26:11 PM'
+        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
         var parts = fmt.formatToParts(now);
         var h = '', m = '', s = '', ampm = '';
         for (var p of parts) {
@@ -675,7 +681,8 @@
           var x2 = 100 + Math.cos(rad) * outer;
           var y2 = 100 + Math.sin(rad) * outer;
           var w = isHour ? 2.5 : 1;
-          html += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="var(--color-foreground, #1f1a3a)" stroke-width="' + w + '" stroke-linecap="round" />';
+          // Hardcoded colors so clock is visible in both light and dark mode
+          html += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="#1f1a3a" stroke-width="' + w + '" stroke-linecap="round" />';
         }
         // Hour numbers (optional, subtle)
         var numHtml = '';
@@ -685,14 +692,15 @@
           var nRad = nAngle * Math.PI / 180;
           var nx = 100 + Math.cos(nRad) * 70;
           var ny = 100 + Math.sin(nRad) * 70 + 4; // +4 for vertical centering
-          numHtml += '<text x="' + nx.toFixed(1) + '" y="' + ny.toFixed(1) + '" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="var(--color-foreground, #1f1a3a)">' + nums[j] + '</text>';
+          numHtml += '<text x="' + nx.toFixed(1) + '" y="' + ny.toFixed(1) + '" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="#1f1a3a">' + nums[j] + '</text>';
         }
         ticksG.innerHTML = html + numHtml;
       }
       function tickClock() {
         var now = new Date();
         // Get hour, minute, second in the city's timezone
-        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false });
+        // 2-digit hours for the analog clock
+        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
         var parts = fmt.formatToParts(now);
         var h = 0, m = 0, s = 0, ms = now.getMilliseconds();
         for (var p of parts) {
