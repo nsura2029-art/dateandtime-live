@@ -1105,13 +1105,231 @@ body.has-mobile-nav-open {
 .breadcrumb [aria-current="page"] { color: var(--color-foreground, #1f1a3a); font-weight: 600; }
 
 /* City hero (lite) — centered, with rich content (live clock, meta, flag) */
+/* =====================================================
+   CITY HERO v2 — 2-column grid (clock + data | carousel)
+   Replaces the old single-column hero. Live analog clock
+   on the left, state-landmark carousel on the right.
+   ===================================================== */
 .city-hero {
   position: relative;
-  padding: 1.5rem 0 2rem;
+  padding: 1.5rem 0 1.5rem;
   border-bottom: 1px solid var(--color-border-soft, rgba(92, 74, 175, 0.12));
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.city-hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 2.5rem;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .city-hero-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+
+/* LEFT: clock + data */
+.city-clock-block h1 {
+  font-size: var(--t-hero);
+  font-weight: var(--t-w-hero);
+  letter-spacing: var(--t-ls-hero);
+  line-height: var(--t-lh-hero);
+  margin: 0 0 0.25rem;
+  color: var(--color-foreground, #1f1a3a);
+  text-align: left;
+}
+.city-hero-loc {
+  font-size: var(--t-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: var(--t-ls-eyebrow);
+  font-weight: var(--t-w-eyebrow);
+  color: var(--color-primary);
+  margin: 0 0 1.25rem;
+  text-align: left;
+}
+.city-hero-loc .state { color: var(--color-primary); font-weight: 700; }
+.city-hero-loc .country { color: var(--color-primary); font-weight: 500; opacity: 0.85; }
+.city-clock-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1.25rem;
+  align-items: center;
+  margin: 0.5rem 0 1.25rem;
+}
+@media (max-width: 560px) {
+  .city-clock-row { grid-template-columns: 120px 1fr; gap: 0.875rem; }
+}
+.city-clock-face {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  display: block;
+}
+.city-time-block { display: flex; flex-direction: column; gap: 0.25rem; }
+.city-time-digits { display: flex; align-items: baseline; gap: 0.25rem; }
+.city-time-digits .time-hm { font-family: var(--font-mono, 'JetBrains Mono', monospace); font-size: clamp(2.5rem, 4vw, 3.25rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1; color: var(--color-foreground, #1f1a3a); }
+.city-time-digits .time-sec { font-family: var(--font-mono, monospace); font-size: 1.25rem; opacity: 0.55; font-weight: 500; }
+.city-time-digits .time-ampm { font-family: var(--font-mono, monospace); font-size: 1.125rem; opacity: 0.6; font-weight: 600; margin-left: 0.25rem; }
+.city-time-block .time-date { font-size: 0.9375rem; color: var(--color-foreground-soft, #49445f); font-weight: 500; }
+.city-time-block .fullscreen-link { font-size: 0.8125rem; color: var(--color-link, #5b4aaf); margin-top: 0.5rem; display: inline-block; }
+
+/* Data table — Country/State/Coordinates/Elevation/Currency/Languages/Code */
+.city-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 0 0 1rem;
+}
+.city-data-table th,
+.city-data-table td { padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
+.city-data-table tr { border-bottom: 1px solid var(--color-border-soft, rgba(92, 74, 175, 0.10)); }
+.city-data-table tr:last-child { border-bottom: none; }
+.city-data-table th { color: var(--color-foreground-soft, #49445f); font-weight: 600; width: 7.5rem; white-space: nowrap; }
+.city-data-table td a { color: var(--color-link, #5b4aaf); }
+.city-data-table td a:hover { text-decoration: underline; }
+
+.city-hero-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.8125rem; color: var(--color-muted, #6b6580); }
+.city-hero-meta .meta-item strong { color: var(--color-foreground-soft, #49445f); font-weight: 600; }
+.city-hero-meta .meta-item--link { color: var(--color-link, #5b4aaf); }
+
+/* RIGHT: state landmark carousel */
+.city-carousel {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--color-bg-soft, #f4f2fb);
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  max-height: 480px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.city-carousel-images { position: absolute; inset: 0; }
+.city-carousel-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 600ms ease-in-out;
+}
+.city-carousel-img.active { opacity: 1; }
+.city-carousel-caption {
+  position: absolute;
+  top: 0.875rem; left: 0.875rem;
+  display: flex; align-items: center; gap: 0.4rem;
+  background: rgba(15, 10, 31, 0.7);
+  color: #fff;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8125rem; font-weight: 600;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  max-width: calc(100% - 6rem);
+  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.city-carousel-caption svg { flex-shrink: 0; opacity: 0.9; }
+.city-carousel-nav {
+  position: absolute;
+  bottom: 0.875rem; right: 0.875rem;
+  display: flex; gap: 0.5rem;
+}
+.city-carousel-prev, .city-carousel-next {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(15, 10, 31, 0.7);
+  color: #fff;
+  font-size: 1.5rem; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 150ms;
+}
+.city-carousel-prev:hover, .city-carousel-next:hover { background: rgba(15, 10, 31, 0.9); }
+.city-carousel-prev:focus-visible, .city-carousel-next:focus-visible { outline: 2px solid var(--color-primary, #5b4aaf); outline-offset: 2px; }
+
+/* =====================================================
+   CITY SEARCH BAR — centered under the hero, jumps to any
+   US city via autocomplete dropdown. Fetches the slim
+   search index once on first focus.
+   ===================================================== */
+.city-search-bar {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  padding: 0 1.5rem;
   text-align: center;
 }
+.city-search-label {
+  display: block;
+  font-size: var(--t-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: var(--t-ls-eyebrow);
+  font-weight: var(--t-w-eyebrow);
+  color: var(--color-muted, #6b6580);
+  margin-bottom: 0.5rem;
+}
+.city-search-wrap {
+  position: relative;
+  width: 100%;
+}
+.city-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-muted, #6b6580);
+  pointer-events: none;
+}
+.city-search-input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 2.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--color-bg-soft, #f4f2fb);
+  border: 1px solid var(--color-border, #e5e2f0);
+  border-radius: 999px;
+  color: var(--color-foreground, #1f1a3a);
+  outline: none;
+  transition: border-color 150ms, box-shadow 150ms;
+}
+.city-search-input:focus {
+  border-color: var(--color-primary, #5b4aaf);
+  box-shadow: 0 0 0 3px rgba(91, 74, 175, 0.12);
+  background: var(--color-bg, #ffffff);
+}
+.city-search-results {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0; right: 0;
+  background: var(--color-bg, #ffffff);
+  border: 1px solid var(--color-border, #e5e2f0);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 30;
+  text-align: left;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.city-search-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.625rem 1rem;
+  text-decoration: none;
+  color: var(--color-foreground, #1f1a3a);
+  border-bottom: 1px solid var(--color-border-soft, rgba(92, 74, 175, 0.10));
+  transition: background 100ms;
+}
+.city-search-result:last-child { border-bottom: none; }
+.city-search-result:hover, .city-search-result:focus { background: var(--color-bg-soft, #f4f2fb); }
+.city-search-result-name { font-weight: 600; }
+.city-search-result-meta { font-size: 0.8125rem; color: var(--color-muted, #6b6580); }
+.city-search-empty { padding: 1rem; color: var(--color-muted, #6b6580); font-style: italic; }
 .city-hero .container { display: flex; flex-direction: column; align-items: center; }
 .city-hero-flag { margin: 0 auto 0.875rem; position: static; }
 .city-hero-flag img { width: 40px; height: 30px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }

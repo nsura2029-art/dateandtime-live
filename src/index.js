@@ -492,7 +492,7 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="canonical" href="https://dateandtime.live/world-time/${countrySlug}/${citySlug}/">
-  <link rel="stylesheet" href="/src/site-shell.css?v=5" />
+  <link rel="stylesheet" href="/src/site-shell.css?v=7" />
   <link rel="stylesheet" href="/src/tz-hub.css?v=23" />
   <style>
     .coming-soon { max-width: 1240px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }

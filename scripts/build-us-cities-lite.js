@@ -41,6 +41,89 @@ function formatPop(pop) {
   return String(pop);
 }
 
+// Format latitude/longitude as degrees/minutes/seconds (DMS) for display
+// e.g. 27.94752 → "27°56'51"N
+function formatDMS(coord, type) {
+  if (coord == null) return '—';
+  const abs = Math.abs(coord);
+  const d = Math.floor(abs);
+  const mFloat = (abs - d) * 60;
+  const m = Math.floor(mFloat);
+  const s = Math.floor((mFloat - m) * 60);
+  const suffix = type === 'lat' ? (coord >= 0 ? 'N' : 'S') : (coord >= 0 ? 'E' : 'W');
+  return `${d}°${String(m).padStart(2, '0')}'${String(s).padStart(2, '0')}"${suffix}`;
+}
+
+// State landmark image labels — per the user's spec, the carousel shows 5
+// state-specific landmark images. Labels are short, descriptive, paired with
+// a pin icon overlay (matches the example in pic3).
+const STATE_LANDMARKS = {
+  'alabama':      ['Alabama State Capitol', 'Gulf Shores Beaches', 'Vulcan Statue, Birmingham', 'Lookout Mountain', 'Birmingham Skyline'],
+  'alaska':       ['Alaska State Capitol', 'Denali National Park', 'Anchorage Skyline', 'Glacier Bay', 'Northern Lights'],
+  'arizona':      ['Arizona State Capitol', 'Grand Canyon', 'Phoenix Skyline', 'Monument Valley', 'Sedona Red Rocks'],
+  'arkansas':     ['Arkansas State Capitol', 'Hot Springs', 'Little Rock Skyline', 'Crater of Diamonds', 'Ozark Mountains'],
+  'california':   ['California State Capitol', 'Big Sur Coast', 'Los Angeles Skyline', 'Golden Gate Bridge', 'Yosemite Valley'],
+  'colorado':     ['Colorado State Capitol', 'Rocky Mountain NP', 'Denver Skyline', 'Great Sand Dunes', 'Maroon Bells'],
+  'connecticut':  ['Connecticut State Capitol', 'Mystic Seaport', 'Hartford Skyline', 'Yale University', 'Litchfield Hills'],
+  'delaware':     ['Delaware State Capitol', 'Cape Henlopen', 'Wilmington Skyline', 'Rehoboth Beach', 'Brandywine Valley'],
+  'florida':      ['Florida State Capitol', 'Everglades', 'Jacksonville Skyline', 'Key West Sunset', 'Sanibel Island'],
+  'georgia':      ['Georgia State Capitol', 'Savannah Squares', 'Atlanta Skyline', 'Stone Mountain', 'Okefenokee Swamp'],
+  'hawaii':       ['Hawaii State Capitol', 'Na Pali Coast', 'Honolulu Skyline', 'Waikiki Beach', 'Haleakala Volcano'],
+  'idaho':        ['Idaho State Capitol', 'Sawtooth Mountains', 'Boise Skyline', 'Craters of the Moon', 'Shoshone Falls'],
+  'illinois':     ['Illinois State Capitol', 'Starved Rock', 'Chicago Skyline', 'Lincoln Memorial', 'Chicago Riverwalk'],
+  'indiana':      ['Indiana State Capitol', 'Indiana Dunes', 'Indianapolis Motor Speedway', 'Indianapolis Skyline', 'Brown County'],
+  'iowa':         ['Iowa State Capitol', 'Field of Dreams', 'Des Moines Skyline', 'Amana Colonies', 'Iowa Farmland'],
+  'kansas':       ['Kansas State Capitol', 'Flint Hills', 'Wichita Skyline', 'Tallgrass Prairie', 'Monument Rocks'],
+  'kentucky':     ['Kentucky State Capitol', 'Mammoth Cave', 'Churchill Downs', 'Louisville Skyline', 'Red River Gorge'],
+  'louisiana':    ['Louisiana State Capitol', 'French Quarter', 'New Orleans Skyline', 'Atchafalaya Swamp', 'Bourbon Street'],
+  'maine':        ['Maine State Capitol', 'Acadia NP', 'Portland Harbor', 'Portland Head Light', 'Bar Harbor'],
+  'maryland':     ['Maryland State House', 'Assateague Island', 'Baltimore Inner Harbor', 'US Naval Academy', 'Chesapeake Bay'],
+  'massachusetts':['Massachusetts State House', 'Cape Cod', 'Boston Skyline', 'Fenway Park', 'Freedom Trail'],
+  'michigan':     ['Michigan State Capitol', 'Mackinac Island', 'Detroit Skyline', 'Sleeping Bear Dunes', 'Pictured Rocks'],
+  'minnesota':    ['Minnesota State Capitol', 'Boundary Waters', 'Minneapolis Skyline', 'Mall of America', 'Split Rock Light'],
+  'mississippi':  ['Mississippi State Capitol', 'Natchez Trace', 'Jackson Skyline', 'Vicksburg', 'Gulf Coast'],
+  'missouri':     ['Missouri State Capitol', 'Gateway Arch', 'Kansas City Skyline', 'Ozark Rivers', 'Silver Dollar City'],
+  'montana':      ['Montana State Capitol', 'Glacier NP', 'Billings Skyline', 'Flathead Lake', 'Big Sky Resort'],
+  'nebraska':     ['Nebraska State Capitol', 'Sandhills', 'Omaha Skyline', 'Henry Doorly Zoo', 'Chimney Rock'],
+  'nevada':       ['Nevada State Capitol', 'Valley of Fire', 'Las Vegas Strip', 'Lake Tahoe', 'Red Rock Canyon'],
+  'new-hampshire':['New Hampshire State House', 'Mount Washington', 'Manchester Skyline', 'Kancamagus Hwy', 'NH Autumn'],
+  'new-jersey':   ['New Jersey State House', 'Delaware Water Gap', 'Newark Skyline', 'Atlantic City', 'Cape May'],
+  'new-mexico':   ['New Mexico Roundhouse', 'White Sands', 'Albuquerque Skyline', 'Carlsbad Caverns', 'Taos Pueblo'],
+  'new-york':     ['New York State Capitol', 'Niagara Falls', 'Manhattan Skyline', 'Statue of Liberty', 'Adirondacks'],
+  'north-carolina':['NC State Capitol', 'Cape Hatteras', 'Charlotte Skyline', 'Biltmore Estate', 'Smoky Mountains'],
+  'north-dakota': ['North Dakota State Capitol', 'Theodore Roosevelt NP', 'Fargo Skyline', 'Painted Canyon', 'Maah Daah Hey'],
+  'ohio':         ['Ohio Statehouse', 'Cedar Point', 'Columbus Skyline', 'Cincinnati Skyline', 'Hocking Hills'],
+  'oklahoma':     ['Oklahoma State Capitol', 'Wichita Mountains', 'OKC Skyline', 'National Cowboy Museum', 'Tulsa Skyline'],
+  'oregon':       ['Oregon State Capitol', 'Crater Lake', 'Portland Skyline', 'Multnomah Falls', 'Mount Hood'],
+  'pennsylvania': ['Pennsylvania State Capitol', 'PA Grand Canyon', 'Philadelphia Skyline', 'Independence Hall', 'Gettysburg'],
+  'rhode-island': ['Rhode Island State House', 'Block Island', 'Providence Skyline', 'Cliff Walk', 'The Breakers'],
+  'south-carolina':['SC State House', 'Hilton Head', 'Charleston Skyline', 'Rainbow Row', 'Magnolia Plantation'],
+  'south-dakota': ['South Dakota State Capitol', 'Mount Rushmore', 'Sioux Falls Skyline', 'Crazy Horse', 'Badlands NP'],
+  'tennessee':    ['Tennessee State Capitol', 'Great Smoky Mountains', 'Nashville Skyline', 'Graceland', 'Dollywood'],
+  'texas':        ['Texas State Capitol', 'Big Bend', 'Houston Skyline', 'San Antonio River Walk', 'Hill Country'],
+  'utah':         ['Utah State Capitol', 'Zion NP', 'Salt Lake City Skyline', 'Arches NP', 'Bryce Canyon'],
+  'vermont':      ['Vermont State House', 'Stowe Mountain', 'Burlington Waterfront', 'Route 100', 'Shelburne Farms'],
+  'virginia':     ['Virginia State Capitol', 'Shenandoah NP', 'Virginia Beach', 'Colonial Williamsburg', 'Blue Ridge Pkwy'],
+  'washington':   ['Washington State Capitol', 'Mount Rainier', 'Seattle Skyline', 'Space Needle', 'San Juan Islands'],
+  'west-virginia':['WV State Capitol', 'New River Gorge', 'Charleston Skyline', 'Harpers Ferry', 'Blackwater Falls'],
+  'wisconsin':    ['Wisconsin State Capitol', 'Door County', 'Milwaukee Skyline', 'Taliesin', 'Apostle Islands'],
+  'wyoming':      ['Wyoming State Capitol', 'Yellowstone', 'Cheyenne Skyline', 'Grand Teton', 'Devils Tower'],
+};
+
+// Pre-load state image list to avoid per-city file existence checks
+function getStateCarousel(stateSlug) {
+  const labels = STATE_LANDMARKS[stateSlug];
+  if (!labels) return null;
+  const images = [];
+  for (let i = 1; i <= 5; i++) {
+    images.push({
+      url: `/world-time/state-images/${stateSlug}-${i}.jpg`,
+      label: labels[i - 1],
+    });
+  }
+  return images;
+}
+
 // Read the build list
 const buildList = JSON.parse(fs.readFileSync(
   path.join(__dirname, 'cities-us-build.json'),
@@ -215,6 +298,16 @@ function buildPage(c) {
   // Build a list of big US cities as "more to explore" cross-links (top 6 by pop)
   const moreToExplore = moreToExploreUS;
 
+  // Build the state-landmark carousel HTML for this city's state.
+  // For MVP, we just use the 5 images in order (1-5). When the JS loads
+  // it will shuffle them for randomness within a session (so the order
+  // varies between page loads).
+  const carouselItems = getStateCarousel(c.stateSlug) || [];
+  const carouselHtml = carouselItems.map((it, idx) =>
+    `<img class="city-carousel-img${idx === 0 ? ' active' : ''}" src="${it.url}" alt="${it.label}" data-label="${it.label}" data-idx="${idx}" loading="${idx === 0 ? 'eager' : 'lazy'}" />`
+  ).join('\n          ');
+  const carouselLabels = carouselItems.map(it => it.label);
+
   // HTML template (lite version)
   const html = `<!doctype html>
 <html lang="en" data-theme="light">
@@ -234,7 +327,7 @@ function buildPage(c) {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css?v=5" />
+<link rel="stylesheet" href="/src/site-shell.css?v=7" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"${c.name}","address":{"@type":"PostalAddress","addressRegion":"${c.stateCode}","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":${c.latitude},"longitude":${c.longitude}},"timeZone":"${c.timezone}","url":"${canonicalUrl}","population":{"@type":"QuantitativeValue","value":${c.population}}}</script>
 </head>
 <body class="shell-page">
@@ -257,31 +350,84 @@ function buildPage(c) {
          the hero CTA / city page Tools tab. -->
 
     <!-- Hero: Live clock -->
+    <!-- 2-column hero: clock + data table (left) | state landmark carousel (right) -->
     <section class="city-hero" data-tz="${c.timezone}" data-lat="${c.latitude}" data-lon="${c.longitude}">
-      <div class="city-hero-flag">
-        <img src="${flagUrl}" alt="US flag" width="40" height="30" loading="lazy" />
-      </div>
-      <h1>Current time in ${c.name}</h1>
-      <div class="city-hero-loc">
-        <span class="state">${stateName}</span> · <span class="country">United States</span>
-      </div>
-      <div class="city-hero-clock" id="cityClock" data-tz="${c.timezone}">
-        <span class="time-hm">--:--</span>
-        <span class="time-sec">--</span>
-        <span class="time-ampm"></span>
-        <span class="time-date" id="cityDate">--</span>
-      </div>
-      <div class="city-hero-meta">
-        <span class="meta-item"><strong>IANA:</strong> ${c.timezone}</span>
-        <span class="meta-item" id="utcOffset">UTC --</span>
-        <span class="meta-item" id="dstStatus">—</span>
-        <span class="meta-item" id="tzAbbr">—</span>
-        <a class="meta-item meta-item--link" href="/time/zones/${getTzAbbr(c.timezone).toLowerCase()}/" id="tzPageLink" style="display: none;">About <span id="tzAbbrText">${getTzAbbr(c.timezone)}</span> →</a>
+      <div class="city-hero-grid">
+        <!-- LEFT: live clock + digital time + data table -->
+        <div class="city-clock-block">
+          <h1>Current time in ${c.name}</h1>
+          <div class="city-hero-loc">
+            <span class="state">${stateName}</span> · <span class="country">United States</span>
+          </div>
+          <div class="city-clock-row">
+            <svg class="city-clock-face" viewBox="0 0 200 200" id="cityClockFace" data-tz="${c.timezone}" aria-label="Analog clock">
+              <circle cx="100" cy="100" r="95" fill="var(--color-bg-soft, #f4f2fb)" stroke="var(--color-border, #e5e2f0)" stroke-width="2" />
+              <g id="clockTicks"></g>
+              <line id="clockHour" x1="100" y1="100" x2="100" y2="55" stroke="var(--color-foreground, #1f1a3a)" stroke-width="4" stroke-linecap="round" />
+              <line id="clockMinute" x1="100" y1="100" x2="100" y2="35" stroke="var(--color-foreground, #1f1a3a)" stroke-width="3" stroke-linecap="round" />
+              <line id="clockSecond" x1="100" y1="100" x2="100" y2="25" stroke="var(--color-primary, #5b4aaf)" stroke-width="1.5" stroke-linecap="round" />
+              <circle cx="100" cy="100" r="4" fill="var(--color-foreground, #1f1a3a)" />
+            </svg>
+            <div class="city-time-block">
+              <div class="city-time-digits" id="cityClock" data-tz="${c.timezone}">
+                <span class="time-hm">--:--</span>
+                <span class="time-sec">--</span>
+                <span class="time-ampm"></span>
+              </div>
+              <div class="time-date" id="cityDate">--</div>
+              <a class="fullscreen-link" href="/world-time/${c.countrySlug}/${c.slug}/fullscreen/">⛶ Fullscreen</a>
+            </div>
+          </div>
+          <!-- Data table — Country/State/Coordinates/Elevation/Currency/Languages/Code -->
+          <table class="city-data-table" aria-label="City facts">
+            <tbody>
+              <tr><th>Country:</th><td><a href="${countryLink}">United States</a></td></tr>
+              <tr><th>State:</th><td><a href="${stateLink}">${stateName} (${c.stateCode})</a></td></tr>
+              <tr><th>Lat/Long:</th><td>${formatDMS(c.latitude, 'lat')} / ${formatDMS(c.longitude, 'lon')}</td></tr>
+              <tr><th>Elevation:</th><td>${c.elevation != null ? c.elevation + ' m' : '—'}</td></tr>
+              <tr><th>Currency:</th><td>United States Dollar (USD)</td></tr>
+              <tr><th>Languages:</th><td>English</td></tr>
+              <tr><th>Country Code:</th><td>+1</td></tr>
+            </tbody>
+          </table>
+          <div class="city-hero-meta">
+            <span class="meta-item"><strong>IANA:</strong> ${c.timezone}</span>
+            <span class="meta-item" id="utcOffset">UTC --</span>
+            <span class="meta-item" id="dstStatus">—</span>
+            <span class="meta-item" id="tzAbbr">—</span>
+            <a class="meta-item meta-item--link" href="/time/zones/${getTzAbbr(c.timezone).toLowerCase()}/" id="tzPageLink" style="display: none;">About <span id="tzAbbrText">${getTzAbbr(c.timezone)}</span> →</a>
+          </div>
+        </div>
+
+        <!-- RIGHT: state landmark carousel (5 images, auto-advance) -->
+        <div class="city-carousel" id="cityCarousel" data-state="${c.stateSlug}">
+          <div class="city-carousel-images" id="carouselImages">
+${carouselHtml}
+          </div>
+          <div class="city-carousel-caption" id="carouselCaption">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
+            <span id="carouselCaptionText">${carouselLabels[0]}</span>
+          </div>
+          <div class="city-carousel-nav">
+            <button class="city-carousel-prev" id="carouselPrev" aria-label="Previous image">‹</button>
+            <button class="city-carousel-next" id="carouselNext" aria-label="Next image">›</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Quick facts -->
-    <section class="city-facts">
+    <!-- Centered city search bar (under hero, for jumping to any US city) -->
+    <section class="city-search-bar">
+      <label class="city-search-label" for="citySearchInput">Search another US city</label>
+      <div class="city-search-wrap">
+        <svg class="city-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="search" id="citySearchInput" class="city-search-input" placeholder="Type a city name (e.g. Boston, Portland, San Diego)…" autocomplete="off" />
+        <div class="city-search-results" id="citySearchResults" hidden></div>
+      </div>
+    </section>
+
+    <!-- Quick facts (KEEP for now, may merge with data table later) -->
+    <section class="city-facts" hidden>
       <div class="fact">
         <div class="fact-label">Population</div>
         <div class="fact-value">${formatPop(c.population)}</div>
@@ -648,6 +794,218 @@ ${moreToExplore.map(x => `        <a href="/world-time/united-states/${x.slug}/"
     }
     update();
     setInterval(update, 1000);
+
+    // ====================================================================
+    // ANALOG CLOCK FACE — draws tick marks + updates hour/minute/second
+    // hands via requestAnimationFrame for ms-precise motion.
+    // ====================================================================
+    (function() {
+      var face = document.getElementById('cityClockFace');
+      if (!face) return;
+      var ticksG = document.getElementById('clockTicks');
+      var hourHand = document.getElementById('clockHour');
+      var minHand = document.getElementById('clockMinute');
+      var secHand = document.getElementById('clockSecond');
+      // Draw 12 hour ticks + 60 minute ticks
+      if (ticksG) {
+        var html = '';
+        for (var i = 0; i < 60; i++) {
+          var angle = i * 6 - 90; // -90 to start at 12 o'clock
+          var rad = angle * Math.PI / 180;
+          var isHour = i % 5 === 0;
+          var inner = isHour ? 78 : 84;
+          var outer = 90;
+          var x1 = 100 + Math.cos(rad) * inner;
+          var y1 = 100 + Math.sin(rad) * inner;
+          var x2 = 100 + Math.cos(rad) * outer;
+          var y2 = 100 + Math.sin(rad) * outer;
+          var w = isHour ? 2.5 : 1;
+          html += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="var(--color-foreground, #1f1a3a)" stroke-width="' + w + '" stroke-linecap="round" />';
+        }
+        // Hour numbers (optional, subtle)
+        var numHtml = '';
+        var nums = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        for (var j = 0; j < 12; j++) {
+          var nAngle = j * 30 - 90;
+          var nRad = nAngle * Math.PI / 180;
+          var nx = 100 + Math.cos(nRad) * 70;
+          var ny = 100 + Math.sin(nRad) * 70 + 4; // +4 for vertical centering
+          numHtml += '<text x="' + nx.toFixed(1) + '" y="' + ny.toFixed(1) + '" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="var(--color-foreground, #1f1a3a)">' + nums[j] + '</text>';
+        }
+        ticksG.innerHTML = html + numHtml;
+      }
+      function tickClock() {
+        var now = new Date();
+        // Get hour, minute, second in the city's timezone
+        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false });
+        var parts = fmt.formatToParts(now);
+        var h = 0, m = 0, s = 0, ms = now.getMilliseconds();
+        for (var p of parts) {
+          if (p.type === 'hour') h = parseInt(p.value, 10) % 12;
+          else if (p.type === 'minute') m = parseInt(p.value, 10);
+          else if (p.type === 'second') s = parseInt(p.value, 10);
+        }
+        // Hour hand: 30 deg per hour + 0.5 deg per minute
+        var hourAngle = (h * 30) + (m * 0.5);
+        var minAngle = (m * 6) + (s * 0.1);
+        var secAngle = (s * 6) + (ms * 0.006);
+        if (hourHand) hourHand.setAttribute('transform', 'rotate(' + hourAngle.toFixed(2) + ' 100 100)');
+        if (minHand) minHand.setAttribute('transform', 'rotate(' + minAngle.toFixed(2) + ' 100 100)');
+        if (secHand) secHand.setAttribute('transform', 'rotate(' + secAngle.toFixed(2) + ' 100 100)');
+        requestAnimationFrame(tickClock);
+      }
+      requestAnimationFrame(tickClock);
+    })();
+
+    // ====================================================================
+    // STATE LANDMARK CAROUSEL — auto-advance every 6s, pause on hover,
+    // prev/next buttons, sync caption with active image. Images are
+    // pre-rendered into the DOM; we just toggle .active on them.
+    // ====================================================================
+    (function() {
+      var carousel = document.getElementById('cityCarousel');
+      if (!carousel) return;
+      var imgs = carousel.querySelectorAll('.city-carousel-img');
+      var captionEl = document.getElementById('carouselCaptionText');
+      var prevBtn = document.getElementById('carouselPrev');
+      var nextBtn = document.getElementById('carouselNext');
+      if (imgs.length < 2) return;
+      var current = 0;
+      var autoplay = null;
+
+      function show(idx) {
+        imgs.forEach(function(img, i) {
+          if (i === idx) img.classList.add('active');
+          else img.classList.remove('active');
+        });
+        if (captionEl) captionEl.textContent = imgs[idx].getAttribute('data-label') || '';
+        current = idx;
+      }
+      function next() { show((current + 1) % imgs.length); }
+      function prev() { show((current - 1 + imgs.length) % imgs.length); }
+
+      // Shuffle initial order (deterministic by city.id so it's stable
+      // across page loads for a given city)
+      try {
+        var order = [0, 1, 2, 3, 4];
+        var seed = parseInt(hero.getAttribute('data-lat').replace('.', '').slice(0, 6), 10) || 0;
+        for (var k = order.length - 1; k > 0; k--) {
+          seed = (seed * 9301 + 49297) % 233280;
+          var j = seed % (k + 1);
+          var tmp = order[k]; order[k] = order[j]; order[j] = tmp;
+        }
+        // Re-order DOM
+        var parent = document.getElementById('carouselImages');
+        for (var n = 0; n < order.length; n++) {
+          parent.appendChild(imgs[order[n]]);
+        }
+        // Re-collect imgs in new order
+        imgs = parent.querySelectorAll('.city-carousel-img');
+        show(0);
+      } catch (e) { /* keep original order on error */ }
+
+      // Autoplay
+      function startAutoplay() {
+        stopAutoplay();
+        autoplay = setInterval(next, 6000);
+      }
+      function stopAutoplay() {
+        if (autoplay) { clearInterval(autoplay); autoplay = null; }
+      }
+      startAutoplay();
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', startAutoplay);
+      // Touch support: tap toggles
+      carousel.addEventListener('touchstart', stopAutoplay, { passive: true });
+      carousel.addEventListener('touchend', function() { setTimeout(startAutoplay, 3000); });
+
+      if (prevBtn) prevBtn.addEventListener('click', function() { prev(); startAutoplay(); });
+      if (nextBtn) nextBtn.addEventListener('click', function() { next(); startAutoplay(); });
+    })();
+
+    // ====================================================================
+    // CITY SEARCH BAR — fetches /data/us-cities-search.json on focus
+    // (once), then filters in-memory as the user types. Top 5 matches
+    // shown as a dropdown; click navigates to the city page.
+    // ====================================================================
+    (function() {
+      var input = document.getElementById('citySearchInput');
+      var results = document.getElementById('citySearchResults');
+      if (!input || !results) return;
+      var cities = null;
+      var citiesLoading = null;
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function(c) {
+          return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+        });
+      }
+      function loadCities() {
+        if (cities) return Promise.resolve(cities);
+        if (citiesLoading) return citiesLoading;
+        citiesLoading = fetch('/data/us-cities-search.json')
+          .then(function(r) { return r.json(); })
+          .then(function(d) { cities = d; return d; })
+          .catch(function() { cities = []; return []; });
+        return citiesLoading;
+      }
+      function search(q) {
+        if (!q || q.length < 2) return [];
+        var qLower = q.toLowerCase();
+        var matches = [];
+        // Exact prefix match first, then substring match
+        for (var i = 0; i < cities.length && matches.length < 8; i++) {
+          var c = cities[i];
+          var n = (c.n || '').toLowerCase();
+          if (n.indexOf(qLower) === 0) {
+            matches.push(c);
+          }
+        }
+        if (matches.length < 5) {
+          for (var j = 0; j < cities.length && matches.length < 8; j++) {
+            var n2 = (cities[j].n || '').toLowerCase();
+            if (n2.indexOf(qLower) > 0 && n2.indexOf(qLower) !== -1) {
+              matches.push(cities[j]);
+            }
+          }
+        }
+        return matches.slice(0, 5);
+      }
+      function render(matches) {
+        if (!matches.length) {
+          results.innerHTML = '<div class="city-search-empty">No matches. Try another city.</div>';
+          results.hidden = false;
+          return;
+        }
+        results.innerHTML = matches.map(function(m) {
+          return '<a class="city-search-result" href="/world-time/united-states/' + m.s + '/">'
+            + '<span class="city-search-result-name">' + escapeHtml(m.n) + '</span>'
+            + '<span class="city-search-result-meta">' + escapeHtml(m.sc || '') + ' · ' + escapeHtml(m.p || '') + '</span>'
+            + '</a>';
+        }).join('');
+        results.hidden = false;
+      }
+      input.addEventListener('focus', loadCities);
+      input.addEventListener('input', function() {
+        var q = input.value.trim();
+        if (q.length < 2) { results.hidden = true; return; }
+        loadCities().then(function() { render(search(q)); });
+      });
+      // Close on outside click
+      document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !results.contains(e.target)) {
+          results.hidden = true;
+        }
+      });
+      // Keyboard nav: Esc to close, Enter to go to first match
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { results.hidden = true; input.blur(); }
+        if (e.key === 'Enter') {
+          var first = results.querySelector('.city-search-result');
+          if (first) { window.location.href = first.getAttribute('href'); }
+        }
+      });
+    })();
 
     // Sunrise / sunset (NOAA solar calculator, simplified)
     function calcSun(lat, lon, when) {
