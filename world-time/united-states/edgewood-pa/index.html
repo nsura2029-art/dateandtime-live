@@ -160,7 +160,7 @@
       <div class="container today-bar-inner">
         <span class="today-bar-time" id="todayBarTime" data-tz="America/New_York">--:--</span>
         <span class="today-bar-city">in Edgewood, Pennsylvania</span>
-        <a href="/world-time/meeting/?cities=115862" class="today-bar-link">Schedule a meeting →</a>
+        <a href="/world-time/meeting/?cities=4354087" class="today-bar-link">Schedule a meeting →</a>
       </div>
     </div>
 
@@ -317,7 +317,7 @@
     <div id="pane-dst-nearby" data-pane="dst" hidden></div>
 
     <!-- More to explore — keeps existing static list, also exposed in Time/General tab -->
-    <section class="city-section">
+    <section class="city-section" data-pane="time-general">
       <h2>🏙 More to explore</h2>
       <div class="explore-grid">
         <a href="/world-time/united-states/new-york/" class="explore-link">
@@ -459,7 +459,7 @@
             <div class="continue-strip-sub">Federal + state holidays, long weekends</div>
           </div>
         </a>
-        <a class="continue-strip-card" href="/world-time/meeting/?cities=115862">
+        <a class="continue-strip-card" href="/world-time/meeting/?cities=4354087">
           <span class="continue-strip-icon">📅</span>
           <div>
             <div class="continue-strip-title">Meeting planner</div>
@@ -589,6 +589,21 @@
           var abbrTextEl = document.getElementById('tzAbbrText');
           if (abbrTextEl) abbrTextEl.textContent = currentAbbr;
         }
+
+        // Update sidebar TZ widget with live abbr + offset
+        var sidebarAbbr = document.getElementById('sidebarTzAbbr');
+        var sidebarOffset = document.getElementById('sidebarTzOffset');
+        if (sidebarAbbr) sidebarAbbr.textContent = liveAbbr || sidebarAbbr.textContent;
+        if (sidebarOffset) {
+          // Compute current UTC offset from Intl
+          var liveOffsetFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' });
+          var liveOffsetParts = liveOffsetFmt.formatToParts(now);
+          for (var lop of liveOffsetParts) {
+            if (lop.type === 'timeZoneName') {
+              sidebarOffset.textContent = 'UTC ' + lop.value.replace('GMT', '');
+            }
+          }
+        }
       } catch (e) { /* ignore */ }
     }
     update();
@@ -693,7 +708,7 @@
   <script>
   // City page v2: Tabs + URL hash + lazy load
   (function() {
-    var cityId = 115862;
+    var cityId = 4354087;
     var iana = "America/New_York";
     var tabs = document.querySelectorAll('.city-tab');
     var panes = document.querySelectorAll('[data-pane]');
@@ -721,12 +736,14 @@
       if (history.replaceState) {
         history.replaceState(null, '', '#' + tabId);
       }
-      // Smooth scroll to tabs nav
+      // Smooth scroll to tabs nav (account for sticky nav height)
       var nav = document.getElementById('cityTabs');
       if (nav) {
         var rect = nav.getBoundingClientRect();
         if (rect.top < 60 || rect.top > 200) {
-          nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Scroll so tabs nav is just below the today bar
+          var navTop = rect.top + window.scrollY - 50;
+          window.scrollTo({ top: navTop, behavior: 'smooth' });
         }
       }
     }

@@ -736,12 +736,14 @@
       if (history.replaceState) {
         history.replaceState(null, '', '#' + tabId);
       }
-      // Smooth scroll to tabs nav
+      // Smooth scroll to tabs nav (account for sticky nav height)
       var nav = document.getElementById('cityTabs');
       if (nav) {
         var rect = nav.getBoundingClientRect();
         if (rect.top < 60 || rect.top > 200) {
-          nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Scroll so tabs nav is just below the today bar
+          var navTop = rect.top + window.scrollY - 50;
+          window.scrollTo({ top: navTop, behavior: 'smooth' });
         }
       }
     }
