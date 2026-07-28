@@ -170,7 +170,7 @@ function buildPage(c) {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css" />
+<link rel="stylesheet" href="/src/site-shell.css?v=2" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"${c.name}","address":{"@type":"PostalAddress","addressRegion":"${c.stateCode}","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":${c.latitude},"longitude":${c.longitude}},"timeZone":"${c.timezone}","url":"${canonicalUrl}","population":{"@type":"QuantitativeValue","value":${c.population}}}</script>
 </head>
 <body class="shell-page">
