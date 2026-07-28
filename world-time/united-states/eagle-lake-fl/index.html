@@ -237,10 +237,10 @@
 
     <!-- Centered city search bar (under hero, for jumping to any US city) -->
     <section class="city-search-bar">
-      <label class="city-search-label" for="citySearchInput">Search another US city</label>
+      <label class="city-search-label" for="citySearchInput">Search 33,945 cities worldwide</label>
       <div class="city-search-wrap">
         <svg class="city-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input type="search" id="citySearchInput" class="city-search-input" placeholder="Type a city name (e.g. Boston, Portland, San Diego)…" autocomplete="off" />
+        <input type="search" id="citySearchInput" class="city-search-input" placeholder="Type a city name (e.g. Madrid, Tokyo, Rio de Janeiro)…" autocomplete="off" />
         <div class="city-search-results" id="citySearchResults" hidden></div>
       </div>
     </section>
@@ -787,15 +787,17 @@
     })();
 
     // ====================================================================
-    // CITY SEARCH BAR — fetches /data/us-cities-search.json on focus
-    // (once), then filters in-memory as the user types. Top 5 matches
-    // shown as a dropdown; click navigates to the city page.
+    // CITY SEARCH BAR — fetches /data/global-cities-search.json + cc2-country-slug.json
+    // on focus (once), then filters in-memory as the user types. Top 5 matches
+    // shown as a dropdown; click navigates to the city page (US → /world-time/united-states/,
+    // other → /world-time/{country-slug}/ which becomes the coming-soon page).
     // ====================================================================
     (function() {
       var input = document.getElementById('citySearchInput');
       var results = document.getElementById('citySearchResults');
       if (!input || !results) return;
       var cities = null;
+      var countrySlug = null;
       var citiesLoading = null;
 
       function escapeHtml(s) {
@@ -803,13 +805,23 @@
           return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
         });
       }
+      function buildHref(m) {
+        if (m.c === 'US') return '/world-time/united-states/' + m.s + '/';
+        var cslug = countrySlug && countrySlug[m.c];
+        if (cslug) return '/world-time/' + cslug + '/' + m.s + '/';
+        return '/world-time/';
+      }
       function loadCities() {
         if (cities) return Promise.resolve(cities);
         if (citiesLoading) return citiesLoading;
-        citiesLoading = fetch('/data/us-cities-search.json')
-          .then(function(r) { return r.json(); })
-          .then(function(d) { cities = d; return d; })
-          .catch(function() { cities = []; return []; });
+        citiesLoading = Promise.all([
+          fetch('/data/global-cities-search.json').then(function(r) { return r.json(); }).catch(function() { return []; }),
+          fetch('/data/cc2-country-slug.json').then(function(r) { return r.json(); }).catch(function() { return {}; })
+        ]).then(function(arr) {
+          cities = arr[0] || [];
+          countrySlug = arr[1] || {};
+          return cities;
+        });
         return citiesLoading;
       }
       function search(q) {
@@ -841,9 +853,10 @@
           return;
         }
         results.innerHTML = matches.map(function(m) {
-          return '<a class="city-search-result" href="/world-time/united-states/' + m.s + '/">'
+          var meta = (m.cn || '') + (m.sc ? ' · ' + m.sc : '') + (m.p ? ' · ' + m.p : '');
+          return '<a class="city-search-result" href="' + buildHref(m) + '">'
             + '<span class="city-search-result-name">' + escapeHtml(m.n) + '</span>'
-            + '<span class="city-search-result-meta">' + escapeHtml(m.sc || '') + ' · ' + escapeHtml(m.p || '') + '</span>'
+            + '<span class="city-search-result-meta">' + escapeHtml(meta) + '</span>'
             + '</a>';
         }).join('');
         results.hidden = false;
