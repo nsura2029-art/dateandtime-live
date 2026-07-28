@@ -846,59 +846,23 @@ body.has-mobile-nav-open {
 }
 
 /* =====================================================
-   TODAY BAR — persistent strip under the site header.
-   Shows today's date, day-of-year, week, and user's local
-   time. Auto-updates every second.
+   TODAY BAR — DISABLED 2026-07-28
+   Was overlapping the site header (both had position: sticky;
+   top: 0; z-index: 50), blocking menu items in the nav.
+   Removed; breadcrumb is now sticky under header instead.
+
+   The CSS below is kept for reference / quick re-enable if
+   we decide to bring it back with proper z-index handling.
+   Uncomment to restore.
+
+   JS: src/site-shell.js injectTodayBar() is also disabled.
    ===================================================== */
-#today-bar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--color-background-soft);
-  border-bottom: 1px solid var(--color-border);
-  font-size: 0.8125rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.today-bar-inner {
-  max-width: var(--container, 1240px);
-  margin: 0 auto;
-  padding: 0.5rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.today-bar-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  color: var(--color-foreground);
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  transition: background 150ms;
-}
-.today-bar-link:hover { background: var(--color-period-bg); text-decoration: none; }
-.today-bar-icon { font-size: 1rem; }
-.today-bar-text { display: flex; flex-direction: column; line-height: 1.2; }
-.today-bar-label { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); font-weight: 600; }
-.today-bar-value { font-size: 0.8125rem; color: var(--color-foreground); font-weight: 600; }
-.today-bar-stat { display: flex; flex-direction: column; line-height: 1.2; }
-.today-bar-time { color: var(--color-primary); }
-.today-bar-time .today-bar-value {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-.today-bar-sep { color: var(--color-muted); opacity: 0.4; }
-.today-bar-right { margin-left: auto; }
-[data-theme="dark"] #today-bar { background: rgba(15, 10, 31, 0.92); border-bottom-color: rgba(120, 102, 212, 0.28); }
-@media (max-width: 720px) {
-  .today-bar-sep, .today-bar-right { display: none; }
-  .today-bar-inner { gap: 0.75rem; padding: 0.4rem 1rem; }
-}
+/* Disabled — see comment above.
+#today-bar { ... }
+.today-bar-inner { ... }
+.today-bar-link { ... }
+... etc
+*/
 
 /* =====================================================
    CONTINUE YOUR JOURNEY — 6 cross-page link cards at the
