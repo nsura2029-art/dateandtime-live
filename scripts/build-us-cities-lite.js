@@ -71,8 +71,16 @@ for (const c of buildList) {
     slugOwner[c.slug] = c;
   }
 }
+// Mark each city with its index in the source list (used to detect
+// duplicates that share the same id but have different stateCode/lat/lon).
+for (let i = 0; i < buildList.length; i++) {
+  buildList[i].sourceIndex = i;
+}
 for (const c of buildList) {
-  if (slugOwner[c.slug].id !== c.id) {
+  // Disambiguate by sourceIndex: if this isn't the most-popular Phoenix/etc.,
+  // the slugOwner.id will equal c.id (because the build data is deduped by id),
+  // so we need a stable identity. sourceIndex is always unique.
+  if (slugOwner[c.slug].sourceIndex !== c.sourceIndex) {
     // Disambiguate: append state code
     c.canonicalSlug = c.slug;
     c.slug = c.slug + '-' + (c.stateCode || '').toLowerCase();
