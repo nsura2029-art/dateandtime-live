@@ -511,8 +511,9 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
     .cs-hero-clock-tz .pill { display: inline-block; background: var(--color-primary-soft); color: var(--color-primary); padding: 0.125rem 0.5rem; border-radius: 6px; margin-left: 0.5rem; font-weight: 600; }
     .cs-flag { width: 56px; height: 38px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); object-fit: cover; }
     .cs-section { margin: 3rem 0; }
-    .cs-section h2 { font-size: 1.375rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.01em; }
-    .cs-section-desc { color: var(--color-foreground-soft); margin: -0.5rem 0 1.25rem; font-size: 0.9375rem; }
+    .cs-section h2 { font-size: 1.375rem; font-weight: 700; margin: 0 auto 1rem; letter-spacing: -0.01em; text-align: center; max-width: 56rem; }
+    .cs-section-desc { color: var(--color-foreground-soft); margin: -0.5rem auto 1.25rem; font-size: 0.9375rem; text-align: center; max-width: 42rem; }
+    .cs-section > p { text-align: center; max-width: 42rem; margin-left: auto; margin-right: auto; }
     .cs-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.875rem; }
     .cs-link-card { display: block; padding: 1rem 1.125rem; border: 1px solid var(--color-border-soft); border-radius: 10px; text-decoration: none; color: var(--color-foreground); transition: all 200ms; background: var(--color-card-bg); }
     .cs-link-card:hover { border-color: var(--color-primary); transform: translateY(-1px); text-decoration: none; box-shadow: 0 4px 12px rgba(120,102,212,0.08); }

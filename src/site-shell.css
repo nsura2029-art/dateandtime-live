@@ -1199,9 +1199,12 @@ body.has-mobile-nav-open {
   font-size: clamp(1.25rem, 2vw, 1.5rem);
   font-weight: 800;
   letter-spacing: -0.015em;
-  margin: 0 0 1rem;
+  margin: 0 auto 1rem;
   color: var(--color-foreground, #1f1a3a);
+  text-align: center;
+  max-width: 56rem;
 }
+.city-section > p { text-align: center; max-width: 42rem; margin-left: auto; margin-right: auto; }
 
 /* Sun cards (lite) */
 .sun-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }

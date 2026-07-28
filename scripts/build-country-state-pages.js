@@ -257,8 +257,8 @@ function buildPage({ cca2, countryName, countrySlug, stateCode, stateSlug, state
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/world-time.css" />
-  <link rel="stylesheet" href="/src/site-shell.css" />
-  <link rel="stylesheet" href="/src/tz-hub.css" />
+  <link rel="stylesheet" href="/src/site-shell.css?v=3" />
+  <link rel="stylesheet" href="/src/tz-hub.css?v=23" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
