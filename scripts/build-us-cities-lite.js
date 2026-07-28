@@ -194,11 +194,8 @@ function buildPage(c) {
   const climate = estimateClimate(c.latitude);
   const climateStr = JSON.stringify(climate);
 
-  // Capital-style today bar data (caller-side compute)
-  // The today bar shows the local time + city; for the lite template we
-  // pre-compute placeholder text that JS will replace with the live time.
+  // Today bar removed 2026-07-28 — no need to pre-compute today bar data.
   const tzEncoded = encodeURIComponent(c.timezone);
-  const todayBarTimeId = 'todayBarTime';
 
   // Top 6 closest big cities (pop >= 50K) from the pre-computed pool
   const nearby = bigCitiesPool
@@ -237,7 +234,7 @@ function buildPage(c) {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css?v=4" />
+<link rel="stylesheet" href="/src/site-shell.css?v=5" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"${c.name}","address":{"@type":"PostalAddress","addressRegion":"${c.stateCode}","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":${c.latitude},"longitude":${c.longitude}},"timeZone":"${c.timezone}","url":"${canonicalUrl}","population":{"@type":"QuantitativeValue","value":${c.population}}}</script>
 </head>
 <body class="shell-page">
@@ -255,14 +252,9 @@ function buildPage(c) {
       </ol>
     </nav>
 
-    <!-- Today bar (sticky under site header) -->
-    <div class="today-bar">
-      <div class="container today-bar-inner">
-        <span class="today-bar-time" id="${todayBarTimeId}" data-tz="${c.timezone}">--:--</span>
-        <span class="today-bar-city">in ${c.name}, ${stateName}</span>
-        <a href="/world-time/meeting/?cities=${c.id}" class="today-bar-link">Schedule a meeting →</a>
-      </div>
-    </div>
+    <!-- Today bar removed 2026-07-28 — was overlapping site header; user wants
+         only the breadcrumb as persistent nav. Schedule a meeting is now in
+         the hero CTA / city page Tools tab. -->
 
     <!-- Hero: Live clock -->
     <section class="city-hero" data-tz="${c.timezone}" data-lat="${c.latitude}" data-lon="${c.longitude}">
@@ -557,19 +549,8 @@ ${moreToExplore.map(x => `        <a href="/world-time/united-states/${x.slug}/"
   <script>
   // Live clock for the city — uses Intl.DateTimeFormat with the city's IANA tz
   (function() {
-    // Today bar time
-    var tbTime = document.getElementById('${todayBarTimeId}');
-    if (tbTime) {
-      function updateTodayBar() {
-        try {
-          var tz = tbTime.getAttribute('data-tz');
-          var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
-          tbTime.textContent = fmt.format(new Date());
-        } catch (e) {}
-      }
-      updateTodayBar();
-      setInterval(updateTodayBar, 1000);
-    }
+    // Today bar removed 2026-07-28 — no DOM element to update. The live
+    // clock in the hero (below) is the source of truth for time display.
 
     var hero = document.querySelector('.city-hero');
     var clock = document.getElementById('cityClock');

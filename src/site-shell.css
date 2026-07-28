@@ -1121,8 +1121,18 @@ body.has-mobile-nav-open {
    for the 15,994 US city pages. Self-contained, no inline <style>.
    ============================================================ */
 
-/* Breadcrumb */
-.breadcrumb { font-size: 0.8125rem; color: var(--color-muted, #6b6580); margin: 1rem 0 0.5rem; }
+/* Breadcrumb — sticky under site header (replaces today bar 2026-07-28) */
+.breadcrumb {
+  position: sticky;
+  top: 56px; /* site header is 56px tall */
+  z-index: 50;
+  background: var(--color-bg, #ffffff);
+  font-size: 0.8125rem;
+  color: var(--color-muted, #6b6580);
+  margin: 0;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--color-border, #e5e2f0);
+}
 .breadcrumb ol { display: flex; flex-wrap: wrap; gap: 0.25rem; list-style: none; padding: 0; margin: 0; }
 .breadcrumb li { display: inline; }
 .breadcrumb li + li::before { content: '›'; margin: 0 0.4rem; opacity: 0.5; }

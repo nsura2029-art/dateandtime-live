@@ -492,8 +492,8 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="canonical" href="https://dateandtime.live/world-time/${countrySlug}/${citySlug}/">
-  <link rel="stylesheet" href="/src/site-shell.css" />
-  <link rel="stylesheet" href="/src/tz-hub.css" />
+  <link rel="stylesheet" href="/src/site-shell.css?v=5" />
+  <link rel="stylesheet" href="/src/tz-hub.css?v=23" />
   <style>
     .coming-soon { max-width: 1240px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
     .cs-hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1.75rem 1.75rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 16px; margin-bottom: 2.5rem; }
@@ -666,13 +666,8 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
     </nav>
   </aside>
 
-  <div class="today-bar">
-    <div class="container today-bar-inner">
-      <span class="today-bar-time" id="todayBarTime">--:--</span>
-      <span class="today-bar-label">${cityData ? 'Local time' : 'Local time (placeholder)'}</span>
-      <a class="today-bar-cta" href="/world-time/meeting/?q=${encodeURIComponent(cityName)}">Plan a meeting →</a>
-    </div>
-  </div>
+  <!-- Today bar removed 2026-07-28 — was overlapping site header; breadcrumb
+       is now sticky instead. -->
 
   <main class="container">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -937,19 +932,8 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
   </footer>
   <script src="/src/site-shell.js" defer></script>
   <script>
-    (function() {
-      var tbTime = document.getElementById('todayBarTime');
-      if (!tbTime) return;
-      function tick() {
-        try {
-          var now = new Date();
-          var fmt = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-          tbTime.textContent = fmt.format(now);
-        } catch (e) {}
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
+    // Today bar removed 2026-07-28 — no element to update. The live clock
+    // in the hero (where applicable) shows current time.
   </script>
 </body>
 </html>`;
