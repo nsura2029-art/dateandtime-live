@@ -241,6 +241,7 @@
     // menu items. The breadcrumb is now sticky under the header instead,
     // and each page's hero shows its own live clock + local time.
     injectContinueStrip();
+    injectCitySearchBar();
   }
 
   // ====================================================================
@@ -310,6 +311,113 @@
       </div>
     `;
     main.appendChild(strip);
+  }
+
+  // ====================================================================
+  // CITY SEARCH BAR — centered, under the breadcrumb, on every page
+  // that doesn't already have one. Fetches the slim US-cities index on
+  // first focus, then filters in-memory. Skips pages with a hub-level
+  // search (world-time hub, home page) by checking for [data-skip-search]
+  // OR a pre-existing #citySearchInput / .hub-search input.
+  // ====================================================================
+  function injectCitySearchBar() {
+    if (document.querySelector('[data-skip-search]')) return;
+    if (document.getElementById('citySearchInput')) return;
+    if (document.querySelector('.hub-search input, .home-search input, .search-input')) return;
+    if (!document.querySelector('main')) return;
+    // Only inject on pages that look like content pages (have a main
+    // element with substantial content). Skips admin pages etc.
+    var main = document.querySelector('main');
+    if (main.children.length === 0) return;
+
+    var section = document.createElement('section');
+    section.className = 'city-search-bar';
+    section.innerHTML = `
+      <label class="city-search-label" for="citySearchInput">Search another US city</label>
+      <div class="city-search-wrap">
+        <svg class="city-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="search" id="citySearchInput" class="city-search-input" placeholder="Type a city name (e.g. Boston, Portland, San Diego)…" autocomplete="off" />
+        <div class="city-search-results" id="citySearchResults" hidden></div>
+      </div>
+    `;
+    // Insert right after the breadcrumb (which is the first thing in main)
+    // or at the start of main if no breadcrumb
+    var breadcrumb = main.querySelector('.breadcrumb, nav[aria-label="Breadcrumb"]');
+    if (breadcrumb && breadcrumb.parentNode) {
+      breadcrumb.parentNode.insertBefore(section, breadcrumb.nextSibling);
+    } else {
+      main.insertBefore(section, main.firstChild);
+    }
+
+    // Init search behavior on the new input
+    var input = section.querySelector('#citySearchInput');
+    var results = section.querySelector('#citySearchResults');
+    var cities = null;
+    var citiesLoading = null;
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function(c) {
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+      });
+    }
+    function loadCities() {
+      if (cities) return Promise.resolve(cities);
+      if (citiesLoading) return citiesLoading;
+      citiesLoading = fetch('/data/us-cities-search.json')
+        .then(function(r) { return r.json(); })
+        .then(function(d) { cities = d; return d; })
+        .catch(function() { cities = []; return []; });
+      return citiesLoading;
+    }
+    function search(q) {
+      if (!q || q.length < 2) return [];
+      var qLower = q.toLowerCase();
+      var matches = [];
+      for (var i = 0; i < cities.length && matches.length < 5; i++) {
+        var c = cities[i];
+        var n = (c.n || '').toLowerCase();
+        if (n.indexOf(qLower) === 0) matches.push(c);
+      }
+      if (matches.length < 5) {
+        for (var j = 0; j < cities.length && matches.length < 5; j++) {
+          var n2 = (cities[j].n || '').toLowerCase();
+          if (n2.indexOf(qLower) > 0 && matches.indexOf(cities[j]) === -1) {
+            matches.push(cities[j]);
+          }
+        }
+      }
+      return matches;
+    }
+    function render(matches) {
+      if (!matches.length) {
+        results.innerHTML = '<div class="city-search-empty">No matches. Try another city.</div>';
+        results.hidden = false;
+        return;
+      }
+      results.innerHTML = matches.map(function(m) {
+        return '<a class="city-search-result" href="/world-time/united-states/' + m.s + '/">'
+          + '<span class="city-search-result-name">' + escapeHtml(m.n) + '</span>'
+          + '<span class="city-search-result-meta">' + escapeHtml(m.sc || '') + ' · ' + escapeHtml(m.p || '') + '</span>'
+          + '</a>';
+      }).join('');
+      results.hidden = false;
+    }
+    input.addEventListener('focus', loadCities);
+    input.addEventListener('input', function() {
+      var q = input.value.trim();
+      if (q.length < 2) { results.hidden = true; return; }
+      loadCities().then(function() { render(search(q)); });
+    });
+    document.addEventListener('click', function(e) {
+      if (!input.contains(e.target) && !results.contains(e.target)) results.hidden = true;
+    });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { results.hidden = true; input.blur(); }
+      if (e.key === 'Enter') {
+        var first = results.querySelector('.city-search-result');
+        if (first) window.location.href = first.getAttribute('href');
+      }
+    });
   }
 
   if (document.readyState === "loading") {
