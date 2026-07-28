@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css?v=4" />
+<link rel="stylesheet" href="/src/site-shell.css?v=5" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"Clarksdale","address":{"@type":"PostalAddress","addressRegion":"MS","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":34.20011,"longitude":-90.57093},"timeZone":"America/Chicago","url":"https://dateandtime.live/world-time/united-states/clarksdale/","population":{"@type":"QuantitativeValue","value":14903}}</script>
 </head>
 <body class="shell-page">
@@ -155,14 +155,9 @@
       </ol>
     </nav>
 
-    <!-- Today bar (sticky under site header) -->
-    <div class="today-bar">
-      <div class="container today-bar-inner">
-        <span class="today-bar-time" id="todayBarTime" data-tz="America/Chicago">--:--</span>
-        <span class="today-bar-city">in Clarksdale, Mississippi</span>
-        <a href="/world-time/meeting/?cities=4421935" class="today-bar-link">Schedule a meeting →</a>
-      </div>
-    </div>
+    <!-- Today bar removed 2026-07-28 — was overlapping site header; user wants
+         only the breadcrumb as persistent nav. Schedule a meeting is now in
+         the hero CTA / city page Tools tab. -->
 
     <!-- Hero: Live clock -->
     <section class="city-hero" data-tz="America/Chicago" data-lat="34.20011" data-lon="-90.57093">
@@ -498,19 +493,8 @@
   <script>
   // Live clock for the city — uses Intl.DateTimeFormat with the city's IANA tz
   (function() {
-    // Today bar time
-    var tbTime = document.getElementById('todayBarTime');
-    if (tbTime) {
-      function updateTodayBar() {
-        try {
-          var tz = tbTime.getAttribute('data-tz');
-          var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
-          tbTime.textContent = fmt.format(new Date());
-        } catch (e) {}
-      }
-      updateTodayBar();
-      setInterval(updateTodayBar, 1000);
-    }
+    // Today bar removed 2026-07-28 — no DOM element to update. The live
+    // clock in the hero (below) is the source of truth for time display.
 
     var hero = document.querySelector('.city-hero');
     var clock = document.getElementById('cityClock');
@@ -777,9 +761,12 @@
       var target = document.getElementById('newsContent');
       if (!target) return;
       fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/cities/' + cityId + '/news?limit=3')
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
         .then(function(json) {
-          if (!json.success) return;
+          if (!json.success) throw new Error('API error');
           var articles = json.data.articles || [];
           if (articles.length === 0) {
             target.innerHTML = '<p style="color: var(--color-muted, #8a869c);">No news articles available yet.</p>';
@@ -797,7 +784,9 @@
           target.innerHTML = html;
         })
         .catch(function() {
-          target.innerHTML = '<p style="color: var(--color-muted, #8a869c);">News unavailable.</p>';
+          // City not in D1 (404) or other error — show graceful fallback
+          // with link to the full news index so users can still browse.
+          target.innerHTML = '<p style="color: var(--color-muted, #8a869c); padding: 1.5rem 0; text-align: center;">Personalized news for Clarksdale is not available yet. <a href="/news/" style="color: var(--color-link, #6d28d9); font-weight: 600;">Browse all news articles →</a></p>';
         });
     }
 
