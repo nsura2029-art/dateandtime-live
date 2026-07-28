@@ -51,6 +51,20 @@ console.log(`Loaded ${buildList.length} US cities to build`);
 // Pre-compute slug collisions: for cities with the same slug, the most-popular
 // one keeps the bare slug, the rest get a state-code suffix.
 // e.g. newport-ri, newport-ky, newport-or (newport, RI keeps "newport")
+
+// Manual slug overrides: for well-known cities that the dataset miscategorizes
+// (e.g. GeoNames calls "New York City" a separate city, but our URL convention
+// uses /new-york/ as the canonical slug to match the legacy 911-city build).
+const SLUG_OVERRIDES = {
+  "new-york-city": "new-york",
+};
+
+for (const c of buildList) {
+  if (SLUG_OVERRIDES[c.slug]) {
+    c.slug = SLUG_OVERRIDES[c.slug];
+  }
+}
+
 const slugOwner = {};  // slug -> city (the canonical one)
 for (const c of buildList) {
   if (!slugOwner[c.slug] || c.population > slugOwner[c.slug].population) {

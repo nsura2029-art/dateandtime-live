@@ -3,6 +3,11 @@
  * URL: /world-time/{country-name-slug}/{city-slug}/
  * Pattern: Home / World Time / {Country Name} / {City}
  *
+ * DEPRECATED 2026-07-28: This script is no longer run. We use the lite template
+ * (`build-us-cities-lite.js`) for all 15,994 US cities, and the Worker
+ * (`generateComingSoonPage()` in src/index.js) serves upgraded coming-soon
+ * pages for the 33,034+ non-US cities. See PRE_LAUNCH_AUDIT_2026-07-28.md.
+ *
  * Inputs: list of cities (id + slug)
  * Fetches: city data, holidays, OTD, climate, people
  * Renders: Template D with all data injected

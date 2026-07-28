@@ -21,6 +21,103 @@
 let citiesCache = { at: 0, data: null };
 const CITIES_TTL_MS = 5 * 60 * 1000;
 
+// Per-country cities cache for coming-soon page enrichment. Key: cca2 (e.g. "CO")
+// Value: { at, cities: [{id, name, asciiName, countryCode, timezone, latitude, longitude, population}] }
+// TTL: 1 day (the city list per country is essentially static).
+const COUNTRY_CITIES_CACHE = {};
+const COUNTRY_CITIES_TTL_MS = 24 * 60 * 60 * 1000;
+
+// Top 10 US cities for "browse our most popular" section. Hardcoded so we
+// don't add API latency to the coming-soon page.
+const TOP_US_CITIES = [
+  { name: "New York City", slug: "new-york", state: "NY" },
+  { name: "Los Angeles",   slug: "los-angeles", state: "CA" },
+  { name: "Chicago",       slug: "chicago", state: "IL" },
+  { name: "Houston",       slug: "houston", state: "TX" },
+  { name: "Phoenix",       slug: "phoenix", state: "AZ" },
+  { name: "Philadelphia",  slug: "philadelphia", state: "PA" },
+  { name: "San Antonio",   slug: "san-antonio", state: "TX" },
+  { name: "San Diego",     slug: "san-diego", state: "CA" },
+  { name: "Dallas",        slug: "dallas", state: "TX" },
+  { name: "Austin",        slug: "austin", state: "TX" }
+];
+
+// US states for the grid. Same as the country page, hardcoded.
+const US_STATES_GRID = [
+  { code: "AL", name: "Alabama", slug: "alabama" },
+  { code: "AK", name: "Alaska", slug: "alaska" },
+  { code: "AZ", name: "Arizona", slug: "arizona" },
+  { code: "AR", name: "Arkansas", slug: "arkansas" },
+  { code: "CA", name: "California", slug: "california" },
+  { code: "CO", name: "Colorado", slug: "colorado" },
+  { code: "CT", name: "Connecticut", slug: "connecticut" },
+  { code: "DE", name: "Delaware", slug: "delaware" },
+  { code: "FL", name: "Florida", slug: "florida" },
+  { code: "GA", name: "Georgia", slug: "georgia" },
+  { code: "HI", name: "Hawaii", slug: "hawaii" },
+  { code: "ID", name: "Idaho", slug: "idaho" },
+  { code: "IL", name: "Illinois", slug: "illinois" },
+  { code: "IN", name: "Indiana", slug: "indiana" },
+  { code: "IA", name: "Iowa", slug: "iowa" },
+  { code: "KS", name: "Kansas", slug: "kansas" },
+  { code: "KY", name: "Kentucky", slug: "kentucky" },
+  { code: "LA", name: "Louisiana", slug: "louisiana" },
+  { code: "ME", name: "Maine", slug: "maine" },
+  { code: "MD", name: "Maryland", slug: "maryland" },
+  { code: "MA", name: "Massachusetts", slug: "massachusetts" },
+  { code: "MI", name: "Michigan", slug: "michigan" },
+  { code: "MN", name: "Minnesota", slug: "minnesota" },
+  { code: "MS", name: "Mississippi", slug: "mississippi" },
+  { code: "MO", name: "Missouri", slug: "missouri" },
+  { code: "MT", name: "Montana", slug: "montana" },
+  { code: "NE", name: "Nebraska", slug: "nebraska" },
+  { code: "NV", name: "Nevada", slug: "nevada" },
+  { code: "NH", name: "New Hampshire", slug: "new-hampshire" },
+  { code: "NJ", name: "New Jersey", slug: "new-jersey" },
+  { code: "NM", name: "New Mexico", slug: "new-mexico" },
+  { code: "NY", name: "New York", slug: "new-york" },
+  { code: "NC", name: "North Carolina", slug: "north-carolina" },
+  { code: "ND", name: "North Dakota", slug: "north-dakota" },
+  { code: "OH", name: "Ohio", slug: "ohio" },
+  { code: "OK", name: "Oklahoma", slug: "oklahoma" },
+  { code: "OR", name: "Oregon", slug: "oregon" },
+  { code: "PA", name: "Pennsylvania", slug: "pennsylvania" },
+  { code: "RI", name: "Rhode Island", slug: "rhode-island" },
+  { code: "SC", name: "South Carolina", slug: "south-carolina" },
+  { code: "SD", name: "South Dakota", slug: "south-dakota" },
+  { code: "TN", name: "Tennessee", slug: "tennessee" },
+  { code: "TX", name: "Texas", slug: "texas" },
+  { code: "UT", name: "Utah", slug: "utah" },
+  { code: "VT", name: "Vermont", slug: "vermont" },
+  { code: "VA", name: "Virginia", slug: "virginia" },
+  { code: "WA", name: "Washington", slug: "washington" },
+  { code: "WV", name: "West Virginia", slug: "west-virginia" },
+  { code: "WI", name: "Wisconsin", slug: "wisconsin" },
+  { code: "WY", name: "Wyoming", slug: "wyoming" },
+  { code: "DC", name: "District of Columbia", slug: "district-of-columbia" }
+];
+
+// Common country cca2 -> IANA timezone map. Used as a fallback when we can't
+// look up the city's exact tz. For coming-soon pages, this gives us a
+// reasonable "live time" for the country even when the API lookup misses.
+const COUNTRY_DEFAULT_TZ = {
+  US: "America/New_York", CA: "America/Toronto", MX: "America/Mexico_City",
+  GB: "Europe/London", IE: "Europe/Dublin", FR: "Europe/Paris", DE: "Europe/Berlin",
+  ES: "Europe/Madrid", IT: "Europe/Rome", NL: "Europe/Amsterdam", BE: "Europe/Brussels",
+  CH: "Europe/Zurich", AT: "Europe/Vienna", PT: "Europe/Lisbon", GR: "Europe/Athens",
+  PL: "Europe/Warsaw", SE: "Europe/Stockholm", NO: "Europe/Oslo", DK: "Europe/Copenhagen",
+  FI: "Europe/Helsinki", RU: "Europe/Moscow", UA: "Europe/Kyiv", TR: "Europe/Istanbul",
+  JP: "Asia/Tokyo", CN: "Asia/Shanghai", KR: "Asia/Seoul", IN: "Asia/Kolkata",
+  PK: "Asia/Karachi", BD: "Asia/Dhaka", ID: "Asia/Jakarta", TH: "Asia/Bangkok",
+  VN: "Asia/Ho_Chi_Minh", PH: "Asia/Manila", MY: "Asia/Kuala_Lumpur", SG: "Asia/Singapore",
+  HK: "Asia/Hong_Kong", TW: "Asia/Taipei", AE: "Asia/Dubai", SA: "Asia/Riyadh",
+  IL: "Asia/Jerusalem", EG: "Africa/Cairo", ZA: "Africa/Johannesburg", NG: "Africa/Lagos",
+  KE: "Africa/Nairobi", MA: "Africa/Casablanca", ET: "Africa/Addis_Ababa", GH: "Africa/Accra",
+  BR: "America/Sao_Paulo", AR: "America/Argentina/Buenos_Aires", CL: "America/Santiago",
+  CO: "America/Bogota", PE: "America/Lima", VE: "America/Caracas", UY: "America/Montevideo",
+  AU: "Australia/Sydney", NZ: "Pacific/Auckland", FJ: "Pacific/Fiji"
+};
+
 // Slug to country mapping for 301 redirects from the legacy /world-time/city/{slug}/
 // path to the canonical /world-time/{country-name-slug}/{slug}/. Generated at build time
 // from scripts/build-city-pages.js (911 entries, compact string).
@@ -62,6 +159,58 @@ async function getCities() {
   const data = j.data || j;
   citiesCache = { at: now, data: Array.isArray(data) ? data : (data.cities || []) };
   return citiesCache.data;
+}
+
+// Fetch all cities for one country (used by the coming-soon page to enrich
+// with live time, flag, lat/lon, etc.). Cached per-cca2 in memory for 1 day.
+async function getCountryCities(cca2, request) {
+  if (!cca2) return null;
+  cca2 = cca2.toUpperCase();
+  const now = Date.now();
+  const hit = COUNTRY_CITIES_CACHE[cca2];
+  if (hit && (now - hit.at) < COUNTRY_CITIES_TTL_MS) return hit.cities;
+  const base = request ? getUpstreamBase(request) : "https://api.dateandtime.live";
+  const url = `${base}/api/v1/cities/all?country=${cca2}`;
+  try {
+    const r = await fetch(url, { headers: { "Accept": "application/json" } });
+    if (!r.ok) return null;
+    const j = await r.json();
+    const cities = (j.data && j.data.cities) || [];
+    COUNTRY_CITIES_CACHE[cca2] = { at: now, cities };
+    return cities;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Convert city asciiName to URL slug (matches the convention used by all our
+// build scripts). asciiName "New York City" -> slug "new-york-city".
+function cityAsciiNameToSlug(asciiName) {
+  if (!asciiName) return "";
+  return String(asciiName)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Find a city in a list by its URL slug. Returns the city object or null.
+function findCityBySlug(cities, slug) {
+  if (!cities || !slug) return null;
+  for (const c of cities) {
+    if (cityAsciiNameToSlug(c.asciiName || c.name) === slug) return c;
+  }
+  return null;
+}
+
+// Minimal HTML-escape helper (used by the coming-soon page to render
+// user-supplied / API-derived strings safely).
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function haversineKm(a, b) {
@@ -298,18 +447,46 @@ function cityDisplayName(slug) {
 // We pre-build 911 cities; the DB has 33,945. When a user visits an unmapped
 // city, serve this page with: live time in the user's tz (we don't know
 // the city's tz yet), 3 feedback CTAs, and 6 contextual backlinks.
-function generateComingSoonPage(countrySlug, citySlug) {
+async function generateComingSoonPage(countrySlug, citySlug, request) {
   const cityName = cityDisplayName(citySlug);
-  const displayName = cityName;  // proper Unicode (e.g. "Medellín")
   const countryName = humanizeSlug(countrySlug);
   const countryUrl = `/world-time/${countrySlug}/`;
+  const cca2 = (SLUG_TO_COUNTRY[citySlug] || "").toUpperCase()
+              || (CCA2_TO_COUNTRY_SLUG && Object.entries(CCA2_TO_COUNTRY_SLUG).find(([,s]) => s === countrySlug)?.[0])
+              || "";
+
+  // Try to enrich the page with real city data from the API.
+  let cityData = null;
+  let similarCities = [];  // other cities in the same country
+  if (cca2) {
+    const all = await getCountryCities(cca2, request);
+    if (all) {
+      cityData = findCityBySlug(all, citySlug);
+      // Pick 5 nearby cities (same country, highest population, excluding this one)
+      similarCities = all
+        .filter(c => c.id !== (cityData && cityData.id))
+        .sort((a, b) => (b.population || 0) - (a.population || 0))
+        .slice(0, 5);
+    }
+  }
+  const ianaTz = (cityData && cityData.timezone) || COUNTRY_DEFAULT_TZ[cca2] || "UTC";
+  const cca2Lower = (cca2 || "").toLowerCase();
+  const flagUrl = cca2 ? `https://flagcdn.com/w80/${cca2Lower}.png` : "";
+  const pop = (cityData && cityData.population) || 0;
+  const lat = (cityData && cityData.latitude) || null;
+  const lon = (cityData && cityData.longitude) || null;
+  const popStr = pop > 0 ? new Intl.NumberFormat("en-US").format(pop) : null;
+  // Sanity-check the IANA tz before using it (Intl throws on bad input)
+  let safeTz = "UTC";
+  try { new Intl.DateTimeFormat("en-US", { timeZone: ianaTz }); safeTz = ianaTz; } catch (e) {}
+
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${cityName}, ${countryName} — Current Time | dateandtime.live</title>
-  <meta name="description" content="Live time, time zone, and weather for ${cityName}, ${countryName}. Coming soon to dateandtime.live.">
+  <meta name="description" content="${cityData ? 'Live current time, time zone, and weather for ' + cityName + ', ' + countryName + '. Population ' + popStr + ' (' + ianaTz + ').' : 'Live time, time zone, and weather for ' + cityName + ', ' + countryName + '. Coming soon to dateandtime.live.'}">
   <meta name="robots" content="index, follow">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -318,26 +495,51 @@ function generateComingSoonPage(countrySlug, citySlug) {
   <link rel="stylesheet" href="/src/site-shell.css" />
   <link rel="stylesheet" href="/src/tz-hub.css" />
   <style>
-    .coming-soon { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-    .coming-soon h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.5rem; line-height: 1.1; }
-    .coming-soon .badge { display: inline-block; background: linear-gradient(135deg, #7866d4 0%, #ff7a59 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.5rem; }
-    .coming-soon .lede { font-size: 1.125rem; color: var(--color-foreground-soft); margin-bottom: 2rem; line-height: 1.6; }
-    .coming-soon .live-time { font-family: var(--font-mono); font-size: 2.5rem; font-weight: 700; color: var(--color-primary); padding: 1.5rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 12px; text-align: center; margin-bottom: 2rem; }
-    .coming-soon .feedback-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0; }
-    .coming-soon .feedback-card { padding: 1.25rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 10px; text-decoration: none; color: var(--color-foreground); transition: border-color 200ms, transform 200ms; }
-    .coming-soon .feedback-card:hover { border-color: var(--color-primary); transform: translateY(-2px); text-decoration: none; }
-    .coming-soon .feedback-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .coming-soon .feedback-card h3 { font-size: 0.9375rem; font-weight: 700; margin: 0 0 0.25rem; }
-    .coming-soon .feedback-card p { font-size: 0.8125rem; color: var(--color-foreground-soft); margin: 0; line-height: 1.4; }
-    .coming-soon .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin: 1.5rem 0; }
-    .coming-soon .link-card { padding: 0.75rem 1rem; border: 1px solid var(--color-border-soft); border-radius: 8px; text-decoration: none; color: var(--color-foreground-soft); font-size: 0.875rem; }
-    .coming-soon .link-card:hover { border-color: var(--color-primary); color: var(--color-primary); text-decoration: none; }
-    .coming-soon .link-card .label { display: block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); margin-bottom: 0.125rem; }
-    .coming-soon .country-link { display: inline-block; margin-top: 2rem; padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; }
-    .coming-soon .country-link:hover { background: var(--color-primary-dark); text-decoration: none; }
-    [data-theme="dark"] .coming-soon .live-time { color: #b3a8ff; }
-    /* Continue-strip variant (matches site-wide layout) */
-    .continue-strip { margin-top: 3rem; }
+    .coming-soon { max-width: 1240px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .cs-hero { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; padding: 1.75rem 2rem; background: linear-gradient(135deg, var(--color-card-bg) 0%, var(--color-bg-soft) 100%); border: 1px solid var(--color-border); border-radius: 16px; margin-bottom: 2.5rem; }
+    .cs-hero-info h1 { font-size: clamp(1.875rem, 4vw, 2.5rem); margin: 0.5rem 0 0.5rem; line-height: 1.1; }
+    .cs-hero-info .cs-country { font-size: 1rem; color: var(--color-foreground-soft); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .cs-hero-info .cs-country a { color: var(--color-foreground-soft); }
+    .cs-hero-info .cs-meta { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.875rem; color: var(--color-foreground-soft); margin-top: 1rem; }
+    .cs-hero-info .cs-meta strong { color: var(--color-foreground); font-weight: 600; }
+    .cs-badge { display: inline-block; background: linear-gradient(135deg, #7866d4 0%, #ff7a59 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cs-hero-clock { text-align: right; min-width: 200px; }
+    .cs-hero-clock-time { font-family: var(--font-mono); font-size: clamp(2.25rem, 4vw, 3rem); font-weight: 700; color: var(--color-primary); line-height: 1; letter-spacing: -0.02em; }
+    .cs-hero-clock-date { font-size: 0.875rem; color: var(--color-foreground-soft); margin-top: 0.5rem; }
+    .cs-hero-clock-tz { font-size: 0.75rem; color: var(--color-muted); margin-top: 0.25rem; font-family: var(--font-mono); }
+    .cs-hero-clock-tz .pill { display: inline-block; background: var(--color-primary-soft); color: var(--color-primary); padding: 0.125rem 0.5rem; border-radius: 6px; margin-left: 0.5rem; font-weight: 600; }
+    .cs-flag { width: 56px; height: 38px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); object-fit: cover; }
+    .cs-section { margin: 3rem 0; }
+    .cs-section h2 { font-size: 1.375rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.01em; }
+    .cs-section-desc { color: var(--color-foreground-soft); margin: -0.5rem 0 1.25rem; font-size: 0.9375rem; }
+    .cs-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.875rem; }
+    .cs-link-card { display: block; padding: 1rem 1.125rem; border: 1px solid var(--color-border-soft); border-radius: 10px; text-decoration: none; color: var(--color-foreground); transition: all 200ms; background: var(--color-card-bg); }
+    .cs-link-card:hover { border-color: var(--color-primary); transform: translateY(-1px); text-decoration: none; box-shadow: 0 4px 12px rgba(120,102,212,0.08); }
+    .cs-link-card .cs-card-label { display: inline-block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-primary); font-weight: 700; margin-bottom: 0.375rem; }
+    .cs-link-card .cs-card-title { display: block; font-size: 0.9375rem; font-weight: 600; line-height: 1.3; }
+    .cs-link-card .cs-card-sub { display: block; font-size: 0.8125rem; color: var(--color-foreground-soft); margin-top: 0.25rem; line-height: 1.4; }
+    .cs-states-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 0.5rem; }
+    .cs-state-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.75rem 0.5rem; border: 1px solid var(--color-border-soft); border-radius: 8px; text-decoration: none; color: var(--color-foreground); font-size: 0.75rem; font-weight: 600; transition: all 150ms; }
+    .cs-state-tile:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-soft); text-decoration: none; }
+    .cs-state-tile .cs-state-code { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.125rem; }
+    .cs-context-row { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.875rem; color: var(--color-foreground-soft); padding: 1rem 1.25rem; background: var(--color-card-bg); border: 1px solid var(--color-border-soft); border-radius: 10px; }
+    .cs-context-row strong { color: var(--color-foreground); font-weight: 600; }
+    .cs-context-row a { color: var(--color-primary); }
+    .cs-similar-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.625rem; }
+    .cs-similar-card { display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 0.875rem; border: 1px solid var(--color-border-soft); border-radius: 8px; text-decoration: none; color: var(--color-foreground); font-size: 0.875rem; transition: all 150ms; }
+    .cs-similar-card:hover { border-color: var(--color-primary); text-decoration: none; }
+    .cs-similar-card .pop { font-size: 0.75rem; color: var(--color-muted); font-weight: 500; }
+    .cs-feedback-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .cs-feedback-card { padding: 1.125rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 10px; text-decoration: none; color: var(--color-foreground); transition: all 200ms; }
+    .cs-feedback-card:hover { border-color: var(--color-primary); transform: translateY(-2px); text-decoration: none; }
+    .cs-feedback-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .cs-feedback-card h3 { font-size: 0.9375rem; font-weight: 700; margin: 0 0 0.25rem; }
+    .cs-feedback-card p { font-size: 0.8125rem; color: var(--color-foreground-soft); margin: 0; line-height: 1.4; }
+    @media (max-width: 640px) {
+      .cs-hero { grid-template-columns: 1fr; padding: 1.5rem; }
+      .cs-hero-clock { text-align: left; }
+      .cs-states-grid { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); }
+    }
   </style>
 </head>
 <body class="shell-page">
@@ -462,11 +664,10 @@ function generateComingSoonPage(countrySlug, citySlug) {
     </nav>
   </aside>
 
-  <!-- Today bar (sticky under site header) — same as city pages -->
   <div class="today-bar">
     <div class="container today-bar-inner">
       <span class="today-bar-time" id="todayBarTime">--:--</span>
-      <span class="today-bar-label">Local time (placeholder)</span>
+      <span class="today-bar-label">${cityData ? 'Local time' : 'Local time (placeholder)'}</span>
       <a class="today-bar-cta" href="/world-time/meeting/?q=${encodeURIComponent(cityName)}">Plan a meeting →</a>
     </div>
   </div>
@@ -482,89 +683,228 @@ function generateComingSoonPage(countrySlug, citySlug) {
     </nav>
 
     <div class="coming-soon">
-      <div class="badge">Coming Soon</div>
-      <h1>${cityName}, ${countryName}</h1>
-      <p class="lede">We're building the full time zone page for <strong>${cityName}</strong>. The static page isn't ready yet, but here's what we have so far — plus a few ways you can help.</p>
+      <div class="cs-hero">
+        <div class="cs-hero-info">
+          <span class="cs-badge">${cityData ? 'Live data ready' : 'Coming soon'}</span>
+          <h1>${cityName}, ${countryName}</h1>
+          <div class="cs-country">${flagUrl ? `<img class="cs-flag" src="${flagUrl}" alt="${countryName} flag" width="56" height="38" loading="lazy" />` : ''} <a href="${countryUrl}">${countryName}</a> · <span>${ianaTz}</span></div>
+          <div class="cs-meta">
+            ${popStr ? `<span>👥 <strong>${popStr}</strong> people</span>` : ''}
+            ${lat != null ? `<span>📍 <strong>${Math.abs(lat).toFixed(3)}°${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(3)}°${lon >= 0 ? 'E' : 'W'}</strong></span>` : ''}
+            <span>🕐 <strong>${ianaTz}</strong></span>
+          </div>
+        </div>
+        <div class="cs-hero-clock">
+          <div class="cs-hero-clock-time" id="cs-clock-time" data-tz="${safeTz}">--:--:--</div>
+          <div class="cs-hero-clock-date" id="cs-clock-date">—</div>
+          <div class="cs-hero-clock-tz" id="cs-clock-tz">${ianaTz} <span class="pill" id="cs-clock-offset">UTC</span></div>
+        </div>
+      </div>
 
-      <div class="live-time" id="live-time">--:--:--</div>
       <script>
-        // Show the user's current time as a placeholder. The live city-specific
-        // clock will be added once the city is in our DB.
         (function() {
-          const el = document.getElementById('live-time');
-          if (!el) return;
-          const tick = () => {
-            const now = new Date();
-            const fmt = new Intl.DateTimeFormat('en-US', {
-              hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-            });
-            el.textContent = fmt.format(now);
-          };
+          var TZ = "${safeTz}";
+          var timeEl = document.getElementById('cs-clock-time');
+          var dateEl = document.getElementById('cs-clock-date');
+          var offEl  = document.getElementById('cs-clock-offset');
+          if (!timeEl) return;
+          function tick() {
+            try {
+              var now = new Date();
+              var t = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now);
+              var d = new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(now);
+              timeEl.textContent = t;
+              if (dateEl) dateEl.textContent = d;
+              var dtf = new Intl.DateTimeFormat('en-US', { timeZone: TZ, timeZoneName: 'shortOffset' });
+              var parts = dtf.formatToParts(now);
+              for (var i = 0; i < parts.length; i++) {
+                if (parts[i].type === 'timeZoneName') {
+                  if (offEl) offEl.textContent = parts[i].value;
+                  break;
+                }
+              }
+            } catch (e) { timeEl.textContent = '--:--:--'; }
+          }
           tick();
           setInterval(tick, 1000);
         })();
       </script>
 
-      <h2 style="margin-top:2rem;font-size:1.125rem;">Help us build this page</h2>
-      <div class="feedback-grid">
-        <a href="/feedback/?type=city&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
-          <div class="icon">📍</div>
-          <h3>Suggest the city</h3>
-          <p>Tell us the exact coordinates and time zone of ${cityName}.</p>
-        </a>
-        <a href="/feedback/?type=info&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
-          <div class="icon">ℹ️</div>
-          <h3>Tell us more</h3>
-          <p>Share history, alternate names, or local facts.</p>
-        </a>
-        <a href="/feedback/?type=notify&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="feedback-card">
-          <div class="icon">🔔</div>
-          <h3>Notify me</h3>
-          <p>Get an email when this page goes live.</p>
-        </a>
+      <div class="cs-section">
+        <h2>About ${cityName}</h2>
+        <div class="cs-context-row">
+          <span><strong>Country:</strong> <a href="${countryUrl}">${countryName}</a>${cca2 ? ` (${cca2})` : ''}</span>
+          <span><strong>Time zone:</strong> ${ianaTz}</span>
+          ${lat != null ? `<span><strong>Coordinates:</strong> ${Math.abs(lat).toFixed(3)}°${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(3)}°${lon >= 0 ? 'E' : 'W'}</span>` : ''}
+          ${popStr ? `<span><strong>Population:</strong> ${popStr}</span>` : ''}
+        </div>
       </div>
 
-      <h2 style="margin-top:2rem;font-size:1.125rem;">While you wait, learn about time zones</h2>
-      <div class="links-grid">
-        <a href="/time-zones/what-is/" class="link-card"><span class="label">Learn</span>What is a time zone?</a>
-        <a href="/time-zones/dst/" class="link-card"><span class="label">Learn</span>Daylight Saving Time</a>
-        <a href="/time-zones/converter/" class="link-card"><span class="label">Tool</span>Time Zone Converter</a>
-        <a href="/time-zones/utc/" class="link-card"><span class="label">Learn</span>UTC & GMT</a>
-        <a href="/meeting/" class="link-card"><span class="label">Tool</span>Meeting Planner</a>
-        <a href="/globe/" class="link-card"><span class="label">Tool</span>World Clock Globe</a>
+      ${similarCities.length ? `
+      <div class="cs-section">
+        <h2>Other major cities in ${countryName}</h2>
+        <p class="cs-section-desc">Compare time across ${countryName}'s biggest cities.</p>
+        <div class="cs-similar-list">
+          ${similarCities.map(c => {
+            const slug = cityAsciiNameToSlug(c.asciiName || c.name);
+            return `<a href="/world-time/${countrySlug}/${slug}/" class="cs-similar-card">
+              <span>${escapeHtml(c.name || c.asciiName || '')}</span>
+              <span class="pop">${(c.population || 0) > 0 ? new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(c.population) : ''}</span>
+            </a>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+
+      <div class="cs-section">
+        <h2>Time tools</h2>
+        <p class="cs-section-desc">Use these tools with ${cityName} pre-filled.</p>
+        <div class="cs-card-grid">
+          <a href="/world-time/meeting/?cities=${encodeURIComponent(cityName)}" class="cs-link-card">
+            <span class="cs-card-label">Tool</span>
+            <span class="cs-card-title">Meeting Planner</span>
+            <span class="cs-card-sub">Find times that work for everyone across cities.</span>
+          </a>
+          <a href="/time-zones/converter/?from=${encodeURIComponent(ianaTz)}" class="cs-link-card">
+            <span class="cs-card-label">Tool</span>
+            <span class="cs-card-title">Time Zone Converter</span>
+            <span class="cs-card-sub">Compare ${ianaTz} with any other zone.</span>
+          </a>
+          <a href="/world-time/event/?time=20:00&city=${encodeURIComponent(cityName)}" class="cs-link-card">
+            <span class="cs-card-label">Tool</span>
+            <span class="cs-card-title">Event Time Announcer</span>
+            <span class="cs-card-sub">Show local times for a global event.</span>
+          </a>
+          <a href="/time-zones/dst/?tz=${encodeURIComponent(ianaTz)}" class="cs-link-card">
+            <span class="cs-card-label">Learn</span>
+            <span class="cs-card-title">DST in ${countryName}</span>
+            <span class="cs-card-sub">Current offset, next change, full rules.</span>
+          </a>
+        </div>
       </div>
 
-      <h2 style="margin-top:2rem;font-size:1.125rem;">Today, on this day, and holidays</h2>
-      <div class="links-grid">
-        <a href="/" class="link-card"><span class="label">Today</span>What day is it?</a>
-        <a href="/onthisday/" class="link-card"><span class="label">On this day</span>Historical events today</a>
-        <a href="/holidays/${countrySlug}/" class="link-card"><span class="label">Holidays</span>${countryName} public holidays</a>
-        <a href="/news/timezone/" class="link-card"><span class="label">News</span>Latest time zone news</a>
-        <a href="/news/astronomy/" class="link-card"><span class="label">News</span>Astronomy & celestial events</a>
-        <a href="/news/calendar/" class="link-card"><span class="label">News</span>Calendar changes</a>
+      <div class="cs-section">
+        <h2>Today &amp; history</h2>
+        <p class="cs-section-desc">What's happening today, in history, and in ${countryName}.</p>
+        <div class="cs-card-grid">
+          <a href="/" class="cs-link-card">
+            <span class="cs-card-label">Today</span>
+            <span class="cs-card-title">What day is it?</span>
+            <span class="cs-card-sub">Today's date, day length, week number.</span>
+          </a>
+          <a href="/onthisday/" class="cs-link-card">
+            <span class="cs-card-label">On this day</span>
+            <span class="cs-card-title">Historical events today</span>
+            <span class="cs-card-sub">50 curated events from history.</span>
+          </a>
+          <a href="/holidays/${cca2Lower}/" class="cs-link-card">
+            <span class="cs-card-label">Holidays</span>
+            <span class="cs-card-title">${countryName} public holidays</span>
+            <span class="cs-card-sub">Full year calendar with long-weekend finder.</span>
+          </a>
+          <a href="/news/timezone/" class="cs-link-card">
+            <span class="cs-card-label">News</span>
+            <span class="cs-card-title">Latest time zone news</span>
+            <span class="cs-card-sub">DST changes, leap seconds, calendar shifts.</span>
+          </a>
+        </div>
       </div>
 
-      <a href="${countryUrl}" class="country-link">Browse all ${countryName} cities →</a>
+      <div class="cs-section">
+        <h2>Learn about time zones</h2>
+        <div class="cs-card-grid">
+          <a href="/time-zones/what-is/" class="cs-link-card">
+            <span class="cs-card-label">Learn</span>
+            <span class="cs-card-title">What is a time zone?</span>
+            <span class="cs-card-sub">UTC offsets and the prime meridian.</span>
+          </a>
+          <a href="/time-zones/dst/" class="cs-link-card">
+            <span class="cs-card-label">Learn</span>
+            <span class="cs-card-title">Daylight Saving Time</span>
+            <span class="cs-card-sub">Spring forward, fall back — who does it?</span>
+          </a>
+          <a href="/time-zones/utc/" class="cs-link-card">
+            <span class="cs-card-label">Learn</span>
+            <span class="cs-card-title">UTC &amp; GMT</span>
+            <span class="cs-card-sub">The world's time standard.</span>
+          </a>
+          <a href="/news/2026/07/history-of-timekeeping/" class="cs-link-card">
+            <span class="cs-card-label">Story</span>
+            <span class="cs-card-title">The history of timekeeping</span>
+            <span class="cs-card-sub">From sundials to atomic clocks.</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="cs-section">
+        <h2>Popular US cities</h2>
+        <p class="cs-section-desc">Our deepest coverage is the United States. These are the most-watched cities.</p>
+        <div class="cs-card-grid">
+          ${TOP_US_CITIES.map(c => `
+          <a href="/world-time/united-states/${c.slug}/" class="cs-link-card">
+            <span class="cs-card-label">${c.state}</span>
+            <span class="cs-card-title">${c.name}</span>
+            <span class="cs-card-sub">Live time, weather, holidays.</span>
+          </a>`).join('')}
+        </div>
+      </div>
+
+      <div class="cs-section">
+        <h2>Browse all 50 US states</h2>
+        <p class="cs-section-desc">Pick a state to see all its cities, current times, and DST rules.</p>
+        <div class="cs-states-grid">
+          ${US_STATES_GRID.map(s => `
+          <a href="/world-time/united-states/state/${s.slug}/" class="cs-state-tile">
+            <span class="cs-state-code">${s.code}</span>
+            <span>${s.name}</span>
+          </a>`).join('')}
+        </div>
+      </div>
+
+      <div class="cs-section">
+        <h2>Help us build this page</h2>
+        <p class="cs-section-desc">If you live in or have visited ${cityName}, we'd love to hear from you.</p>
+        <div class="cs-feedback-grid">
+          <a href="/feedback/?type=city&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="cs-feedback-card">
+            <div class="icon">📍</div>
+            <h3>Suggest the city</h3>
+            <p>Tell us the exact coordinates and time zone of ${cityName}.</p>
+          </a>
+          <a href="/feedback/?type=info&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="cs-feedback-card">
+            <div class="icon">ℹ️</div>
+            <h3>Tell us more</h3>
+            <p>Share history, alternate names, or local facts.</p>
+          </a>
+          <a href="/feedback/?type=notify&city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}" class="cs-feedback-card">
+            <div class="icon">🔔</div>
+            <h3>Notify me</h3>
+            <p>Get an email when this page goes live.</p>
+          </a>
+        </div>
+      </div>
     </div>
 
-    <!-- Continue your journey strip (matches city pages) -->
     <section class="continue-strip" aria-label="Continue your journey">
       <h2 class="continue-strip-title">Continue your journey</h2>
       <div class="continue-strip-grid">
         <a class="continue-strip-card" href="/world-time/">
           <span class="continue-strip-icon" aria-hidden="true">🌐</span>
           <span class="continue-strip-card-title">World Time Hub</span>
-          <span class="continue-strip-card-sub">Browse 1,000+ cities by region & country</span>
+          <span class="continue-strip-card-sub">Browse 33,945 cities by region &amp; country</span>
         </a>
         <a class="continue-strip-card" href="/time-zones/">
           <span class="continue-strip-icon" aria-hidden="true">🕐</span>
           <span class="continue-strip-card-title">All Time Zones</span>
           <span class="continue-strip-card-sub">408 IANA zones, UTC offsets, DST rules</span>
         </a>
-        <a class="continue-strip-card" href="/meeting/">
+        <a class="continue-strip-card" href="/world-time/meeting/">
           <span class="continue-strip-icon" aria-hidden="true">📅</span>
           <span class="continue-strip-card-title">Meeting Planner</span>
           <span class="continue-strip-card-sub">Find times that work for everyone</span>
+        </a>
+        <a class="continue-strip-card" href="/news/">
+          <span class="continue-strip-icon" aria-hidden="true">📰</span>
+          <span class="continue-strip-card-title">News &amp; Editorial</span>
+          <span class="continue-strip-card-sub">Time, time zones, astronomy, calendars</span>
         </a>
       </div>
     </section>
@@ -584,7 +924,7 @@ function generateComingSoonPage(countrySlug, citySlug) {
         <a href="/sitemap.xml">Sitemap</a>
       </nav>
       <p class="site-footer-meta">
-        © 2026 dateandtime.live — ${displayName}, ${countryName} (coming soon) ·
+        © 2026 dateandtime.live — ${cityName}, ${countryName} ·
         33,945 cities · 408 time zones · 1,600+ holidays ·
         Data: <a href="/editorial-policy/">IANA · GeoNames · Nager.Date · Wikipedia</a>
       </p>
@@ -595,7 +935,6 @@ function generateComingSoonPage(countrySlug, citySlug) {
   </footer>
   <script src="/src/site-shell.js" defer></script>
   <script>
-    // Wire up the today-bar clock to user's local time (placeholder).
     (function() {
       var tbTime = document.getElementById('todayBarTime');
       if (!tbTime) return;
@@ -613,6 +952,7 @@ function generateComingSoonPage(countrySlug, citySlug) {
 </body>
 </html>`;
 }
+
 
 // ===== Cookie consent helpers =====
 const COOKIE_NAME = "cookie_consent";
@@ -1124,10 +1464,14 @@ export default {
         const buf = await cityCheck.arrayBuffer();
         if (buf.byteLength < 12000) {
           // Likely a 404 fallback page. Serve coming-soon.
-          return new Response(generateComingSoonPage(countrySlug, citySlug), {
-            status: 200,
-            headers: { "content-type": "text/html; charset=utf-8" }
-          });
+          try {
+            return new Response(await generateComingSoonPage(countrySlug, citySlug, request), {
+              status: 200,
+              headers: { "content-type": "text/html; charset=utf-8" }
+            });
+          } catch (e) {
+            return new Response("Coming-soon error: " + e.message, { status: 500 });
+          }
         }
       } catch (e) {
         // Error fetching — fall through to default asset serving.
