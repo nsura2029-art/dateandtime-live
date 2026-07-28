@@ -179,13 +179,28 @@
     <div class="container">
       <h1>United States</h1>
       <p class="tz-subtitle">Live time in <strong>15,994 United States cities</strong> across <strong>52 states</strong>. Real-time updates every second.</p>
+      <div class="tz-hero-stats">
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">15,994</span>
+          <span class="tz-hero-stat-label">cities</span>
+        </div>
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">52</span>
+          <span class="tz-hero-stat-label">states &amp; DC</span>
+        </div>
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">11</span>
+          <span class="tz-hero-stat-label">time zones</span>
+        </div>
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">329M</span>
+          <span class="tz-hero-stat-label">people covered</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Mount point for the 6-clocks hero section (populated by /src/hero-clocks.js) -->
-  <div id="hero-clocks-mount"></div>
-
-  <section class="wt-hub-section" id="all-cities">
+<section class="wt-hub-section" id="all-cities">
     <div class="container">
       <div class="wt-hub-header">
         <h2>All United States cities</h2>
@@ -724,43 +739,9 @@ const STATE_META = {
 };
 
 window.__STATE_META = STATE_META;</script>
-<script src="/src/hero-clocks.js?v=3" defer></script>
 <script src="/src/world-time-cities.js" defer></script>
 <script>
-  // Mount the 6-clocks hero section (US cities, with user-city slot).
-  (function() {
-    const US_DEFAULT = [
-      { name: "New York",     slug: "new-york",     country: "united-states", tz: "America/New_York",    clock: "sundial"   },
-      { name: "Los Angeles",  slug: "los-angeles",  country: "united-states", tz: "America/Los_Angeles", clock: "hourglass" },
-      { name: "Philadelphia", slug: "philadelphia", country: "united-states", tz: "America/New_York",    clock: "pendulum"  },
-      { name: "Cupertino",    slug: "cupertino",    country: "united-states", tz: "America/Los_Angeles", clock: "chrono"    }
-    ];
-    function buildCities() {
-      const loc = window.__location;
-      let userCity = null;
-      // Only auto-detect if user is in the US (this is a US-focused page)
-      if (loc && loc.countryCode === "US" && loc.city) {
-        const slug = String(loc.city).toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-        userCity = { name: loc.city, slug, country: "united-states", tz: loc.timezone, clock: "quartz", isUser: true };
-      }
-      if (!userCity) {
-        userCity = { name: "New York", slug: "new-york", country: "united-states", tz: "America/New_York", clock: "quartz", isUser: true };
-      }
-      return [
-        ...US_DEFAULT,
-        userCity,
-        { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
-      ];
-    }
-    function tryMount() {
-      if (window.MountHeroClocks) {
-        window.MountHeroClocks(buildCities(), "#hero-clocks-mount");
-      } else {
-        setTimeout(tryMount, 50);
-      }
-    }
-    tryMount();
-  })();
+  // (Hero clocks section removed 2026-07-28 — see PRE_LAUNCH_AUDIT.)
 </script>
 </body>
 </html>

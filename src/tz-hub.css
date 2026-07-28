@@ -47,9 +47,9 @@
   padding: 0 1.25rem;
 }
 
-/* Hero (compact — just H1 + 1-line subtitle, no buttons) */
+/* Hero (compact — just H1 + 1-line subtitle + stat strip) */
 .tz-hero {
-  padding: 1.75rem 0 1.25rem;
+  padding: 2rem 0 2.25rem;
   background: linear-gradient(180deg, var(--tz-primary-soft) 0%, var(--tz-bg) 100%);
   border-bottom: 1px solid var(--tz-border-soft);
   position: relative;
@@ -81,6 +81,40 @@
   line-height: 1.55;
 }
 .tz-subtitle strong { color: var(--tz-fg); font-weight: 700; }
+
+/* Hero stat strip — replaces the visual weight of the old 6-clocks section
+   so the page doesn't feel empty after that was removed. */
+.tz-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2.25rem;
+  margin-top: 0.5rem;
+}
+.tz-hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+.tz-hero-stat-num {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--tz-primary);
+}
+.tz-hero-stat-label {
+  font-size: 0.8125rem;
+  color: var(--tz-fg-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.125rem;
+  font-weight: 500;
+}
+@media (max-width: 600px) {
+  .tz-hero-stats { gap: 0.875rem 1.5rem; }
+  .tz-hero-stat-num { font-size: 1.375rem; }
+}
 
 /* Section headings */
 .tz-explain, .tz-regions, .tz-tools, .tz-faq {
@@ -365,7 +399,10 @@
    ========================================================================== */
 
 .wt-hub-section {
-  padding: 2rem 0 3rem;
+  padding: 2.5rem 0 3rem;
+}
+.wt-hub-section:first-of-type {
+  padding-top: 2.5rem;
 }
 .wt-hub-header {
   display: flex;

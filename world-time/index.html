@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/world-time.css?v=19" />
   <link rel="stylesheet" href="/src/site-shell.css?v=19" />
-  <link rel="stylesheet" href="/src/tz-hub.css?v=21" />
+  <link rel="stylesheet" href="/src/tz-hub.css?v=22" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -53,85 +53,9 @@
   }
   </script>
   <script src="/src/site-shell.js" defer></script>
-  <script src="/src/hero-clocks.js?v=3" defer></script>
   <script src="/src/world-time-cities.js?v=19" defer></script>
   <script>
-    // Mount the 6-clocks hero section.
-    (function() {
-      // Default city list (6 clocks). The 5th slot is filled with the
-      // user's current city (auto-detected via window.__location which
-      // the Worker injects from Cloudflare's IP geolocation data).
-      // The 6th slot is Boulder (NIST atomic clock) — the modern gold
-      // standard of timekeeping.
-      const DEFAULT_CITIES = [
-        { name: "New York",     slug: "new-york",    country: "united-states", tz: "America/New_York",    clock: "sundial"   },
-        { name: "Los Angeles",  slug: "los-angeles", country: "united-states", tz: "America/Los_Angeles", clock: "hourglass" },
-        { name: "London",       slug: "london",      country: "united-kingdom",tz: "Europe/London",      clock: "pendulum"  },
-        { name: "Tokyo",        slug: "tokyo",       country: "japan",         tz: "Asia/Tokyo",         clock: "chrono"    }
-      ];
-
-      // Build the city list. The 5th slot is filled with the user's city
-      // (auto-detected via window.__location which the Worker injects from
-      // Cloudflare's IP geolocation data). If the user is already in one
-      // of the 4 fixed cities, we replace that one with the user's own
-      // record so the same city doesn't show up twice.
-      function buildCities() {
-        const loc = window.__location;
-        let userCity = null;
-        if (loc && loc.city && loc.countryName) {
-          // Map common IANA timezones to our country pages
-          const TZ_TO_COUNTRY = {
-            "America/New_York": "united-states", "America/Chicago": "united-states",
-            "America/Denver": "united-states", "America/Los_Angeles": "united-states",
-            "America/Phoenix": "united-states", "America/Toronto": "canada",
-            "Europe/London": "united-kingdom", "Europe/Paris": "france",
-            "Europe/Berlin": "germany", "Europe/Madrid": "spain",
-            "Europe/Rome": "italy", "Europe/Amsterdam": "netherlands",
-            "Asia/Tokyo": "japan", "Asia/Singapore": "singapore",
-            "Asia/Shanghai": "china", "Asia/Hong_Kong": "hong-kong",
-            "Australia/Sydney": "australia", "Pacific/Auckland": "new-zealand",
-            "Asia/Kolkata": "india", "Asia/Dubai": "united-arab-emirates",
-            "America/Mexico_City": "mexico", "America/Sao_Paulo": "brazil",
-            "America/Argentina/Buenos_Aires": "argentina"
-          };
-          const country = TZ_TO_COUNTRY[loc.timezone];
-          if (country) {
-            const slug = String(loc.city).toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-            userCity = {
-              name: loc.city,
-              slug: slug,
-              country: country,
-              tz: loc.timezone,
-              clock: "water",   // 5th slot now uses the water clock
-              isUser: true
-            };
-          }
-        }
-        if (!userCity) {
-          // Fallback when geo lookup fails — use a non-conflicting city
-          userCity = { name: "Paris", slug: "paris", country: "france", tz: "Europe/Paris", clock: "water", isUser: true };
-        }
-        // De-duplicate: if the user is in one of the 4 fixed cities, drop
-        // that fixed entry so the user city appears once (with the "You" badge).
-        const filtered = DEFAULT_CITIES.filter(c =>
-          !(c.country === userCity.country && c.slug === userCity.slug)
-        );
-        return [
-          ...filtered,
-          userCity,
-          { name: "Boulder", slug: "boulder", country: "united-states", tz: "America/Denver", clock: "atomic" }
-        ];
-      }
-
-      function tryMount() {
-        if (window.MountHeroClocks) {
-          window.MountHeroClocks(buildCities(), "#hero-clocks-mount");
-        } else {
-          setTimeout(tryMount, 50);
-        }
-      }
-      tryMount();
-    })();
+    // (Hero clocks section removed 2026-07-28 — see PRE_LAUNCH_AUDIT.)
   </script>
   <script>
     // Inject a full ItemList schema once the popular cities load.
@@ -277,16 +201,31 @@
 </nav>
 
 <main class="tz-hub">
-  <!-- Hero (just a 2-liner message) -->
+  <!-- Hero -->
   <section class="tz-hero">
     <div class="container">
       <h1>The World Clock</h1>
       <p class="tz-subtitle">Live current time in <strong>33,945 cities</strong> across <strong>408 time zones</strong>. Real-time updates every second.</p>
+      <div class="tz-hero-stats">
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">33,945</span>
+          <span class="tz-hero-stat-label">cities</span>
+        </div>
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">408</span>
+          <span class="tz-hero-stat-label">time zones</span>
+        </div>
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">242</span>
+          <span class="tz-hero-stat-label">countries</span>
+        </div>
+        <div class="tz-hero-stat">
+          <span class="tz-hero-stat-num">15,994</span>
+          <span class="tz-hero-stat-label">US cities live</span>
+        </div>
+      </div>
     </div>
   </section>
-
-  <!-- Mount point for the 6-clocks hero section (populated by /src/hero-clocks.js) -->
-  <div id="hero-clocks-mount"></div>
 
   <!-- City cards (server-side filter + search + sort + paginated Load more) -->
   <section class="wt-hub-section" id="all-cities">
