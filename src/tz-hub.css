@@ -47,46 +47,40 @@
   padding: 0 1.25rem;
 }
 
-/* Hero (compact — just H1 + 1-line subtitle + stat strip) */
+/* Hero (compact — just H1 + 1-line subtitle + stat strip) — centered design system */
 .tz-hero {
   padding: 2rem 0 2.25rem;
-  background: linear-gradient(180deg, var(--tz-primary-soft) 0%, var(--tz-bg) 100%);
+  background: var(--tz-bg);
   border-bottom: 1px solid var(--tz-border-soft);
-  position: relative;
-  overflow: hidden;
+  text-align: center;
 }
-.tz-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--tz-primary) 12%, transparent) 0%, transparent 40%),
-                    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--tz-secondary) 10%, transparent) 0%, transparent 50%);
-  pointer-events: none;
-  opacity: 0.7;
-}
-.tz-hero > .container { position: relative; z-index: 1; }
+.tz-hero > .container { display: flex; flex-direction: column; align-items: center; }
 .tz-hero h1 {
+  text-align: center;
   font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
   font-weight: 800;
   letter-spacing: -0.025em;
   color: var(--tz-fg);
-  margin: 0 0 0.75rem;
+  margin: 0 auto 0.75rem;
   line-height: 1.15;
+  max-width: 56rem;
 }
 .tz-subtitle {
+  text-align: center;
   font-size: 1.0625rem;
   color: var(--tz-fg-soft);
-  max-width: 680px;
-  margin: 0 0 1.25rem;
+  max-width: 42rem;
+  margin: 0 auto 1.25rem;
   line-height: 1.55;
 }
 .tz-subtitle strong { color: var(--tz-fg); font-weight: 700; }
 
-/* Hero stat strip — replaces the visual weight of the old 6-clocks section
+/* Hero stat strip — centered, replaces the visual weight of the old 6-clocks section
    so the page doesn't feel empty after that was removed. */
 .tz-hero-stats {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1.25rem 2.25rem;
   margin-top: 0.5rem;
 }

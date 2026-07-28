@@ -304,6 +304,7 @@ ${buildHeader(
 <main class="tz-hub">
   <section class="tz-hero">
     <div class="container">
+      <p class="page-hero-eyebrow">${isState ? 'State · ' + escapeHtml(cca2) : 'Country · ' + escapeHtml(cca2)}</p>
       <h1>${escapeHtml(heroH1)}</h1>
       <p class="tz-subtitle">${heroSub}</p>
     </div>
