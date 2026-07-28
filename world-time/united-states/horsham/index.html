@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css?v=3" />
+<link rel="stylesheet" href="/src/site-shell.css?v=4" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"Horsham","address":{"@type":"PostalAddress","addressRegion":"PA","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":40.17844,"longitude":-75.12851},"timeZone":"America/New_York","url":"https://dateandtime.live/world-time/united-states/horsham/","population":{"@type":"QuantitativeValue","value":14842}}</script>
 </head>
 <body class="shell-page">
@@ -160,7 +160,7 @@
       <div class="container today-bar-inner">
         <span class="today-bar-time" id="todayBarTime" data-tz="America/New_York">--:--</span>
         <span class="today-bar-city">in Horsham, Pennsylvania</span>
-        <a href="/world-time/meeting/?cities=118677" class="today-bar-link">Schedule a meeting →</a>
+        <a href="/world-time/meeting/?cities=2646557" class="today-bar-link">Schedule a meeting →</a>
       </div>
     </div>
 
@@ -208,8 +208,67 @@
       </div>
     </section>
 
+    <!-- TABS NAV (sticky below today bar) -->
+    <nav class="city-tabs" id="cityTabs" role="tablist" aria-label="City page sections">
+      <a href="#time-general" class="city-tab active" data-tab="time-general" role="tab">
+        <span class="city-tab-icon">⏰</span>
+        <span class="city-tab-label">Time/General</span>
+      </a>
+      <a href="#weather" class="city-tab" data-tab="weather" role="tab">
+        <span class="city-tab-icon">☀️</span>
+        <span class="city-tab-label">Weather</span>
+      </a>
+      <a href="#time-zone" class="city-tab" data-tab="time-zone" role="tab">
+        <span class="city-tab-icon">🌐</span>
+        <span class="city-tab-label">Time Zone</span>
+      </a>
+      <a href="#dst" class="city-tab" data-tab="dst" role="tab">
+        <span class="city-tab-icon">🔄</span>
+        <span class="city-tab-label">DST</span>
+      </a>
+      <a href="#sun-moon" class="city-tab" data-tab="sun-moon" role="tab">
+        <span class="city-tab-icon">🌙</span>
+        <span class="city-tab-label">Sun & Moon</span>
+      </a>
+      <a href="#news" class="city-tab" data-tab="news" role="tab">
+        <span class="city-tab-icon">📰</span>
+        <span class="city-tab-label">News</span>
+      </a>
+      <a href="#tools" class="city-tab" data-tab="tools" role="tab">
+        <span class="city-tab-icon">🛠</span>
+        <span class="city-tab-label">Tools</span>
+      </a>
+    </nav>
+
+    <!-- TAB PANES: 2-column layout (main + sidebar) -->
+    <div class="city-tab-layout">
+    <div class="city-tab-main">
+
+    <!-- Time/General tab (default, always visible) -->
+    <section class="city-section" id="pane-time-general" data-pane="time-general">
+      <h2>📍 Time & Location</h2>
+      <div class="city-fact-grid">
+        <div class="city-fact-card">
+          <div class="city-fact-label">Population</div>
+          <div class="city-fact-value">14,842</div>
+        </div>
+        <div class="city-fact-card">
+          <div class="city-fact-label">State</div>
+          <div class="city-fact-value"><a href="/world-time/united-states/state/pennsylvania/">Pennsylvania</a></div>
+        </div>
+        <div class="city-fact-card">
+          <div class="city-fact-label">Country</div>
+          <div class="city-fact-value"><a href="/world-time/united-states/">United States</a></div>
+        </div>
+        <div class="city-fact-card">
+          <div class="city-fact-label">Coordinates</div>
+          <div class="city-fact-value mono">40.178, -75.129</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Sun times -->
-    <section class="city-section">
+    <section class="city-section" id="pane-sun-moon" data-pane="sun-moon" hidden>
       <h2>🌅 Sunrise & sunset in Horsham</h2>
       <div class="sun-grid">
         <div class="sun-card">
@@ -235,8 +294,8 @@
       </div>
     </section>
 
-    <!-- 7-day weather -->
-    <section class="city-section">
+    <!-- Weather tab -->
+    <section class="city-section" id="pane-weather" data-pane="weather" hidden>
       <h2>🌤 7-day weather forecast — Horsham</h2>
       <div class="weather-grid" id="weatherGrid" data-lat="40.17844" data-lon="-75.12851" data-tz="America/New_York">
         <p class="city-page-loading">Loading 7-day forecast…</p>
@@ -244,15 +303,21 @@
       <p class="weather-source">Forecast data: <a href="https://open-meteo.com/" rel="noopener" target="_blank">Open-Meteo</a> (CC BY 4.0)</p>
     </section>
 
-    <!-- Climate year-round -->
-    <section class="city-section">
+    <!-- Climate (lives inside time-zone pane — geographic context) -->
+    <section class="city-section" id="pane-time-zone" data-pane="time-zone" hidden>
+      <h2>🌐 Time Zone in Horsham</h2>
+      <p>Horsham is in the <strong>EST</strong> zone. IANA: <code>America/New_York</code>. <a href="/time/zones/est/" class="tz-page-link">About EST →</a></p>
+
       <h2>🌡 Horsham climate year-round</h2>
       <div class="climate-chart" id="climateChart" data-climate='[{"month":1,"avg_high_c":1.9,"avg_low_c":-8.1,"avg_mean_c":-3.1},{"month":2,"avg_high_c":3,"avg_low_c":-7,"avg_mean_c":-2},{"month":3,"avg_high_c":6.3,"avg_low_c":-3.7,"avg_mean_c":1.3},{"month":4,"avg_high_c":10.7,"avg_low_c":0.7,"avg_mean_c":5.7},{"month":5,"avg_high_c":15.3,"avg_low_c":5.3,"avg_mean_c":10.3},{"month":6,"avg_high_c":18.6,"avg_low_c":8.6,"avg_mean_c":13.6},{"month":7,"avg_high_c":19.9,"avg_low_c":9.9,"avg_mean_c":14.9},{"month":8,"avg_high_c":18.8,"avg_low_c":8.8,"avg_mean_c":13.8},{"month":9,"avg_high_c":15.6,"avg_low_c":5.6,"avg_mean_c":10.6},{"month":10,"avg_high_c":11.1,"avg_low_c":1.1,"avg_mean_c":6.1},{"month":11,"avg_high_c":6.5,"avg_low_c":-3.5,"avg_mean_c":1.5},{"month":12,"avg_high_c":3.2,"avg_low_c":-6.8,"avg_mean_c":-1.8}]'></div>
       <p class="climate-note">Estimated from latitude (40.18°N). Actual values vary by elevation, ocean currents, and local geography.</p>
     </section>
 
-    <!-- More US cities -->
-    <section class="city-section">
+    <!-- Cities near (new section using /cities/{id}/nearby API) -->
+    <div id="pane-dst-nearby" data-pane="dst" hidden></div>
+
+    <!-- More to explore — keeps existing static list, also exposed in Time/General tab -->
+    <section class="city-section" data-pane="time-general">
       <h2>🏙 More to explore</h2>
       <div class="explore-grid">
         <a href="/world-time/united-states/new-york/" class="explore-link">
@@ -282,8 +347,8 @@
       </div>
     </section>
 
-    <!-- Cross-links to relevant tools -->
-    <section class="city-section">
+    <!-- Tools tab -->
+    <section class="city-section" id="pane-tools" data-pane="tools" hidden>
       <h2>🛠 Tools for Horsham</h2>
       <div class="tools-grid">
         <a href="/world-time/meeting/" class="tool-link">
@@ -318,6 +383,61 @@
         </a>
       </div>
     </section>
+
+
+    <!-- News tab (lazy-loaded via /api/v1/cities/{id}/news) -->
+    <section class="city-section" id="pane-news" data-pane="news" hidden>
+      <h2>📰 News about United States</h2>
+      <div id="newsContent">
+        <p class="city-page-loading">Loading news…</p>
+      </div>
+    </section>
+
+    </div><!-- /city-tab-main -->
+
+    <!-- Sidebar with 5 widgets (no ads) -->
+    <aside class="city-sidebar">
+      <div class="sidebar-widget sidebar-widget--primary">
+        <h4>🌐 Current time zone</h4>
+        <div class="sidebar-widget-value" id="sidebarTzAbbr">EST</div>
+        <div class="sidebar-widget-meta" id="sidebarTzOffset">UTC -5</div>
+        <a class="sidebar-widget-link" href="/time/zones/est/">About EST →</a>
+      </div>
+
+      <div class="sidebar-widget">
+        <h4>🔄 Next clock change</h4>
+        <div class="sidebar-widget-value" id="sidebarNextChange">—</div>
+        <div class="sidebar-widget-meta" id="sidebarNextChangeMeta">Loading…</div>
+        <a class="sidebar-widget-link" href="#dst">View DST schedule →</a>
+      </div>
+
+      <div class="sidebar-widget">
+        <h4>📍 Compare with…</h4>
+        <div class="sidebar-chips">
+          <a class="sidebar-chip" href="/world-time/united-states/new-york/" data-compare="5128581">🗽 NYC</a>
+          <a class="sidebar-chip" href="/world-time/united-states/los-angeles/" data-compare="5368361">🌉 LA</a>
+          <a class="sidebar-chip" href="/world-time/united-states/chicago/" data-compare="4887398">🏙 Chicago</a>
+          <a class="sidebar-chip" href="/world-time/united-states/denver/" data-compare="5419384">🏔 Denver</a>
+        </div>
+      </div>
+
+      <div class="sidebar-widget sidebar-widget--cta">
+        <h4>📧 DST email alerts</h4>
+        <p>Get an email 7 days before every clock change in your area.</p>
+        <input type="email" id="dstEmailInput" placeholder="you@email.com" />
+        <button id="dstEmailSubmit">Subscribe</button>
+        <div class="sidebar-widget-meta" id="dstEmailResult"></div>
+      </div>
+
+      <div class="sidebar-widget">
+        <h4>🏠 Set as home</h4>
+        <p>Personalize the page to show time diff from Horsham.</p>
+        <button id="setHomeBtn">Set Horsham as my home</button>
+        <div class="sidebar-widget-meta" id="setHomeResult"></div>
+      </div>
+    </aside>
+
+    </div><!-- /city-tab-layout -->
   </main>
 
   <!-- Continue your journey strip -->
@@ -339,7 +459,7 @@
             <div class="continue-strip-sub">Federal + state holidays, long weekends</div>
           </div>
         </a>
-        <a class="continue-strip-card" href="/world-time/meeting/?cities=118677">
+        <a class="continue-strip-card" href="/world-time/meeting/?cities=2646557">
           <span class="continue-strip-icon">📅</span>
           <div>
             <div class="continue-strip-title">Meeting planner</div>
@@ -469,6 +589,21 @@
           var abbrTextEl = document.getElementById('tzAbbrText');
           if (abbrTextEl) abbrTextEl.textContent = currentAbbr;
         }
+
+        // Update sidebar TZ widget with live abbr + offset
+        var sidebarAbbr = document.getElementById('sidebarTzAbbr');
+        var sidebarOffset = document.getElementById('sidebarTzOffset');
+        if (sidebarAbbr) sidebarAbbr.textContent = liveAbbr || sidebarAbbr.textContent;
+        if (sidebarOffset) {
+          // Compute current UTC offset from Intl
+          var liveOffsetFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' });
+          var liveOffsetParts = liveOffsetFmt.formatToParts(now);
+          for (var lop of liveOffsetParts) {
+            if (lop.type === 'timeZoneName') {
+              sidebarOffset.textContent = 'UTC ' + lop.value.replace('GMT', '');
+            }
+          }
+        }
       } catch (e) { /* ignore */ }
     }
     update();
@@ -569,5 +704,205 @@
     }
   })();
   </script>
-</body>
-</html>
+
+  <script>
+  // City page v2: Tabs + URL hash + lazy load
+  (function() {
+    var cityId = 2646557;
+    var iana = "America/New_York";
+    var tabs = document.querySelectorAll('.city-tab');
+    var panes = document.querySelectorAll('[data-pane]');
+    var loadedPanes = {};
+
+    function showTab(tabId) {
+      // Update active state
+      tabs.forEach(function(t) {
+        t.classList.toggle('active', t.dataset.tab === tabId);
+      });
+      panes.forEach(function(p) {
+        if (p.dataset.pane === tabId) {
+          p.removeAttribute('hidden');
+        } else {
+          p.setAttribute('hidden', '');
+        }
+      });
+      // Lazy-load tab content if not yet loaded
+      if (!loadedPanes[tabId]) {
+        loadedPanes[tabId] = true;
+        if (tabId === 'news') loadNews();
+        if (tabId === 'dst') loadDst();
+      }
+      // Update URL hash without scroll
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + tabId);
+      }
+      // Smooth scroll to tabs nav
+      var nav = document.getElementById('cityTabs');
+      if (nav) {
+        var rect = nav.getBoundingClientRect();
+        if (rect.top < 60 || rect.top > 200) {
+          nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab(tab.dataset.tab);
+      });
+    });
+
+    // On page load, restore tab from URL hash
+    function initFromHash() {
+      var hash = (location.hash || '').replace('#', '');
+      var validIds = Array.from(tabs).map(function(t) { return t.dataset.tab; });
+      if (hash && validIds.indexOf(hash) !== -1) {
+        showTab(hash);
+      } else {
+        // Default: time-general is already visible (the only non-hidden pane)
+        loadedPanes['time-general'] = true;
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFromHash);
+    } else {
+      initFromHash();
+    }
+
+    // Lazy load: news
+    function loadNews() {
+      var target = document.getElementById('newsContent');
+      if (!target) return;
+      fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/cities/' + cityId + '/news?limit=3')
+        .then(function(r) { return r.json(); })
+        .then(function(json) {
+          if (!json.success) return;
+          var articles = json.data.articles || [];
+          if (articles.length === 0) {
+            target.innerHTML = '<p style="color: var(--color-muted, #8a869c);">No news articles available yet.</p>';
+            return;
+          }
+          var html = '<div class="news-grid">';
+          articles.forEach(function(a) {
+            html += '<a class="news-card" href="' + a.url + '">';
+            html += '<div class="news-card-cat">' + a.category + '</div>';
+            html += '<div class="news-card-title">' + a.title + '</div>';
+            html += '<div class="news-card-excerpt">' + a.excerpt + '</div>';
+            html += '</a>';
+          });
+          html += '</div>';
+          target.innerHTML = html;
+        })
+        .catch(function() {
+          target.innerHTML = '<p style="color: var(--color-muted, #8a869c);">News unavailable.</p>';
+        });
+    }
+
+    // Lazy load: DST (year strip + history)
+    function loadDst() {
+      // DST year strip
+      fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/dst/upcoming?tz=' + encodeURIComponent(iana))
+        .then(function(r) { return r.json(); })
+        .then(function(json) {
+          if (!json.success || !json.data.history) return;
+          var history = json.data.history;
+          var all = history.all || [];
+          var past = history.past || [];
+          var future = history.future || [];
+
+          // Build year strip (12 cells, Jan-Dec)
+          var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          var curMonth = new Date().getUTCMonth();
+          var baseAbbr = (window.IANA_TO_ABBR && window.IANA_TO_ABBR[iana]) || 'STD';
+          var isDstObserved = all.length > 0;
+          var sorted = all.slice().sort(function(a,b) { return a.date.localeCompare(b.date); });
+          var stripHtml = '<div class="dst-year-strip">';
+          months.forEach(function(m, i) {
+            var monthDate = new Date().getUTCFullYear() + '-' + String(i+1).padStart(2,'0') + '-15';
+            var cellAbbr = baseAbbr;
+            var isDaylight = false;
+            sorted.forEach(function(t) {
+              if (t.date <= monthDate) {
+                if (t.direction === 'forward') { cellAbbr = baseAbbr.replace('ST','DT'); isDaylight = true; }
+                else { cellAbbr = baseAbbr.replace('DT','ST'); isDaylight = false; }
+              }
+            });
+            if (!isDstObserved) cellAbbr = baseAbbr;
+            var cls = (isDstObserved && isDaylight) ? 'daylight' : 'standard';
+            stripHtml += '<div class="dst-year-cell ' + cls + (i === curMonth ? ' current' : '') + '">';
+            stripHtml += '<span class="m">' + m + '</span>';
+            stripHtml += '<span class="a">' + cellAbbr + '</span>';
+            stripHtml += '</div>';
+          });
+          stripHtml += '</div>';
+
+          // Build history table
+          var tableHtml = '<div class="dst-history"><h3>Recent & upcoming changes</h3><table>';
+          tableHtml += '<thead><tr><th>Date</th><th>Change</th><th>Direction</th></tr></thead><tbody>';
+          past.slice(0, 3).forEach(function(t) {
+            tableHtml += '<tr><td>' + t.date + '</td><td>' + (t.type === 'spring_forward' ? 'STD → DT' : 'DT → STD') + '</td><td>' + (t.direction === 'forward' ? '+1h' : '−1h') + '</td></tr>';
+          });
+          future.slice(0, 5).forEach(function(t, i) {
+            tableHtml += '<tr class="' + (i === 0 ? 'next' : '') + '"><td>' + t.date + (i === 0 ? ' (next)' : '') + '</td><td>' + (t.type === 'spring_forward' ? 'STD → DT' : 'DT → STD') + '</td><td>' + (t.direction === 'forward' ? '+1h' : '−1h') + '</td></tr>';
+          });
+          tableHtml += '</tbody></table></div>';
+
+          // Find the DST pane and inject
+          var pane = document.getElementById('pane-dst-nearby');
+          if (pane) {
+            pane.removeAttribute('hidden');
+            pane.innerHTML = '<h2>🔄 DST in United States</h2>' + stripHtml + tableHtml +
+              '<p style="margin-top: 1rem;"><a href="/news/2026/07/daylight-saving-time-history/" class="news-link">Read the full history of DST →</a></p>';
+          }
+
+          // Update sidebar
+          var nextEl = document.getElementById('sidebarNextChange');
+          var nextMetaEl = document.getElementById('sidebarNextChangeMeta');
+          if (nextEl && future[0]) {
+            var n = future[0];
+            nextEl.textContent = n.date;
+            nextMetaEl.textContent = (n.direction === 'forward' ? '+1h forward' : '−1h back') + ' at 2:00 am';
+          } else if (nextEl) {
+            nextEl.textContent = 'No upcoming';
+            nextMetaEl.textContent = 'No DST in this zone';
+          }
+        });
+    }
+
+    // Sidebar: Set as home
+    var setHomeBtn = document.getElementById('setHomeBtn');
+    if (setHomeBtn) {
+      setHomeBtn.addEventListener('click', function() {
+        try {
+          localStorage.setItem('homeCity', JSON.stringify({ id: cityId, name: "Horsham" }));
+          document.getElementById('setHomeResult').textContent = '✓ Set! Time diff will show on all city pages.';
+        } catch (e) {
+          document.getElementById('setHomeResult').textContent = 'Browser blocked. Try a different browser.';
+        }
+      });
+    }
+
+    // Sidebar: Email signup (DST alerts) — stub for now, logs to console
+    var emailBtn = document.getElementById('dstEmailSubmit');
+    if (emailBtn) {
+      emailBtn.addEventListener('click', function() {
+        var input = document.getElementById('dstEmailInput');
+        var email = (input.value || '').trim();
+        if (!email || !email.includes('@')) {
+          document.getElementById('dstEmailResult').textContent = 'Please enter a valid email.';
+          return;
+        }
+        // TODO: POST to /api/v1/feedback (once email infra is set up)
+        // For now, store in localStorage as "would have subscribed"
+        try {
+          var subs = JSON.parse(localStorage.getItem('dstEmailSubscriptions') || '[]');
+          subs.push({ email: email, cityId: cityId, timestamp: Date.now() });
+          localStorage.setItem('dstEmailSubscriptions', JSON.stringify(subs));
+        } catch (e) {}
+        document.getElementById('dstEmailResult').textContent = "✓ Saved! We'll email you 7 days before the next clock change.";
+        input.value = '';
+      });
+    }
+  })();
+  </script>
