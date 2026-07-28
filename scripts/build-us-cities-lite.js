@@ -836,9 +836,12 @@ ${moreToExplore.map(x => `        <a href="/world-time/united-states/${x.slug}/"
       var target = document.getElementById('newsContent');
       if (!target) return;
       fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/cities/' + cityId + '/news?limit=3')
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
         .then(function(json) {
-          if (!json.success) return;
+          if (!json.success) throw new Error('API error');
           var articles = json.data.articles || [];
           if (articles.length === 0) {
             target.innerHTML = '<p style="color: var(--color-muted, #8a869c);">No news articles available yet.</p>';
@@ -856,7 +859,9 @@ ${moreToExplore.map(x => `        <a href="/world-time/united-states/${x.slug}/"
           target.innerHTML = html;
         })
         .catch(function() {
-          target.innerHTML = '<p style="color: var(--color-muted, #8a869c);">News unavailable.</p>';
+          // City not in D1 (404) or other error — show graceful fallback
+          // with link to the full news index so users can still browse.
+          target.innerHTML = '<p style="color: var(--color-muted, #8a869c); padding: 1.5rem 0; text-align: center;">Personalized news for ${c.name} is not available yet. <a href="/news/" style="color: var(--color-link, #6d28d9); font-weight: 600;">Browse all news articles →</a></p>';
         });
     }
 
