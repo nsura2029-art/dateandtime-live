@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css?v=5" />
+<link rel="stylesheet" href="/src/site-shell.css?v=6" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"Evans","address":{"@type":"PostalAddress","addressRegion":"CO","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":40.37637,"longitude":-104.69219},"timeZone":"America/Denver","url":"https://dateandtime.live/world-time/united-states/evans-co/","population":{"@type":"QuantitativeValue","value":22165}}</script>
 </head>
 <body class="shell-page">
@@ -160,31 +160,88 @@
          the hero CTA / city page Tools tab. -->
 
     <!-- Hero: Live clock -->
+    <!-- 2-column hero: clock + data table (left) | state landmark carousel (right) -->
     <section class="city-hero" data-tz="America/Denver" data-lat="40.37637" data-lon="-104.69219">
-      <div class="city-hero-flag">
-        <img src="https://flagcdn.com/w40/us.png" alt="US flag" width="40" height="30" loading="lazy" />
-      </div>
-      <h1>Current time in Evans</h1>
-      <div class="city-hero-loc">
-        <span class="state">Colorado</span> · <span class="country">United States</span>
-      </div>
-      <div class="city-hero-clock" id="cityClock" data-tz="America/Denver">
-        <span class="time-hm">--:--</span>
-        <span class="time-sec">--</span>
-        <span class="time-ampm"></span>
-        <span class="time-date" id="cityDate">--</span>
-      </div>
-      <div class="city-hero-meta">
-        <span class="meta-item"><strong>IANA:</strong> America/Denver</span>
-        <span class="meta-item" id="utcOffset">UTC --</span>
-        <span class="meta-item" id="dstStatus">—</span>
-        <span class="meta-item" id="tzAbbr">—</span>
-        <a class="meta-item meta-item--link" href="/time/zones/mst/" id="tzPageLink" style="display: none;">About <span id="tzAbbrText">MST</span> →</a>
+      <div class="city-hero-grid">
+        <!-- LEFT: live clock + digital time + data table -->
+        <div class="city-clock-block">
+          <h1>Current time in Evans</h1>
+          <div class="city-hero-loc">
+            <span class="state">Colorado</span> · <span class="country">United States</span>
+          </div>
+          <div class="city-clock-row">
+            <svg class="city-clock-face" viewBox="0 0 200 200" id="cityClockFace" data-tz="America/Denver" aria-label="Analog clock">
+              <circle cx="100" cy="100" r="95" fill="var(--color-bg-soft, #f4f2fb)" stroke="var(--color-border, #e5e2f0)" stroke-width="2" />
+              <g id="clockTicks"></g>
+              <line id="clockHour" x1="100" y1="100" x2="100" y2="55" stroke="var(--color-foreground, #1f1a3a)" stroke-width="4" stroke-linecap="round" />
+              <line id="clockMinute" x1="100" y1="100" x2="100" y2="35" stroke="var(--color-foreground, #1f1a3a)" stroke-width="3" stroke-linecap="round" />
+              <line id="clockSecond" x1="100" y1="100" x2="100" y2="25" stroke="var(--color-primary, #5b4aaf)" stroke-width="1.5" stroke-linecap="round" />
+              <circle cx="100" cy="100" r="4" fill="var(--color-foreground, #1f1a3a)" />
+            </svg>
+            <div class="city-time-block">
+              <div class="city-time-digits" id="cityClock" data-tz="America/Denver">
+                <span class="time-hm">--:--</span>
+                <span class="time-sec">--</span>
+                <span class="time-ampm"></span>
+              </div>
+              <div class="time-date" id="cityDate">--</div>
+              <a class="fullscreen-link" href="/world-time/united-states/evans-co/fullscreen/">⛶ Fullscreen</a>
+            </div>
+          </div>
+          <!-- Data table — Country/State/Coordinates/Elevation/Currency/Languages/Code -->
+          <table class="city-data-table" aria-label="City facts">
+            <tbody>
+              <tr><th>Country:</th><td><a href="/world-time/united-states/">United States</a></td></tr>
+              <tr><th>State:</th><td><a href="/world-time/united-states/state/colorado/">Colorado (CO)</a></td></tr>
+              <tr><th>Lat/Long:</th><td>40°22'34"N / 104°41'31"W</td></tr>
+              <tr><th>Elevation:</th><td>—</td></tr>
+              <tr><th>Currency:</th><td>United States Dollar (USD)</td></tr>
+              <tr><th>Languages:</th><td>English</td></tr>
+              <tr><th>Country Code:</th><td>+1</td></tr>
+            </tbody>
+          </table>
+          <div class="city-hero-meta">
+            <span class="meta-item"><strong>IANA:</strong> America/Denver</span>
+            <span class="meta-item" id="utcOffset">UTC --</span>
+            <span class="meta-item" id="dstStatus">—</span>
+            <span class="meta-item" id="tzAbbr">—</span>
+            <a class="meta-item meta-item--link" href="/time/zones/mst/" id="tzPageLink" style="display: none;">About <span id="tzAbbrText">MST</span> →</a>
+          </div>
+        </div>
+
+        <!-- RIGHT: state landmark carousel (5 images, auto-advance) -->
+        <div class="city-carousel" id="cityCarousel" data-state="colorado">
+          <div class="city-carousel-images" id="carouselImages">
+<img class="city-carousel-img active" src="/world-time/state-images/colorado-1.jpg" alt="Colorado State Capitol" data-label="Colorado State Capitol" data-idx="0" loading="eager" />
+          <img class="city-carousel-img" src="/world-time/state-images/colorado-2.jpg" alt="Rocky Mountain NP" data-label="Rocky Mountain NP" data-idx="1" loading="lazy" />
+          <img class="city-carousel-img" src="/world-time/state-images/colorado-3.jpg" alt="Denver Skyline" data-label="Denver Skyline" data-idx="2" loading="lazy" />
+          <img class="city-carousel-img" src="/world-time/state-images/colorado-4.jpg" alt="Great Sand Dunes" data-label="Great Sand Dunes" data-idx="3" loading="lazy" />
+          <img class="city-carousel-img" src="/world-time/state-images/colorado-5.jpg" alt="Maroon Bells" data-label="Maroon Bells" data-idx="4" loading="lazy" />
+          </div>
+          <div class="city-carousel-caption" id="carouselCaption">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
+            <span id="carouselCaptionText">Colorado State Capitol</span>
+          </div>
+          <div class="city-carousel-nav">
+            <button class="city-carousel-prev" id="carouselPrev" aria-label="Previous image">‹</button>
+            <button class="city-carousel-next" id="carouselNext" aria-label="Next image">›</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Quick facts -->
-    <section class="city-facts">
+    <!-- Centered city search bar (under hero, for jumping to any US city) -->
+    <section class="city-search-bar">
+      <label class="city-search-label" for="citySearchInput">Search another US city</label>
+      <div class="city-search-wrap">
+        <svg class="city-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="search" id="citySearchInput" class="city-search-input" placeholder="Type a city name (e.g. Boston, Portland, San Diego)…" autocomplete="off" />
+        <div class="city-search-results" id="citySearchResults" hidden></div>
+      </div>
+    </section>
+
+    <!-- Quick facts (KEEP for now, may merge with data table later) -->
+    <section class="city-facts" hidden>
       <div class="fact">
         <div class="fact-label">Population</div>
         <div class="fact-value">22K</div>
@@ -592,6 +649,218 @@
     }
     update();
     setInterval(update, 1000);
+
+    // ====================================================================
+    // ANALOG CLOCK FACE — draws tick marks + updates hour/minute/second
+    // hands via requestAnimationFrame for ms-precise motion.
+    // ====================================================================
+    (function() {
+      var face = document.getElementById('cityClockFace');
+      if (!face) return;
+      var ticksG = document.getElementById('clockTicks');
+      var hourHand = document.getElementById('clockHour');
+      var minHand = document.getElementById('clockMinute');
+      var secHand = document.getElementById('clockSecond');
+      // Draw 12 hour ticks + 60 minute ticks
+      if (ticksG) {
+        var html = '';
+        for (var i = 0; i < 60; i++) {
+          var angle = i * 6 - 90; // -90 to start at 12 o'clock
+          var rad = angle * Math.PI / 180;
+          var isHour = i % 5 === 0;
+          var inner = isHour ? 78 : 84;
+          var outer = 90;
+          var x1 = 100 + Math.cos(rad) * inner;
+          var y1 = 100 + Math.sin(rad) * inner;
+          var x2 = 100 + Math.cos(rad) * outer;
+          var y2 = 100 + Math.sin(rad) * outer;
+          var w = isHour ? 2.5 : 1;
+          html += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="var(--color-foreground, #1f1a3a)" stroke-width="' + w + '" stroke-linecap="round" />';
+        }
+        // Hour numbers (optional, subtle)
+        var numHtml = '';
+        var nums = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        for (var j = 0; j < 12; j++) {
+          var nAngle = j * 30 - 90;
+          var nRad = nAngle * Math.PI / 180;
+          var nx = 100 + Math.cos(nRad) * 70;
+          var ny = 100 + Math.sin(nRad) * 70 + 4; // +4 for vertical centering
+          numHtml += '<text x="' + nx.toFixed(1) + '" y="' + ny.toFixed(1) + '" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="var(--color-foreground, #1f1a3a)">' + nums[j] + '</text>';
+        }
+        ticksG.innerHTML = html + numHtml;
+      }
+      function tickClock() {
+        var now = new Date();
+        // Get hour, minute, second in the city's timezone
+        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: false });
+        var parts = fmt.formatToParts(now);
+        var h = 0, m = 0, s = 0, ms = now.getMilliseconds();
+        for (var p of parts) {
+          if (p.type === 'hour') h = parseInt(p.value, 10) % 12;
+          else if (p.type === 'minute') m = parseInt(p.value, 10);
+          else if (p.type === 'second') s = parseInt(p.value, 10);
+        }
+        // Hour hand: 30 deg per hour + 0.5 deg per minute
+        var hourAngle = (h * 30) + (m * 0.5);
+        var minAngle = (m * 6) + (s * 0.1);
+        var secAngle = (s * 6) + (ms * 0.006);
+        if (hourHand) hourHand.setAttribute('transform', 'rotate(' + hourAngle.toFixed(2) + ' 100 100)');
+        if (minHand) minHand.setAttribute('transform', 'rotate(' + minAngle.toFixed(2) + ' 100 100)');
+        if (secHand) secHand.setAttribute('transform', 'rotate(' + secAngle.toFixed(2) + ' 100 100)');
+        requestAnimationFrame(tickClock);
+      }
+      requestAnimationFrame(tickClock);
+    })();
+
+    // ====================================================================
+    // STATE LANDMARK CAROUSEL — auto-advance every 6s, pause on hover,
+    // prev/next buttons, sync caption with active image. Images are
+    // pre-rendered into the DOM; we just toggle .active on them.
+    // ====================================================================
+    (function() {
+      var carousel = document.getElementById('cityCarousel');
+      if (!carousel) return;
+      var imgs = carousel.querySelectorAll('.city-carousel-img');
+      var captionEl = document.getElementById('carouselCaptionText');
+      var prevBtn = document.getElementById('carouselPrev');
+      var nextBtn = document.getElementById('carouselNext');
+      if (imgs.length < 2) return;
+      var current = 0;
+      var autoplay = null;
+
+      function show(idx) {
+        imgs.forEach(function(img, i) {
+          if (i === idx) img.classList.add('active');
+          else img.classList.remove('active');
+        });
+        if (captionEl) captionEl.textContent = imgs[idx].getAttribute('data-label') || '';
+        current = idx;
+      }
+      function next() { show((current + 1) % imgs.length); }
+      function prev() { show((current - 1 + imgs.length) % imgs.length); }
+
+      // Shuffle initial order (deterministic by city.id so it's stable
+      // across page loads for a given city)
+      try {
+        var order = [0, 1, 2, 3, 4];
+        var seed = parseInt(hero.getAttribute('data-lat').replace('.', '').slice(0, 6), 10) || 0;
+        for (var k = order.length - 1; k > 0; k--) {
+          seed = (seed * 9301 + 49297) % 233280;
+          var j = seed % (k + 1);
+          var tmp = order[k]; order[k] = order[j]; order[j] = tmp;
+        }
+        // Re-order DOM
+        var parent = document.getElementById('carouselImages');
+        for (var n = 0; n < order.length; n++) {
+          parent.appendChild(imgs[order[n]]);
+        }
+        // Re-collect imgs in new order
+        imgs = parent.querySelectorAll('.city-carousel-img');
+        show(0);
+      } catch (e) { /* keep original order on error */ }
+
+      // Autoplay
+      function startAutoplay() {
+        stopAutoplay();
+        autoplay = setInterval(next, 6000);
+      }
+      function stopAutoplay() {
+        if (autoplay) { clearInterval(autoplay); autoplay = null; }
+      }
+      startAutoplay();
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', startAutoplay);
+      // Touch support: tap toggles
+      carousel.addEventListener('touchstart', stopAutoplay, { passive: true });
+      carousel.addEventListener('touchend', function() { setTimeout(startAutoplay, 3000); });
+
+      if (prevBtn) prevBtn.addEventListener('click', function() { prev(); startAutoplay(); });
+      if (nextBtn) nextBtn.addEventListener('click', function() { next(); startAutoplay(); });
+    })();
+
+    // ====================================================================
+    // CITY SEARCH BAR — fetches /data/us-cities-search.json on focus
+    // (once), then filters in-memory as the user types. Top 5 matches
+    // shown as a dropdown; click navigates to the city page.
+    // ====================================================================
+    (function() {
+      var input = document.getElementById('citySearchInput');
+      var results = document.getElementById('citySearchResults');
+      if (!input || !results) return;
+      var cities = null;
+      var citiesLoading = null;
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function(c) {
+          return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+        });
+      }
+      function loadCities() {
+        if (cities) return Promise.resolve(cities);
+        if (citiesLoading) return citiesLoading;
+        citiesLoading = fetch('/data/us-cities-search.json')
+          .then(function(r) { return r.json(); })
+          .then(function(d) { cities = d; return d; })
+          .catch(function() { cities = []; return []; });
+        return citiesLoading;
+      }
+      function search(q) {
+        if (!q || q.length < 2) return [];
+        var qLower = q.toLowerCase();
+        var matches = [];
+        // Exact prefix match first, then substring match
+        for (var i = 0; i < cities.length && matches.length < 8; i++) {
+          var c = cities[i];
+          var n = (c.n || '').toLowerCase();
+          if (n.indexOf(qLower) === 0) {
+            matches.push(c);
+          }
+        }
+        if (matches.length < 5) {
+          for (var j = 0; j < cities.length && matches.length < 8; j++) {
+            var n2 = (cities[j].n || '').toLowerCase();
+            if (n2.indexOf(qLower) > 0 && n2.indexOf(qLower) !== -1) {
+              matches.push(cities[j]);
+            }
+          }
+        }
+        return matches.slice(0, 5);
+      }
+      function render(matches) {
+        if (!matches.length) {
+          results.innerHTML = '<div class="city-search-empty">No matches. Try another city.</div>';
+          results.hidden = false;
+          return;
+        }
+        results.innerHTML = matches.map(function(m) {
+          return '<a class="city-search-result" href="/world-time/united-states/' + m.s + '/">'
+            + '<span class="city-search-result-name">' + escapeHtml(m.n) + '</span>'
+            + '<span class="city-search-result-meta">' + escapeHtml(m.sc || '') + ' · ' + escapeHtml(m.p || '') + '</span>'
+            + '</a>';
+        }).join('');
+        results.hidden = false;
+      }
+      input.addEventListener('focus', loadCities);
+      input.addEventListener('input', function() {
+        var q = input.value.trim();
+        if (q.length < 2) { results.hidden = true; return; }
+        loadCities().then(function() { render(search(q)); });
+      });
+      // Close on outside click
+      document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !results.contains(e.target)) {
+          results.hidden = true;
+        }
+      });
+      // Keyboard nav: Esc to close, Enter to go to first match
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { results.hidden = true; input.blur(); }
+        if (e.key === 'Enter') {
+          var first = results.querySelector('.city-search-result');
+          if (first) { window.location.href = first.getAttribute('href'); }
+        }
+      });
+    })();
 
     // Sunrise / sunset (NOAA solar calculator, simplified)
     function calcSun(lat, lon, when) {
