@@ -496,14 +496,15 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
   <link rel="stylesheet" href="/src/tz-hub.css" />
   <style>
     .coming-soon { max-width: 1240px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-    .cs-hero { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; padding: 1.75rem 2rem; background: linear-gradient(135deg, var(--color-card-bg) 0%, var(--color-bg-soft) 100%); border: 1px solid var(--color-border); border-radius: 16px; margin-bottom: 2.5rem; }
-    .cs-hero-info h1 { font-size: clamp(1.875rem, 4vw, 2.5rem); margin: 0.5rem 0 0.5rem; line-height: 1.1; }
-    .cs-hero-info .cs-country { font-size: 1rem; color: var(--color-foreground-soft); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .cs-hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1.75rem 1.75rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 16px; margin-bottom: 2.5rem; }
+    .cs-hero-info { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .cs-hero-info h1 { font-size: clamp(1.875rem, 4vw, 2.5rem); margin: 0.5rem auto; line-height: 1.1; text-align: center; max-width: 56rem; }
+    .cs-hero-info .cs-country { font-size: 1rem; color: var(--color-foreground-soft); margin: 0.25rem auto 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
     .cs-hero-info .cs-country a { color: var(--color-foreground-soft); }
-    .cs-hero-info .cs-meta { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.875rem; color: var(--color-foreground-soft); margin-top: 1rem; }
+    .cs-hero-info .cs-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.25rem; font-size: 0.875rem; color: var(--color-foreground-soft); margin: 1rem auto 0; }
     .cs-hero-info .cs-meta strong { color: var(--color-foreground); font-weight: 600; }
     .cs-badge { display: inline-block; background: linear-gradient(135deg, #7866d4 0%, #ff7a59 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-    .cs-hero-clock { text-align: right; min-width: 200px; }
+    .cs-hero-clock { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border-soft); width: 100%; }
     .cs-hero-clock-time { font-family: var(--font-mono); font-size: clamp(2.25rem, 4vw, 3rem); font-weight: 700; color: var(--color-primary); line-height: 1; letter-spacing: -0.02em; }
     .cs-hero-clock-date { font-size: 0.875rem; color: var(--color-foreground-soft); margin-top: 0.5rem; }
     .cs-hero-clock-tz { font-size: 0.75rem; color: var(--color-muted); margin-top: 0.25rem; font-family: var(--font-mono); }
@@ -536,8 +537,8 @@ async function generateComingSoonPage(countrySlug, citySlug, request) {
     .cs-feedback-card h3 { font-size: 0.9375rem; font-weight: 700; margin: 0 0 0.25rem; }
     .cs-feedback-card p { font-size: 0.8125rem; color: var(--color-foreground-soft); margin: 0; line-height: 1.4; }
     @media (max-width: 640px) {
-      .cs-hero { grid-template-columns: 1fr; padding: 1.5rem; }
-      .cs-hero-clock { text-align: left; }
+      .cs-hero { padding: 1.5rem; }
+      .cs-hero-clock { text-align: center; }
       .cs-states-grid { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); }
     }
   </style>
