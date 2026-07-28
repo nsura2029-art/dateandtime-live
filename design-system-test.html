@@ -34,6 +34,13 @@
   </div>
 
   <main>
+    <!-- ========================================
+         AD SLOT 1: Top Leaderboard (after hero)
+         ======================================== -->
+    <div class="ad-slot ad-slot--leaderboard">
+      <span class="ad-slot__label">Ad · Leaderboard · 728×90</span>
+    </div>
+
     <!-- DISPLAY HERO (homepage) -->
     <section class="page-hero page-hero--display">
       <div class="container">
@@ -61,54 +68,25 @@
       </div>
     </section>
 
-    <!-- LARGE HERO (regular page) -->
-    <section class="page-hero">
-      <div class="container">
-        <p class="page-hero-eyebrow"><span class="dot"></span>Country · 11 time zones</p>
-        <h1 class="page-hero-title">United States</h1>
-        <p class="page-hero-subtitle">Live time in <strong>15,994 US cities</strong> across <strong>52 states</strong>. Real-time updates every second.</p>
-        <div class="page-hero-stats">
-          <div class="page-hero-stat">
-            <span class="page-hero-stat-num">15,994</span>
-            <span class="page-hero-stat-label">cities</span>
-          </div>
-          <div class="page-hero-stat">
-            <span class="page-hero-stat-num">52</span>
-            <span class="page-hero-stat-label">states &amp; DC</span>
-          </div>
-          <div class="page-hero-stat">
-            <span class="page-hero-stat-num">11</span>
-            <span class="page-hero-stat-label">time zones</span>
-          </div>
-          <div class="page-hero-stat">
-            <span class="page-hero-stat-num">329M</span>
-            <span class="page-hero-stat-label">people</span>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- ========================================
+         AD SLOT 2: In-content (after hero)
+         ======================================== -->
+    <div class="ad-slot ad-slot--in-content">
+      <span class="ad-slot__label">Ad · In-content · 728×90 / 300×250 mobile</span>
+    </div>
 
-    <!-- COMPACT HERO (single-content page) -->
-    <section class="page-hero">
-      <div class="container">
-        <p class="page-hero-eyebrow">City · Kings County</p>
-        <h1 class="page-hero-title">Brooklyn, New York</h1>
-        <p class="page-hero-subtitle">Live local time, weather, and holidays for Brooklyn.</p>
-      </div>
-    </section>
-
-    <!-- SECTION 1 — with hairline border-top separating from the previous section -->
+    <!-- SECTION 1 — Centered header, full-width grid -->
     <section class="page-section">
       <div class="container">
-        <div class="page-section-header page-section-header--with-meta">
-          <div class="page-section-title-block">
-            <p class="page-section-eyebrow">Browse</p>
-            <h2 class="page-section-title">Browse cities by location</h2>
-            <p class="page-section-subtitle">Drill down by region → sub-region → country → state. Live local time updates every second.</p>
-          </div>
-          <span class="page-section-count">1,000 cities</span>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
+        <header class="page-section-header">
+          <p class="page-section-meta">
+            <span class="page-section-eyebrow">Browse</span>
+            <span class="page-section-count">1,000 cities</span>
+          </p>
+          <h2 class="page-section-title">Browse cities by location</h2>
+          <p class="page-section-subtitle">Drill down by region → sub-region → country → state. Live local time updates every second.</p>
+        </header>
+        <div class="card-grid">
           <a class="card card-link" href="#">
             <span class="card-label">US</span>
             <h3 class="card-title">New York City</h3>
@@ -133,41 +111,68 @@
       </div>
     </section>
 
-    <!-- SECTION 2 — same flat look, separated only by the hairline -->
+    <!-- ========================================
+         AD SLOT 3: In-content (after section 1)
+         ======================================== -->
+    <div class="ad-slot ad-slot--in-content">
+      <span class="ad-slot__label">Ad · In-content · 728×90 / 300×250 mobile</span>
+    </div>
+
+    <!-- SECTION 2 — Centered header, 2-col split with sidebar ad -->
     <section class="page-section">
       <div class="container">
-        <div class="page-section-header page-section-header--with-meta">
-          <div class="page-section-title-block">
-            <p class="page-section-eyebrow">Tools</p>
-            <h2 class="page-section-title">World Time Tools</h2>
-            <p class="page-section-subtitle">Time tools for every need.</p>
+        <header class="page-section-header">
+          <p class="page-section-meta">
+            <span class="page-section-eyebrow">Tools</span>
+            <span class="page-section-count">8 tools</span>
+          </p>
+          <h2 class="page-section-title">World Time Tools</h2>
+          <p class="page-section-subtitle">Time tools for every need — meeting planner, time zone converter, event announcer, and more.</p>
+        </header>
+        <div class="section-with-sidebar">
+          <div class="section-content">
+            <div class="card-grid">
+              <a class="card card-link" href="#">
+                <span class="card-label">Tool</span>
+                <h3 class="card-title">Meeting Planner</h3>
+                <p class="card-sub">Find meeting times that work for everyone across cities.</p>
+              </a>
+              <a class="card card-link" href="#">
+                <span class="card-label">Tool</span>
+                <h3 class="card-title">Time Zone Converter</h3>
+                <p class="card-sub">Time difference calculator for any two zones.</p>
+              </a>
+              <a class="card card-link" href="#">
+                <span class="card-label">Tool</span>
+                <h3 class="card-title">Event Time Announcer</h3>
+                <p class="card-sub">Show local times for a global event with a shareable link.</p>
+              </a>
+              <a class="card card-link" href="#">
+                <span class="card-label">Tool</span>
+                <h3 class="card-title">Distance Signpost</h3>
+                <p class="card-sub">Air distance between this city and other locations.</p>
+              </a>
+            </div>
           </div>
-          <span class="page-section-count">8 tools</span>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
-          <a class="card card-link" href="#">
-            <span class="card-label">Tool</span>
-            <h3 class="card-title">Meeting Planner</h3>
-            <p class="card-sub">Find meeting times that work for everyone across cities.</p>
-          </a>
-          <a class="card card-link" href="#">
-            <span class="card-label">Tool</span>
-            <h3 class="card-title">Time Zone Converter</h3>
-            <p class="card-sub">Time difference calculator for any two zones.</p>
-          </a>
+          <!-- Sidebar ad (desktop only) -->
+          <aside class="ad-slot ad-slot--sidebar">
+            <span class="ad-slot__label">Ad · Sidebar · 300×600</span>
+          </aside>
         </div>
       </div>
     </section>
 
-    <!-- SECTION 3 — flat, just the line -->
+    <!-- SECTION 3 — Centered, no meta count (simple) -->
     <section class="page-section">
       <div class="container">
-        <div class="page-section-header">
-          <p class="page-section-eyebrow">Learn</p>
+        <header class="page-section-header">
+          <p class="page-section-meta">
+            <span class="page-section-eyebrow">Learn</span>
+          </p>
           <h2 class="page-section-title">Learn about time zones</h2>
           <p class="page-section-subtitle">From the prime meridian to the leap second.</p>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
+        </header>
+        <div class="card-grid">
           <a class="card card-link" href="#">
             <span class="card-label">Learn</span>
             <h3 class="card-title">What is a time zone?</h3>
@@ -178,9 +183,26 @@
             <h3 class="card-title">Daylight Saving Time</h3>
             <p class="card-sub">Spring forward, fall back — who does it?</p>
           </a>
+          <a class="card card-link" href="#">
+            <span class="card-label">Learn</span>
+            <h3 class="card-title">UTC &amp; GMT</h3>
+            <p class="card-sub">The world's time standard.</p>
+          </a>
+          <a class="card card-link" href="#">
+            <span class="card-label">Learn</span>
+            <h3 class="card-title">The history of timekeeping</h3>
+            <p class="card-sub">From sundials to atomic clocks.</p>
+          </a>
         </div>
       </div>
     </section>
+
+    <!-- ========================================
+         AD SLOT 4: Bottom billboard
+         ======================================== -->
+    <div class="ad-slot ad-slot--bottom">
+      <span class="ad-slot__label">Ad · Bottom · 970×250 desktop / 300×250 mobile</span>
+    </div>
   </main>
 </body>
 </html>
