@@ -1,7 +1,21 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8" />
+<!-- Theme bootstrap: read saved preference from localStorage and apply BEFORE
+     CSS paints, so users with a saved "light" preference don't see a dark
+     flash. Defaults to "dark" if no preference is saved. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem("tdl-theme") || localStorage.getItem("tdp-theme");
+    if (!t) t = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  } catch(e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Current time in Hanapēpē Heights, Hawaii — dateandtime.live</title>
 <meta name="description" content="Current local time in Hanapēpē Heights, Hawaii, United States. Sunrise & sunset, 7-day weather forecast, DST status, and nearby cities. Population: 3K." />
@@ -16,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/src/site-shell.css?v=9" />
+<link rel="stylesheet" href="/src/site-shell.css?v=15" />
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"Hanapēpē Heights","address":{"@type":"PostalAddress","addressRegion":"HI","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":21.91633,"longitude":-159.58995},"timeZone":"Pacific/Honolulu","url":"https://dateandtime.live/world-time/united-states/hanapēpē-heights/","population":{"@type":"QuantitativeValue","value":2692}}</script>
 </head>
 <body class="shell-page">
@@ -183,10 +197,10 @@
               <circle cx="100" cy="100" r="4" fill="#1f1a3a" />
             </svg>
             <div class="city-time-block">
-              <!-- 2-digit hours (06:26:11 instead of 6:26:11) -->
+              <!-- Time format: HH.MM.SS.MS — 2-digit hours/min/sec/ms, dots as separators, 24-hour -->
               <div class="city-time-digits" id="cityClock" data-tz="Pacific/Honolulu">
-                <span class="time-hm">--:--</span>
-                <span class="time-sec">--</span>
+                <span class="time-hm">--.--.--</span>
+                <span class="time-sec">.--</span>
                 <span class="time-ampm"></span>
               </div>
               <div class="time-date" id="cityDate">--</div>
@@ -265,27 +279,27 @@
       </div>
     </section>
 
-    <!-- TABS NAV (sticky below today bar) -->
+    <!-- TABS NAV (sticky below breadcrumb, 7 sections, scroll-margin-top: 116px = 56 header + 60 tabs) -->
     <nav class="city-tabs" id="cityTabs" role="tablist" aria-label="City page sections">
-      <a href="#time-general" class="city-tab active" data-tab="time-general" role="tab">
-        <span class="city-tab-icon">⏰</span>
-        <span class="city-tab-label">Time/General</span>
-      </a>
-      <a href="#weather" class="city-tab" data-tab="weather" role="tab">
-        <span class="city-tab-icon">☀️</span>
-        <span class="city-tab-label">Weather</span>
-      </a>
-      <a href="#time-zone" class="city-tab" data-tab="time-zone" role="tab">
+      <a href="#time-zone" class="city-tab active" data-tab="time-zone" role="tab" aria-selected="true">
         <span class="city-tab-icon">🌐</span>
         <span class="city-tab-label">Time Zone</span>
       </a>
       <a href="#dst" class="city-tab" data-tab="dst" role="tab">
         <span class="city-tab-icon">🔄</span>
-        <span class="city-tab-label">DST</span>
+        <span class="city-tab-label">DST Changes</span>
+      </a>
+      <a href="#weather" class="city-tab" data-tab="weather" role="tab">
+        <span class="city-tab-icon">☀️</span>
+        <span class="city-tab-label">Weather</span>
       </a>
       <a href="#sun-moon" class="city-tab" data-tab="sun-moon" role="tab">
         <span class="city-tab-icon">🌙</span>
         <span class="city-tab-label">Sun & Moon</span>
+      </a>
+      <a href="#holidays" class="city-tab" data-tab="holidays" role="tab">
+        <span class="city-tab-icon">🎉</span>
+        <span class="city-tab-label">Holidays</span>
       </a>
       <a href="#news" class="city-tab" data-tab="news" role="tab">
         <span class="city-tab-icon">📰</span>
@@ -301,30 +315,102 @@
     <div class="city-tab-layout">
     <div class="city-tab-main">
 
-    <!-- Time/General tab (default, always visible) -->
-    <section class="city-section" id="pane-time-general" data-pane="time-general">
-      <h2>📍 Time & Location</h2>
-      <div class="city-fact-grid">
-        <div class="city-fact-card">
-          <div class="city-fact-label">Population</div>
-          <div class="city-fact-value">2,692</div>
+    <!-- Time Zone tab (default, always visible) -->
+    <section class="city-section" id="pane-time-zone" data-pane="time-zone">
+      <h2>🌐 Time Zone in Hanapēpē Heights</h2>
+
+      <!-- Definition list — 4 rows matching the timeanddate.com pattern:
+           Current TZ / Next change / Current offset / Same time as... -->
+      <dl class="tz-info-list">
+        <div class="tz-info-row">
+          <dt>Current:</dt>
+          <dd id="tzCurrent">HST — loading…</dd>
         </div>
-        <div class="city-fact-card">
-          <div class="city-fact-label">State</div>
-          <div class="city-fact-value"><a href="/world-time/united-states/state/hawaii/">Hawaii</a></div>
+        <div class="tz-info-row">
+          <dt>Next Change:</dt>
+          <dd id="tzNextChange">Loading next DST change…</dd>
         </div>
-        <div class="city-fact-card">
-          <div class="city-fact-label">Country</div>
-          <div class="city-fact-value"><a href="/world-time/united-states/">United States</a></div>
+        <div class="tz-info-row">
+          <dt>Current Offset:</dt>
+          <dd id="tzCurrentOffset">UTC -10</dd>
         </div>
-        <div class="city-fact-card">
-          <div class="city-fact-label">Coordinates</div>
-          <div class="city-fact-value mono">21.916, -159.590</div>
+        <div class="tz-info-row">
+          <dt>Same time as:</dt>
+          <dd id="tzSameTime">Loading nearby same-time cities…</dd>
+        </div>
+      </dl>
+
+      <p class="tz-info-meta">IANA: <code>Pacific/Honolulu</code> · <a href="/time/zones/hst/" class="tz-page-link">About HST →</a></p>
+
+      <!-- Year strip — color-coded months showing DST vs Standard time.
+           Populated by JS from /api/v1/dst/upcoming?tz=... data. -->
+      <h3>2026 Time Zones — Hanapēpē Heights</h3>
+      <div class="year-strip" id="yearStrip" data-tz="Pacific/Honolulu" data-year="2026">
+        <div class="year-strip-grid">
+          <div class="year-month" data-month="1"><span>Jan</span></div>
+          <div class="year-month" data-month="2"><span>Feb</span></div>
+          <div class="year-month" data-month="3"><span>Mar</span></div>
+          <div class="year-month" data-month="4"><span>Apr</span></div>
+          <div class="year-month" data-month="5"><span>May</span></div>
+          <div class="year-month" data-month="6"><span>Jun</span></div>
+          <div class="year-month" data-month="7"><span>Jul</span></div>
+          <div class="year-month" data-month="8"><span>Aug</span></div>
+          <div class="year-month" data-month="9"><span>Sep</span></div>
+          <div class="year-month" data-month="10"><span>Oct</span></div>
+          <div class="year-month" data-month="11"><span>Nov</span></div>
+          <div class="year-month" data-month="12"><span>Dec</span></div>
+        </div>
+        <div class="year-strip-legend">
+          <span class="year-strip-legend-item standard"><span class="year-strip-swatch standard"></span>HST (Standard)</span>
+          <span class="year-strip-legend-item daylight"><span class="year-strip-swatch daylight"></span>HDT (Daylight)</span>
         </div>
       </div>
+      <p class="year-strip-caption">The graph above illustrates clock changes in Hanapēpē Heights during 2026.</p>
+
+      <!-- DST changes table — same shape as timeanddate.com's "Time Changes" table -->
+      <h3>Time Changes in Hanapēpē Heights Over the Years</h3>
+      <p class="year-strip-caption">Daylight Saving Time (DST) changes do not necessarily occur on the same date every year.</p>
+      <div class="dst-table-wrap">
+        <table class="dst-table" id="tzDstTable" data-tz="Pacific/Honolulu">
+          <thead>
+            <tr><th>Year</th><th>Date &amp; Time</th><th>Abbreviation</th><th>Time Change</th><th>Offset After</th></tr>
+          </thead>
+          <tbody><tr><td colspan="5" class="city-page-loading">Loading DST history…</td></tr></tbody>
+        </table>
+      </div>
+      <p class="year-strip-caption"><a href="?year=2027#time-zone" id="tzYearLink">View all years →</a></p>
+
+      <!-- TZ-specific news — shown if there are articles tagged with this IANA tz -->
+      <h3>📰 HST News</h3>
+      <div class="tz-news" id="tzNews" data-tz="Pacific/Honolulu">
+        <p class="city-page-loading">Loading time zone news…</p>
+      </div>
+
+      <!-- Climate (lat-based estimate) -->
+      <h3>🌡 Hanapēpē Heights climate year-round</h3>
+      <div class="climate-chart" id="climateChart" data-climate='[{"month":1,"avg_high_c":30,"avg_low_c":20,"avg_mean_c":25},{"month":2,"avg_high_c":30.1,"avg_low_c":20.1,"avg_mean_c":25.1},{"month":3,"avg_high_c":30.2,"avg_low_c":20.2,"avg_mean_c":25.2},{"month":4,"avg_high_c":30.5,"avg_low_c":20.5,"avg_mean_c":25.5},{"month":5,"avg_high_c":30.7,"avg_low_c":20.7,"avg_mean_c":25.7},{"month":6,"avg_high_c":30.9,"avg_low_c":20.9,"avg_mean_c":25.9},{"month":7,"avg_high_c":31,"avg_low_c":21,"avg_mean_c":26},{"month":8,"avg_high_c":30.9,"avg_low_c":20.9,"avg_mean_c":25.9},{"month":9,"avg_high_c":30.8,"avg_low_c":20.8,"avg_mean_c":25.8},{"month":10,"avg_high_c":30.5,"avg_low_c":20.5,"avg_mean_c":25.5},{"month":11,"avg_high_c":30.3,"avg_low_c":20.3,"avg_mean_c":25.3},{"month":12,"avg_high_c":30.1,"avg_low_c":20.1,"avg_mean_c":25.1}]'></div>
+      <p class="climate-note">Estimated from latitude (21.92°N). Actual values vary by elevation, ocean currents, and local geography.</p>
     </section>
 
-    <!-- Sun times -->
+    <!-- DST tab — shows the same year strip + history but focused view -->
+    <section class="city-section" id="pane-dst" data-pane="dst" hidden>
+      <h2>🔄 Daylight Saving Time in Hanapēpē Heights</h2>
+      <p id="dstDescription">Loading DST schedule for Hanapēpē Heights…</p>
+      <div class="dst-year-strip" id="dstYearStrip"></div>
+      <h3>📅 Recent and upcoming clock changes</h3>
+      <div class="dst-history" id="dstHistory"><p class="city-page-loading">Loading 5-year history…</p></div>
+    </section>
+
+    <!-- Weather tab -->
+    <section class="city-section" id="pane-weather" data-pane="weather" hidden>
+      <h2>☀️ 7-day weather forecast — Hanapēpē Heights</h2>
+      <div class="weather-grid" id="weatherGrid" data-lat="21.91633" data-lon="-159.58995" data-tz="Pacific/Honolulu">
+        <p class="city-page-loading">Loading 7-day forecast…</p>
+      </div>
+      <p class="weather-source">Forecast data: <a href="https://open-meteo.com/" rel="noopener" target="_blank">Open-Meteo</a> (CC BY 4.0)</p>
+    </section>
+
+    <!-- Sun times tab -->
     <section class="city-section" id="pane-sun-moon" data-pane="sun-moon" hidden>
       <h2>🌅 Sunrise & sunset in Hanapēpē Heights</h2>
       <div class="sun-grid">
@@ -360,60 +446,33 @@
       <p class="weather-source">Forecast data: <a href="https://open-meteo.com/" rel="noopener" target="_blank">Open-Meteo</a> (CC BY 4.0)</p>
     </section>
 
-    <!-- Climate (lives inside time-zone pane — geographic context) -->
-    <section class="city-section" id="pane-time-zone" data-pane="time-zone" hidden>
-      <h2>🌐 Time Zone in Hanapēpē Heights</h2>
-      <p>Hanapēpē Heights is in the <strong>HST</strong> zone. IANA: <code>Pacific/Honolulu</code>. <a href="/time/zones/hst/" class="tz-page-link">About HST →</a></p>
-
-      <h2>🌡 Hanapēpē Heights climate year-round</h2>
-      <div class="climate-chart" id="climateChart" data-climate='[{"month":1,"avg_high_c":30,"avg_low_c":20,"avg_mean_c":25},{"month":2,"avg_high_c":30.1,"avg_low_c":20.1,"avg_mean_c":25.1},{"month":3,"avg_high_c":30.2,"avg_low_c":20.2,"avg_mean_c":25.2},{"month":4,"avg_high_c":30.5,"avg_low_c":20.5,"avg_mean_c":25.5},{"month":5,"avg_high_c":30.7,"avg_low_c":20.7,"avg_mean_c":25.7},{"month":6,"avg_high_c":30.9,"avg_low_c":20.9,"avg_mean_c":25.9},{"month":7,"avg_high_c":31,"avg_low_c":21,"avg_mean_c":26},{"month":8,"avg_high_c":30.9,"avg_low_c":20.9,"avg_mean_c":25.9},{"month":9,"avg_high_c":30.8,"avg_low_c":20.8,"avg_mean_c":25.8},{"month":10,"avg_high_c":30.5,"avg_low_c":20.5,"avg_mean_c":25.5},{"month":11,"avg_high_c":30.3,"avg_low_c":20.3,"avg_mean_c":25.3},{"month":12,"avg_high_c":30.1,"avg_low_c":20.1,"avg_mean_c":25.1}]'></div>
-      <p class="climate-note">Estimated from latitude (21.92°N). Actual values vary by elevation, ocean currents, and local geography.</p>
-    </section>
+    <!-- Climate (lives inside time-zone pane — geographic context) — REMOVED, now in time-zone above -->
 
     <!-- Cities near (new section using /cities/{id}/nearby API) -->
     <div id="pane-dst-nearby" data-pane="dst" hidden></div>
 
-    <!-- More to explore — keeps existing static list, also exposed in Time/General tab -->
-    <section class="city-section" data-pane="time-general">
-      <h2>🏙 More to explore</h2>
-      <div class="explore-grid">
-        <a href="/world-time/united-states/new-york/" class="explore-link">
-          <span class="label">New York City</span>
-          <span class="meta">NY · 8.8M</span>
-        </a>
-        <a href="/world-time/united-states/los-angeles/" class="explore-link">
-          <span class="label">Los Angeles</span>
-          <span class="meta">CA · 3.8M</span>
-        </a>
-        <a href="/world-time/united-states/chicago/" class="explore-link">
-          <span class="label">Chicago</span>
-          <span class="meta">IL · 2.7M</span>
-        </a>
-        <a href="/world-time/united-states/brooklyn/" class="explore-link">
-          <span class="label">Brooklyn</span>
-          <span class="meta">NY · 2.7M</span>
-        </a>
-        <a href="/world-time/united-states/queens/" class="explore-link">
-          <span class="label">Queens</span>
-          <span class="meta">NY · 2.4M</span>
-        </a>
-        <a href="/world-time/united-states/houston/" class="explore-link">
-          <span class="label">Houston</span>
-          <span class="meta">TX · 2.3M</span>
-        </a>
+    <!-- More to explore — REMOVED, was duplicating Time/General tab data; replaced by section in continue-strip -->
+
+    <!-- Holidays tab — real data from /api/v1/holidays endpoint -->
+    <section class="city-section" id="pane-holidays" data-pane="holidays" hidden>
+      <h2>🎉 US Holidays in 2026</h2>
+      <p class="holidays-note">Federal public holidays observed in the United States. Data from Nager.Date API.</p>
+      <div class="holidays-grid" id="holidaysGrid" data-country="US">
+        <p class="city-page-loading">Loading 2026 holidays…</p>
       </div>
+      <p class="holidays-source">Source: <a href="https://date.nager.at/" rel="noopener" target="_blank">Nager.Date</a> (CC BY 4.0)</p>
     </section>
 
     <!-- Tools tab -->
     <section class="city-section" id="pane-tools" data-pane="tools" hidden>
       <h2>🛠 Tools for Hanapēpē Heights</h2>
       <div class="tools-grid">
-        <a href="/world-time/meeting/" class="tool-link">
+        <a href="/world-time/meeting/?cities=117945" class="tool-link">
           <span class="tool-icon">📅</span>
           <span class="tool-title">Meeting planner</span>
           <span class="tool-desc">Find overlap with Hanapēpē Heights</span>
         </a>
-        <a href="/time-zones/converter/" class="tool-link">
+        <a href="/time-zones/converter/?from=Pacific/Honolulu" class="tool-link">
           <span class="tool-icon">🔄</span>
           <span class="tool-title">Time zone converter</span>
           <span class="tool-desc">Convert time to/from Hanapēpē Heights</span>
@@ -428,15 +487,15 @@
           <span class="tool-title">On this day</span>
           <span class="tool-desc">Historical events</span>
         </a>
-        <a href="/world-time/united-states/" class="tool-link">
-          <span class="tool-icon">🇺🇸</span>
-          <span class="tool-title">All US cities</span>
-          <span class="tool-desc">15,994 cities in 52 states</span>
-        </a>
         <a href="/world-time/united-states/state/hawaii/" class="tool-link">
           <span class="tool-icon">🏛</span>
           <span class="tool-title">All Hawaii cities</span>
           <span class="tool-desc">Browse by state</span>
+        </a>
+        <a href="/world-time/united-states/" class="tool-link">
+          <span class="tool-icon">🇺🇸</span>
+          <span class="tool-title">All US cities</span>
+          <span class="tool-desc">15,994 cities in 52 states</span>
         </a>
       </div>
     </section>
@@ -497,35 +556,9 @@
     </div><!-- /city-tab-layout -->
   </main>
 
-  <!-- Continue your journey strip -->
-  <section class="continue-strip">
-    <div class="container continue-strip-inner">
-      <h2>Continue your journey</h2>
-      <div class="continue-strip-grid">
-        <a class="continue-strip-card" href="/world-time/">
-          <span class="continue-strip-icon">🕐</span>
-          <div>
-            <div class="continue-strip-title">World time</div>
-            <div class="continue-strip-sub">Live clock for 15,994 US cities + 33,945 worldwide</div>
-          </div>
-        </a>
-        <a class="continue-strip-card" href="/holidays/">
-          <span class="continue-strip-icon">🎉</span>
-          <div>
-            <div class="continue-strip-title">US holidays</div>
-            <div class="continue-strip-sub">Federal + state holidays, long weekends</div>
-          </div>
-        </a>
-        <a class="continue-strip-card" href="/world-time/meeting/?cities=117945">
-          <span class="continue-strip-icon">📅</span>
-          <div>
-            <div class="continue-strip-title">Meeting planner</div>
-            <div class="continue-strip-sub">Find overlap with Hanapēpē Heights</div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
+  <!-- Continue your journey strip — REMOVED 2026-07-29. Was duplicating the
+       6-card strip that site-shell.js auto-injects on every page. Now we
+       rely on the JS-injected version (richer, 6 cards instead of 3). -->
 
   <footer class="site-footer" role="contentinfo">
     <div class="site-footer-inner">
@@ -576,19 +609,24 @@
     function update() {
       try {
         var now = new Date();
-        // 2-digit hours: '06:26:11 PM' instead of '6:26:11 PM'
-        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        // Format: HH.MM.SS.MS — 2-digit hours/minutes/seconds, then 2-digit
+        // fractional seconds (centiseconds) from the LOCAL ms value. We use
+        // 24-hour time and dots as separators, per user spec 2026-07-28.
+        var fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
         var parts = fmt.formatToParts(now);
-        var h = '', m = '', s = '', ampm = '';
+        var h = '', m = '', s = '';
         for (var p of parts) {
           if (p.type === 'hour') h = p.value;
           else if (p.type === 'minute') m = p.value;
           else if (p.type === 'second') s = p.value;
-          else if (p.type === 'dayPeriod') ampm = p.value;
         }
-        clock.querySelector('.time-hm').textContent = h + ':' + m;
-        clock.querySelector('.time-sec').textContent = s;
-        clock.querySelector('.time-ampm').textContent = ampm;
+        // 2-digit ms (centiseconds): take first 2 digits of getMilliseconds()
+        var cs = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
+        // time-hm holds "HH.MM.SS" and time-sec holds ".MS" (2 digits)
+        // so they appear on one line: "06.26.11.45"
+        clock.querySelector('.time-hm').textContent = h + '.' + m + '.' + s;
+        clock.querySelector('.time-sec').textContent = '.' + cs;
+        clock.querySelector('.time-ampm').textContent = '';
 
         var dateFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         dateEl.textContent = dateFmt.format(now);
@@ -653,8 +691,21 @@
         }
       } catch (e) { /* ignore */ }
     }
+    // Initial paint, then a fast rAF loop for smooth sub-second updates.
+    // We use rAF (60fps) so the .MS sub-seconds (centiseconds) tick smoothly,
+    // not once per second like setInterval would. Throttled to ~30fps to be
+    // gentle on battery; the eye can't distinguish 30fps sub-second animation.
     update();
-    setInterval(update, 1000);
+    var lastTick = 0;
+    function tickRAF(ts) {
+      // Throttle to ~30fps: only re-render if 33ms passed
+      if (ts - lastTick >= 33) {
+        lastTick = ts;
+        update();
+      }
+      requestAnimationFrame(tickRAF);
+    }
+    requestAnimationFrame(tickRAF);
 
     // ====================================================================
     // ANALOG CLOCK FACE — draws tick marks + updates hour/minute/second
@@ -1005,20 +1056,23 @@
         loadedPanes[tabId] = true;
         if (tabId === 'news') loadNews();
         if (tabId === 'dst') loadDst();
+        if (tabId === 'holidays') loadHolidays();
+        if (tabId === 'time-zone') loadTimeZoneData();
       }
       // Update URL hash without scroll
       if (history.replaceState) {
         history.replaceState(null, '', '#' + tabId);
       }
-      // Smooth scroll to tabs nav (account for sticky nav height)
-      var nav = document.getElementById('cityTabs');
-      if (nav) {
-        var rect = nav.getBoundingClientRect();
-        if (rect.top < 60 || rect.top > 200) {
-          // Scroll so tabs nav is just below the today bar
-          var navTop = rect.top + window.scrollY - 50;
-          window.scrollTo({ top: navTop, behavior: 'smooth' });
-        }
+      // Scroll the target pane into view, accounting for the sticky chrome
+      // (header 56px + breadcrumb ~0 + tabs nav ~48px = ~110px headroom).
+      // Use scrollIntoView with -120px block offset (handled by CSS
+      // scroll-margin-top on .city-section). The browser handles the math.
+      var pane = document.querySelector('[data-pane="' + tabId + '"]');
+      if (pane) {
+        // Slight delay so the display change is visible before scroll
+        setTimeout(function() {
+          pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
       }
     }
 
@@ -1036,14 +1090,74 @@
       if (hash && validIds.indexOf(hash) !== -1) {
         showTab(hash);
       } else {
-        // Default: time-general is already visible (the only non-hidden pane)
-        loadedPanes['time-general'] = true;
+        // Default: time-zone tab is visible. Load its data immediately
+        // so the year strip + DST table + same-time cities populate
+        // without requiring the user to click the tab.
+        loadTimeZoneData();
       }
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initFromHash);
     } else {
       initFromHash();
+    }
+
+    // Lazy load: holidays — fetch from /api/v1/holidays?country=US&year=YYYY
+    function loadHolidays() {
+      var target = document.getElementById('holidaysGrid');
+      if (!target || target.getAttribute('data-loaded')) return;
+      target.setAttribute('data-loaded', '1');
+      var year = new Date().getFullYear();
+      var country = target.getAttribute('data-country') || 'US';
+      fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/holidays?country=' + country + '&year=' + year)
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(json) {
+          if (!json.success) throw new Error('API error');
+          var holidays = (json.data && json.data.holidays) || [];
+          if (holidays.length === 0) {
+            target.innerHTML = '<p class="holidays-empty">No holidays found for ' + country + ' in ' + year + '.</p>';
+            return;
+          }
+          var today = new Date().toISOString().slice(0, 10);
+          var html = '<div class="holidays-list">';
+          holidays.forEach(function(h) {
+            var isPast = h.date < today;
+            var isToday = h.date === today;
+            var isFederal = h.type === 'public_holiday';
+            html += '<div class="holiday-row' + (isPast ? ' is-past' : '') + (isToday ? ' is-today' : '') + '">';
+            html += '<div class="holiday-date">';
+            html += '<div class="holiday-day">' + h.date.slice(8, 10) + '</div>';
+            html += '<div class="holiday-month">' + new Date(h.date).toLocaleString('en-US', { month: 'short' }) + '</div>';
+            html += '</div>';
+            html += '<div class="holiday-info">';
+            html += '<div class="holiday-name">' + h.name;
+            if (isFederal) html += ' <span class="holiday-badge">Federal</span>';
+            if (isToday) html += ' <span class="holiday-badge holiday-badge--today">Today</span>';
+            html += '</div>';
+            html += '<div class="holiday-meta">';
+            html += '<span class="holiday-dayname">' + new Date(h.date + 'T12:00:00').toLocaleString('en-US', { weekday: 'long' }) + '</span>';
+            if (h.religion && h.religion !== 'secular') html += ' · ' + h.religion;
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="holiday-when">' + (isPast ? '<span class="holiday-past-tag">Passed</span>' : '<span class="holiday-countdown" data-date="' + h.date + '"></span>') + '</div>';
+            html += '</div>';
+          });
+          html += '</div>';
+          target.innerHTML = html;
+          // Compute "in X days" for upcoming
+          document.querySelectorAll('.holiday-countdown').forEach(function(el) {
+            var target = el.getAttribute('data-date');
+            var days = Math.ceil((new Date(target) - new Date(today)) / (1000 * 60 * 60 * 24));
+            if (days === 0) el.textContent = 'Today';
+            else if (days === 1) el.textContent = 'Tomorrow';
+            else if (days < 30) el.textContent = 'in ' + days + ' days';
+            else if (days < 60) el.textContent = 'in ' + Math.round(days / 7) + ' weeks';
+            else el.textContent = 'in ' + Math.round(days / 30) + ' months';
+          });
+        })
+        .catch(function() {
+          target.innerHTML = '<p class="holidays-empty">Could not load holidays. <a href="/holidays/?country=' + country + '">View all US holidays →</a></p>';
+        });
     }
 
     // Lazy load: news
@@ -1080,10 +1194,262 @@
         });
     }
 
+    // Lazy load: Time Zone tab data — populates the year strip, DST
+    // history table, "Same time as..." cities, and TZ news. Uses a
+    // single /api/v1/dst/upcoming fetch + parallel /cities/{id}/nearby
+    // and /news?tz= fetches for maximum data, minimum round-trips.
+    function loadTimeZoneData() {
+      if (loadedPanes['time-zone']) return;
+      loadedPanes['time-zone'] = true;
+
+      var tzCurrent = document.getElementById('tzCurrent');
+      var tzNextChange = document.getElementById('tzNextChange');
+      var tzCurrentOffset = document.getElementById('tzCurrentOffset');
+      var tzSameTime = document.getElementById('tzSameTime');
+      var yearStrip = document.getElementById('yearStrip');
+      var dstTable = document.getElementById('tzDstTable');
+      var tzNews = document.getElementById('tzNews');
+
+      var baseAbbr = (window.IANA_TO_ABBR && window.IANA_TO_ABBR[iana]) || 'STD';
+      var dstAbbr = baseAbbr.replace('ST', 'DT');
+      var stdAbbr = baseAbbr.replace('DT', 'ST');
+
+      // 1) Fetch DST data — drives year strip + history table + next change
+      fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/dst/upcoming?tz=' + encodeURIComponent(iana))
+        .then(function(r) { return r.json(); })
+        .then(function(json) {
+          if (!json.success || !json.data) return;
+          var data = json.data;
+          var history = data.history || {};
+          var all = (history.all || []).slice().sort(function(a, b) {
+            return a.date.localeCompare(b.date);
+          });
+          var future = history.future || [];
+          var dstObserved = !!data.dstObserved;
+
+          // ===== Update the 4-row info card =====
+          if (tzCurrent) {
+            // Live TZ abbr from Intl
+            try {
+              var now = new Date();
+              var liveFmt = new Intl.DateTimeFormat('en-US', { timeZone: iana, timeZoneName: 'short' });
+              var liveAbbr = '';
+              liveFmt.formatToParts(now).forEach(function(p) {
+                if (p.type === 'timeZoneName') liveAbbr = p.value;
+              });
+              var tzLink = '/time/zones/' + (liveAbbr || baseAbbr).toLowerCase() + '/';
+              tzCurrent.innerHTML = '<a href="' + tzLink + '">' + (liveAbbr || baseAbbr) + '</a> — ' + (liveAbbr && liveAbbr.indexOf('D') > -1 ? 'Daylight Time' : 'Standard Time');
+            } catch (e) {
+              tzCurrent.textContent = baseAbbr + ' — current time zone';
+            }
+          }
+          if (tzNextChange && future[0]) {
+            var n = future[0];
+            var isDst = n.direction === 'forward';
+            var targetAbbr = isDst ? dstAbbr : stdAbbr;
+            var tzLink2 = '/time/zones/' + targetAbbr.toLowerCase() + '/';
+            var dateObj = new Date(n.date + 'T12:00:00');
+            var dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            tzNextChange.innerHTML = '<a href="' + tzLink2 + '">' + targetAbbr + '</a> — on <strong>' + dateStr + '</strong> (' + (isDst ? '+1h' : '−1h') + ' at 2:00 am)';
+          } else if (tzNextChange) {
+            tzNextChange.innerHTML = dstObserved ? 'No upcoming changes' : '<em>DST is not observed in this zone</em>';
+          }
+          if (tzCurrentOffset) {
+            // Live UTC offset
+            try {
+              var offFmt = new Intl.DateTimeFormat('en-US', { timeZone: iana, timeZoneName: 'shortOffset' });
+              var liveOff = '';
+              offFmt.formatToParts(new Date()).forEach(function(p) {
+                if (p.type === 'timeZoneName') liveOff = p.value.replace('GMT', '');
+              });
+              tzCurrentOffset.innerHTML = 'UTC/GMT ' + (liveOff || getTzOffset(iana)) + ' hours';
+            } catch (e) {
+              tzCurrentOffset.textContent = 'UTC ' + getTzOffset(iana);
+            }
+          }
+
+          // ===== Build year strip (12 months, color-coded) =====
+          if (yearStrip) {
+            var months = yearStrip.querySelectorAll('.year-month');
+            var isDstActive = false;
+            // Start: is DST active right now? (we need to check this month)
+            var currentMonth = new Date().getMonth();
+            // First, determine the baseline state at the start of the year
+            // If a DST start happened before Jan 1, isDstActive = true
+            all.forEach(function(t) {
+              if (t.date <= new Date().getFullYear() + '-01-01') {
+                isDstActive = t.direction === 'forward';
+              }
+            });
+            months.forEach(function(m, i) {
+              var monthNum = i + 1;
+              var monthDate = new Date().getFullYear() + '-' + String(monthNum).padStart(2, '0') + '-15';
+              // Check if any transition in this month changed the state
+              all.forEach(function(t) {
+                var tMonth = parseInt(t.date.slice(5, 7), 10);
+                if (tMonth === monthNum && t.date.slice(0, 4) == new Date().getFullYear()) {
+                  // The transition happens in this month. For visual purposes,
+                  // we mark the whole month as the state AFTER the transition.
+                  isDstActive = t.direction === 'forward';
+                }
+              });
+              if (dstObserved && isDstActive) {
+                m.classList.add('daylight');
+              } else {
+                m.classList.remove('daylight');
+              }
+            });
+          }
+
+          // ===== Build DST history table =====
+          if (dstTable) {
+            var tbody = dstTable.querySelector('tbody');
+            if (!dstObserved || all.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--color-muted, #6b6580);"><strong>' + baseAbbr + '</strong> does not observe Daylight Saving Time — clocks stay the same all year.</td></tr>';
+            } else {
+              // Show 5 years: 2 past + current/next + 2 future
+              var allSorted = all.slice().sort(function(a, b) { return a.date.localeCompare(b.date); });
+              var rowsHtml = '';
+              var nextDate = future[0] ? future[0].date : null;
+              allSorted.forEach(function(t) {
+                var d = new Date(t.date + 'T02:00:00');
+                var dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                var timeStr = 'at 2:00 am';
+                var isNext = t.date === nextDate;
+                var isDst = t.direction === 'forward';
+                var fromAbbr = isDst ? stdAbbr : dstAbbr;
+                var toAbbr = isDst ? dstAbbr : stdAbbr;
+                var changeStr = (isDst ? '+1 hour (DST start)' : '−1 hour (DST end)');
+                var dirClass = isDst ? 'direction-forward' : 'direction-back';
+                var offsetAfter = isDst ? n2off(t.offsetAfter) : n2off(t.offsetAfter);
+                rowsHtml += '<tr' + (isNext ? ' class="next"' : '') + '>';
+                rowsHtml += '<td>' + (t.date ? t.date.slice(0, 4) : '') + '</td>';
+                rowsHtml += '<td>' + dateStr + ' ' + timeStr + (isNext ? ' <span style="color: var(--color-primary, #5b4aaf); font-weight: 700;">← next</span>' : '') + '</td>';
+                rowsHtml += '<td class="abbr-change">' + fromAbbr + ' <span class="arrow">→</span> ' + toAbbr + '</td>';
+                rowsHtml += '<td class="' + dirClass + '">' + changeStr + '</td>';
+                rowsHtml += '<td class="mono">UTC' + offsetAfter + '</td>';
+                rowsHtml += '</tr>';
+              });
+              tbody.innerHTML = rowsHtml;
+            }
+          }
+        })
+        .catch(function(e) { /* ignore — defaults remain */ });
+
+      // 2) "Same time as..." — fetch nearby cities in the same TZ
+      // Use a more direct approach: query the cities API for major cities in
+      // the same IANA timezone, sorted by population. Falls back to the
+      // /cities/{id}/nearby endpoint if needed.
+      if (tzSameTime) {
+        // Build a list of major US cities in common timezones as a static fallback
+        var SAME_TZ_MAJOR = {
+          'America/New_York':   ['New York', 'Boston', 'Philadelphia', 'Atlanta', 'Miami', 'Toronto'],
+          'America/Chicago':    ['Chicago', 'Houston', 'Dallas', 'San Antonio', 'Austin', 'Minneapolis'],
+          'America/Denver':     ['Denver', 'Salt Lake City', 'Phoenix', 'Albuquerque', 'Cheyenne'],
+          'America/Los_Angeles':['Los Angeles', 'San Francisco', 'Seattle', 'Portland', 'Las Vegas', 'San Diego'],
+          'America/Phoenix':    ['Phoenix', 'Tucson', 'Mesa', 'Chandler', 'Scottsdale'],
+          'Pacific/Honolulu':   ['Honolulu', 'Hilo', 'Kailua', 'Pearl City'],
+          'America/Anchorage':  ['Anchorage', 'Fairbanks', 'Juneau'],
+          'America/Adak':       ['Adak'],
+          'America/Boise':      ['Boise', 'Reno'],
+          'America/Detroit':    ['Detroit', 'Indianapolis'],
+          'America/Kentucky/Louisville': ['Louisville', 'Frankfort'],
+          'America/Indiana/Indianapolis': ['Indianapolis', 'Fort Wayne']
+        };
+        var sameList = SAME_TZ_MAJOR[iana] || [];
+
+        // Try to use the actual /cities/{id}/nearby endpoint as the
+        // primary source (real data, always accurate)
+        fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/cities/' + cityId + '/nearby?limit=3')
+          .then(function(r) { return r.json(); })
+          .then(function(json) {
+            if (json.success && json.data && json.data.nearby) {
+              var nearbySame = (json.data.nearby || []).filter(function(n) { return n.timezone === iana; });
+              var html = '';
+              if (nearbySame.length > 0) {
+                html = '<strong>' + nearbySame[0].name + '</strong> (' + nearbySame[0].distanceKm.toFixed(1) + ' km away)';
+                if (nearbySame.length > 1) {
+                  html += '<br><span style="color: var(--color-muted, #6b6580); font-size: 0.875rem;">Also same time: ';
+                  html += nearbySame.slice(1, 4).map(function(n) { return '<a href="/world-time/united-states/' + slugify(n.name) + '/">' + n.name + '</a>'; }).join(', ');
+                  html += '</span>';
+                }
+              } else if (sameList.length > 0) {
+                // Fallback to major cities list
+                html = '<strong>' + sameList[0] + '</strong>';
+                if (sameList.length > 1) {
+                  html += '<br><span style="color: var(--color-muted, #6b6580); font-size: 0.875rem;">Also same time: ';
+                  html += sameList.slice(1, 5).join(', ');
+                  html += '</span>';
+                }
+              } else {
+                html = '<em>No major city in this time zone in our database</em>';
+              }
+              tzSameTime.innerHTML = html;
+            }
+          })
+          .catch(function() {
+            // Fallback to static list
+            if (sameList.length > 0) {
+              tzSameTime.innerHTML = '<strong>' + sameList[0] + '</strong>' +
+                (sameList.length > 1 ? '<br><span style="color: var(--color-muted, #6b6580); font-size: 0.875rem;">Also same time: ' + sameList.slice(1, 5).join(', ') + '</span>' : '');
+            } else {
+              tzSameTime.innerHTML = '<em>Same UTC offset</em>';
+            }
+          });
+      }
+
+      // 3) TZ news — fetch country-filtered news from the existing endpoint,
+      //    then client-side filter for "time" category which is TZ-relevant.
+      //    (Future: add ?tz= param to /api/v1/news for true TZ-specific
+      //    filtering once we have a TZ tag on each article.)
+      if (tzNews) {
+        fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/cities/' + cityId + '/news?limit=10')
+          .then(function(r) { return r.json(); })
+          .then(function(json) {
+            if (!json.success || !json.data) return;
+            // Filter for "time" category (TZ-specific articles) first,
+            // fall back to any article if none found.
+            var articles = (json.data.articles || []).filter(function(a) {
+              return a.category === 'time' || a.category === 'tz';
+            });
+            if (articles.length === 0) articles = (json.data.articles || []).slice(0, 3);
+            if (articles.length === 0) {
+              tzNews.innerHTML = '<p class="tz-news-empty">No time-zone-specific news yet. <a href="/news/time/">Browse all time zone news →</a></p>';
+              return;
+            }
+            var html = '<div class="tz-news-list">';
+            articles.forEach(function(a) {
+              var icon = a.category === 'time' ? '⏰' : '📰';
+              html += '<a class="tz-news-item" href="' + a.url + '">';
+              html += '<span class="tz-news-item-icon">' + icon + '</span>';
+              html += '<span class="tz-news-item-text">';
+              html += '<div class="tz-news-item-title">' + a.title + '</div>';
+              html += '<div class="tz-news-item-meta">' + (a.category || 'time') + ' · ' + (a.published || '') + '</div>';
+              html += '</span></a>';
+            });
+            html += '</div>';
+            tzNews.innerHTML = html;
+          })
+          .catch(function() {
+            tzNews.innerHTML = '<p class="tz-news-empty">News temporarily unavailable.</p>';
+          });
+      }
+    }
+
+    function n2off(s) {
+      // "−04:00" → "-4h", "+00:00" → "0h", etc.
+      if (!s) return '?';
+      var m = s.match(/([+-]?)(d+):(d+)/);
+      if (!m) return s;
+      var sign = m[1] === '+' ? '+' : (m[1] === '-' ? '-' : '');
+      var h = parseInt(m[2], 10);
+      var mm = parseInt(m[3], 10);
+      if (mm === 0) return sign + h + 'h';
+      return sign + h + ':' + (mm < 10 ? '0' + mm : mm) + 'h';
+    }
+
     // Lazy load: DST (year strip + history)
     function loadDst() {
-      // DST year strip
-      fetch('https://datetime-api-dev.nsura2029.workers.dev/api/v1/dst/upcoming?tz=' + encodeURIComponent(iana))
         .then(function(r) { return r.json(); })
         .then(function(json) {
           if (!json.success || !json.data.history) return;

@@ -15,9 +15,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/src/world-time.css?v=19" />
-  <link rel="stylesheet" href="/src/site-shell.css?v=24" />
-  <link rel="stylesheet" href="/src/tz-hub.css?v=22" />
+  <link rel="stylesheet" href="/src/world-time.css?v=22" />
+  <link rel="stylesheet" href="/src/site-shell.css?v=12" />
+  <link rel="stylesheet" href="/src/tz-hub.css?v=26" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -205,14 +205,14 @@
   <section class="tz-hero">
     <div class="container">
       <h1>The World Clock</h1>
-      <p class="tz-subtitle">Live current time in <strong>33,945 cities</strong> across <strong>408 time zones</strong>. Real-time updates every second.</p>
+      <p class="tz-subtitle">Live current time in <strong>33,945 cities</strong> across <strong>356 IANA time zones</strong>. Real-time updates every second.</p>
       <div class="tz-hero-stats">
         <div class="tz-hero-stat">
           <span class="tz-hero-stat-num">33,945</span>
           <span class="tz-hero-stat-label">cities</span>
         </div>
-        <div class="tz-hero-stat">
-          <span class="tz-hero-stat-num">408</span>
+        <div class="tz-hero-stat" data-tooltip="IANA timezone identifiers in our database. 33 unique UTC offsets are currently in use.">
+          <span class="tz-hero-stat-num">356</span>
           <span class="tz-hero-stat-label">time zones</span>
         </div>
         <div class="tz-hero-stat">
@@ -228,7 +228,7 @@
   </section>
 
   <!-- City cards (server-side filter + search + sort + paginated Load more) -->
-  <section class="wt-hub-section" id="all-cities">
+  <section class="wt-hub-section" data-animate id="all-cities">
     <div class="container">
       <div class="wt-hub-header">
         <h2>Browse cities by location</h2>
@@ -316,7 +316,7 @@
   </section>
 
   <!-- Tools grid -->
-  <section class="tz-tools">
+  <section class="tz-tools" data-animate>
     <div class="container">
       <h2>World Time Tools</h2>
       <div class="tz-tools-grid">
@@ -345,7 +345,7 @@
   </section>
 
   <!-- FAQ -->
-  <section class="tz-faq">
+  <section class="tz-faq" data-animate>
     <div class="container">
       <h2>Frequently Asked Questions</h2>
       <div class="tz-faq-list">
